@@ -212,7 +212,7 @@ const Holidays_Mainbar = () => {
         <Mobile_Sidebar />
 
         {/* breadcrumb */}
-        <div className="flex gap-2 mt-5 text-sm items-center cursor-pointer">
+        <div className="flex gap-2 md:mt-5 text-sm items-center cursor-pointer">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
@@ -227,12 +227,12 @@ const Holidays_Mainbar = () => {
 
         {/* Heading */}
         <section className="flex flex-wrap md:flex-row justify-between ">
-          <p className="text-2xl md:text-3xl font-semibold  mt-5 md:mt-8">
+          <p className="text-2xl md:text-3xl font-semibold  mt-2 md:mt-8">
             Holidays
           </p>
           <button
             onClick={openUpcomingHolidaysModalOpen}
-            className="px-4 py-1 mt-5 md:mt-8 w-fit cursor-pointer rounded-full  text-white bg-blue-500 hover:bg-blue-600 font-medium"
+            className="px-4 py-1 mt-2 md:mt-8 w-full md:w-fit cursor-pointer rounded-full  text-white bg-blue-500 hover:bg-blue-600 font-medium"
           >
             Add Upcoming Holidays
           </button>
@@ -240,12 +240,12 @@ const Holidays_Mainbar = () => {
 
         <div className="w-full mx-auto relative">
           {/* Global Search Input */}
-          <div className="mt-4 md:mt-8 flex md:justify-end">
+          <div className="mt-2 md:mt-8 flex md:justify-end">
             <InputText
               value={globalFilter}
               onChange={(e) => setGlobalFilter(e.target.value)}
               placeholder="Search"
-              className="px-2 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500"
+              className="px-2 py-2 w-full md:w-fit rounded-md border border-gray-300 focus:outline-none focus:border-blue-500"
             />
           </div>
 
@@ -326,7 +326,7 @@ const Holidays_Mainbar = () => {
               onClick={closeUpcomingHolidaysModalOpen}
             ></div>
             <div
-              className={`fixed top-0 right-0 h-screen overflow-y-scroll w-[80vw] md:w-[50vw] bg-white shadow-lg px-5 md:px-16 py-10 transform transition-transform duration-500 ease-in-out ${
+              className={`fixed top-0 right-0 h-screen overflow-y-scroll w-[80vw] md:w-[50vw] bg-white shadow-lg px-5 md:px-16 py-3 md:py-10 transform transition-transform duration-500 ease-in-out ${
                 isAnimating ? "translate-x-0" : "translate-x-full"
               }`}
             >
@@ -338,10 +338,10 @@ const Holidays_Mainbar = () => {
                 <IoIosArrowForward className="w-3 h-3" />
               </div>
               <div className="flex flex-wrap flex-col md:flex-row justify-between">
-                <p className="text-2xl md:text-3xl font-medium mt-8">
+                <p className="text-2xl md:text-3xl font-medium mt-2 md:mt-8">
                   Add Upcoming Holiday
                 </p>
-                <div className="flex justify-end gap-5 mt-8">
+                <div className="flex justify-end gap-5 mt-2 md:mt-8">
                   <button
                     onClick={closeUpcomingHolidaysModalOpen}
                     className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
@@ -363,7 +363,7 @@ const Holidays_Mainbar = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3 mt-8">
+              <div className="flex flex-col gap-3 mt-3 md:mt-8">
                 {/* leave date */}
                 <div className="flex flex-col lg:flex-row gap-1 justify-between">
                   <div className="flex flex-col">
@@ -433,7 +433,7 @@ const Holidays_Mainbar = () => {
               onClick={closeEditHolidayModalOpen}
             ></div>
             <div
-              className={`fixed top-0 right-0 h-screen overflow-y-scroll w-[90vw] md:w-[70vw] bg-white shadow-lg px-5 md:px-16 py-10 transform transition-transform duration-500 ease-in-out ${
+              className={`fixed top-0 right-0 h-screen overflow-y-scroll w-[90vw] md:w-[70vw] bg-white shadow-lg px-5 md:px-16 py-3 md:py-10 transform transition-transform duration-500 ease-in-out ${
                 isAnimating ? "translate-x-0" : "translate-x-full"
               }`}
             >
@@ -445,8 +445,8 @@ const Holidays_Mainbar = () => {
                 <IoIosArrowForward className="w-3 h-3" />
               </div>
               <div className="flex flex-wrap flex-col md:flex-row justify-between">
-                <p className="text-3xl font-medium mt-8">Edit Holiday</p>
-                <div className="flex justify-end gap-5 mt-8">
+                <p className="text-3xl font-medium mt-2 md:mt-8">Edit Holiday</p>
+                <div className="flex justify-end gap-5 mt-2 md:mt-8">
                   <button
                     onClick={closeEditHolidayModalOpen}
                     className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
@@ -467,7 +467,7 @@ const Holidays_Mainbar = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3 mt-8">
+              <div className="flex flex-col gap-3 mt-3 md:mt-8">
                 {/* leave date */}
                 <div className="flex flex-col lg:flex-row gap-1 justify-between">
                   <div className="flex flex-col">

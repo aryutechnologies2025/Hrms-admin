@@ -286,7 +286,7 @@ const Source_Details = () => {
         </div>
 
         {/* Add Button */}
-        <div className="flex justify-between mt-8">
+        <div className="flex justify-between mt-4 md:mt-8">
           <div className="">
             <h1 className="text-2xl md:text-3xl font-semibold">Technologies</h1>
           </div>
@@ -337,13 +337,13 @@ const Source_Details = () => {
                 <IoIosArrowForward className="w-3 h-3" />
               </div>
 
-              <div className="p-5">
+              <div className="p-3 md:p-5">
                 <p className="text-2xl md:text-3xl font-medium">Add Technologies </p>
                 <div className="mt-5 flex justify-between items-center">
                   <label className="block text-md font-medium mb-2">
                     Name <span className="text-red-500">*</span>
                   </label>
-                  <div className="w-[50%]">
+                  <div className="w-[70%] md:w-[50%]">
                     <input
                       type="text"
                       value={name}
@@ -366,7 +366,7 @@ const Source_Details = () => {
                       Status <span className="text-red-500">*</span>
                     </label>
                   </div>
-                  <div className="w-[50%]">
+                  <div className="w-[70%] md:w-[50%]">
                     <select
                       name="status"
                       id="status"
@@ -387,7 +387,7 @@ const Source_Details = () => {
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-2 mt-14">
+                <div className="flex justify-end gap-2 mt-7 md:mt-14">
                   <button
                     onClick={closeAddModal}
                     className="bg-red-100 hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-5 py-1 md:py-2 font-semibold rounded-full"
@@ -425,13 +425,13 @@ const Source_Details = () => {
                 <IoIosArrowForward className="w-3 h-3" />
               </div>
 
-              <div className="p-5">
+              <div className="p-3 md:p-5">
                 <p className="text-2xl md:text-3xl font-medium">Edit Technologies</p>
                 <div className="mt-5 flex justify-between items-center">
                   <label className="block text-md font-medium mb-2">
                     Name <span className="text-red-500">*</span>
                   </label>
-                  <div className="w-[50%]">
+                  <div className="w-[70%] md:w-[50%]">
                     <input
                       type="text"
                       value={nameEdit}
@@ -454,7 +454,7 @@ const Source_Details = () => {
                       Status <span className="text-red-500">*</span>
                     </label>
                   </div>
-                  <div className="w-[50%]">
+                  <div className="w-[70%] md:w-[50%]">
                     <select
                       name="status"
                       id="status"
@@ -476,7 +476,7 @@ const Source_Details = () => {
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-2 mt-14">
+                <div className="flex justify-end gap-2 mt-7 md:mt-14">
                   <button
                     onClick={closeEditModal}
                     className="bg-red-100 hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-5 py-1 md:py-2 font-semibold rounded-full"

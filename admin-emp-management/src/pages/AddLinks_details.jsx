@@ -346,7 +346,7 @@ const AddLinks_details = () => {
         </div>
 
         {/* Add Button */}
-        <div className="flex justify-between mt-8 mb-3">
+        <div className="flex justify-between mt-2 md:mt-8 mb-1 md:mb-3">
           <h1 className="text-2xl md:text-3xl font-semibold">Link</h1>
           <button
             onClick={openAddModal}
@@ -377,11 +377,11 @@ const AddLinks_details = () => {
         {/* Add Modal */}
         {isAddModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-5 rounded-xl w-[400px] h-[400px] overflow-y-auto px-8 py-6">
-              <h2 className="text-xl font-semibold mb-4">Add Item</h2>
+            <div className="bg-white p-2 md:p-5 rounded-xl w-[400px] h-[400px] overflow-y-auto px-8 py-6">
+              <h2 className="text-xl font-semibold mb-2 md:mb-4">Add Item</h2>
 
               {/* Title */}
-              <div className="mb-3">
+              <div className="mb-1 md:mb-3">
                 <label className="block text-sm font-medium mb-2">Category</label>
 
                 <select
