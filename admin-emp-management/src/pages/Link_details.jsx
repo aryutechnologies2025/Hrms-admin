@@ -63,19 +63,19 @@ function Link_details() {
           <p className="text-sm text-blue-500 ">Links</p>
         </div>
 
-        <div className="flex flex-wrap justify-between mt-8 mb-3">
+        <div className="flex flex-wrap justify-between mt-2 md:mt-8 mb-1 md:mb-3">
           <h1 className="text-2xl md:text-3xl font-semibold">Links</h1>
           <div className="flex gap-3 ">
             <button
               // onClick={openAddModal}
               onClick={() => navigate("/addlinks")}
-              className="flex justify-between px-7 py-1 text-white bg-blue-500 hover:bg-blue-600 font-medium items-center w-28 rounded-2xl"
+              className="flex justify-between px-7 py-1 md:py-2 text-white bg-blue-500 hover:bg-blue-600 font-normal md:font-medium items-center w-28 rounded-2xl"
             ><IoMdAdd className="text-white size-5" />
                Link
             </button>
             <button
               onClick={() => navigate("/addcategory")}
-              className="flex justify-between px-3 py-2 text-white bg-blue-500 hover:bg-blue-600 font-medium w-32 rounded-2xl"
+              className="flex justify-between px-3 py-1 md:py-2 text-white bg-blue-500 hover:bg-blue-600 font-normal md:font-medium items-center w-32 rounded-2xl"
             ><IoMdAdd className="text-white size-5" />
               Category
             </button>

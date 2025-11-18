@@ -48,7 +48,7 @@ const Leaves_Mainbar = () => {
 
   const [leaveType, setLeavetype] = useState("");
   const [subleavetype, setSubleavetype] = useState([]);
-
+  let navigate = useNavigate();
   const handleEditClick = (rowData) => {
     console.log("Clicked row ID:", rowData);
     setLeavetype(rowData.leaveType);

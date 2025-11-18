@@ -14,6 +14,7 @@ import { Column } from "primereact/column";
 import Swal from "sweetalert2";
 import Mobile_Sidebar from "../components/Mobile_Sidebar";
 import Footer from "../components/Footer";
+import { useNavigate } from "react-router-dom";
 
 export const AdminPrivileges = () => {
   const [employeeOption, setEmployeeOption] = useState(null);
@@ -271,6 +272,7 @@ export const AdminPrivileges = () => {
       };
     });
   };
+  let navigate = useNavigate();
 
   return (
     <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
@@ -284,8 +286,8 @@ export const AdminPrivileges = () => {
 
       <div className="flex gap-2 items-center cursor-pointer">
         <p
-          className=" text-gray-500 cursor-pointer"
-          onClick={() => navigate("/")}
+          className=" text-gray-500 text-sm cursor-pointer"
+          onClick={() => navigate("/dashboard")}
         >
           Dashboard
         </p>
@@ -294,13 +296,13 @@ export const AdminPrivileges = () => {
         <p>{">"}</p>
       </div>
 
-      <div className="flex flex-wrap justify-between mt-8 mb-3">
-        <h2 className="text-2xl md:text-3xl mt-3 font-semibold">
+      <div className="flex flex-wrap justify-between mt-3 md:mt-8 mb-3">
+        <h2 className="text-2xl md:text-3xl font-semibold">
           Manage User Privileges
         </h2>
         <button
           onClick={openPrivilegesModal}
-                className=" px-6 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium mt-3 md:mt-0  rounded-2xl"
+                className=" px-6 py-2 w-full md:w-64  text-white bg-blue-500 hover:bg-blue-600 font-medium mt-3 md:mt-0  rounded-2xl"
         >
           Add User to Admin Panel
         </button>
@@ -315,7 +317,7 @@ export const AdminPrivileges = () => {
                 // value={globalFilter}
                 // onChange={(e) => setGlobalFilter(e.target.value)}
                 placeholder="Search"
-                className="px-2 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500"
+                className="px-2 py-2 w-full md:w-64 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500"
               />
             </div>
 
@@ -376,7 +378,7 @@ export const AdminPrivileges = () => {
               <IoIosArrowForward className="w-3 h-3" />
             </div>
 
-            <div className="px-5 lg:px-14 py-10">
+            <div className="px-5 lg:px-14 py-3 md:py-10">
               <p className="text-2xl md:text-3xl font-medium">
                 Manage User Privileges
               </p>
@@ -385,13 +387,13 @@ export const AdminPrivileges = () => {
                 roles and responsibilities.
               </p>
 
-              <div className="mt-10 md:mt-16  rounded-lg ">
-                <div className="mt-10 flex flex-col gap-8">
+              <div className="mt-3 md:mt-16  rounded-lg ">
+                <div className="mt-3 md:mt-10 flex flex-col gap-3 md:gap-8">
                   {/* user dropdown */}
                   <div className="flex flex-wrap md:flex-nowrap gap-2 md:gap-14 items-center ">
                     <label
                       htmlFor="employee_name"
-                      className="block text-md font-medium mb-2"
+                      className="block text-md font-medium mb-1 md:mb-2"
                     >
                       Employee Name
                     </label>
@@ -488,7 +490,7 @@ export const AdminPrivileges = () => {
               <IoIosArrowForward className="w-3 h-3" />
             </div>
 
-            <div className="px-5 lg:px-14 py-10">
+            <div className="px-5 lg:px-14 py-3 md:py-10">
               <p className="text-2xl md:text-3xl font-medium">
                 Edit User Privileges
               </p>
@@ -497,8 +499,8 @@ export const AdminPrivileges = () => {
                 roles and responsibilities.
               </p> */}
 
-              <div className="mt-10 md:mt-16  rounded-lg ">
-                <div className="mt-3 md:mt-10 flex flex-col gap-8">
+              <div className="mt-2 md:mt-16  rounded-lg ">
+                <div className="mt-2 md:mt-10 flex flex-col gap-2 md:gap-8">
                   {/* user dropdown */}
                   <div className=" flex flex-wrap md:flex-nowrap md:gap-14 items-center">
                     <label
@@ -537,7 +539,7 @@ export const AdminPrivileges = () => {
                       Select Privileges
                     </label>
 
-                    <div className=" grid grid-cols-2 md:grid-cols-3 gap-5 md:gap-10">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-5 md:gap-10">
                       {privilegesOption &&
                         privilegesOption.map((privilege) => {
                           const isChecked = editPrivilegesRowdata.module.some(

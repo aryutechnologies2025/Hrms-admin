@@ -453,7 +453,7 @@ const JobOpening_Details = () => {
                     <IoIosArrowForward className="w-3 h-3" />
                   </div>
 
-                  <div className="p-5">
+                  <div className="p-3 md:p-5">
                     <h2 className="text-xl font-semibold mb-4">Add Job Opening</h2>
 
                     <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center ">
@@ -596,7 +596,7 @@ const JobOpening_Details = () => {
 
                     {/* Notes */}
 
-                    <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                    <div className="mt-3 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         Notes <span className="text-red-500">*</span>
                       </label>
@@ -619,7 +619,7 @@ const JobOpening_Details = () => {
 
                     {/* {error.rolename && <p className="error">{error.rolename}</p>} */}
 
-                    <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                    <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <div className="">
                         <label
                           htmlFor="status"
@@ -827,7 +827,7 @@ const JobOpening_Details = () => {
 
                     {/* Notes */}
 
-                    <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                    <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="w-full md:w-0 block text-md font-medium mb-2">
                         Notes <span className="text-red-500">*</span>
                       </label>
@@ -840,14 +840,14 @@ const JobOpening_Details = () => {
                           className="w-full px-3 h-36 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.note && (
-                          <p className="text-red-500 text-sm mb-4">{errors.note}</p>
+                          <p className="text-red-500 text-sm mb-2 md:mb-4">{errors.note}</p>
                         )}
                       </div>
                     </div>
 
                     {/* {error.rolename && <p className="error">{error.rolename}</p>} */}
 
-                    <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                    <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <div className="">
                         <label
                           htmlFor="status"

@@ -334,7 +334,7 @@ const Departments_Mainbar = () => {
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
           >
-            Dashboard
+            Dashboard 
           </p>
           <p>{">"}</p>
 
