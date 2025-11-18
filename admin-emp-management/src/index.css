@@ -1,0 +1,315 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&display=swap'); */
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+body {
+  font-family: "Poppins", serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  cursor: pointer !important;
+  border-radius: 10px !important;
+}
+
+::-webkit-scrollbar-track {
+  /* background: #d1e5ff; */
+  background: lightgray;
+}
+
+::-webkit-scrollbar-thumb {
+  background: gray;
+  cursor: pointer;
+  border-radius: 15px;
+}
+
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+/* index.css */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 2px;
+  /* Horizontal scrollbar height */
+  background: #f0f0f0;
+  /* Scrollbar background */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+  /* Thumb color */
+  border-radius: 2px;
+  /* Rounded corners */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+  /* Thumb hover color */
+}
+
+/* ********************************************************************************* */
+.dt-layout-row {
+  display: flex;
+  margin-top: 10px;
+  align-items: center;
+}
+
+.dt-search {
+  align-self: flex-end;
+  align-items: end;
+  align-content: end;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.dt-input {
+  width: 100%;
+  padding: 10px 10px;
+  border: 1px solid rgba(213, 213, 213, 1);
+  border-radius: 14px !important;
+  font-size: 14px;
+  color: rgba(113, 142, 191, 1) !important;
+  align-items: top !important;
+  border: none !important;
+  outline: none !important;
+  width: fit-content;
+}
+
+.dt-layout-cell {
+  width: 100%;
+  text-transform: capitalize;
+}
+
+
+
+.dt-scroll-head {
+  display: none !important;
+}
+
+/* Scrollable container for the table */
+.table-scroll-container {
+  overflow-x: auto;
+  width: 100%;
+}
+
+/* Ensure proper table alignment and responsive behavior */
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+  /* Allow column adjustments */
+  overflow-x: scroll;
+}
+
+.dataTable th,
+.dataTable td {
+  text-align: center;
+  padding: 12px;
+  white-space: wrap;
+  /* Prevent wrapping in cells */
+}
+
+th {
+  text-align: center;
+  height: 40px;
+  color: #495057 !important;
+  background-color: #F8F9FA;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: bold;
+  /* font-family: 'segoe-Regul'!important; */
+
+}
+
+.payslip-th{
+  color:#000000 !important;
+}
+
+td {
+  text-align: center;
+  border-bottom: 1px solid #e0e4ea;
+  color: #495057 !important;
+  /* font-family: 'segoe-Regul'; */
+}
+
+.no-line-bot {
+  border-bottom: none !important;
+}
+
+table td.clickable-blue {
+  color: blue !important;
+}
+
+
+tbody {
+  text-align: start;
+}
+
+/* Maintain the search and pagination layout */
+.dt-paging {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dt-paging-button {
+  padding: 6px 12px;
+  border: none;
+  background-color: #2563EB;
+  color: #ffffff;
+  border-radius: 5px;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.display {
+  white-space: nowrap;
+  /* Prevent table content from wrapping */
+}
+
+/* *********************************************************** */
+
+/* data table styling */
+
+/* Style for the active page button */
+.p-paginator .p-paginator-page.p-highlight {
+  background-color: #007bff !important;
+  /* Change to your desired color */
+  color: white !important;
+  font-weight: bold;
+  border-radius: 50%;
+  /* Optional for rounded buttons */
+  border: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.p-paginator .p-paginator-page.p-highlight:hover {
+  transform: scale(1.1);
+}
+
+/* Style for other paginator buttons */
+.p-paginator .p-paginator-page {
+  border-radius: 50%;
+  /* Optional for rounded buttons */
+  transition: background-color 0.2s ease;
+}
+
+.display {
+  white-space: nowrap;
+  /* Prevent table content from wrapping */
+}
+
+.p-column-header-content {
+  justify-content: center;
+}
+
+.p-paginator-last {
+  display: none;
+}
+
+.p-paginator-first {
+  display: none;
+}
+
+/* td{
+  text-align: start;
+} */
+
+.p-datatable-wrapper::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.p-datatable-wrapper::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.p-datatable-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.p-fileupload-content {
+  padding: 0px 5px !important;
+}
+
+
+/* @font-face {
+  font-family: 'segoe-Regul';
+  src: url('/src/assets/fonts/Segoe\ UI.ttf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+} */
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scroll-container {
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.scroll-container::-webkit-scrollbar {
+  width: 0px;
+}
+
+.scroll-container:hover::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 100, 0.5);
+  border-radius: 2px;
+}
+
+
+
+
+
+@media (max-width: 768px) {
+.dt-search {
+    align-self: flex-end;
+    align-items: end;
+    align-content: end;
+    width: 100%;
+    display: flex;
+    margin-top: 10px;
+    align-items: center;
+    justify-content: flex-start !important;
+    gap: 10px;
+}
+.dt-layout-row {
+  display: flex;
+  margin-top: 10px;
+  align-items: center;
+  flex-wrap: wrap !important;
+
+}
+}
+
+#datatable .dataTables_info,
+#datatable .dt-info {
+  display: none !important;
+}
+
