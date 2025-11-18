@@ -335,6 +335,13 @@ const Leave_type_details = () => {
 
         <div className="flex gap-2 items-center cursor-pointer">
           <p
+            className="text-sm text-gray-500"
+            onClick={() => navigate("/dashboard")}
+          >
+            Dashboard
+          </p>
+          <p>{">"}</p>
+          <p
             className=" text-gray-500 cursor-pointer"
             onClick={() => navigate("/leaves")}
           >

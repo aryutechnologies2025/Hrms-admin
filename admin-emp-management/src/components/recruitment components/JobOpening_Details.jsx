@@ -879,7 +879,7 @@ const JobOpening_Details = () => {
                       </div>
                     </div>
 
-                    <div className="flex  justify-end gap-2 mt-14">
+                    <div className="flex  justify-end gap-2 mt-5 md:mt-14">
                       <button
                         onClick={closeEditModal}
                         className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-5 py-1 md:py-2 font-semibold rounded-full"

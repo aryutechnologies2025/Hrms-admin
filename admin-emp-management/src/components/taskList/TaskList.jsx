@@ -1033,19 +1033,19 @@ const TaskList = () => {
                   </span>
                 </div>
               </div>
-              <div className="flex justify-between bg-[#f3f4f610]  border px-8 py-6 rounded-lg shadow-sm w-full">
+              <div className="flex justify-between bg-[#f3f4f610] border px-8 py-6 rounded-lg shadow-sm w-full">
                 <button
-                  className="flex justify-between gap-1"
+                  className="flex justify-between w-full"
                   onClick={handleTodayClick}
                 >
-                  <div>
+                  <div >
                     <h2 className="text-[16px] font-semibold">Today Tasks</h2>
-                    <p className="text-[14px] mt-2">
+                    <p className="text-[14px] text-start md:text-center mt-2">
                       {projectTaskCount?.todayTasks}
                     </p>
                   </div>
-                  <div className="flex">
-                    <span className="text-blue-500 w-12 h-12 text-2xl bg-blue-200/30 rounded-full flex justify-center items-center">
+                  <div className="flex justify-between">
+                    <span className="text-blue-500 w-12 h-12 text-2xl bg-blue-200/30  rounded-full flex justify-center items-center">
                       <FaTasks />
                     </span>
                   </div>

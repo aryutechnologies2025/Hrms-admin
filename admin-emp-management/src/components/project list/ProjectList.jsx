@@ -853,7 +853,7 @@ const ProjectList = () => {
               >
                 <IoIosArrowForward className="w-3 h-3" />
               </div>
-              <div className="px-5 lg:px-14 py-10">
+              <div className="px-5 lg:px-14 py-5 md:py-10">
                 <div className="flex justify-between items-center gap-2 ">
                   <h2 className="text-xl font-semibold mb-4">Add Project</h2>
                 </div>
@@ -1097,7 +1097,7 @@ const ProjectList = () => {
                   <div className="my-2 w-full">
                     <label
                       htmlFor="employee_name"
-                      className="block text-sm font-medium mb-2"
+                      className="block text-sm font-medium mb-1"
                     >
                       Priority
                     </label>
@@ -1199,7 +1199,7 @@ const ProjectList = () => {
 
                 <label
                   htmlFor="demo"
-                  className="block text-sm font-medium mb-2 mt-4 "
+                  className="block text-sm font-medium mb-2 mt-2 md:mt-4 "
                 >
                   Upload Files
                 </label>
@@ -1656,10 +1656,10 @@ const ProjectList = () => {
                 <IoIosArrowForward className="w-3 h-3" />
               </div>
 
-              <div className="px-5 lg:px-14 py-10">
+              <div className="px-5 lg:px-14 py-5 md:py-10">
                 <p className="text-2xl md:text-3xl font-medium">Edit Project</p>
 
-                <div className="mt-10  rounded-lg ">
+                <div className="mt-5 md:mt-10  rounded-lg ">
                   <div className="">
                     <div className="flex justify-between items-center "></div>
                     <label className="block text-sm font-medium mb-2">
@@ -1860,7 +1860,7 @@ const ProjectList = () => {
                               budget: e.target.value,
                             }));
                           }}
-                          className="mt-5 md:mt-0 px-3 w-full py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="px-3 w-full py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                     </div>
@@ -1921,18 +1921,18 @@ const ProjectList = () => {
                           </div>
 
                           {errors.gst && (
-                            <p className="text-red-500 text-sm mb-4">
+                            <p className="text-red-500 text-sm mb-2">
                               {errors.gst}
                             </p>
                           )}
                         </div>
                       </div>
                     </div>
-                    <div className="flex flex-wrap md:flex-nowrap gap-3">
+                    <div className="flex flex-wrap md:flex-nowrap md:gap-3">
                       <div className="my-2 w-full">
                         <label
                           htmlFor="employee_name"
-                          className="block text-sm font-medium mb-2 "
+                          className="block text-sm font-medium mb-1 "
                         >
                           Priority
                         </label>
@@ -1952,7 +1952,7 @@ const ProjectList = () => {
                       </div>
 
                       <div className="w-full my-3">
-                        <p>
+                        <p  className="block text-sm font-medium mb-1 ">
                           Status <span className="text-red-500">*</span>
                         </p>
                         <select
@@ -1982,7 +1982,7 @@ const ProjectList = () => {
                           </option>
                         </select>
                         {errors.status && (
-                          <p className="text-red-500 text-sm mb-4">
+                          <p className="text-red-500 text-sm mb-2">
                             {errors.status}
                           </p>
                         )}
@@ -2067,7 +2067,7 @@ const ProjectList = () => {
 
                     <label
                       htmlFor="demo"
-                      className="block text-sm font-medium mb-2 mt-4 "
+                      className="block text-sm font-medium mb-2 mt-2 md:mt-4 "
                     >
                       Upload Files
                     </label>
