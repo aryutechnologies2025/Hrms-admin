@@ -1345,7 +1345,13 @@ function Task_view_All_client() {
     const commonClass = "w-7 h-7 object-contain";
 
     if (imageFormats.includes(type)) {
-      return type !== "mp4" ? <img src={Image} className={commonClass} alt="Image" /> : <LuFileVideo2 className="text-xl text-blue-600" />;
+
+      return type !== "mp4" ? (
+        <img src={Image} className={commonClass} alt="Image" />
+      ) : (
+        <LuFileVideo2 className="text-xl text-blue-600" />
+      );
+
     }
     if (SavFormats.includes(type)) {
       return <img src={Sav} className={commonClass} alt="Image" />;
@@ -1685,7 +1691,10 @@ function Task_view_All_client() {
         console.log("Status updated:", response.data);
 
         toast.success(
-          `Project ${pauseProject === "hold" ? "held" : "restarted"
+
+          `Project ${
+            pauseProject === "hold" ? "held" : "restarted"
+
           } successfully.`
         );
 
@@ -1911,14 +1920,17 @@ function Task_view_All_client() {
       body: (rowData) => (
         <div className="flex items-center justify-center gap-1">
           <div
-            className={`flex gap-1 px-2 rounded-sm justify-center items-center font-semibold capitalize ${rowData.priority === "high"
+
+            className={`flex gap-1 px-2 rounded-sm justify-center items-center font-semibold capitalize ${
+              rowData.priority === "high"
                 ? "text-red-500 bg-red-100"
                 : rowData.priority === "medium"
-                  ? "text-orange-400 bg-orange-100"
-                  : rowData.priority === "low"
-                    ? "text-yellow-300 bg-yellow-100"
-                    : "text-gray-500"
-              }`}
+                ? "text-orange-400 bg-orange-100"
+                : rowData.priority === "low"
+                ? "text-yellow-300 bg-yellow-100"
+                : "text-gray-500"
+            }`}
+
           >
             <span className="font-normal">{rowData.priority}</span>
             <PiFlagPennantFill />
@@ -1976,6 +1988,24 @@ function Task_view_All_client() {
         <div className="px-3 py-3 md:px-7 lg:px-10 xl:px-12 md:py-10 ">
           <Mobile_Sidebar />
 
+          {/* <div className="flex gap-2 items-center cursor-pointer mb-3">
+            <p
+              className="text-sm text-gray-500"
+              onClick={() => navigate("/dashboard")}
+            >
+              Dashboard
+            </p>
+            <p>{">"}</p>
+            <p
+              className="text-sm text-gray-500"
+              onClick={() => navigate("/task-list")}
+            >
+              Task List
+            </p>
+            <p>{">"}</p>
+            <p className="text-sm text-blue-500">Task View</p>
+          </div> */}
+
           <div className="flex gap-2 items-center cursor-pointer mb-3">
             <p
               className="text-sm text-gray-500"
@@ -1993,25 +2023,31 @@ function Task_view_All_client() {
             <p>{">"}</p>
             <p className="text-sm text-blue-500">Task View</p>
           </div>
+
           {/* task details*/}
           <section className="flex flex-wrap md:flex-nowrap bg-white rounded-2xl">
             {/* left side */}
             <div
               className="w-full md:w-[64%] pt-5 md:pt-10 relative 
                md:border-r-6 md:border-gray-400 
-               border-b-2 border-gray-300 md:border-b-0" 
+               border-b-2 border-gray-300 md:border-b-0"
+
             >
               <h2 className="text-gray-600 text-[20px] md:text-[22px] px-4 md:px-10 font-bold">
                 Details
               </h2>
 
-              <div className="h-[540px] overflow-y-scroll md:mr-2 px-4 md:px-10"> 
+
+              <div className="h-[540px] overflow-y-scroll md:mr-2 px-4 md:px-10">
+
                 {/* project title */}
                 <div className="mt-6 md:mt-8">
                   <span className="font-bold text-[15px] md:text-[16px] text-gray-500">
                     Task Title :
                   </span>
-                  <span className="text-gray-500 text-[14px] ml-2 break-words"> 
+
+                  <span className="text-gray-500 text-[14px] ml-2 break-words">
+
                     {alldata?.title}
                   </span>
                 </div>
@@ -2022,7 +2058,8 @@ function Task_view_All_client() {
                     Task Description:
                   </span>
                   <div
-                    className="text-gray-500 text-[14px] w-full md:w-[90%] mt-2 leading-relaxed break-words " 
+                    className="text-gray-500 text-[14px] w-full md:w-[90%] mt-2 leading-relaxed break-words "
+
                     dangerouslySetInnerHTML={{
                       __html: formatHtml(alldata?.description),
                     }}
@@ -2031,18 +2068,26 @@ function Task_view_All_client() {
 
                 {/* attachment */}
                 {alldata.document && alldata.document.length > 0 && (
-                  <div className="mt-6 flex flex-col sm:flex-row gap-2 "> 
+                  <div className="mt-6 flex flex-col sm:flex-row gap-2 ">
+
                     <span className="text-[15px] md:text-[16px] text-gray-500 font-bold">
                       Attachment:
                     </span>
                     <div className="flex gap-2 flex-wrap">
                       {alldata?.document.map((doc, idx) => {
-                        const extension = doc.filepath?.split(".").pop().toLowerCase();
+                        const extension = doc.filepath
+                          ?.split(".")
+                          .pop()
+                          .toLowerCase();
+
                         return (
                           <div
                             key={idx}
                             className="flex items-center gap-1 cursor-pointer"
-                            onClick={() => handleCommonFileDownload(doc.filepath)}
+                            onClick={() =>
+                              handleCommonFileDownload(doc.filepath)
+                            }
+
                           >
                             {getFileIcon(extension)}
                           </div>
@@ -2066,17 +2111,20 @@ function Task_view_All_client() {
                     </button>
                   </div>
 
-                  
+
                   <div className="overflow-x-auto">
                     <DataTable
                       value={subTasks}
                       showGridlines
-                      tableStyle={{ minWidth: "40rem" }} 
+                      tableStyle={{ minWidth: "40rem" }}
+
                       resizableColumns
                       columnResizeMode="fit"
                       scrollable
                       scrollHeight="200px"
-                      className="border border-gray-300 rounded-md shadow-md text-sm" 
+
+                      className="border border-gray-300 rounded-md shadow-md text-sm"
+
                     >
                       {columns.map((col, index) => (
                         <Column
@@ -2087,12 +2135,13 @@ function Task_view_All_client() {
                           style={
                             index === 0
                               ? {
-                                minWidth: "200px",
-                                maxWidth: "300px",
-                                wordWrap: "break-word",
-                                whiteSpace: "normal",
-                                overflow: "visible",
-                              }
+                                  minWidth: "200px",
+                                  maxWidth: "300px",
+                                  wordWrap: "break-word",
+                                  whiteSpace: "normal",
+                                  overflow: "visible",
+                                }
+
                               : {}
                           }
                         />
@@ -2130,14 +2179,18 @@ function Task_view_All_client() {
                     {message.map((msg) => (
                       <div
                         key={msg.id}
-                        className="space-x-2 flex flex-col sm:flex-row items-start sm:space-x-2 w-full sm:w-[90%] pb-6" 
+
+                        className="space-x-2 flex flex-col sm:flex-row items-start sm:space-x-2 w-full sm:w-[90%] pb-6"
                       >
-                        {msg.photo ?  <img
-                          src={`${API_URL}/api/uploads/${msg.photo}`}
-                          alt={msg.name}
-                          className="w-10 h-10 rounded-full shadow-md mb-2 sm:mb-0"
-                        />:<FaUser className="w-10 h-10 rounded-full shadow-md mb-2 sm:mb-0 text-gray-400 pt-2 bg-gray-100"/>}
-                       
+                        {msg.photo ? (
+                          <img
+                            src={`${API_URL}/api/uploads/${msg.photo}`}
+                            alt={msg.name}
+                            className="w-10 h-10 rounded-full shadow-md mb-2 sm:mb-0"
+                          />
+                        ) : (
+                          <FaUser className="w-10 h-10 rounded-full shadow-md mb-2 sm:mb-0 text-gray-400 pt-2 bg-gray-100" />
+                        )}
 
                         <div className="bg-gray-100/70 p-3 sm:p-4 rounded-lg shadow-sm w-full sm:w-[600px] space-y-2">
                           <p className="text-sm font-semibold text-gray-800 capitalize">
@@ -2153,11 +2206,17 @@ function Task_view_All_client() {
                           {msg.document && Array.isArray(msg.document) && (
                             <div className="flex gap-1 flex-wrap">
                               {msg.document.map((doc, idx) => {
-                                const extension = doc.filepath?.split(".").pop().toLowerCase();
+
+                                const extension = doc.filepath
+                                  ?.split(".")
+                                  .pop()
+                                  .toLowerCase();
+
                                 return (
                                   <div
                                     key={idx}
                                     className="flex items-center gap-1 cursor-pointer p-2 hover:bg-gray-100"
+
                                     onClick={() => handleCommonFilecommon(doc.filepath)}
                                   >
                                     {getFileIcon(extension)}
@@ -2187,11 +2246,15 @@ function Task_view_All_client() {
                 </div>
               </div>
 
-              <div className="md:mt-7 md:absolute bottom-0 w-full bg-white p-2 border-t border-gray-300"> 
+
+              <div className="md:mt-7 md:absolute bottom-0 w-full bg-white p-2 border-t border-gray-300">
                 <div className="w-full">
-                  <div className="flex justify-between items-center gap-2 flex-wrap md:flex-nowrap "> 
+                  <div className="flex justify-between items-center gap-2 flex-wrap md:flex-nowrap ">
                     <p className="text-gray-700 text-sm">
-                      {uploadedFiles?.length > 0 ? `${uploadedFiles?.length} files` : ""}
+                      {uploadedFiles?.length > 0
+                        ? `${uploadedFiles?.length} files`
+                        : ""}
+
                     </p>
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 bg-gray-300/50 p-1 rounded-full text-2xl cursor-pointer hover:scale-105">
@@ -2268,20 +2331,38 @@ function Task_view_All_client() {
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={status}
                     onChange={handleStatusChange}
-                    disabled
+                    disabled={status !== "done"}
+
                   >
                     <option value="" disabled>
                       Select option
                     </option>
-                    <option value="todo">TO DO</option>
 
-                    <option value="in-progress">IN PROGRESS</option>
-                    <option value="in-review">IN REVIEW</option>
+                    {status !== "done" && <option value="todo">TO DO</option>}
+                    {status !== "done" && (
+                      <option value="in-progress">IN PROGRESS</option>
+                    )}
+                    {status !== "done" && (
+                      <option value="in-review">IN REVIEW</option>
+                    )}
+                    {status == "done" && <option value="todo">TO DO</option>}
                     <option value="done">DONE</option>
-                    <option value="block">BLOCKED</option>
-                    <option value="completed">CLOSE</option>
+                    {status == "done" && (
+                      <option value="completed">CLOSE</option>
+                    )}
+                    {status !== "done" && (
+                      <option value="completed">CLOSE</option>
+                    )}
+                    {status == "done" && <option value="block">BLOCKED</option>}
+                    {status !== "done" && (
+                      <option value="block">BLOCKED</option>
+                    )}
+
+                    {/* <option value="block">BLOCKED</option>
+                    <option value="completed">CLOSE</option> */}
                   </select>
                 </div>
+                
                 {status === "in-review" && (
                   <div className="flex items-center space-x-4">
                     <div className="w-1/2 font-bold text-[14px]  text-gray-500">
@@ -2454,14 +2535,17 @@ function Task_view_All_client() {
                   <div className="w-full py-2 text-gray-700">
                     <div
                       className={`font-semibold px-2  rounded-md inline-block capitalize
-                          ${alldata.priority === "high"
-                          ? "text-[#c8212f] bg-[#ffebee] "
-                          : alldata.priority === "medium"
-                            ? "text-[#e65200] bg-[#ffa60142]"
-                            : alldata.priority === "low"
+
+                          ${
+                            alldata.priority === "high"
+                              ? "text-[#c8212f] bg-[#ffebee] "
+                              : alldata.priority === "medium"
+                              ? "text-[#e65200] bg-[#ffa60142]"
+                              : alldata.priority === "low"
                               ? "text-[#7d6a14] bg-[#ffea0059]"
                               : "text-gray-700 bg-gray-100"
-                        }`}
+                          }`}
+
                     >
                       {alldata.priority}
                     </div>

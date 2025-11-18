@@ -35,6 +35,8 @@ const CreateEmployee_Mainbar = () => {
   const [selectedPositionId, setSelectedPositionId] = useState(null);
 
   const [selectedDocs, setSelectedDocs] = useState([]);
+  const [githubEmailId, setGithubEmailId] = useState("");
+
 
   const handleCheckboxChangeVerification = (event) => {
     const { name, checked } = event.target;
@@ -1006,6 +1008,7 @@ const CreateEmployee_Mainbar = () => {
       roleId: selectedPositionId,
       employeeType: employeeWorkType,
       driveLink: driveLink,
+      gitHubEmail: githubEmailId
     };
 
     setError("");
@@ -2132,13 +2135,40 @@ const CreateEmployee_Mainbar = () => {
                     type="text"
                     placeholder="Employee ID"
                     value={employeeid}
-                    // value="12"
                     onChange={(e) => {
                       setEmployeeId(e.target.value);
                     }}
                     className={`border-2 rounded-xl px-4 h-10  w-full  lg:w-72 ${
                       !touched.employeeId ? "border-red-400" : "border-gray-300"
                     }`}
+                    onKeyUp={handleKeyUp}
+                  />
+                </div>
+
+                  {/* Github email id */}
+                <div className="flex flex-col xl:flex-row justify-between gap-1">
+                  <div className="flex flex-col w-full sm:w-auto">
+                    <label
+                      className="font-medium text-sm"
+                      htmlFor="githubemail"
+                      id="githubemail"
+                      name="githubemail"
+                      aria-readonly
+                    >
+                      Github Email Address 
+                    </label>
+                    {/* <p className="text-sm">Add employee id</p> */}
+                  </div>
+                  <input
+                    id="githubemail"
+                    type="email"
+                    placeholder="Github Email Address"
+                    value={githubEmailId}
+                    onChange={(e) => {
+                      setGithubEmailId(e.target.value);
+                    }}
+                    className={`border-2 rounded-xl px-4 h-10  w-full  lg:w-72 border-gray-300
+                    `}
                     onKeyUp={handleKeyUp}
                   />
                 </div>

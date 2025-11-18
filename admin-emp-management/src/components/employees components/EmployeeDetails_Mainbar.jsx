@@ -311,8 +311,17 @@ const EmployeeDetails_Mainbar = () => {
                 <div className="flex flex-col gap-3">
                   <div className="flex flex-wrap justify-between mt-3">
                     <p className="text-sm ">Email Address</p>
-                    <p className="font-medium text-sm ms-3 ">
-                      {employee?.personalEmail ?? ""}
+                    <p className=" text-sm ms-3 ">
+                      {employee?.personalEmail || "-"}
+                    </p>
+                  </div>
+                  <hr />
+                </div>
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-wrap justify-between mt-3">
+                    <p className="text-sm ">Github Email Address</p>
+                    <p className="text-sm ms-3 ">
+                      {employee?.gitHubEmail ?? "-"}
                     </p>
                   </div>
                   <hr />
