@@ -22,7 +22,7 @@ import {
 import Loader from "../Loader";
 
 
-const JobType_Details = () => {
+const AssetCategory_details = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const storedDetatis = localStorage.getItem("hrmsuser");
@@ -304,19 +304,19 @@ const JobType_Details = () => {
         <div className="flex gap-2 text-sm items-center">
               <p
                 className="text-sm text-gray-500"
-                onClick={() => navigate("/dashboard-Recruitment")}
+                onClick={() => navigate("/dashboard")}
               >
                 Dashboard
               </p>
           <p>{">"}</p>
 
-          <p className="text-sm text-blue-500">Job Type</p>
+          <p className="text-sm text-blue-500">Asset Category</p>
         </div>
 
         {/* Add Button */}
         <div className="flex justify-between mt-8">
           <div className="">
-            <h1 className="text-2xl md:text-3xl font-semibold">Job Type</h1>
+            <h1 className="text-2xl md:text-3xl font-semibold">Asset Category</h1>
           </div>
 
           <button
@@ -365,7 +365,7 @@ const JobType_Details = () => {
               </div>
 
               <div className="p-5">
-                <p className="text-2xl md:text-3xl font-medium">Job Type</p>
+                <p className="text-2xl md:text-3xl font-medium">Asset Category</p>
                 <div className="mt-5 flex justify-between items-center">
                   <label className="block text-md font-medium mb-2">
                     Name <span className="text-red-500">*</span>
@@ -457,7 +457,7 @@ const JobType_Details = () => {
               </div>
 
               <div className="p-5">
-                <p className="text-2xl md:text-3xl font-medium">JobType Edit</p>
+                <p className="text-2xl md:text-3xl font-medium">Asset Category Edit</p>
                 <div className="mt-5 flex justify-between items-center">
                   <label className="block text-md font-medium mb-2">
                     Name <span className="text-red-500">*</span>
@@ -538,5 +538,6 @@ const JobType_Details = () => {
     </div>
   );
 };
-export default JobType_Details;
+export default AssetCategory_details;
+
 
