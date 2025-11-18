@@ -15,6 +15,8 @@ import PayslipContent from "./PayslipContent";
 import Swal from "sweetalert2";
 import ReactDOM from "react-dom";
 import html2pdf from "html2pdf.js";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Payroll_Mainbar = () => {
   const [globalFilter, setGlobalFilter] = useState("");
@@ -35,7 +37,7 @@ const Payroll_Mainbar = () => {
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
   const [statusError, setStatusError] = useState("");
-
+  let navigate = useNavigate();
   const salaryTotals = useMemo(() => {
     const initialTotals = {
       totalCTC: 0,
@@ -576,8 +578,11 @@ const Payroll_Mainbar = () => {
           <div>
             <Mobile_Sidebar />
             <div className="flex gap-2 mt-5 text-sm items-center">
-              <p className=" text-blue-500 ">Payroll</p>
+              <p className='text-gray-500 text-sm'
+                onClick={() => navigate("/dashboard")}
+              >Dashboard</p>
               <p>{">"}</p>
+              <p className=" text-blue-500 ">Payroll</p>
             </div>
 
             <p className="text-2xl md:text-3xl mt-5 md:mt-8 font-semibold">
@@ -590,7 +595,7 @@ const Payroll_Mainbar = () => {
                 className="overflow-x-hidden"
                 style={{ width: "auto", margin: "0 auto" }}
               >
-               
+
                 <div className="md:mt-8 flex flex-wrap  justify-between">
                   <div className="flex flex-wrap gap-5 mt-4">
                     <button
@@ -598,9 +603,9 @@ const Payroll_Mainbar = () => {
                         if (
                           (selectedRows?.length || 0) === (payrollList?.length || 0)
                         ) {
-                          setSelectedRows([]); 
+                          setSelectedRows([]);
                         } else {
-                          setSelectedRows(payrollList || []); 
+                          setSelectedRows(payrollList || []);
                         }
                       }}
                       className="bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-md text-white"
@@ -681,17 +686,17 @@ const Payroll_Mainbar = () => {
                         bodyStyle={{ textAlign: "center" }}
                       />
 
-                        <Column
-                          field="name"
-                          header="Employee Name"
-                          body={(rowData) => rowData.employee.name}
-                          footer="Total"
-                          frozen={!isMobile}
-                          style={{ minWidth: "200px", textAlign: "center" }}
-                        />
-                      
+                      <Column
+                        field="name"
+                        header="Employee Name"
+                        body={(rowData) => rowData.employee.name}
+                        footer="Total"
+                        frozen={!isMobile}
+                        style={{ minWidth: "200px", textAlign: "center" }}
+                      />
 
-                      
+
+
                       {columns.map((col, index) => (
                         <Column
                           key={index}

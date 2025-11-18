@@ -312,7 +312,7 @@ const Addcategory_details = () => {
         </div>
 
         {/* Add Button */}
-        <div className="flex justify-between mt-8 mb-3">
+        <div className="flex justify-between mt-2 md:mt-8 mb-1 md:mb-3">
           <h1 className="text-2xl md:text-3xl font-semibold">Category</h1>
           <button
             onClick={openAddModal}

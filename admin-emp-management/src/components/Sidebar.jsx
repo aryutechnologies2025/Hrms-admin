@@ -25,6 +25,7 @@ import { IoSettings } from "react-icons/io5";
 import { GiCrystalGrowth } from "react-icons/gi";
 import { LuUserSearch } from "react-icons/lu";
 import { BsFillCameraReelsFill } from "react-icons/bs";
+import { MdManageAccounts } from "react-icons/md";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -1143,7 +1144,7 @@ const Sidebar = () => {
                             "/jobtype-Recruitment",
                             "/jobopening-Recruitment",
                             "/interview-Recruitment",
-                            "/source-Recruitment",
+                            "/technologies-Recruitment",
                             "/Candidate-Recruitment",
                             "/dashboard-Recruitment",
                           ].includes(currentPath)
@@ -1161,7 +1162,7 @@ const Sidebar = () => {
                                 "/jobtype-Recruitment",
                                 "/jobopening-Recruitment",
                                 "/interview-Recruitment",
-                                "/source-Recruitment",
+                                "/technologies-Recruitment",
                                 "/Candidate-Recruitment",
                                 "/dashboard-Recruitment",
                               ].includes(currentPath) ? (
@@ -1181,7 +1182,7 @@ const Sidebar = () => {
                             "/jobtype-Recruitment",
                             "/jobopening-Recruitment",
                             "/interview-Recruitment",
-                            "/source-Recruitment",
+                            "/technologies-Recruitment",
                             "/Candidate-Recruitment",
                             "/dashboard-Recruitment",
                           ].includes(currentPath)
@@ -1312,6 +1313,24 @@ const Sidebar = () => {
                       >
                         <MdOutlineHideImage />
                         {!arrowClicked && <p className="text-sm">Privileges</p>}
+                      </div>
+                    </>
+                  )}
+
+                  {hasPermission("Asset Management") && (
+                    <>
+                      <div
+                        onClick={() => onClickSidebarMenu("assetmanagement")}
+                        className={`flex items-center w-full flex-grow ${
+                          arrowClicked ? "justify-center  " : "justify-normal"
+                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
+                          currentPath === "/assetmanagement"
+                            ? "bg-blue-100 text-[#4F46E5]"
+                            : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
+                        }`}
+                      >
+                        <MdManageAccounts />
+                        {!arrowClicked && <p className="text-sm">Asset Management</p>}
                       </div>
                     </>
                   )}

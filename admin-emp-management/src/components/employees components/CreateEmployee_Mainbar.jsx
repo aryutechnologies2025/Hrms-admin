@@ -1538,11 +1538,11 @@ const CreateEmployee_Mainbar = () => {
       </div>
 
       <div>
-        <div className="flex flex-col sm:flex-row justify-between mt-5">
+        <div className="flex flex-col sm:flex-row justify-between mt-2 md:mt-5">
           <p className="text-xl md:text-3xl font-semibold ">Create Employee</p>
 
           {/* Heading */}
-          <div className="flex justify-end gap-5 mt-8">
+          <div className="flex justify-end gap-5 mt-4 md:mt-8">
             <button
               onClick={onClickCreateEmployeeCancelButton}
               className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
@@ -1572,7 +1572,7 @@ const CreateEmployee_Mainbar = () => {
         <div className="flex flex-col  lg:flex-row gap-3 my-5">
           {/* leftside bar */}
           <div className="basis-[50vw] flex-grow flex flex-col gap-3 ">
-            <div className="rounded-2xl border-2 border-gray-200 bg-white  py-4 px-4 lg:px-6">
+            <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
               <div className="flex items-center justify-between flex-wrap">
                 <p className="text-xl font-semibold">Basic Information</p>
                 <label
@@ -3667,7 +3667,7 @@ const CreateEmployee_Mainbar = () => {
             {" "}
           </div>
           <div
-            className={`fixed top-0 right-0 h-full overflow-y-scroll w-screen sm:w-[90vw] md:w-[70vw] bg-white shadow-lg px-5 md:px-16 py-10 transform transition-transform duration-500 ease-in-out ${
+            className={`fixed top-0 right-0 h-full overflow-y-scroll w-screen sm:w-[90vw] md:w-[70vw] bg-white shadow-lg px-5 md:px-16 py-5 md:py-10 transform transition-transform duration-500 ease-in-out ${
               isAnimating ? "translate-x-0" : "translate-x-full"
             }`}
           >
@@ -3679,8 +3679,8 @@ const CreateEmployee_Mainbar = () => {
               <IoIosArrowForward className="w-3 h-3" />
             </div>
             <div className="flex flex-col md:flex-row justify-between ">
-              <p className="text-3xl font-medium mt-8"> Experience </p>
-              <div className="flex gap-5 justify-end mt-8">
+              <p className="text-3xl font-medium mt-3 md:mt-8"> Experience </p>
+              <div className="flex gap-5 justify-end mt-4 md:mt-8">
                 <button
                   onClick={closeAddWorkExperienceModal}
                   className=" bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
@@ -3695,7 +3695,7 @@ const CreateEmployee_Mainbar = () => {
                 </button>
               </div>
             </div>
-            <div className="flex flex-col gap-3 mt-8">
+            <div className="flex flex-col gap-3 mt-4 md:mt-8">
               <div className="flex flex-col lg:flex-row gap-1 justify-between">
                 <div className="flex flex-col ">
                   <label className="font-medium text-sm" htmlFor="jobTitle">
@@ -3920,7 +3920,7 @@ const CreateEmployee_Mainbar = () => {
               <p className="text-3xl font-medium mt-8">Verification Process</p>
 
               <div className="flex mt-5 gap-5">
-                <div className="flex gap-2">
+                <div className="flex gap-2 ">
                   <input
                     type="checkbox"
                     name="Payslip 1"
@@ -3930,7 +3930,7 @@ const CreateEmployee_Mainbar = () => {
                   <label htmlFor="Payslip 1">Payslip 1</label>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 ">
                   <input
                     type="checkbox"
                     name="Payslip 2"
@@ -3987,7 +3987,7 @@ const CreateEmployee_Mainbar = () => {
             onClick={closeAddEducationInfoModal}
           ></div>
           <div
-            className={`fixed top-0 right-0 h-screen overflow-y-scroll w-[90vw] md:w-[70vw] bg-white shadow-lg px-5 md:px-16 py-10 transform transition-transform duration-500 ease-in-out ${
+            className={`fixed top-0 right-0 h-screen overflow-y-scroll w-[90vw] md:w-[70vw] bg-white shadow-lg px-5 md:px-16 py-5 md:py-10 transform transition-transform duration-500 ease-in-out ${
               isAnimating ? "translate-x-0" : "translate-x-full"
             }`}
           >
@@ -3998,9 +3998,9 @@ const CreateEmployee_Mainbar = () => {
             >
               <IoIosArrowForward className="w-3 h-3" />
             </div>
-            <div className="flex flex-wrap flex-col md:flex-row justify-between">
-              <p className="text-3xl font-medium mt-8">Education Info</p>
-              <div className="flex justify-end gap-5 mt-8">
+            <div className="flex flex-col md:flex-row justify-between ">
+              <p className="text-3xl font-medium mt-3 md:mt-8">Education Info</p>
+              <div className="flex gap-5 justify-end mt-4 md:mt-8">
                 <button
                   onClick={closeAddEducationInfoModal}
                   className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
@@ -4015,6 +4015,7 @@ const CreateEmployee_Mainbar = () => {
                 </button>
               </div>
             </div>
+            
             <div className="flex flex-col gap-3 mt-8">
               {/* School Name */}
               <div className="flex flex-col lg:flex-row gap-1 justify-between">
@@ -4098,20 +4099,20 @@ const CreateEmployee_Mainbar = () => {
             onClick={closeAddEmployeeDocumentsModal}
           ></div>
           <div
-            className={`fixed top-0 right-0 h-full  overflow-y-scroll w-[90vw] md:w-[70vw] bg-white  px-5 md:px-16 py-10 transform transition-transform duration-500 ease-in-out ${
+            className={`fixed top-0 right-0 h-full  overflow-y-scroll w-[90vw] md:w-[100vw] bg-white  px-5 md:px-16 py-10 transform transition-transform duration-500 ease-in-out ${
               isAnimating ? "translate-x-0" : "translate-x-full"
             }`}
           >
             <div
-              className="w-6 h-6 rounded-full  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
+              className="w-6 h-6 rounded-full border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
               title="Toggle Sidebar"
               onClick={closeAddEmployeeDocumentsModal}
             >
               <IoIosArrowForward className="w-3 h-3" />
             </div>
-            <div className="flex justify-between items-center">
-              <p className="text-3xl font-medium mt-8">Documents</p>
-              <div className="flex gap-3 mt-8">
+            <div className="flex flex-col md:flex-row justify-between ">
+              <p className="text-3xl font-medium mt-3 md:mt-8">Documents</p>
+              <div className="flex gap-5 justify-end mt-4 md:mt-8">
                 <button
                   onClick={closeAddEmployeeDocumentsModal}
                   className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
@@ -4126,6 +4127,7 @@ const CreateEmployee_Mainbar = () => {
                 </button>
               </div>
             </div>
+            
             {/* Title Input */}
             <div className="flex flex-col lg:flex-row gap-1  justify-between mt-8">
               <div className="flex flex-col">

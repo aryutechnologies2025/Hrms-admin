@@ -546,7 +546,7 @@ const Candidate_Details = () => {
             </div>
 
             {/* Add Button */}
-            <div className="flex justify-between mt-8">
+            <div className="flex justify-between mt-4 md:mt-8">
               <div className="">
                 <h1 className="text-3xl  font-semibold">Candidate</h1>
               </div>
@@ -632,15 +632,14 @@ const Candidate_Details = () => {
                     <IoIosArrowForward className="w-3 h-3" />
                   </div>
 
-                  <div className="px-5 lg:px-14 py-10">
+                  <div className="px-5 lg:px-14 py-3 md:py-10">
 
                     <p className="text-2xl md:text-3xl font-medium">
                       Add Candidate
                     </p>
 
 
-                    <div className="mt-5 flex justify-between items-center">
-
+                    <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         First Name <span className="text-red-500">*</span>
                       </label>
@@ -653,14 +652,14 @@ const Candidate_Details = () => {
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.firstName && (
-                          <p className="text-red-500 text-sm mb-4">
+                          <p className="text-red-500 text-sm mb-2 md:mb-4">
                             {errors.firstName}
                           </p>
                         )}
                       </div>
                     </div>
 
-                    <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                    <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         Last Name <span className="text-red-500">*</span>
                       </label>
@@ -673,7 +672,7 @@ const Candidate_Details = () => {
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.lastName && (
-                          <p className="text-red-500 text-sm mb-4">
+                          <p className="text-red-500 text-sm mb-2 md:mb-4">
                             {errors.lastName}
                           </p>
                         )}
@@ -682,7 +681,7 @@ const Candidate_Details = () => {
 
                     {/* phonenumber */}
 
-                    <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                    <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         Phone Number <span className="text-red-500">*</span>
                       </label>
@@ -695,7 +694,7 @@ const Candidate_Details = () => {
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.phoneNumber && (
-                          <p className="text-red-500 text-sm mb-4">
+                          <p className="text-red-500 text-sm mb-2 md:mb-4">
                             {errors.phoneNumber}
                           </p>
                         )}
@@ -704,7 +703,7 @@ const Candidate_Details = () => {
 
                     {/* email */}
 
-                    <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                    <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         Email <span className="text-red-500">*</span>
                       </label>
@@ -717,7 +716,7 @@ const Candidate_Details = () => {
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.email && (
-                          <p className="text-red-500 text-sm mb-4">
+                          <p className="text-red-500 text-sm mb-2 md:mb-4">
                             {errors.email}
                           </p>
                         )}
@@ -726,7 +725,7 @@ const Candidate_Details = () => {
 
                     {/* address */}
 
-                    <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                    <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         Address <span className="text-red-500">*</span>
                       </label>
@@ -739,7 +738,7 @@ const Candidate_Details = () => {
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.address && (
-                          <p className="text-red-500 text-sm mb-4">
+                          <p className="text-red-500 text-sm mb-2 md:mb-4">
                             {errors.address}
                           </p>
                         )}
@@ -754,7 +753,7 @@ const Candidate_Details = () => {
                         <span className="text-red-500">*</span>
                       </label>
                       <div className="w-[50%]">
-                        <div className="flex items-center w-[50%] gap-5 mb-4">
+                        <div className="flex items-center w-[50%] gap-5 mb-2 md:mb-4">
                           <label className="flex items-center gap-2 cursor-pointer">
                             <input
                               type="radio"
@@ -788,51 +787,44 @@ const Candidate_Details = () => {
                     </div>
 
                     {/* employee */}
-
-                    <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                    <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="block text-md font-medium mb-2">
-                        Employee <span className="text-red-500">*</span>
+                         Employee{" "} <span className="text-red-500">*</span>
                       </label>
+                      <div className="flex items-center w-full md:w-[50%] gap-5 mb-2 md:b-4">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="employee"
+                            value="Fresher"
+                            checked={employee === "Fresher"}
+                            onChange={() => setEmployee("Fresher")}
+                            className="text-indigo-600 focus:ring-indigo-500"
+                          />
+                          <span className="text-gray-700">Fresher</span>
+                        </label>
 
-                      <div className="w-[50%]">
-                        <div className="flex items-center w-[50%] gap-1 md:gap-5 mb-4">
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="radio"
-                              name="employee"
-                              value="Fresher"
-                              checked={employee === "Fresher"}
-                              onChange={() => setEmployee("Fresher")}
-                              className="text-indigo-600 focus:ring-indigo-500"
-                            />
-
-
-                            <span className="text-gray-700">Fresher</span>
-                          </label>
-
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="radio"
-                              name="employee"
-                              value="Experience"
-                              checked={employee === "Experience"}
-                              onChange={() => setEmployee("Experience")}
-                              className="text-indigo-600 focus:ring-indigo-500"
-                            />
-                            <span className="text-gray-700">Experience</span>
-                          </label>
-                        </div>
-                        {errors.employeeType && (
-                          <p className="flex justify-start text-red-500 text-sm  ">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="employee"
+                            value="Experience"
+                            checked={employee === "Experience"}
+                            onChange={() => setEmployee("Experience")}
+                            className="text-indigo-600 focus:ring-indigo-500"
+                          />
+                          <span className="text-gray-700">Experience</span>
+                        </label>
+                      </div>
+                      {errors.employeeType && (
+                          <p className="flex justify-start text-red-500 text-sm ">
                             {errors.employeeType}
                           </p>
-                        )}
-                      </div>
+                      )}
                     </div>
-
                     {employee === "Experience" && (
                       <>
-                        <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                        <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                           <label className="block text-md font-medium mb-2">
                             How many years of experience{" "}
                             <span className="text-red-500">*</span>
@@ -846,14 +838,14 @@ const Candidate_Details = () => {
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                             {errors.yearOfExperience && (
-                              <p className="text-red-500 text-sm mb-4">
+                              <p className="text-red-500 text-sm mb-2 md:mb-4">
                                 {errors.yearOfExperience}
                               </p>
                             )}
                           </div>
                         </div>
 
-                        <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                        <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                           <label className="block text-md font-medium mb-2">
                             Current CTC <span className="text-red-500">*</span>
                           </label>
@@ -866,14 +858,14 @@ const Candidate_Details = () => {
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                             {errors.expectedCtc && (
-                              <p className="text-red-500 text-sm mb-4">
+                              <p className="text-red-500 text-sm mb-2 md:mb-4">
                                 {errors.currentCtc}
                               </p>
                             )}
                           </div>
                         </div>
 
-                        <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                        <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                           <label className="block text-md font-medium mb-2">
                             Expected CTC <span className="text-red-500">*</span>
                           </label>
@@ -886,7 +878,7 @@ const Candidate_Details = () => {
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                             {errors.expectedCtc && (
-                              <p className="text-red-500 text-sm mb-4">
+                              <p className="text-red-500 text-sm mb-2 md:mb-4">
                                 {errors.expectedCtc}
                               </p>
                             )}
@@ -897,7 +889,7 @@ const Candidate_Details = () => {
 
                     {/* interview status */}
 
-                    <div className="mt-5 flex flex-wrap md:flex-wrap justify-between items-center">
+                    <div className="mt-2 first-letter:md:mt-5 flex flex-wrap md:flex-wrap justify-between items-center">
                       <div className="">
                         <label
                           htmlFor="status"
@@ -919,7 +911,7 @@ const Candidate_Details = () => {
                           className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.interviewStatus && (
-                          <p className="text-red-500 text-sm mb-4">
+                          <p className="text-red-500 text-sm mt-2 md:mb-4">
                             {errors.interviewStatus}
                           </p>
                         )}
@@ -928,7 +920,7 @@ const Candidate_Details = () => {
 
                     {/* Technologies */}
 
-                    <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                    <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <div className="">
                         <label
                           htmlFor="Technologies"
@@ -950,7 +942,7 @@ const Candidate_Details = () => {
                           className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.platform && (
-                          <p className="text-red-500 text-sm mb-4">
+                          <p className="text-red-500 text-sm mb-2 md:mb-4">
                             {errors.platform}
                           </p>
                         )}
@@ -959,7 +951,7 @@ const Candidate_Details = () => {
 
                     {/* Platform */}
 
-                    <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                    <div className="mt-3 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <div className="">
                         <label
                           htmlFor="Platform"
@@ -981,7 +973,7 @@ const Candidate_Details = () => {
                           className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.source && (
-                          <p className="text-red-500 text-sm mb-4">
+                          <p className="text-red-500 text-sm mb-2 md:mb-4">
                             {errors.source}
                           </p>
                         )}
@@ -990,10 +982,14 @@ const Candidate_Details = () => {
 
                     {/* notes */}
 
-                    <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between ">
-                      <label className="w-full md:w-0 block text-sm font-medium mb-2">
-                        Notes
-                      </label>
+                    <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between ">
+                       <label
+                          htmlFor="Platform"
+                          className="block text-md font-medium mb-2 "
+                        >
+                          Notes
+                          
+                        </label>
                       <div className="w-full md:w-[50%]">
                         <textarea
                           type="text"
@@ -1007,7 +1003,7 @@ const Candidate_Details = () => {
 
                     {/* button */}
 
-                    <div className="flex justify-end gap-2 mt-14">
+                    <div className="flex justify-end gap-2 mt-7 md:mt-14">
                       <button
                         onClick={closeAddModal}
                         className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-5 py-1 md:py-2 font-semibold rounded-full"
@@ -1040,22 +1036,21 @@ const Candidate_Details = () => {
                   }`}
                 >
                   <div
-                    className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
+                    className="w-6 h-6 rounded-full mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
                     title="Toggle Sidebar"
                     onClick={closeEditModal}
                   >
                     <IoIosArrowForward className="w-3 h-3" />
                   </div>
 
-                  <div className="px-5 lg:px-14 py-10">
+                  <div className="px-5 lg:px-14 py-3 md:py-10">
 
                     <p className="text-2xl md:text-3xl font-medium">
                       Edit Candidate
                     </p>
 
 
-                    <div className="mt-5 flex justify-between items-center">
-
+                    <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         First Name <span className="text-red-500">*</span>
                       </label>
@@ -1068,14 +1063,14 @@ const Candidate_Details = () => {
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.firstName && (
-                          <p className="text-red-500 text-sm mb-4">
+                          <p className="text-red-500 text-sm mb-2 md:mb-4">
                             {errors.firstName}
                           </p>
                         )}
                       </div>
                     </div>
 
-                    <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                    <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         Last Name <span className="text-red-500">*</span>
                       </label>
@@ -1088,7 +1083,7 @@ const Candidate_Details = () => {
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.lastName && (
-                          <p className="text-red-500 text-sm mb-4">
+                          <p className="text-red-500 text-sm mb-2 md:mb-4">
                             {errors.lastName}
                           </p>
                         )}
@@ -1097,7 +1092,7 @@ const Candidate_Details = () => {
 
                     {/* phonenumber */}
 
-                    <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                    <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         Phone Number <span className="text-red-500">*</span>
                       </label>
@@ -1110,7 +1105,7 @@ const Candidate_Details = () => {
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.phoneNumber && (
-                          <p className="text-red-500 text-sm mb-4">
+                          <p className="text-red-500 text-sm mb-2 md:mb-4">
                             {errors.phoneNumber}
                           </p>
                         )}
@@ -1119,7 +1114,7 @@ const Candidate_Details = () => {
 
                     {/* email */}
 
-                    <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                    <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         Email <span className="text-red-500">*</span>
                       </label>
@@ -1132,7 +1127,7 @@ const Candidate_Details = () => {
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.email && (
-                          <p className="text-red-500 text-sm mb-4">
+                          <p className="text-red-500 text-sm mb-2 md:mb-4">
                             {errors.email}
                           </p>
                         )}
@@ -1141,7 +1136,7 @@ const Candidate_Details = () => {
 
                     {/* address */}
 
-                    <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                    <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         Address <span className="text-red-500">*</span>
                       </label>
@@ -1154,7 +1149,7 @@ const Candidate_Details = () => {
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.address && (
-                          <p className="text-red-500 text-sm mb-4">
+                          <p className="text-red-500 text-sm mb-2 md:mb-4">
                             {errors.address}
                           </p>
                         )}
@@ -1163,12 +1158,12 @@ const Candidate_Details = () => {
 
                     {/* relocate */}
 
-                    <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                    <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         Ready to Relocate{" "}
                         <span className="text-red-500">*</span>
                       </label>
-                      <div className="flex items-center w-[50%] gap-5 mb-4">
+                      <div className="flex items-center w-[50%] gap-5 mb-2 md:mb-4">
                         <label className="flex items-center gap-2 cursor-pointer">
                           <input
                             type="radio"
@@ -1194,7 +1189,7 @@ const Candidate_Details = () => {
                         </label>
                       </div>
                       {errors.readyToRelocate && (
-                        <p className="text-red-500 text-sm mb-4">
+                        <p className="text-red-500 text-sm mb-2 md:mb-4">
                           {errors.readyToRelocate}
                         </p>
                       )}
@@ -1202,11 +1197,11 @@ const Candidate_Details = () => {
 
                     {/* employee */}
 
-                    <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
+                    <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         Employee <span className="text-red-500">*</span>
                       </label>
-                      <div className="flex items-center w-full md:w-[50%] gap-5 mb-4">
+                      <div className="flex items-center w-full md:w-[50%] gap-5 mb-2 md:b-4">
                         <label className="flex items-center gap-2 cursor-pointer">
                           <input
                             type="radio"
@@ -1232,7 +1227,7 @@ const Candidate_Details = () => {
                         </label>
                       </div>
                       {errors.employeeType && (
-                        <p className="text-red-500 text-sm mb-4">
+                        <p className="text-red-500 text-sm mb-2 md:mb-4">
                           {errors.employeeType}
                         </p>
                       )}

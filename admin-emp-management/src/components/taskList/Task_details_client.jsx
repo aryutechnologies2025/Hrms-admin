@@ -1970,7 +1970,7 @@ const Task_details_client = () => {
       data: "taskId",
       render: function (data, type, row) {
         return `<a 
-              href="/tasklist-details/${row.taskId}" 
+              href="/tasklist-details_client/${row.taskId}" 
               target="_blank" 
               style="color: #2563eb; text-decoration: underline; cursor: pointer;"
             >
@@ -2009,7 +2009,7 @@ const Task_details_client = () => {
 
         ReactDOM.render(
           <span
-            style={{ cursor: "pointer", color: "black" }}
+            // style={{ cursor: "pointer", color: "black" }}
             onMouseOver={(e) => (e.target.style.color = "blue")}
             onMouseOut={(e) => (e.target.style.color = "black")}
             onClick={() => onClickCard(rowData?.assignedTo?._id)}

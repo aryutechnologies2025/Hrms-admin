@@ -403,9 +403,9 @@ const Attendance_trackerdetails = () => {
 
                     <button
                       onClick={handleSubmit}
-                      className="bg-blue-500 text-white px-4 py-2 rounded-md hover:scale-105 duration-300"
+                      className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-2 py-1 md:py-2 md:px-4 rounded-md hover:scale-105 duration-300"
                     >
-                      search{" "}
+                      Search{" "}
                     </button>
                   </div>
 
@@ -413,7 +413,7 @@ const Attendance_trackerdetails = () => {
 
                     <button
                       onClick={exportToCSV}
-                      className="flex flex-wrap mb-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold w-full px-2 py-1 md:py-2 md:px-4 rounded-md items-center gap-2"
+                      className="flex flex-wrap mb-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold w-full px-2 py-2 md:px-4 rounded-md items-center gap-2"
                     >
                       Export CSV
                       <FaFileExport />

@@ -34,7 +34,7 @@ const JobType_Details = () => {
   const [jobTypeDetails, setJobTypeDetails] = useState([])
   console.log("jobTypeDetails", jobTypeDetails)
   const [loading, setLoading] = useState(true); // State to manage loading
-  
+  let navigate = useNavigate();
 
 
   //  view
@@ -370,7 +370,7 @@ const JobType_Details = () => {
                   <label className="block text-md font-medium mb-2">
                     Name <span className="text-red-500">*</span>
                   </label>
-                  <div className="w-[50%]">
+                  <div className="w-[70%] md:w-[50%]">
                     <input
                       type="text"
                       value={name}
@@ -397,7 +397,7 @@ const JobType_Details = () => {
                     </label>
                     
                   </div>
-                  <div className="w-[50%]">
+                  <div className="w-[70%] md:w-[50%]">
                     <select
                       name="status"
                       id="status"
@@ -420,7 +420,7 @@ const JobType_Details = () => {
                 </div>
                 {/* {error.status && <p className="error">{error.status}</p>} */}
 
-                <div className="flex  justify-end gap-2 mt-14">
+                <div className="flex  justify-end gap-2 mt-6 md:mt-14">
                   <button
                     onClick={closeAddModal}
                     className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-5 py-1 md:py-2 font-semibold rounded-full"
@@ -462,7 +462,7 @@ const JobType_Details = () => {
                   <label className="block text-md font-medium mb-2">
                     Name <span className="text-red-500">*</span>
                   </label>
-                  <div className="w-[50%]">
+                  <div className="w-[70%] md:w-[50%]">
                     <input
                       type="text"
                       value={nameEdit}
@@ -489,7 +489,7 @@ const JobType_Details = () => {
                     </label>
                     
                   </div>
-                  <div className="w-[50%]">
+                  <div className="w-[70%] md:w-[50%]">
                     <select
                       name="status"
                       id="status"
@@ -512,7 +512,7 @@ const JobType_Details = () => {
                 </div>
                 {/* {error.status && <p className="error">{error.status}</p>} */}
 
-                <div className="flex  justify-end gap-2 mt-14">
+                <div className="flex  justify-end gap-2 mt-7 md:mt-14">
                   <button
                     onClick={closeEditModal}
                     className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-5 py-1 md:py-2 font-semibold rounded-full"

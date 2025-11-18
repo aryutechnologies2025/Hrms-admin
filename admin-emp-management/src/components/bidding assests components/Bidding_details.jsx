@@ -481,7 +481,7 @@ const Bidding_details = () => {
             {/* filter */}
             <div className=" p-1  flex flex-wrap gap-4 items-end mb-6">
               {/* Account Filter */}
-              <div className="flex flex-col w-40 md:w-48">
+              <div className="flex flex-col w-full md:w-48">
                 <label className="text-sm font-medium text-gray-700 mb-1">
                   Account
                 </label>
@@ -500,7 +500,7 @@ const Bidding_details = () => {
               </div>
 
               {/* Technology Filter */}
-              <div className="flex flex-col w-40 md:w-48">
+              <div className="flex flex-col w-full md:w-48">
                 <label className="text-sm font-medium text-gray-700 mb-1">
                   Technology
                 </label>
@@ -519,7 +519,7 @@ const Bidding_details = () => {
               </div>
 
               {/* Created By Filter */}
-              <div className="flex flex-col w-40 md:w-48">
+              <div className="flex flex-col w-full md:w-48">
                 <label className="text-sm font-medium text-gray-700 mb-1">
                   Created By
                 </label>
@@ -538,7 +538,7 @@ const Bidding_details = () => {
               </div>
 
               {/* Reply Filter */}
-              <div className="flex flex-col w-40 md:w-48">
+              <div className="flex flex-col w-full md:w-48">
                 <label className="text-sm font-medium text-gray-700 mb-1">
                   Reply
                 </label>
@@ -552,7 +552,7 @@ const Bidding_details = () => {
               </div>
 
               {/* Date Filter */}
-              <div className="flex flex-col w-40 md:w-48">
+              <div className="flex flex-col w-full md:w-48">
                 <label className="text-sm font-medium text-gray-700 mb-1">
                   Date
                 </label>
@@ -565,7 +565,7 @@ const Bidding_details = () => {
               </div>
 
               {/* Status Filter */}
-              <div className="flex flex-col w-40 md:w-48">
+              <div className="flex flex-col w-full md:w-48">
                 <label className="text-sm font-medium text-gray-700 mb-1">
                   Status
                 </label>

@@ -462,10 +462,10 @@ const Employees_Card = () => {
               </div>
             ) : (
               <>
-                <div className="flex flex-wrap justify-end mt-6 space-x-3">
+                <div className="flex flex-wrap justify-start md:justify-end mt-6 md:space-x-3">
                   {/* STATUS FILTER */}
                   <select
-                    className="px-3 py-2 cursor-pointer rounded-md border"
+                    className="px-3 py-2 w-full md:w-40 cursor-pointer rounded-md border"
                     onChange={(e) => filterEmployee(e.target.value)}
                   >
                     <option value="">Status</option>
@@ -477,7 +477,7 @@ const Employees_Card = () => {
 
                   {/* ROLE FILTER */}
                   <select
-                    className="px-3 py-2 cursor-pointer rounded-md border"
+                    className="px-3 py-2 w-full md:w-60 cursor-pointer rounded-md border"
                     onChange={(e) => setRoleFilter(e.target.value)}
                   >
                     <option value="">Role</option>
@@ -493,7 +493,7 @@ const Employees_Card = () => {
                   {/* JOINING DATE FILTER */}
                   <input
                     type="date"
-                    className="px-3 py-2 cursor-pointer rounded-md border"
+                    className="px-3 py-2 w-full md:w-44 cursor-pointer rounded-md border"
                     onChange={(e) => setDateFilter(e.target.value)}
                   />
                 </div>

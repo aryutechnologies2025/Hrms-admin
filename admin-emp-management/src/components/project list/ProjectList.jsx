@@ -813,6 +813,7 @@ const ProjectList = () => {
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
               >
+
                 Dashboard
               </p>
               <p>{">"}</p>
@@ -846,6 +847,7 @@ const ProjectList = () => {
                     scrollX: true,
                     responsive: true,
                     autoWidth: false,
+
                   }}
                   className="display nowrap bg-white"
                 />
@@ -1014,6 +1016,7 @@ const ProjectList = () => {
                       </div>
                     </div>
 
+
                     {/* emplopyre and buget */}
                     <div className="flex flex-wrap md:flex-nowrap gap-3  pt-2">
                       <div className="my-2 w-full md:w-[50%]">
@@ -1023,6 +1026,7 @@ const ProjectList = () => {
                         >
                           Add Employees to the project
                         </label>
+
 
                         <MultiSelect
                           value={selectedEmployeeDetails}
@@ -1070,6 +1074,7 @@ const ProjectList = () => {
                           Full Payment
                         </label>
 
+
                         <input
                           type="text"
                           value={fullpayment.toFixed(2)}
@@ -1078,6 +1083,7 @@ const ProjectList = () => {
                         />
                       </div>
                       {/* gstin  */}
+
 
                       <div className="my-4 w-full md:w-[50%]">
                         <div className="">
@@ -1688,6 +1694,7 @@ const ProjectList = () => {
                     <IoIosArrowForward className="w-3 h-3" />
                   </div>
 
+
                   <div className="px-5 lg:px-14 py-10">
                     <p className="text-2xl md:text-3xl font-medium">
                       Edit Project
@@ -1698,6 +1705,7 @@ const ProjectList = () => {
                         <div className="flex justify-between items-center "></div>
                         <label className="block text-sm font-medium mb-2">
                           Project Name <span className="text-red-500">*</span>
+
                         </label>
                         <input
                           type="text"
@@ -1797,6 +1805,7 @@ const ProjectList = () => {
                         </div>
                         {/* start and end date */}
 
+
                         <div className="flex flex-wrap md:flex-nowrap gap-3 my-2">
                           <div className="flex flex-col w-full ">
                             <label
@@ -1861,6 +1870,7 @@ const ProjectList = () => {
                           </div>
                         </div>
 
+
                         <div className="flex flex-wrap md:flex-nowrap gap-3">
                           <div className="my-2 w-full md:w-[50%]">
                             <label
@@ -1920,10 +1930,12 @@ const ProjectList = () => {
                               />
                             </div>
                           </div>
+
                         </div>
 
                         <div className="flex flex-wrap md:flex-nowrap gap-3 pt-2 items-center">
                           {/* full amount */}
+
 
                           <div className="my-2 w-full md:w-[50%]">
                             <label className="block text-sm font-medium mb-2">
@@ -2048,6 +2060,7 @@ const ProjectList = () => {
                           </div>
                         </div>
 
+
                         <div className="">
                           <div className="flex gap-3 pt-2 ">
                             <div className="w-full">
@@ -2136,6 +2149,7 @@ const ProjectList = () => {
                             )}
                           </div>
                         </div>
+
 
                         <label
                           htmlFor="demo"

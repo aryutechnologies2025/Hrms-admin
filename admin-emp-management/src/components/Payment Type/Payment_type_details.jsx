@@ -917,7 +917,7 @@ const Payment_type_details = () => {
         </div>
         <div className="flex flex-wrap gap-4 mb-4 items-end ">
           {/* Client */}
-          <div className="flex flex-col w-40 md:w-48">
+          <div className="flex flex-col w-full md:w-48">
             <label className="text-sm font-medium text-gray-700 mb-1">
               Client
             </label>
@@ -936,7 +936,7 @@ const Payment_type_details = () => {
           </div>
 
           {/* Project */}
-          <div className="flex flex-col w-40 md:w-48">
+          <div className="flex flex-col w-full md:w-48">
             <label className="text-sm font-medium text-gray-700 mb-1">
               Project
             </label>
@@ -955,7 +955,7 @@ const Payment_type_details = () => {
           </div>
 
           {/* Date */}
-          <div className="flex flex-col w-40 md:w-48">
+          <div className="flex flex-col w-full md:w-48">
             <label className="text-sm font-medium text-gray-700 mb-1">
               Date
             </label>
@@ -970,7 +970,7 @@ const Payment_type_details = () => {
           </div>
 
           {/* Status */}
-          <div className="flex flex-col w-40 md:w-48">
+          <div className="flex flex-col w-full md:w-48">
             <label className="text-sm font-medium text-gray-700 mb-1">
               Status
             </label>
@@ -1244,7 +1244,7 @@ const Payment_type_details = () => {
               >
                 <IoIosArrowForward className="w-3 h-3" />
               </div>
-              <div className="p-5">
+              <div className="p-3 md:p-5">
                 <h2 className="text-xl font-semibold mb-4">Add Payment</h2>
 
                 {/* Leave Type */}
@@ -1500,16 +1500,18 @@ const Payment_type_details = () => {
                 ))}
 
                 {/* Add button with validation */}
+                <div className='flex justify-end md:justify-start'>
                 <button
                   type="button"
                   onClick={addPayment}
-                  className="flex items-center gap-1 text-blue-600 border border-blue-600 px-3 py-1 rounded hover:bg-blue-600 hover:text-white"
+                  className="flex items-center gap-1 text-blue-600 border border-blue-600 px-5 md:px-3 py-1 rounded hover:bg-blue-600 hover:text-white"
                 >
                   <IoMdAdd /> Add Payment
                 </button>
+                </div>
 
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                  <label className="block text-sm font-medium text-gray-700">
+                <div className="flex flex-wrap md:flex-row md:items-center md:justify-between gap- mt-1">
+                  <label className="block w-[80%] text-sm font-medium text-gray-700">
                     Reference No <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -1517,18 +1519,18 @@ const Payment_type_details = () => {
                     value={referenceNo}
                     onChange={(e) => setReferenceNo(e.target.value)}
                     placeholder="Enter reference number"
-                    className="w-full md:w-1/2 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full md:w-1/2 px-3 py-2 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 {errors.referenceNo && (
                   <p className="text-red-500 text-sm">{errors.referenceNo}</p>
                 )}
-                <div className="flex justify-end mt-2 w-[80%] text-black">
+                <div className="flex justify-center md:justify-end mt-1 md:mt-2 w-full text-black">
                   (or)
                 </div>
 
                 {/* Attachment */}
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mt-3 mb-3">
+                <div className="flex flex-wrap md:flex-row md:items-center md:justify-between gap-3 md:mt-3 mb-3">
                   <label className="block text-sm font-medium text-gray-700">
                     Attachment
                   </label>

@@ -32,7 +32,7 @@ import DOMPurify from "dompurify";
 import { saveAs } from "file-saver";
 import { TbLogs } from "react-icons/tb";
 import Papa from "papaparse";
-import { FaFileExport, FaUpload } from "react-icons/fa6";
+import { FaFileExport, FaUpload, FaUser } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import { PiFlagPennantFill } from "react-icons/pi";
 import { AiFillDelete, AiTwotoneDelete } from "react-icons/ai";
@@ -81,6 +81,7 @@ function Task_view_all() {
       "PNG",
       "JPG",
       "SVG",
+      "MP4"
     ];
     const excelFormats = ["xlsx", "xls", "csv"];
     const wordFormats = ["docx", "doc", "word"];
@@ -89,11 +90,11 @@ function Task_view_all() {
 
     const commonClass = "w-7 h-7 object-contain";
 
-    if (imageFormats.includes(type)) {
-      return <img src={Image} className={commonClass} alt="Image" />;
+   if (imageFormats.includes(type)) {
+      return type !== "mp4" ? <img src={Image} className={commonClass} alt="Image" /> : <LuFileVideo2 className="text-xl text-blue-600" />;
     }
     if (SavFormats.includes(type)) {
-      return <img src={Sav} className={commonClass} alt="Image" />;
+      return <img src={Sav} className={commonClass} alt="Image"/>;
     }
 
     if (excelFormats.includes(type)) {
@@ -430,7 +431,8 @@ function Task_view_all() {
         console.log("Status updated:", response.data);
 
         toast.success(
-          `Project ${pauseProject === "hold" ? "held" : "restarted"
+          `Project ${
+            pauseProject === "hold" ? "held" : "restarted"
           } successfully.`
         );
 
@@ -656,14 +658,15 @@ function Task_view_all() {
       body: (rowData) => (
         <div className="flex items-center justify-center gap-1">
           <div
-            className={`flex gap-1 px-2 rounded-sm justify-center items-center font-semibold capitalize ${rowData.priority === "high"
+            className={`flex gap-1 px-2 rounded-sm justify-center items-center font-semibold capitalize ${
+              rowData.priority === "high"
                 ? "text-red-500 bg-red-100"
                 : rowData.priority === "medium"
-                  ? "text-orange-400 bg-orange-100"
-                  : rowData.priority === "low"
-                    ? "text-yellow-300 bg-yellow-100"
-                    : "text-gray-500"
-              }`}
+                ? "text-orange-400 bg-orange-100"
+                : rowData.priority === "low"
+                ? "text-yellow-300 bg-yellow-100"
+                : "text-gray-500"
+            }`}
           >
             <span className="font-normal">{rowData.priority}</span>
             <PiFlagPennantFill />
@@ -744,19 +747,19 @@ function Task_view_all() {
             <div
               className="w-full md:w-[64%] pt-5 md:pt-10 relative 
                md:border-r-6 md:border-gray-400 
-               border-b-2 border-gray-300 md:border-b-0" 
+               border-b-2 border-gray-300 md:border-b-0"
             >
               <h2 className="text-gray-600 text-[20px] md:text-[22px] px-4 md:px-10 font-bold">
                 Details
               </h2>
 
-              <div className="h-[540px] overflow-y-scroll md:mr-2 px-4 md:px-10"> 
+              <div className="h-[540px] overflow-y-scroll md:mr-2 px-4 md:px-10">
                 {/* project title */}
                 <div className="mt-6 md:mt-8">
                   <span className="font-bold text-[15px] md:text-[16px] text-gray-500">
                     Task Title :
                   </span>
-                  <span className="text-gray-500 text-[14px] ml-2 break-words"> 
+                  <span className="text-gray-500 text-[14px] ml-2 break-words">
                     {alldata?.title}
                   </span>
                 </div>
@@ -767,7 +770,7 @@ function Task_view_all() {
                     Task Description:
                   </span>
                   <div
-                    className="text-gray-500 text-[14px] w-full md:w-[90%] mt-2 leading-relaxed break-words " 
+                    className="text-gray-500 text-[14px] w-full md:w-[90%] mt-2 leading-relaxed break-words "
                     dangerouslySetInnerHTML={{
                       __html: formatHtml(alldata?.description),
                     }}
@@ -776,18 +779,23 @@ function Task_view_all() {
 
                 {/* attachment */}
                 {alldata.document && alldata.document.length > 0 && (
-                  <div className="mt-6 flex flex-col sm:flex-row gap-2 px-10"> 
+                  <div className="mt-6 flex flex-col sm:flex-row gap-2 ">
                     <span className="text-[15px] md:text-[16px] text-gray-500 font-bold">
                       Attachment:
                     </span>
                     <div className="flex gap-2 flex-wrap">
                       {alldata?.document.map((doc, idx) => {
-                        const extension = doc.filepath?.split(".").pop().toLowerCase();
+                        const extension = doc.filepath
+                          ?.split(".")
+                          .pop()
+                          .toLowerCase();
                         return (
                           <div
                             key={idx}
                             className="flex items-center gap-1 cursor-pointer"
-                            onClick={() => handleCommonFileDownload(doc.filepath)}
+                            onClick={() =>
+                              handleCommonFileDownload(doc.filepath)
+                            }
                           >
                             {getFileIcon(extension)}
                           </div>
@@ -811,17 +819,16 @@ function Task_view_all() {
                     </button>
                   </div>
 
-                  
                   <div className="overflow-x-auto">
                     <DataTable
                       value={subTasks}
                       showGridlines
-                      tableStyle={{ minWidth: "40rem" }} 
+                      tableStyle={{ minWidth: "40rem" }}
                       resizableColumns
                       columnResizeMode="fit"
                       scrollable
                       scrollHeight="200px"
-                      className="border border-gray-300 rounded-md shadow-md text-sm" 
+                      className="border border-gray-300 rounded-md shadow-md text-sm"
                     >
                       {columns.map((col, index) => (
                         <Column
@@ -832,12 +839,12 @@ function Task_view_all() {
                           style={
                             index === 0
                               ? {
-                                minWidth: "200px",
-                                maxWidth: "300px",
-                                wordWrap: "break-word",
-                                whiteSpace: "normal",
-                                overflow: "visible",
-                              }
+                                  minWidth: "200px",
+                                  maxWidth: "300px",
+                                  wordWrap: "break-word",
+                                  whiteSpace: "normal",
+                                  overflow: "visible",
+                                }
                               : {}
                           }
                         />
@@ -875,13 +882,22 @@ function Task_view_all() {
                     {message.map((msg) => (
                       <div
                         key={msg.id}
-                        className="space-x-2 flex flex-col sm:flex-row items-start sm:space-x-2 w-full sm:w-[90%] pb-6" 
+                        className="space-x-2 flex flex-col sm:flex-row items-start sm:space-x-2 w-full sm:w-[90%] pb-6"
                       >
-                        <img
+                        {/* <img
                           src={`${API_URL}/api/uploads/${msg.photo}`}
                           alt={msg.name}
                           className="w-10 h-10 rounded-full shadow-md mb-2 sm:mb-0"
-                        />
+                        /> */}
+                        {msg.photo ? (
+                          <img
+                            src={`${API_URL}/api/uploads/${msg.photo}`}
+                            alt={msg.name}
+                            className="w-10 h-10 rounded-full shadow-md mb-2 sm:mb-0"
+                          />
+                        ) : (
+                          <FaUser className="w-10 h-10 rounded-full shadow-md mb-2 sm:mb-0 text-gray-400 pt-2 bg-gray-100" />
+                        )}
 
                         <div className="bg-gray-100/70 p-3 sm:p-4 rounded-lg shadow-sm w-full sm:w-[600px] space-y-2">
                           <p className="text-sm font-semibold text-gray-800 capitalize">
@@ -897,12 +913,17 @@ function Task_view_all() {
                           {msg.document && Array.isArray(msg.document) && (
                             <div className="flex gap-1 flex-wrap">
                               {msg.document.map((doc, idx) => {
-                                const extension = doc.filepath?.split(".").pop().toLowerCase();
+                                const extension = doc.filepath
+                                  ?.split(".")
+                                  .pop()
+                                  .toLowerCase();
                                 return (
                                   <div
                                     key={idx}
                                     className="flex items-center gap-1 cursor-pointer p-2 hover:bg-gray-100"
-                                    onClick={() => handleCommonFilecommon(doc.filepath)}
+                                    onClick={() =>
+                                      handleCommonFilecommon(doc.filepath)
+                                    }
                                   >
                                     {getFileIcon(extension)}
                                   </div>
@@ -931,11 +952,13 @@ function Task_view_all() {
                 </div>
               </div>
 
-              <div className="md:mt-7 md:absolute bottom-0 w-full bg-white p-2 border-t border-gray-300"> 
+              <div className="md:mt-7 md:absolute bottom-0 w-full bg-white p-2 border-t border-gray-300">
                 <div className="w-full">
-                  <div className="flex justify-between items-center gap-2 flex-wrap md:flex-nowrap "> 
+                  <div className="flex justify-between items-center gap-2 flex-wrap md:flex-nowrap ">
                     <p className="text-gray-700 text-sm">
-                      {uploadedFiles?.length > 0 ? `${uploadedFiles?.length} files` : ""}
+                      {uploadedFiles?.length > 0
+                        ? `${uploadedFiles?.length} files`
+                        : ""}
                     </p>
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 bg-gray-300/50 p-1 rounded-full text-2xl cursor-pointer hover:scale-105">
@@ -1056,13 +1079,13 @@ function Task_view_all() {
                     value={
                       startTime
                         ? new Date(startTime).toLocaleString("en-GB", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        })
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                          })
                         : ""
                     }
                     readOnly
@@ -1080,13 +1103,13 @@ function Task_view_all() {
                     value={
                       stopTime
                         ? new Date(stopTime).toLocaleString("en-GB", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        })
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                          })
                         : ""
                     }
                     readOnly
@@ -1196,14 +1219,15 @@ function Task_view_all() {
                   <div className="w-full py-2 text-gray-700">
                     <div
                       className={`font-semibold px-2  rounded-md inline-block capitalize
-                          ${alldata.priority === "high"
-                          ? "text-[#c8212f] bg-[#ffebee] "
-                          : alldata.priority === "medium"
-                            ? "text-[#e65200] bg-[#ffa60142]"
-                            : alldata.priority === "low"
+                          ${
+                            alldata.priority === "high"
+                              ? "text-[#c8212f] bg-[#ffebee] "
+                              : alldata.priority === "medium"
+                              ? "text-[#e65200] bg-[#ffa60142]"
+                              : alldata.priority === "low"
                               ? "text-[#7d6a14] bg-[#ffea0059]"
                               : "text-gray-700 bg-gray-100"
-                        }`}
+                          }`}
                     >
                       {alldata.priority}
                     </div>
@@ -1299,12 +1323,13 @@ function Task_view_all() {
                           </td>
                           <td className="p-2 border text-center">
                             <span
-                              className={`px-2 py-1 rounded font-semibold ${item.pauseCondition === "hold"
+                              className={`px-2 py-1 rounded font-semibold ${
+                                item.pauseCondition === "hold"
                                   ? "text-red-600"
                                   : item.pauseCondition === "restart"
-                                    ? "text-green-600"
-                                    : "text-gray-600"
-                                }`}
+                                  ? "text-green-600"
+                                  : "text-gray-600"
+                              }`}
                             >
                               {capitalizeFirstLetter(item.pauseCondition)}
                             </span>
@@ -1312,13 +1337,13 @@ function Task_view_all() {
                           <td className="p-2 border text-center">
                             {item.time
                               ? new Date(item.time).toLocaleString("en-GB", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: true,
-                              })
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  hour12: true,
+                                })
                               : ""}
                           </td>
                           <td className="p-2 border">
@@ -1389,12 +1414,13 @@ function Task_view_all() {
                           </td>
                           <td className="p-2 border text-center">
                             <span
-                              className={`px-2 py-1 rounded font-semibold ${item.status === "hold"
+                              className={`px-2 py-1 rounded font-semibold ${
+                                item.status === "hold"
                                   ? "text-red-600"
                                   : item.status === "restart"
-                                    ? "text-green-600"
-                                    : "text-gray-600"
-                                }`}
+                                  ? "text-green-600"
+                                  : "text-gray-600"
+                              }`}
                             >
                               {/* {capitalizeFirstLetter(
                                 item.status.replace(/[^a-zA-Z0-9 ]/g, " ")
@@ -1402,23 +1428,23 @@ function Task_view_all() {
                               {item.status === "start"
                                 ? "Tester Started"
                                 : capitalizeFirstLetter(
-                                  item.status.replace(/[^a-zA-Z0-9 ]/g, " ")
-                                )}
+                                    item.status.replace(/[^a-zA-Z0-9 ]/g, " ")
+                                  )}
                             </span>
                           </td>
                           <td className="p-2 border text-center">
                             {item.updatedAt
                               ? new Date(item.updatedAt).toLocaleString(
-                                "en-GB",
-                                {
-                                  day: "2-digit",
-                                  month: "2-digit",
-                                  year: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  hour12: true,
-                                }
-                              )
+                                  "en-GB",
+                                  {
+                                    day: "2-digit",
+                                    month: "2-digit",
+                                    year: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: true,
+                                  }
+                                )
                               : ""}
                           </td>
                           <td className="p-2 border">

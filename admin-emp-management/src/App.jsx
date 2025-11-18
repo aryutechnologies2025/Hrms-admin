@@ -104,15 +104,16 @@ import PayslipContent from "./components/payroll components/PayslipContent";
 import SessionChecker from "./auth/SessionChecker";
 
 import DashboardClientSubUserMain from "./pages/DashboardSubUserClient";
-// import SubUserListClient from "./components/taskList/subUserListClient";
 import Mom from "./pages/Mom";
 
 import Client_view_SubUser_details from "./pages/client_view_subUser_details";
 import Client_view_subuser from "./pages/client_subuser_view";
 import Client_login from "./pages/Client_login";
 import Client_subUser_login from "./pages/Client_subUser_login";
-
+import AssetCategory_mainbar from "./components/Asset management components/AssetCategory_mainbar";
 import Platform_Details from "./components/recruitment components/Platform_Details";
+import Task_details_client from "./components/taskList/Task_details_client";
+import AssetManagement_mainbar from "./pages/AssetManagement_mainbar";
 
 
 function App() {
@@ -696,6 +697,20 @@ function App() {
       ),
     },
 
+     /* -------------------------------------------
+      ASSET MANAGEMENT
+  --------------------------------------------*/
+    {
+      path: "/assetmanagement",
+      permissionTitle: "Asset Management",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <AssetManagement_mainbar />
+        </ProtectedRoute>
+      ),
+    },
+
+     
     /* -------------------------------------------
       PAYROLL
   --------------------------------------------*/
@@ -889,10 +904,18 @@ function App() {
         </ProtectedRoute>
       ),
     },
+
     // {
     //   path: "/message",
     //   element: <Messages />,
     // },
+
+
+    {
+      path: "/assetcategory",
+      element: <AssetCategory_mainbar />
+    },
+
 
     {
       path: "/sitemap.html",
