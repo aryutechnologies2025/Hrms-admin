@@ -405,12 +405,12 @@ const Request_details = () => {
         {/* breadcrumb */}
         <div className="flex gap-2 items-center cursor-pointer mt-6">
           <p
-            className="text-sm text-gray-500"
-            onClick={() => navigate("/dashboard")}
-          >
-            Dashboard
-          </p>
-          <p>{">"}</p>
+                className="text-sm text-gray-500"
+                onClick={() => navigate("/dashboard")}
+              >
+                Dashboard
+              </p>
+              <p>{">"}</p>
 
           <p className="text-sm text-blue-500">Request</p>
         </div>
@@ -506,7 +506,7 @@ const Request_details = () => {
                 <IoIosArrowForward className="w-3 h-3" />
               </div>
 
-              <div className="px-5 lg:px-14 py-10">
+              <div className="px-5 lg:px-14 py-5 md:py-10">
                 <p className="text-2xl md:text-3xl font-medium">
                   Employee Request
                 </p>
@@ -682,7 +682,7 @@ const Request_details = () => {
                           />
                         </div>
 
-                        <div className="flex flex-wrap md:justify-end gap-2 md:gap-5">
+                        <div className="flex flex-wrap md:justify-end gap-2 md:gap-5 pb-3">
                           <button
                             onClick={
                               () => handleApprove("approved", item._id)

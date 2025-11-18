@@ -113,6 +113,7 @@ import Client_login from "./pages/Client_login";
 import Client_subUser_login from "./pages/Client_subUser_login";
 
 import Platform_Details from "./components/recruitment components/Platform_Details";
+import Task_details_client from "./components/taskList/Task_details_client";
 
 
 function App() {

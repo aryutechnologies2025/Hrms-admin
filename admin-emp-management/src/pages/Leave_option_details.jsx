@@ -524,13 +524,7 @@ const Leave_option_details = () => {
             Dashboard
           </p>
           <p>{">"}</p>
-          <p
-            onClick={() => navigate("/employees")}
-            className="text-sm text-gray-500 cursor-pointer "
-          >
-            Employees
-          </p>
-          <p>{">"}</p>
+          
           <p
             onClick={() => navigate("/leaves")}
             className="text-sm text-gray-500 cursor-pointer "
@@ -834,7 +828,7 @@ const Leave_option_details = () => {
                   <select
                     value={selectedLeaveTypeedit}
                     onChange={(e) => setSelectedLeaveTypeedit(e.target.value)}
-                    className="border-2 rounded-xl px-4 text-sm border-gray-300 outline-none h-10 w-[50%]"
+                    className="border-2 rounded-xl px-2 md:px-4 text-sm border-gray-300 outline-none h-10 w-[50%]"
                     disabled
                   >
                     <option value="" disabled>

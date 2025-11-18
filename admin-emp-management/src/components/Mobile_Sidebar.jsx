@@ -120,7 +120,7 @@ const Mobile_Sidebar = () => {
       </div>
 
       {hamburgerIconClicked && (
-        <div className="fixed block md:hidden h-screen  inset-0 z-50">
+        <div className="fixed block md:hidden h-screen inset-0 z-50">
           {/* Overlay */}
           <div
             className="absolute inset-0 backdrop-blur-sm bg-opacity-25"
@@ -135,7 +135,7 @@ const Mobile_Sidebar = () => {
           >
             <div className="flex flex-col h-full">
               {/* Close Button */}
-              <div className="flex mt-4 ps-2">
+              <div className="flex mt-2 ps-2">
                 <IoClose
                   className="text-2xl"
                   onClick={() => setHamburgerIconClicked(false)}
@@ -190,7 +190,7 @@ const Mobile_Sidebar = () => {
                               : "max-h-0 opacity-0"
                           }`}
                         >
-                          <div className="flex gap-2 w-full h-full items-start  ms-10 flex-col text-sm font-medium text-gray-500">
+                          <div className="flex gap-2 w-fit h-full items-start ms-10 flex-col text-sm font-medium text-gray-500">
                             <button
                               onClick={() => onClickSidebarMenu("departments")}
                               className="hover:bg-blue-100 px-2 py-1 rounded-full"
@@ -740,11 +740,11 @@ const Mobile_Sidebar = () => {
 
                 <div
                   onClick={() => onClickSidebarMenu("/")}
-                  className={`flex mx-2 items-center ${
-                    arrowClicked ? "justify-center" : "justify-normal w-44"
+                  className={`flex items-center text-center ${
+                    arrowClicked ? "justify-center" : "justify-normal w-36"
                   } ${
                     buttonLoading ? "justify-center" : "justify-normal"
-                  } px-3 py-3 gap-3 items-center mt-1 h-10  bg-blue-600 hover:bg-blue-700  rounded-full cursor-pointer`}
+                  } px-5 py-2 gap-3 items-center ml-5 h-10  bg-blue-600 hover:bg-blue-700  rounded-full cursor-pointer`}
                 >
                   {buttonLoading ? (
                     <Button_Loader />
