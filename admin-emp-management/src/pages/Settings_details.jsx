@@ -20,7 +20,7 @@ const Settings_details = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchProject();
+    fetchSettings();
   }, []);
 
   const [gst, setGst] = useState("");
@@ -41,14 +41,16 @@ const Settings_details = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   // leave type
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const [casualLeave, setCasualLeave] = useState("");
+  const [dateFormat, setDateFormat] = useState("");
+
   const [wfh, setWfh] = useState("");
   const [compensatoryLeave, setCompensatoryLeave] = useState("");
   const [unhappyLeave, setUnhappyLeave] = useState("");
   const [permission, setPermission] = useState("");
 
-  const fetchProject = async () => {
+  const fetchSettings = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/setting/view-setting`);
       console.log("response", response);
@@ -67,6 +69,7 @@ const Settings_details = () => {
         setPayrollEf(response.data.data[0]?.payroll_eepf_percent);
         setPayrollErf(response.data.data[0]?.payroll_erpf_percent);
         setCasualLeave(response.data.data[0]?.casual_leave);
+        setDateFormat(response.data.data[0]?.date_format);
         setCompensatoryLeave(response.data.data[0]?.complementary_leave);
         setUnhappyLeave(response.data.data[0]?.unhappy_leave);
         setPermission(response.data.data[0]?.permission);
@@ -102,6 +105,7 @@ const Settings_details = () => {
         unhappy_leave_option: unhappy_leave_option,
         payroll_eeesi_percent: payrollEeesi,
         payroll_eresi_percent: payrollEresi,
+        date_format: dateFormat,
       };
 
       const response = await axios.post(
@@ -111,7 +115,7 @@ const Settings_details = () => {
       console.log("response:", response);
       toast.success("Settings updated successfully!");
 
-      //   fetchProject();
+      
       setPassword("");
       setErrors({});
     } catch (err) {
@@ -130,377 +134,430 @@ const Settings_details = () => {
         <Loader />
       ) : (
         <>
-      <div>
-        <Mobile_Sidebar />
-        <div className="flex gap-2 items-center cursor-pointer">
-          <p
-            className="text-sm text-gray-500"
-            onClick={() => navigate("/dashboard")}
-          >
-            Dashboard
-          </p>
-          <p>{">"}</p>
+          <div>
+            <Mobile_Sidebar />
+            <div className="flex gap-2 items-center cursor-pointer">
+              <p
+                className="text-sm text-gray-500"
+                onClick={() => navigate("/dashboard")}
+              >
+                Dashboard
+              </p>
+              <p>{">"}</p>
 
-          <p className="text-sm text-blue-500">Settings</p>
-        </div>
+              <p className="text-sm text-blue-500">Settings</p>
+            </div>
 
-        <h1 className="text-2xl md:text-3xl font-semibold mt-4">Settings</h1>
+            <h1 className="text-2xl md:text-3xl font-semibold mt-4">
+              Settings
+            </h1>
 
-        <div className="py-4">
-          <div className="bg-white rounded-2xl shadow-md p-6 w-full ">
-            <div className="flex flex-col gap-4">
-              {/* GST field */}
-              <div className="flex flex-col gap-2 w-full md:w-[40%]">
-                <label
-                  htmlFor="gst"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  GST(%)
-                </label>
-                <input
-                  id="gst"
-                  type="number"
-                  value={gst}
-                  onChange={(e) => setGst(e.target.value)}
-                  placeholder="Enter GST amount"
-                  className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
-                />
-              </div>
-              <hr class="border-t-2 border-gray w-full"></hr>
-
-              {/* Payroll  field */}
-              <div className="mt-4 ">
-                <h2 className="text-lg md:text-2xl font-medium">
-                  Payroll Components Configuration
-                </h2>
-                <p className="text-sm text-gray-600 mt-2 mb-6">
-                  Configure the essential payroll components including basic
-                  salary, allowances, and contributions to ensure accurate
-                  salary processing.
-                </p>
-                <div className="flex flex-wrap gap-y-5 gap-x-14 ">
+            <div className="py-4">
+              <div className="bg-white rounded-2xl shadow-md p-6 w-full ">
+                <div className="flex flex-col gap-4">
+                  {/* GST field */}
                   <div className="flex flex-col gap-2 w-full md:w-[40%]">
                     <label
-                      htmlFor="basic"
+                      htmlFor="gst"
                       className="block text-sm font-medium text-gray-700"
                     >
-                      BASIC SALARY PERCENTAGE (%)
+                      GST(%)
                     </label>
                     <input
-                      id="basic"
+                      id="gst"
                       type="number"
-                      value={payrollBasic}
-                      onChange={(e) => setPayrollBasic(e.target.value)}
-                      placeholder="Enter the percentage for Basic Salary"
+                      value={gst}
+                      onChange={(e) => setGst(e.target.value)}
+                      placeholder="Enter GST amount"
                       className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
                     />
                   </div>
-                  <div className="flex flex-col gap-2 w-full md:w-[40%]">
-                    <label
-                      htmlFor="HRA"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      HOUSE RENT ALLOWANCE (HRA) PERCENTAGE (%)
-                    </label>
-                    <input
-                      id="HRA"
-                      type="number"
-                      value={payrollHra}
-                      onChange={(e) => setPayrollHra(e.target.value)}
-                      placeholder="Enter the percentage for House Rent Allowance"
-                      className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
-                    />
+                  <hr class="border-t-2 border-gray w-full"></hr>
+
+                  {/* Payroll  field */}
+                  <div className="mt-4 ">
+                    <h2 className="text-lg md:text-2xl font-medium">
+                      Payroll Components Configuration
+                    </h2>
+                    <p className="text-sm text-gray-600 mt-2 mb-6">
+                      Configure the essential payroll components including basic
+                      salary, allowances, and contributions to ensure accurate
+                      salary processing.
+                    </p>
+                    <div className="flex flex-wrap gap-y-5 gap-x-14 ">
+                      <div className="flex flex-col gap-2 w-full md:w-[40%]">
+                        <label
+                          htmlFor="basic"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          BASIC SALARY PERCENTAGE (%)
+                        </label>
+                        <input
+                          id="basic"
+                          type="number"
+                          value={payrollBasic}
+                          onChange={(e) => setPayrollBasic(e.target.value)}
+                          placeholder="Enter the percentage for Basic Salary"
+                          className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2 w-full md:w-[40%]">
+                        <label
+                          htmlFor="HRA"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          HOUSE RENT ALLOWANCE (HRA) PERCENTAGE (%)
+                        </label>
+                        <input
+                          id="HRA"
+                          type="number"
+                          value={payrollHra}
+                          onChange={(e) => setPayrollHra(e.target.value)}
+                          placeholder="Enter the percentage for House Rent Allowance"
+                          className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-2 w-full md:w-[40%]">
+                        <label
+                          htmlFor="medicalAllowance"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          MEDICAL ALLOWANCE AMOUNT (MONTHLY)
+                        </label>
+                        <input
+                          id="medicalAllowance"
+                          type="number"
+                          value={payrollMedicalAllowance}
+                          onChange={(e) =>
+                            setPayrollMedicalAllowance(e.target.value)
+                          }
+                          placeholder="Enter the monthly Medical Allowance amount"
+                          className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-2 w-full md:w-[40%]">
+                        <label
+                          htmlFor="conveyanceAllowance"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          CONVEYANCE ALLOWANCE AMOUNT (MONTHLY)
+                        </label>
+                        <input
+                          id="conveyanceAllowance"
+                          type="number"
+                          value={payrollConveyanceAllowance}
+                          onChange={(e) =>
+                            setPayrollConveyanceAllowance(e.target.value)
+                          }
+                          placeholder="Enter the monthly Conveyance Allowance amount"
+                          className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-2 w-full md:w-[40%]">
+                        <label
+                          htmlFor="ef"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          EMPLOYEE PROVIDENT FUND (PF) CONTRIBUTION PERCENTAGE
+                          (%)
+                        </label>
+                        <input
+                          id="ef"
+                          type="number"
+                          value={payrollEf}
+                          onChange={(e) => setPayrollEf(e.target.value)}
+                          placeholder="Enter the Employee PF contribution percentage"
+                          className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-2 w-full md:w-[40%]">
+                        <label
+                          htmlFor="erf"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          EMPLOYEE PROVIDENT FUND (PF) CONTRIBUTION PERCENTAGE
+                          (%)
+                        </label>
+                        <input
+                          id="erf"
+                          type="number"
+                          value={payrollErf}
+                          onChange={(e) => setPayrollErf(e.target.value)}
+                          placeholder="Enter the Employer PF contribution percentage"
+                          className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-2 w-full md:w-[40%]">
+                        <label
+                          htmlFor="eeesi"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          EMPLOYEE EEESI
+                        </label>
+                        <input
+                          id="eeesi"
+                          type="number"
+                          value={payrollEeesi}
+                          onChange={(e) => setPayrollEeesi(e.target.value)}
+                          placeholder="Enter the Employee PF contribution percentage"
+                          className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-2 w-full md:w-[40%]">
+                        <label
+                          htmlFor="eresi"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          EMPLOYEE ERESI
+                        </label>
+                        <input
+                          id="eresi"
+                          type="number"
+                          value={payrollEresi}
+                          onChange={(e) => setPayrollEresi(e.target.value)}
+                          placeholder="Enter the Employer PF contribution percentage"
+                          className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <hr class="border-t-2 border-gray w-full"></hr>
+
+                  {/* password */}
+
+                  <div className="mt-4">
+                    <h2 className="text-lg md:text-2xl font-medium">
+                      SOCIAL MEDIA PASSWORD
+                    </h2>
+
+                    <div className="flex flex-col gap-2 w-full md:w-[40%] relative mt-4">
+                      <label
+                        htmlFor="password"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        PASSWORD
+                      </label>
+                      <div className="relative w-[50%]">
+                        <input
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="Enter Password"
+                          autoComplete="new-password"
+                          className="border w-full border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 pr-10 text-sm outline-none transition"
+                        />
+                        <button
+                          type="button"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500"
+                          onClick={() => setShowPassword((prev) => !prev)}
+                        >
+                          {showPassword ? (
+                            <AiOutlineEyeInvisible className="h-5 w-5" />
+                          ) : (
+                            <AiOutlineEye className="h-5 w-5" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="flex flex-col gap-2 w-full md:w-[40%]">
-                    <label
-                      htmlFor="medicalAllowance"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      MEDICAL ALLOWANCE AMOUNT (MONTHLY)
-                    </label>
-                    <input
-                      id="medicalAllowance"
-                      type="number"
-                      value={payrollMedicalAllowance}
-                      onChange={(e) =>
-                        setPayrollMedicalAllowance(e.target.value)
-                      }
-                      placeholder="Enter the monthly Medical Allowance amount"
-                      className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
-                    />
+                  {/* leave policy */}
+
+                  <hr class="border-t-2 border-gray w-full"></hr>
+
+                  {/* Payroll  field */}
+                  <div className="mt-4 ">
+                    <h2 className="text-lg md:text-2xl font-medium">
+                      LEAVE POLICY
+                    </h2>
+
+                    <div className="flex flex-wrap gap-y-5 gap-x-14 mt-5 ">
+                      <div className="flex flex-col gap-2 w-full md:w-[40%]">
+                        <label
+                          htmlFor="Casual"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          CASUAL LEAVE COUNT
+                        </label>
+                        <input
+                          id="Casual"
+                          type="number"
+                          value={casualLeave}
+                          onChange={(e) => setCasualLeave(e.target.value)}
+                          placeholder="Enter the Count"
+                          className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2 w-full md:w-[40%]">
+                        <label
+                          htmlFor="Compensatory"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          COMPENSATORY LEAVE COUNT
+                        </label>
+                        <input
+                          id="Compensatory"
+                          type="number"
+                          value={compensatoryLeave}
+                          onChange={(e) => setCompensatoryLeave(e.target.value)}
+                          placeholder="Enter the Count"
+                          className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
+                        />
+                      </div>
+
+                      {/* <form onSubmit={handlesubmit}> */}
+                      <div className="flex flex-col gap-2 w-full md:w-[40%]">
+                        <label
+                          htmlFor="Unhappy"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          UNHAPPY LEAVE COUNT
+                        </label>
+
+                        {/* Toggle Switch */}
+                        <div
+                          onClick={() =>
+                            setUnhappyLeaveOption(
+                              unhappy_leave_option === "Yes" ? "No" : "Yes"
+                            )
+                          }
+                          value={unhappy_leave_option}
+                          className={`w-14 h-8 flex items-center rounded-full p-1 cursor-pointer transition ${
+                            unhappy_leave_option === "Yes"
+                              ? "bg-green-500"
+                              : "bg-gray-300"
+                          }`}
+                        >
+                          <div
+                            className={`bg-white w-6 h-6 rounded-full shadow-md transform transition ${
+                              unhappy_leave_option === "Yes"
+                                ? "translate-x-6"
+                                : ""
+                            }`}
+                          />
+                        </div>
+                        <span className="text-sm text-gray-600">
+                          {unhappy_leave_option}
+                        </span>
+
+                        {/* Input field (enabled only if Yes) */}
+                        <input
+                          id="Unhappy"
+                          type="number"
+                          value={
+                            unhappy_leave_option === "Yes" ? unhappyLeave : ""
+                          }
+                          onChange={(e) => setUnhappyLeave(e.target.value)}
+                          placeholder="Enter the Count"
+                          className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
+                          disabled={unhappy_leave_option === "No"} // disable when No
+                        />
+                      </div>
+                      {/* </form> */}
+                      <div className="flex flex-col gap-2 w-full md:w-[40%]">
+                        <label
+                          htmlFor="WFH"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          WFH COUNT
+                        </label>
+                        <input
+                          id="WFH"
+                          type="number"
+                          value={wfh}
+                          onChange={(e) => setWfh(e.target.value)}
+                          placeholder="Enter the Count"
+                          className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2 w-full md:w-[40%]">
+                        <label
+                          htmlFor="WFH"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          PERMISSION COUNT
+                        </label>
+                        <input
+                          id="WFH"
+                          type="number"
+                          value={permission}
+                          onChange={(e) => setPermission(e.target.value)}
+                          placeholder="Enter the Count"
+                          className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
+                        />
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="flex flex-col gap-2 w-full md:w-[40%]">
-                    <label
-                      htmlFor="conveyanceAllowance"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      CONVEYANCE ALLOWANCE AMOUNT (MONTHLY)
-                    </label>
-                    <input
-                      id="conveyanceAllowance"
-                      type="number"
-                      value={payrollConveyanceAllowance}
-                      onChange={(e) =>
-                        setPayrollConveyanceAllowance(e.target.value)
-                      }
-                      placeholder="Enter the monthly Conveyance Allowance amount"
-                      className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
-                    />
+                  <hr class="border-t-2 border-gray w-full"></hr>
+                  <div className="mt-4 ">
+                    <h2 className="text-lg md:text-2xl font-medium">
+                      Date Format
+                    </h2>
+
+                    <div className="mt-5 flex flex-col gap-4">
+                      <div className="flex gap-3">
+                        <input
+                          id="DD/MM/YYYY"
+                          name="dateformat"
+                          type="radio"
+                          value="DD/MM/YYYY"
+                          className="cursor-pointer"
+                          checked={dateFormat === "DD/MM/YYYY"}
+                          onClick={(e) => setDateFormat(e.target.value)}
+                        />{" "}
+                        <label htmlFor="DD/MM/YYYY" className="cursor-pointer">DD/MM/YYYY</label>
+                      </div>
+
+                      <div className="flex gap-3">
+                        <input
+                          id="MM/DD/YYYY"
+                          name="dateformat"
+                          type="radio"
+                          value="MM/DD/YYYY"
+                          className="cursor-pointer"
+                          checked={dateFormat === "MM/DD/YYYY"}
+                          onClick={(e) => setDateFormat(e.target.value)}
+                        />
+                        <label htmlFor="MM/DD/YYYY" className="cursor-pointer">MM/DD/YYYY</label>
+                      </div>
+
+                      <div className="flex gap-3">
+                        <input
+                          id="YYYY/MM/DD"
+                          name="dateformat"
+                          type="radio"
+                          value="YYYY/MM/DD"
+                          className="cursor-pointer"
+                          checked={dateFormat === "YYYY/MM/DD"}
+                          onClick={(e) => setDateFormat(e.target.value)}
+                        />
+                        <label htmlFor="YYYY/MM/DD" className="cursor-pointer">YYYY/MM/DD</label>
+                      </div>
+                    </div>
                   </div>
-
-                  <div className="flex flex-col gap-2 w-full md:w-[40%]">
-                    <label
-                      htmlFor="ef"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      EMPLOYEE PROVIDENT FUND (PF) CONTRIBUTION PERCENTAGE (%)
-                    </label>
-                    <input
-                      id="ef"
-                      type="number"
-                      value={payrollEf}
-                      onChange={(e) => setPayrollEf(e.target.value)}
-                      placeholder="Enter the Employee PF contribution percentage"
-                      className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-2 w-full md:w-[40%]">
-                    <label
-                      htmlFor="erf"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      EMPLOYEE PROVIDENT FUND (PF) CONTRIBUTION PERCENTAGE (%)
-                    </label>
-                    <input
-                      id="erf"
-                      type="number"
-                      value={payrollErf}
-                      onChange={(e) => setPayrollErf(e.target.value)}
-                      placeholder="Enter the Employer PF contribution percentage"
-                      className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
-                    />
-                  </div>
-
-
-
-                   <div className="flex flex-col gap-2 w-full md:w-[40%]">
-                    <label
-                      htmlFor="eeesi"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      EMPLOYEE EEESI
-                    </label>
-                    <input
-                      id="eeesi"
-                      type="number"
-                      value={payrollEeesi}
-                      onChange={(e) => setPayrollEeesi(e.target.value)}
-                      placeholder="Enter the Employee PF contribution percentage"
-                      className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-2 w-full md:w-[40%]">
-                    <label
-                      htmlFor="eresi"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      EMPLOYEE ERESI
-                    </label>
-                    <input
-                      id="eresi"
-                      type="number"
-                      value={payrollEresi}
-                      onChange={(e) => setPayrollEresi(e.target.value)}
-                      placeholder="Enter the Employer PF contribution percentage"
-                      className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
-                    />
-                  </div>
-                </div>
-              </div>
-              <hr class="border-t-2 border-gray w-full"></hr>
-
-              {/* password */}
-
-              <div className="mt-4">
-                <h2 className="text-lg md:text-2xl font-medium">SOCIAL MEDIA PASSWORD</h2>
-
-                <div className="flex flex-col gap-2 w-full md:w-[40%] relative mt-4">
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    PASSWORD
-                  </label>
-                  <div className="relative w-[50%]">
-                    <input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter Password"
-                      autoComplete="new-password"
-                      className="border w-full border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 pr-10 text-sm outline-none transition"
-                    />
+                  {/* Save button */}
+                  <div className="flex justify-end">
                     <button
                       type="button"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500"
-                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow transition duration-200"
+                      onClick={handlesubmit}
                     >
-                      {showPassword ? (
-                        <AiOutlineEyeInvisible className="h-5 w-5" />
-                      ) : (
-                        <AiOutlineEye className="h-5 w-5" />
-                      )}
+                      Save
                     </button>
                   </div>
                 </div>
               </div>
-
-              {/* leave policy */}
-
-              <hr class="border-t-2 border-gray w-full"></hr>
-
-              {/* Payroll  field */}
-              <div className="mt-4 ">
-                <h2 className="text-lg md:text-2xl font-medium">LEAVE POLICY</h2>
-
-                <div className="flex flex-wrap gap-y-5 gap-x-14 mt-5 ">
-                  <div className="flex flex-col gap-2 w-full md:w-[40%]">
-                    <label
-                      htmlFor="Casual"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      CASUAL LEAVE COUNT
-                    </label>
-                    <input
-                      id="Casual"
-                      type="number"
-                      value={casualLeave}
-                      onChange={(e) => setCasualLeave(e.target.value)}
-                      placeholder="Enter the Count"
-                      className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-2 w-full md:w-[40%]">
-                    <label
-                      htmlFor="Compensatory"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      COMPENSATORY LEAVE COUNT
-                    </label>
-                    <input
-                      id="Compensatory"
-                      type="number"
-                      value={compensatoryLeave}
-                      onChange={(e) => setCompensatoryLeave(e.target.value)}
-                      placeholder="Enter the Count"
-                      className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
-                    />
-                  </div>
-
-                  {/* <form onSubmit={handlesubmit}> */}
-                    <div className="flex flex-col gap-2 w-full md:w-[40%]">
-                      <label
-                        htmlFor="Unhappy"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        UNHAPPY LEAVE COUNT
-                      </label>
-
-                      {/* Toggle Switch */}
-                      <div
-                        onClick={() =>
-                          setUnhappyLeaveOption(
-                            unhappy_leave_option === "Yes" ? "No" : "Yes"
-                          )
-                        }
-                        value={unhappy_leave_option}
-                        className={`w-14 h-8 flex items-center rounded-full p-1 cursor-pointer transition ${
-                          unhappy_leave_option === "Yes"
-                            ? "bg-green-500"
-                            : "bg-gray-300"
-                        }`}
-                      >
-                        <div
-                          className={`bg-white w-6 h-6 rounded-full shadow-md transform transition ${
-                            unhappy_leave_option === "Yes"
-                              ? "translate-x-6"
-                              : ""
-                          }`}
-                        />
-                      </div>
-                      <span className="text-sm text-gray-600">
-                        {unhappy_leave_option}
-                      </span>
-
-                      {/* Input field (enabled only if Yes) */}
-                      <input
-                        id="Unhappy"
-                        type="number"
-                        value={
-                          unhappy_leave_option === "Yes" ? unhappyLeave : ""
-                        }
-                        onChange={(e) => setUnhappyLeave(e.target.value)}
-                        placeholder="Enter the Count"
-                      className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
-                        disabled={unhappy_leave_option === "No"} // disable when No
-                      />
-                    </div>
-                  {/* </form> */}
-                  <div className="flex flex-col gap-2 w-full md:w-[40%]">
-                    <label
-                      htmlFor="WFH"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      WFH COUNT
-                    </label>
-                    <input
-                      id="WFH"
-                      type="number"
-                      value={wfh}
-                      onChange={(e) => setWfh(e.target.value)}
-                      placeholder="Enter the Count"
-                      className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-2 w-full md:w-[40%]">
-                    <label
-                      htmlFor="WFH"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      PERMISSION COUNT
-                    </label>
-                    <input
-                      id="WFH"
-                      type="number"
-                      value={permission}
-                      onChange={(e) => setPermission(e.target.value)}
-                      placeholder="Enter the Count"
-                      className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Save button */}
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow transition duration-200"
-                  onClick={handlesubmit}
-                >
-                  Save
-                </button>
-              </div>
             </div>
           </div>
-        </div>
-      </div>
-      </>
+        </>
       )}
       <Footer />
     </div>

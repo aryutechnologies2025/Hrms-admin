@@ -1981,6 +1981,40 @@ const handleLastworkdate = (date) => {
                       />
                     </div>
 
+                     {/* Github Email Address */}
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="githubEmail"
+                          id="githubEmail"
+                          name="githubEmail"
+                        >
+                          GITHUB EMAIL ADDRESS 
+                        </label>
+                        {/* <p className="text-sm">Add employee id</p> */}
+                      </div>
+                      <input
+                        id="githubEmail"
+                        type="text"
+                        placeholder="Github Email Address"
+                        // disabled
+                        value={formData?.gitHubEmail || ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            gitHubEmail: e.target.value,
+                          })
+                        }
+                        className={`border-2 rounded-xl px-4 h-10 outline-none w-full  lg:w-72 ${
+                          !touched.employeeId
+                            ? "border-red-400"
+                            : "border-gray-300"
+                        }`}
+                        onKeyUp={handleKeyUp}
+                      />
+                    </div>
+
                     {/* employee status */}
                     <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
                       <div className="flex flex-col">

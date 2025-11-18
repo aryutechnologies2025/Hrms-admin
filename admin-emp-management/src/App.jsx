@@ -881,16 +881,14 @@ function App() {
         </ProtectedRoute>
       ),
     },
-
     {
       path: "/settings",
       element: (
-        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="">
           <Setting_main />
         </ProtectedRoute>
       ),
     },
-
     // {
     //   path: "/message",
     //   element: <Messages />,

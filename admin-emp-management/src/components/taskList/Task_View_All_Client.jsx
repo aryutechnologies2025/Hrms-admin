@@ -7,9 +7,15 @@ import { useNavigate } from "react-router-dom";
 import { Editor } from "primereact/editor";
 import { FileUpload } from "primereact/fileupload";
 
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { InputText } from "primereact/inputtext"; // PrimeReact InputText
+import { HiOutlineArrowTurnUpLeft } from "react-icons/hi2";
+
+import { FaPlus } from "react-icons/fa";
 // files
 
-import axios from "axios";
+import axios, { all } from "axios";
 import PDF from "../../assets/document/pdf.svg";
 import Excel from "../../assets/document/excel.svg";
 import ppt from "../../assets/document/ppt.svg";
@@ -26,15 +32,18 @@ import DOMPurify from "dompurify";
 import { saveAs } from "file-saver";
 import { TbLogs } from "react-icons/tb";
 import Papa from "papaparse";
-import { FaFileExport, FaUpload } from "react-icons/fa6";
+import { FaFileExport, FaUpload, FaUser } from "react-icons/fa6";
 import { toast } from "react-toastify";
+import { PiFlagPennantFill } from "react-icons/pi";
+import { AiFillDelete, AiTwotoneDelete } from "react-icons/ai";
+import { LuFileVideo2 } from "react-icons/lu";
 
 function Task_view_All_client() {
   const employeeDetails = JSON.parse(localStorage.getItem("hrmsuser"));
   // console.log("employeeDetails:", employeeDetails.email);
 
   const employeeemail = employeeDetails?.email;
-   const employeeeId = employeeDetails?._id;
+  const employeeeId = employeeDetails?._id;
   const { taskId } = useParams();
 
   console.log("Task ID:", taskId);
@@ -73,6 +82,7 @@ function Task_view_All_client() {
       "PNG",
       "JPG",
       "SVG",
+      "MP4",
     ];
     const excelFormats = ["xlsx", "xls", "csv"];
     const wordFormats = ["docx", "doc", "word"];
@@ -82,7 +92,11 @@ function Task_view_All_client() {
     const commonClass = "w-7 h-7 object-contain";
 
     if (imageFormats.includes(type)) {
-      return <img src={Image} className={commonClass} alt="Image" />;
+      return type !== "mp4" ? (
+        <img src={Image} className={commonClass} alt="Image" />
+      ) : (
+        <LuFileVideo2 className="text-xl text-blue-600" />
+      );
     }
     if (SavFormats.includes(type)) {
       return <img src={Sav} className={commonClass} alt="Image" />;
@@ -141,6 +155,7 @@ function Task_view_All_client() {
         setHolddata(response?.data?.data?.pauseComments);
         setProjectManager(response?.data?.data?.projectManagerId);
         setTester(response?.data?.data?.testerStatus || "-");
+        setSubTasks(response?.data?.data?.subtasks || []);
       } else {
         console.log("Failed to fetch roles.");
       }
@@ -225,11 +240,14 @@ function Task_view_All_client() {
 
       console.log("Status updated:", response.data);
 
-     toast.success("Task status updated successfully");
+      toast.success("Task status updated successfully");
       fetchProjectlogs();
     } catch (error) {
       console.error("Error updating status:", error);
-      toast.error(error?.response?.data?.message || "Failed to update task status.");
+      toast.error(
+        error?.response?.data?.message || "Failed to update task status."
+      );
+      fetchProjectall();
     }
   };
 
@@ -404,7 +422,7 @@ function Task_view_All_client() {
       const payload = {
         pauseProject: pauseProject,
         note: note,
-        updatedBy: employeeeId
+        updatedBy: employeeeId,
       };
 
       console.log("Submitted payload:", payload);
@@ -417,9 +435,10 @@ function Task_view_All_client() {
 
         console.log("Status updated:", response.data);
 
-        toast.success(`Project ${
+        toast.success(
+          `Project ${
             pauseProject === "hold" ? "held" : "restarted"
-          } successfully.`,
+          } successfully.`
         );
 
         setShowModal(false);
@@ -573,12 +592,160 @@ function Task_view_All_client() {
     setUploadedFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
   };
 
+  const [subTasks, setSubTasks] = useState([]);
+
+  const [newTask, setNewTask] = useState("");
+  const [isAddingTask, setIsAddingTask] = useState(false);
+
+  // Handle adding a new task
+  const handleAddTask = () => {
+    try {
+      const payload = {
+        taskId: alldata._id,
+        title: newTask,
+        createdById: employeeeId,
+      };
+      const response = axios.post(
+        `${API_URL}/api/subtasks/create-subtask`,
+        payload
+      );
+      fetchProjectall();
+    } catch (error) {
+      console.log("error to add subtask");
+    }
+    setNewTask("");
+    setIsAddingTask(false);
+  };
+
+  const handleSubTaskStatus = (id, value) => {
+    try {
+      const payload = {
+        status: value,
+        updatedBy: employeeeId,
+      };
+      const response = axios.put(
+        `${API_URL}/api/subtasks/update-subtask/${id}`,
+        payload
+      );
+      fetchProjectall();
+      toast.success("SubTask status updated successfully");
+    } catch (error) {
+      console.log("error to update subtask status");
+      toast.error(
+        error?.response?.data?.message || "Failed to update subtask status."
+      );
+    }
+  };
+
+  const handleDeleteSubTask = (id) => {
+    try {
+      const response = axios.delete(
+        `${API_URL}/api/subtasks/delete-subtask/${id}`
+      );
+      fetchProjectall();
+      toast.success("SubTask deleted successfully");
+    } catch (error) {
+      console.log("error to delete subtask status");
+      toast.error(
+        error?.response?.data?.message || "Failed to delete subtask ."
+      );
+    }
+  };
+
+  const columns = [
+    {
+      field: "title",
+      header: "Sub Task",
+    },
+    {
+      field: "status",
+      header: "priority",
+      body: (rowData) => (
+        <div className="flex items-center justify-center gap-1">
+          <div
+            className={`flex gap-1 px-2 rounded-sm justify-center items-center font-semibold capitalize ${
+              rowData.priority === "high"
+                ? "text-red-500 bg-red-100"
+                : rowData.priority === "medium"
+                ? "text-orange-400 bg-orange-100"
+                : rowData.priority === "low"
+                ? "text-yellow-300 bg-yellow-100"
+                : "text-gray-500"
+            }`}
+          >
+            <span className="font-normal">{rowData.priority}</span>
+            <PiFlagPennantFill />
+          </div>
+        </div>
+      ),
+    },
+    {
+      field: "status",
+      header: "Status",
+      body: (rowData) => (
+        <div className="flex items-center justify-center gap-1">
+          {/* Status Indicator */}
+          {rowData?.status === "todo" ? (
+            <span className="bg-blue-600 w-2 h-2 rounded-full"></span>
+          ) : rowData?.status === "in-progress" ? (
+            <span className="bg-orange-500 w-2 h-2 rounded-full"></span>
+          ) : (
+            <span className="bg-green-600 w-2 h-2 rounded-full"></span>
+          )}
+
+          {/* Select with options */}
+          <select
+            className="px-2 py-1 border rounded border-none cursor-pointer outline-none"
+            value={rowData?.status} // Set the select value based on rowData.status
+            onChange={(e) => handleSubTaskStatus(rowData._id, e.target.value)} // Handle status change
+          >
+            <option value="todo">Todo</option>
+            <option value="in-progress">In Progress</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+      ),
+    },
+    {
+      field: "action",
+      header: "Action",
+      body: (rowData) => (
+        <>
+          {" "}
+          <button
+            onClick={() => handleDeleteSubTask(rowData._id)}
+            className="text-xl text-red-500 hover:text-red-600 hover:scale-105 "
+          >
+            <AiFillDelete />
+          </button>
+        </>
+      ),
+    },
+  ];
   return (
     <>
       {" "}
-      <div className="h-full w-screen flex flex-col justify-between  bg-gray-100 ">
+      <div className="h-full w-screen flex flex-col justify-between bg-gray-100 ">
         <div className="px-3 py-3 md:px-7 lg:px-10 xl:px-12 md:py-10 ">
           <Mobile_Sidebar />
+
+          {/* <div className="flex gap-2 items-center cursor-pointer mb-3">
+            <p
+              className="text-sm text-gray-500"
+              onClick={() => navigate("/dashboard")}
+            >
+              Dashboard
+            </p>
+            <p>{">"}</p>
+            <p
+              className="text-sm text-gray-500"
+              onClick={() => navigate("/task-list")}
+            >
+              Task List
+            </p>
+            <p>{">"}</p>
+            <p className="text-sm text-blue-500">Task View</p>
+          </div> */}
 
           <div className="flex gap-2 items-center cursor-pointer mb-3">
             <p
@@ -597,135 +764,194 @@ function Task_view_All_client() {
             <p>{">"}</p>
             <p className="text-sm text-blue-500">Task View</p>
           </div>
-          {/* task details */}
-          <section className=" flex  bg-white  rounded-2xl">
-            {/* left side */}
-            <div className="w-[64%] pt-10   relative border-r-2  border-gray-400">
-              <h2 className=" text-gray-600 text-[22px] px-10 font-bold ">Details</h2>
-              <div className="h-[540px] overflow-y-scroll mr-2">
-                {/* project title */}
 
-                <div className="mt-8 px-10 ">
-                  <span className=" font-bold text-[16px]  text-gray-500 ">
+          {/* task details*/}
+          <section className="flex flex-wrap md:flex-nowrap bg-white rounded-2xl">
+            {/* left side */}
+            <div
+              className="w-full md:w-[64%] pt-5 md:pt-10 relative 
+               md:border-r-6 md:border-gray-400 
+               border-b-2 border-gray-300 md:border-b-0"
+            >
+              <h2 className="text-gray-600 text-[20px] md:text-[22px] px-4 md:px-10 font-bold">
+                Details
+              </h2>
+
+              <div className="h-[540px] overflow-y-scroll md:mr-2 px-4 md:px-10">
+                {/* project title */}
+                <div className="mt-6 md:mt-8">
+                  <span className="font-bold text-[15px] md:text-[16px] text-gray-500">
                     Task Title :
                   </span>
-                  <span className=" text-gray-500 text-[14px] mx-4">
+                  <span className="text-gray-500 text-[14px] ml-2 break-words">
                     {alldata?.title}
                   </span>
                 </div>
-                {/* project description */}
 
-                <div className="mt-6 px-10 ">
-                  <div className=" items-start">
-                    <span className="text-[16px]  text-gray-500 font-bold">
-                      Task Description:
-                    </span>
-                    <div
-                      className=" text-gray-500 text-[14px] w-[90%] mt-1"
-                      dangerouslySetInnerHTML={{
-                        __html: formatHtml(alldata?.description),
-                      }}
-                    ></div>
-                  </div>
+                {/* project description */}
+                <div className="mt-4 md:mt-6">
+                  <span className="text-[15px] md:text-[16px] text-gray-500 font-bold">
+                    Task Description:
+                  </span>
+                  <div
+                    className="text-gray-500 text-[14px] w-full md:w-[90%] mt-2 leading-relaxed break-words "
+                    dangerouslySetInnerHTML={{
+                      __html: formatHtml(alldata?.description),
+                    }}
+                  ></div>
                 </div>
 
                 {/* attachment */}
+                {alldata.document && alldata.document.length > 0 && (
+                  <div className="mt-6 flex flex-col sm:flex-row gap-2 ">
+                    <span className="text-[15px] md:text-[16px] text-gray-500 font-bold">
+                      Attachment:
+                    </span>
+                    <div className="flex gap-2 flex-wrap">
+                      {alldata?.document.map((doc, idx) => {
+                        const extension = doc.filepath
+                          ?.split(".")
+                          .pop()
+                          .toLowerCase();
+                        return (
+                          <div
+                            key={idx}
+                            className="flex items-center gap-1 cursor-pointer"
+                            onClick={() =>
+                              handleCommonFileDownload(doc.filepath)
+                            }
+                          >
+                            {getFileIcon(extension)}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
-                <div className="mt-1 flex gap-2 px-10 ">
-                  <span className="text-[16px]  text-gray-500 font-bold">
-                    Attachment:
-                  </span>
-                  <span className=" text-gray-500 text-[14px] ">
-                    {alldata?.document && Array.isArray(alldata?.document) && (
-                      <div className="flex gap-2 flex-wrap">
-                        {alldata?.document.map((doc, idx) => {
-                          const extension = doc.filepath
-                            ?.split(".")
-                            .pop()
-                            .toLowerCase();
-                          return (
-                            <div
-                              key={idx}
-                              className="flex items-center gap-1 cursor-pointer"
-                              onClick={() =>
-                                handleCommonFileDownload(doc.filepath)
-                              }
-                            >
-                              {getFileIcon(extension)}
-                              {/* <span className="text-blue-600 underline">
-                        {doc.originalName || "View"}
-                      </span> */}
-                            </div>
-                          );
-                        })}
+                {/* subtask details */}
+                <div className="mt-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-[15px] md:text-[16px] text-gray-500 font-bold">
+                      Sub task items
+                    </span>
+                    <button
+                      className="text-gray-500 hover:text-gray-600 hover:scale-105"
+                      onClick={() => setIsAddingTask(!isAddingTask)}
+                    >
+                      <FaPlus className="inline-block" />
+                    </button>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <DataTable
+                      value={subTasks}
+                      showGridlines
+                      tableStyle={{ minWidth: "40rem" }}
+                      resizableColumns
+                      columnResizeMode="fit"
+                      scrollable
+                      scrollHeight="200px"
+                      className="border border-gray-300 rounded-md shadow-md text-sm"
+                    >
+                      {columns.map((col, index) => (
+                        <Column
+                          key={index}
+                          field={col.field}
+                          header={col.header}
+                          body={col.body}
+                          style={
+                            index === 0
+                              ? {
+                                  minWidth: "200px",
+                                  maxWidth: "300px",
+                                  wordWrap: "break-word",
+                                  whiteSpace: "normal",
+                                  overflow: "visible",
+                                }
+                              : {}
+                          }
+                        />
+                      ))}
+                    </DataTable>
+                  </div>
+
+                  {isAddingTask && (
+                    <div className="mt-2 relative">
+                      <InputText
+                        value={newTask}
+                        onChange={(e) => setNewTask(e.target.value)}
+                        placeholder="Enter task title"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleAddTask();
+                        }}
+                        className="p-inputtext-sm py-2 px-3 border rounded-md w-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <div
+                        onClick={handleAddTask}
+                        className="right-0 top-0 absolute p-button-sm rounded-r-md p-button-success bg-blue-600 text-white text-xl font-bold flex justify-center items-center h-full px-2"
+                      >
+                        <HiOutlineArrowTurnUpLeft />
                       </div>
-                    )}
-                  </span>
+                    </div>
+                  )}
                 </div>
+
                 {/* comments */}
-
-                {/* message details*/}
-
-                <div className="mt-1">
-                  <h2 className=" text-[16px]  text-gray-500 font-bold px-10">
-                    Comments:{" "}
+                <div className="mt-6">
+                  <h2 className="text-[15px] md:text-[16px] text-gray-500 font-bold">
+                    Comments:
                   </h2>
-                  <div className="mt-7 space-y-4 px-10">
+                  <div className="mt-5 space-y-4">
                     {message.map((msg) => (
                       <div
                         key={msg.id}
-                        className="flex items-start space-x-2 w-[90%] pb-10"
+                        className="space-x-2 flex flex-col sm:flex-row items-start sm:space-x-2 w-full sm:w-[90%] pb-6"
                       >
-                        <img
-                          src={`${API_URL}/api/uploads/${msg.photo}`}
-                          alt={msg.name}
-                          className="w-10 h-10 rounded-l-full shadow-md rounded-tr-full"
-                        />
+                        {msg.photo ? (
+                          <img
+                            src={`${API_URL}/api/uploads/${msg.photo}`}
+                            alt={msg.name}
+                            className="w-10 h-10 rounded-full shadow-md mb-2 sm:mb-0"
+                          />
+                        ) : (
+                          <FaUser className="w-10 h-10 rounded-full shadow-md mb-2 sm:mb-0 text-gray-400 pt-2 bg-gray-100" />
+                        )}
 
-                        <div className="bg-gray-100/70 p-4 rounded-lg shadow-sm w-[600px] space-y-2">
+                        <div className="bg-gray-100/70 p-3 sm:p-4 rounded-lg shadow-sm w-full sm:w-[600px] space-y-2">
                           <p className="text-sm font-semibold text-gray-800 capitalize">
                             {msg.name}
                           </p>
-
                           <p
                             className="text-sm break-words text-gray-700"
                             dangerouslySetInnerHTML={{
                               __html: formatHtml(msg.comment),
                             }}
-                            target="_blank"
-                          >
-                            {/* {capitalizeFirstLetter(stripHtmlTags(msg.comment))} */}
-                          </p>
+                          ></p>
 
-                          <div className="">
-                            {msg.document && Array.isArray(msg.document) && (
-                              <div className="flex gap-1 flex-wrap">
-                                {msg.document.map((doc, idx) => {
-                                  const extension = doc.filepath
-                                    ?.split(".")
-                                    .pop()
-                                    .toLowerCase();
-                                  return (
-                                    <div
-                                      key={idx}
-                                      className="flex items-center gap-1 cursor-pointer  p-2 hover:bg-gray-100"
-                                      onClick={() =>
-                                        handleCommonFilecommon(doc.filepath)
-                                      }
-                                    >
-                                      {getFileIcon(extension)}
-                                      {/* <span className="text-sm text-blue-600 underline">
-                                                    {doc.originalName}
-                                                  </span> */}
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            )}
-                          </div>
+                          {msg.document && Array.isArray(msg.document) && (
+                            <div className="flex gap-1 flex-wrap">
+                              {msg.document.map((doc, idx) => {
+                                const extension = doc.filepath
+                                  ?.split(".")
+                                  .pop()
+                                  .toLowerCase();
+                                return (
+                                  <div
+                                    key={idx}
+                                    className="flex items-center gap-1 cursor-pointer p-2 hover:bg-gray-100"
+                                    onClick={() =>
+                                      handleCommonFilecommon(doc.filepath)
+                                    }
+                                  >
+                                    {getFileIcon(extension)}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
 
-                          <div className="flex justify-between text-xs text-gray-500 pt-1 border-t border-gray-500">
-                            {/* <span>created by {msg.Email}</span> */}
+                          <div className="flex justify-between text-xs text-gray-500 pt-1 border-t border-gray-300">
                             <span></span>
                             <span>
                               {new Date(msg.createdAt).toLocaleString("en-GB", {
@@ -745,21 +971,20 @@ function Task_view_All_client() {
                 </div>
               </div>
 
-              <div className="mt-7 absolute bottom-0 w-[100%] bg-white p-1">
-                <div className="card w-[100%]  mt-2">
-                  <div className="p-2">
-                    <div className="flex justify-end items-center gap-1 ">
-                      <p className="text-gray-700">
-                        {uploadedFiles?.length > 0
-                          ? `${uploadedFiles?.length} files`
-                          : ""}{" "}
-                      </p>
-                      <div className="w-8 h-8   bg-gray-300/50 p-1 rounded-full text-2xl cursor-pointer hover:scale-105">
+              <div className="md:mt-7 md:absolute bottom-0 w-full bg-white p-2 border-t border-gray-300">
+                <div className="w-full">
+                  <div className="flex justify-between items-center gap-2 flex-wrap md:flex-nowrap ">
+                    <p className="text-gray-700 text-sm">
+                      {uploadedFiles?.length > 0
+                        ? `${uploadedFiles?.length} files`
+                        : ""}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-gray-300/50 p-1 rounded-full text-2xl cursor-pointer hover:scale-105">
                         <FaUpload
                           onClick={handleIconClick}
-                          className="text-gray-600 p-1 text-2xl cursor-pointer "
+                          className="text-gray-600 p-1 text-2xl cursor-pointer"
                         />
-
                         <input
                           type="file"
                           ref={fileInputRef}
@@ -767,53 +992,61 @@ function Task_view_All_client() {
                           style={{ display: "none" }}
                           onChange={handleFileChange}
                         />
-                      </div>{" "}
+                      </div>
                       <button
-                        className="bg-blue-600 ml-2 text-md px-4 py-1 hover:scale-105 duration-200 text-white  rounded-2xl"
+                        className="bg-blue-600 text-sm md:text-md px-3 py-1 hover:scale-105 duration-200 text-white rounded-2xl"
                         onClick={handleSubmit}
                       >
                         Submit
                       </button>
                     </div>
-                    <div className="text-end">
-                      {" "}
-                      <span className="text-red-600 text-sm">{errors}</span>
-                    </div>
                   </div>
-                  <Editor
-                    value={editorContent}
-                    onTextChange={(e) => setEditorContent(e.htmlValue)}
-                    style={{ height: "100px" }}
-                    placeholder="Add a comment..."
-                  />
+
+                  <div className="text-end">
+                    <span className="text-red-600 text-sm">{errors}</span>
+                  </div>
                 </div>
+
+                <Editor
+                  value={editorContent}
+                  onTextChange={(e) => setEditorContent(e.htmlValue)}
+                  placeholder="Add a comment..."
+                  style={{ height: "100px" }}
+                  className="border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2"
+                />
               </div>
             </div>
+
             {/* right side */}
-            <div className="w-[36%] pt-4  px-8 pb-10 bg-gray-100/20">
+            <div className="w-full md:w-[36%] pt-4 px-4 md:px-8 pb-10 bg-gray-100/20">
               {/* status */}
               <div className="max-w-md mx-auto space-y-5">
-                <div className="flex justify-end text-gray-500 text-lg">
+                <div className="flex justify-start md:justify-end text-gray-500 text-lg">
                   #{alldata?.taskId}
                 </div>
-                <div className="flex justify-end">
+                <div className="flex justify-between md:justify-end">
                   <TbLogs
                     onClick={handleClicklogs}
                     className="cursor-pointer"
                     title="View "
                   />
                 </div>
-                 <div className="flex items-center space-x-4">
-                  <div className="w-1/2 font-bold text-[14px]  text-gray-500">
+                <div className="flex flex-wrap md:flex-nowrap items-center space-x-4">
+                  <div className="w-full md:w-1/2 font-bold text-[14px]  text-gray-500">
                     Project Name
                   </div>
                   <div className="w-full">
-                    <input type="text" value={alldata?.projectId?.name} className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" disabled />
+                    <input
+                      type="text"
+                      value={alldata?.projectId?.name}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      disabled
+                    />
                   </div>
                 </div>
                 {/* Status */}
-                <div className="flex items-center space-x-4">
-                  <div className="w-1/2 font-bold text-[14px]  text-gray-500">
+                <div className="flex flex-wrap md:flex-nowrap items-center space-x-4">
+                  <div className="w-full md:w-1/2 font-bold text-[14px] text-gray-500">
                     Status
                   </div>
 
@@ -821,20 +1054,37 @@ function Task_view_All_client() {
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={status}
                     onChange={handleStatusChange}
-                    disabled={true}
+                    disabled={status !== "done"}
                   >
                     <option value="" disabled>
                       Select option
                     </option>
-                    <option value="todo">TO DO</option>
 
-                    <option value="in-progress">IN PROGRESS</option>
-                    <option value="in-review">IN REVIEW</option>
+                    {status !== "done" && <option value="todo">TO DO</option>}
+                    {status !== "done" && (
+                      <option value="in-progress">IN PROGRESS</option>
+                    )}
+                    {status !== "done" && (
+                      <option value="in-review">IN REVIEW</option>
+                    )}
+                    {status == "done" && <option value="todo">TO DO</option>}
                     <option value="done">DONE</option>
-                    <option value="block">BLOCKED</option>
-                    <option value="completed">CLOSE</option>
+                    {status == "done" && (
+                      <option value="completed">CLOSE</option>
+                    )}
+                    {status !== "done" && (
+                      <option value="completed">CLOSE</option>
+                    )}
+                    {status == "done" && <option value="block">BLOCKED</option>}
+                    {status !== "done" && (
+                      <option value="block">BLOCKED</option>
+                    )}
+
+                    {/* <option value="block">BLOCKED</option>
+                    <option value="completed">CLOSE</option> */}
                   </select>
                 </div>
+                
                 {status === "in-review" && (
                   <div className="flex items-center space-x-4">
                     <div className="w-1/2 font-bold text-[14px]  text-gray-500">
@@ -857,8 +1107,8 @@ function Task_view_All_client() {
                 )}
 
                 {/* Start Time */}
-                <div className="flex items-center space-x-4">
-                  <div className="w-1/2 font-bold text-[14px]  text-gray-500">
+                <div className="flex flex-wrap md:flex-nowrap items-center space-x-4">
+                  <div className="w-full md:w-1/2 font-bold text-[14px]  text-gray-500">
                     Start Time
                   </div>
                   <input
@@ -881,8 +1131,8 @@ function Task_view_All_client() {
                 </div>
 
                 {/* Stop Time */}
-                <div className="flex items-center space-x-4">
-                  <div className="w-1/2 font-bold text-[14px]  text-gray-500">
+                <div className="flex flex-wrap md:flex-nowrap items-center space-x-4">
+                  <div className="w-full md:w-1/2 font-bold text-[14px]  text-gray-500">
                     End Time
                   </div>
                   <input
@@ -906,8 +1156,8 @@ function Task_view_All_client() {
 
                 {/* end time */}
 
-                <div className="flex items-center space-x-4">
-                  <div className="w-1/2 font-bold text-[14px]  text-gray-500">
+                <div className="flex flex-wrap md:flex-nowrap items-center space-x-4">
+                  <div className="w-full md:w-1/2 font-bold text-[14px]  text-gray-500">
                     Worked Time
                   </div>
                   <input
@@ -920,8 +1170,8 @@ function Task_view_All_client() {
 
                 {/* hold */}
 
-                <div className="flex items-center space-x-4">
-                  <div className="w-1/2 font-bold text-[14px]  text-gray-500">
+                <div className="flex flex-wrap md:flex-nowrap items-center space-x-4">
+                  <div className="w-full md:w-1/2 font-bold text-[14px]  text-gray-500">
                     Pause
                   </div>
 
@@ -929,14 +1179,32 @@ function Task_view_All_client() {
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={pauseProject}
                     onChange={handleholdChange}
-                    disabled={true}
+                    disabled
                   >
-                    <option value="" disabled selected>
+                    <option value="" disabled selected={pauseProject === ""}>
                       Select option
                     </option>
-                    <option value="hold">Hold</option>
 
-                    <option value="restart">Restart</option>
+                    <option
+                      value="hold"
+                      style={{
+                        display:
+                          pauseProject === "" || pauseProject === "restart"
+                            ? "block"
+                            : "none", // Show 'Hold' if empty or 'restart' is selected
+                      }}
+                    >
+                      Hold
+                    </option>
+
+                    <option
+                      value="restart"
+                      style={{
+                        display: pauseProject === "hold" ? "block" : "none", // Show 'Restart' if empty or 'hold' is selected
+                      }}
+                    >
+                      Restart
+                    </option>
                   </select>
                 </div>
 
@@ -948,58 +1216,56 @@ function Task_view_All_client() {
                   />
                 </div> */}
 
-                
-
                 {/* Assign To */}
-                <div className="flex items-center space-x-4">
-                  <div className="w-1/2 font-bold text-[14px]  text-gray-500">
+                <div className="flex flex-wrap md:flex-nowrap items-center space-x-4">
+                  <div className="w-full md:w-1/2 font-bold text-[14px]  text-gray-500">
                     Assigned To
                   </div>
                   <div
-                    className="w-full py-2 text-gray-700 text-[14px]  hover:text-blue-500"
+                    className="w-full py-2 text-gray-700 text-[14px]"
                     // onClick={() => onClickCard(alldata?.assignedTo?._id)}
                   >
-                    {alldata?.assignedTo?.employeeName || "-"}
+                    {alldata?.assignedTo?.employeeName}
                   </div>
                 </div>
 
                 {/* created by */}
-                <div className="flex items-center space-x-4">
-                  <div className="w-1/2 font-bold text-[14px]  text-gray-500">
+                <div className="flex flex-wrap md:flex-nowrap items-center space-x-4">
+                  <div className="w-full md:w-1/2 font-bold text-[14px]  text-gray-500">
                     Created By
                   </div>
                   <div className="w-full py-2 text-gray-700 text-[14px]">
-                    {alldata.createdById?.employeeName || "Client"}
+                    {alldata.createdById?.employeeName}
                   </div>
                 </div>
 
                 {/* reporter */}
 
-                <div className="flex items-center space-x-4">
-                  <div className="w-1/2 font-bold text-[14px]  text-gray-500">
+                <div className="flex flex-wrap md:flex-nowrap items-center space-x-4">
+                  <div className="w-full md:w-1/2 font-bold text-[14px]  text-gray-500">
                     Reporter By
                   </div>
                   <div className="w-full py-2 text-gray-700 text-[14px]">
-                    {alldata?.projectManagerId?.projectManagerName || "-"}
+                    {alldata?.projectManagerId?.projectManagerName}
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-4">
-                  <div className="w-1/2 font-bold text-[14px]  text-gray-500">
+                <div className="flex flex-wrap md:flex-nowrap items-center space-x-4">
+                  <div className="w-full md:w-1/2 font-bold text-[14px]  text-gray-500">
                     Priority
                   </div>
                   <div className="w-full py-2 text-gray-700">
                     <div
                       className={`font-semibold px-2  rounded-md inline-block capitalize
                           ${
-                           alldata.priority === "high"
-                             ? "text-[#c8212f] bg-[#ffebee] "
-                             : alldata.priority === "medium"
-                             ? "text-[#e65200] bg-[#ffa60142]"
-                             : alldata.priority === "low"
-                             ? "text-[#7d6a14] bg-[#ffea0059]"
-                             : "text-gray-700 bg-gray-100"
-                         }`}
+                            alldata.priority === "high"
+                              ? "text-[#c8212f] bg-[#ffebee] "
+                              : alldata.priority === "medium"
+                              ? "text-[#e65200] bg-[#ffa60142]"
+                              : alldata.priority === "low"
+                              ? "text-[#7d6a14] bg-[#ffea0059]"
+                              : "text-gray-700 bg-gray-100"
+                          }`}
                     >
                       {alldata.priority}
                     </div>
@@ -1007,8 +1273,8 @@ function Task_view_All_client() {
                 </div>
 
                 {/* Task Created Date and Time */}
-                <div className="flex items-center space-x-4 mt-4">
-                  <div className="w-1/2 font-bold text-[14px]  text-gray-500">
+                <div className="flex flex-wrap md:flex-nowrap items-center space-x-4 mt-4">
+                  <div className="w-full md:w-1/2 font-bold text-[14px]  text-gray-500">
                     Created Date and Time
                   </div>
                   <div className="w-full py-2 text-gray-700">
