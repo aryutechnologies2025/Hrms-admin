@@ -1,7 +1,7 @@
 import login_image from "../assets/login_image.svg";
 import { LuUser } from "react-icons/lu";
 import { SlLock } from "react-icons/sl";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../config.js";
 import { useState } from "react";
@@ -110,24 +110,54 @@ const Login = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword); // Toggle password visibility state
   };
+const activeClass = "underline font-bold text-blue-600";
+const inactiveClass = "hover:underline";
 
   return (
    <div className="min-h-screen bg-[#F3F4F6] flex flex-col">
 
   {/* Top Navigation */}
-  {/* <div className="flex justify-end gap-6 px-5 md:pt-2 text-lg font-semibold text-[#0050AA]"> */}
+  <div className="flex justify-end gap-6 px-5 md:pt-2 text-lg font-semibold text-[#0050AA]"> 
     {/* <Link to="/client" className="hover:underline">Client Login</Link> */}
     {/* <Link to="/client-user" className="hover:underline">Client User Login</Link> */}
-  {/* </div> */}
+     <nav className="flex gap-4">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive ? activeClass : inactiveClass
+            }
+          >
+            Admin Login
+          </NavLink>
+
+          <NavLink
+            to="/client"
+            className={({ isActive }) =>
+              isActive ? activeClass : inactiveClass
+            }
+          >
+            Client Login
+          </NavLink>
+
+          <NavLink
+            to="/client-user"
+            className={({ isActive }) =>
+             isActive ? activeClass : inactiveClass
+            }
+          >
+            Client User Login
+          </NavLink>
+        </nav>
+  </div>
 
   {/* Logo */}
   <div className="flex justify-center p-2">
     <img src={aryu_logo} alt="Logo" className="w-20" />
   </div>
   <p className='text-center text-lg md:text-xl font-semibold text-[#0050AA]'>ARYU PORTAL</p>
-  <div className="flex justify-end gap-6 px-5 md:pt-2 text-sm md:text-md font-semibold text-[#0050AA]">
+  {/* <div className="flex justify-end gap-6 px-5 md:pt-2 text-sm md:text-md font-semibold text-[#0050AA]">
     <Link to="/client" className="underline">Client Login</Link>
-  </div>
+  </div> */}
 
 
   {/* Main Content */}
