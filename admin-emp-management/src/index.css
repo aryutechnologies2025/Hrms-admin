@@ -284,6 +284,17 @@ tbody {
 }
 
 
+#datatable_wrapper {
+    width: 100% !important;
+    overflow-x: auto !important;
+}
+
+table.dataTable {
+    width: 100% !important;
+    white-space: nowrap !important;
+}
+
+
 
 
 

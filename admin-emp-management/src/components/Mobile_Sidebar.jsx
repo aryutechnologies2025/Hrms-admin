@@ -415,7 +415,7 @@ const Mobile_Sidebar = () => {
                         <div
                           className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${
                             openSection === "finance"
-                              ? "max-h-40 opacity-100"
+                              ? "max-h-50 opacity-100"
                               : "max-h-0 opacity-0"
                           }`}
                         >
@@ -449,6 +449,12 @@ const Mobile_Sidebar = () => {
                               className="hover:bg-blue-100 px-2 py-1 rounded-full"
                             >
                               Payments
+                            </button>
+                            <button
+                              onClick={() => onClickSidebarMenu("bankstatement")}
+                              className="hover:bg-blue-100 px-2 py-1 rounded-full"
+                            >
+                              Bank Statement
                             </button>
                           </div>
                         </div>
