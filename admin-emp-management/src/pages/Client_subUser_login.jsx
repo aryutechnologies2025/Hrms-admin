@@ -1,7 +1,7 @@
 import login_image from "../assets/login_image.svg";
 import { LuUser } from "react-icons/lu";
 import { SlLock } from "react-icons/sl";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../config.js";
 import { useState } from "react";
@@ -110,14 +110,45 @@ const Client_subUser_login= () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword); // Toggle password visibility state
   };
+  const activeClass = "underline font-bold text-blue-600";
+const inactiveClass = "hover:underline";
+
 
   return (
    <div className="min-h-screen bg-[#F3F4F6] flex flex-col">
 
   {/* Top Navigation */}
   <div className="flex justify-end gap-6 px-8 py-4 text-lg font-semibold text-[#0050AA]">
-    <Link to="/" className="hover:underline">Admin Login</Link>
-    <Link to="/client" className="hover:underline">Client Login</Link>
+    {/* <Link to="/" className="hover:underline">Admin Login</Link>
+    <Link to="/client" className="hover:underline">Client Login</Link> */}
+     <nav className="flex gap-4">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive ? activeClass : inactiveClass
+            }
+          >
+            Admin Login
+          </NavLink>
+
+          <NavLink
+            to="/client"
+            className={({ isActive }) =>
+              isActive ? activeClass : inactiveClass
+            }
+          >
+            Client Login
+          </NavLink>
+
+          <NavLink
+            to="/client-user"
+            className={({ isActive }) =>
+             isActive ? activeClass : inactiveClass
+            }
+          >
+            Client User Login
+          </NavLink>
+        </nav>
   </div>
 
   {/* Logo */}
