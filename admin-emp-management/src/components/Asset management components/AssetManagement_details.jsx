@@ -27,39 +27,61 @@ const AssetManagement_details = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const storedDetatis = localStorage.getItem("hrmsuser");
-    const parsedDetails = JSON.parse(null);
+    const parsedDetails = JSON.parse(storedDetatis || "{}");
     const userid = parsedDetails ? parsedDetails.id : null;
     const [errors, setErrors] = useState({});
-    console.log("errors:", errors);
+    console.log("errors checking:", errors);
     const [isAnimating, setIsAnimating] = useState(false);
-    const [jobTypeDetails, setJobTypeDetails] = useState([])
-    console.log("jobTypeDetails", jobTypeDetails)
+    const [assetManageDetails, setAssetManageDetails] = useState([])
+    console.log("assetManageDetails check", assetManageDetails)
     const [loading, setLoading] = useState(true); // State to manage loading
     let navigate = useNavigate();
 
 
     //  view
     useEffect(() => {
-        fetchJobType();
+        fetchAssetManagement();
     }, []);
-    const fetchJobType = async () => {
+    const fetchAssetManagement = async () => {
         try {
             const response = await axios.get(
-                `${API_URL}/api/job-type/view-jobtype`
+                `${API_URL}/api/asset-mannagement/view-asset`
             );
-            console.log(response);
+            console.log("asset get response", response);
 
 
-            setJobTypeDetails(response.data?.jobType)
+            setAssetManageDetails(response?.data?.data)
             setLoading(false);
 
 
         } catch (err) {
-            setErrors("Failed to fetch JobType.");
+            setErrors("Failed to fetch Asset Management.");
             setLoading(false);
 
         }
     };
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const res = await axios.get(
+                    `${API_URL}/api/asset-mannagement-category/assetCatagory`
+                );
+                console.log("asset category get response", res);
+                const formatted = res.data?.data?.map((item) => ({
+                    label: item?.name,
+                    value: item?._id
+                }));
+
+                setAccountoption(formatted);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchCategories();
+    }, []);
+
 
     const openAddModal = () => {
         setIsAddModalOpen(true);
@@ -78,8 +100,21 @@ const AssetManagement_details = () => {
         setTimeout(() => setIsEditModalOpen(false), 250);
     };
 
-    const [name, setName] = useState("");
-    const [status, setStatus] = useState("");
+
+    const [assetCategory, setAssetCategory] = useState("");
+    console.log("assetCategory", assetCategory)
+    const [accountoption, setAccountoption] = useState([]);
+    console.log("accountoption", accountoption)
+    const [assetName, setAssetName] = useState("");
+    const [serialNumber, setSerialNumber] = useState("");
+    const [count, setCount] = useState("");
+    const [purchasedDate, setPurchasedDate] = useState("");
+    const [eachCost, setEachCost] = useState("");
+    const [totalCost, setTotalCost] = useState("");
+    const [warrantyYear, setWarrantyYear] = useState("");
+    const [disposedDate, setDisposedDate] = useState("");
+
+
 
     // console.log("chech:", nameEdit, statusEdit);
 
@@ -87,95 +122,109 @@ const AssetManagement_details = () => {
     // create
     const handlesubmit = async (e) => {
         e.preventDefault();
+
+        const formdata = {
+            assetCategory,
+            assetName,
+            serialNumber: Number(serialNumber),
+            count: Number(count),
+            purchasedDate,
+            eachCost: Number(eachCost),
+            totalCost: Number(totalCost),
+            warrantyYear: Number(warrantyYear),
+            disposedDate,
+        };
+
+
         try {
-            const formdata = {
-                name: name,
-                status: status,
-
-            };
-
             const response = await axios.post(
-                `${API_URL}/api/job-type/create-jobtype`,
+                `${API_URL}/api/asset-mannagement/create-asset`,
                 formdata
             );
 
+            toast.success("Asset created successfully");
 
-            setIsAddModalOpen(false);
-            setName("");
-            setStatus("");
-            setErrors("");
-            fetchJobType();
+            closeAddModal();
+            fetchAssetManagement();
 
-            toast.success(" Job Type created successfully.");
+            // Reset fields
+            setAssetName("");
+            setAssetCategory("");
+            setSerialNumber("");
+            setCount("");
+            setPurchasedDate("");
+            setEachCost("");
+            setTotalCost("");
+            setWarrantyYear("");
+            setDisposedDate("");
+
         } catch (err) {
-            if (err.response && err.response.data && err.response.data.errors) {
-                setErrors(err.response.data.errors);
-            } else {
-                console.error("Error submitting form:", err);
-            }
+            console.log(err);
+            toast.error("Failed to create asset");
         }
     };
 
 
+
     //  edit  
-    const [nameEdit, setNameEdit] = useState("");
-    const [statusEdit, setStatusEdit] = useState("");
+    const [assetCategoryEdit, setAssetCategoryEdit] = useState("");
+    const [assetNameEdit, setAssetNameEdit] = useState("");
+    const [serialNumberEdit, setSerialNumberEdit] = useState("");
+    const [countEdit, setCountEdit] = useState("");
+    const [purchasedDateEdit, setPurchasedDateEdit] = useState("");
+    const [eachCostEdit, setEachCostEdit] = useState("");
+    const [totalCostEdit, setTotalCostEdit] = useState("");
+    const [warrantyYearEdit, setWarrantyYearEdit] = useState("");
+    const [disposedDateEdit, setDisposedDateEdit] = useState("");
     const [editId, setEditid] = useState("");
 
     const openEditModal = (row) => {
-        console.log("rowData", row);
 
         setEditid(row._id);
-        setNameEdit(row.name);
-
-        setStatusEdit(row.status);
-
+        setAssetCategoryEdit(row.assetCategory?._id || "");
+        setAssetNameEdit(row.assetName);
+        setSerialNumberEdit(row.serialNumber);
+        setCountEdit(row.count);
+        setPurchasedDateEdit(row.purchasedDate?.slice(0, 10));
+        setDisposedDateEdit(row.disposedDate?.slice(0, 10));
+        setEachCostEdit(row.eachCost);
+        setTotalCostEdit(row.totalCost);
+        setWarrantyYearEdit(row.warrantyYear);
+        setDisposedDateEdit(row.disposedDate);
         setIsEditModalOpen(true);
         setTimeout(() => setIsAnimating(true), 10);
     };
 
 
+
     const handlesubmitedit = async (e) => {
         e.preventDefault();
-        setErrors({});
 
-        // Client-side validation
-        const newErrors = {};
-        if (!nameEdit.trim()) {
-            newErrors.name = "Name is required.";
-        }
-        if (!statusEdit) {
-            newErrors.status = "Status is required.";
-        }
+        const formData = {
+            assetCategory: assetCategoryEdit,
+            assetName: assetNameEdit,
+            serialNumber: serialNumberEdit,
+            count: countEdit,
+            purchasedDate: purchasedDateEdit,
+            eachCost: eachCostEdit,
+            totalCost: totalCostEdit,
+            warrantyYear: warrantyYearEdit,
+            disposedDate: disposedDateEdit,
+        };
 
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            return;
-        }
         try {
-            const formData = {
-                name: nameEdit,
-                status: statusEdit,
-            };
-
-            const response = await axios.put(
-                `${API_URL}/api/job-type/edit-jobtype/${editId}`,
+            await axios.put(
+                `${API_URL}/api/asset-mannagement/edit-assetdetails/${editId}`,
                 formData
             );
-            console.log("response:", response);
 
+            toast.success("Asset updated successfully");
 
-            setIsEditModalOpen(false);
-            fetchJobType();
-            setErrors({});
-            toast.success("JobType updated successfully.");
+            closeEditModal();
+            fetchAssetManagement();
         } catch (err) {
-            if (err.response?.data?.errors) {
-                setErrors(err.response.data.errors);
-            } else {
-                console.error("Error submitting form:", err);
-                toast.error("Failed to update JobType.");
-            }
+            console.log(err);
+            toast.error("Failed to update asset");
         }
     };
 
@@ -188,7 +237,7 @@ const AssetManagement_details = () => {
     const deleteRoles = (editId) => {
         Swal.fire({
             title: "Are you sure?",
-            text: "Do you want to delete this JobType?",
+            text: "Do you want to delete this Asset Management?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "Yes, delete it!",
@@ -196,18 +245,18 @@ const AssetManagement_details = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 axios
-                    .delete(`${API_URL}/api/job-type/delete-jobtype/${editId}`)
+                    .delete(`${API_URL}/api/asset-mannagement/delete-asset/${editId}`)
                     .then((response) => {
                         if (response.data) {
-                            toast.success("JobType has been deleted.");
-                            fetchJobType(); // Refresh the job type
+                            toast.success("Asset Management has been deleted.");
+                            fetchAssetManagement(); // Refresh
                         } else {
-                            Swal.fire("Error!", "Failed to delete JobType.", "error");
+                            Swal.fire("Error!", "Failed to delete Asset Management.", "error");
                         }
                     })
                     .catch((error) => {
                         // console.error("Error deleting role:", error);
-                        Swal.fire("Error!", "Failed to delete JobType.", "error");
+                        Swal.fire("Error!", "Failed to delete Asset Management.", "error");
                     });
             }
         });
@@ -215,58 +264,61 @@ const AssetManagement_details = () => {
 
     const columns = [
         {
-            title: "Sno",
+            title: "S.No",
             data: null,
-            render: function (data, type, row, meta) {
-                return meta.row + 1;
-            },
+            render: (data, type, row, meta) => meta.row + 1,
         },
         {
             title: "Asset Category",
-            data: "name",
+            data: "assetCategory",
+            render: function (data) {
+                if (!data) return "-";
+                return data.name || "-";
+            }
         },
+
         {
             title: "Asset Name",
-            data: "name",
+            data: "assetName",
+            defaultContent: "-"
         },
         {
             title: "Serial Number",
-            data: "name",
+            data: "serialNumber",
+            defaultContent: "-"
         },
         {
             title: "Count",
-            data: "name",
+            data: "count",
+            defaultContent: "-"
         },
         {
             title: "Purchased Date",
-            data: "name",
-            render: function (data) {
-                if (!data) return "-";
-                const date = new Date(data);
-                return date.toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "numeric",
-                    year: "numeric",
-                });
-            },
+            data: "purchasedDate",
+            render: (data) => data ? new Date(data).toLocaleDateString("en-GB") : "-",
         },
         {
             title: "Each Cost",
-            data: "name",
+            data: "eachCost",
+            defaultContent: "-"
         },
         {
             title: "Total Cost",
-            data: "name",
+            data: "totalCost",
+            defaultContent: "-"
         },
         {
-            title: "Warrantly Years",
-            data: "name",
+            title: "Warranty Years",
+            data: "warrantyYear",
+            defaultContent: "-"
         },
         {
             title: "Disposed Date",
-            data: "name",
+            data: "disposedDate",
+            render: (data) => data ? new Date(data).toLocaleDateString("en-GB") : "-",
         },
     ];
+
 
 
 
@@ -296,29 +348,29 @@ const AssetManagement_details = () => {
                             <div className=" ">
                                 <h1 className="text-2xl md:text-3xl font-semibold">Asset Management</h1>
                             </div>
-                        
-                        <div className="flex justify-end items-center gap-3">
-                            <button
-                            onClick={() => navigate("/assetcategory")}
-                            className=" px-1 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-24 rounded-2xl"
-                        >
-                            Category
-                        </button>
-                        <button
-                                onClick={openAddModal}
-                                className=" px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
-                            >
-                                Add
-                            </button>
-                        </div>
-                        </div>
-                        
 
-                        <div className="datatable-container">
+                            <div className="flex flex-wrap md:flex-nowrap justify-end items-center gap-1 md:gap-3">
+                                <button
+                                    onClick={() => navigate("/assetcategory")}
+                                    className=" px-1 py-2  text-white bg-blue-500 hover:bg-blue-600 font-normal md:font-medium w-24 rounded-2xl"
+                                >
+                                    Category
+                                </button>
+                                <button
+                                    onClick={openAddModal}
+                                    className=" px-1 py-2  text-white bg-blue-500 hover:bg-blue-600 font-normal md:font-medium w-20 rounded-2xl"
+                                >
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+
+
+                        <div className="datatable-container mt-5">
                             {/* Responsive wrapper for the table */}
-                            <div className="table-scroll-container" id="datatable">
+                            <div className="overflow-x-auto w-full" id="datatable">
                                 <DataTable
-                                    data={jobTypeDetails}
+                                    data={assetManageDetails}
                                     columns={columns}
                                     options={{
                                         paging: true,
@@ -328,7 +380,7 @@ const AssetManagement_details = () => {
                                         responsive: true,
                                         autoWidth: false,
                                     }}
-                                    className="display nowrap bg-white"
+                                    className="display nowrap bg-white w-full"
                                 />
                             </div>
                         </div>
@@ -351,19 +403,19 @@ const AssetManagement_details = () => {
                                         <IoIosArrowForward className="w-3 h-3" />
                                     </div>
 
-                                    <div className="p-5">
+                                    <div className="p-2 md:p-5">
                                         <p className="text-2xl md:text-3xl font-medium">Asset Management</p>
                                         {/* assest category */}
-                                        <div className="mt-5 mb-2 flex justify-between items-center">
+                                        <div className="mt-2 md:mt-5 mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Asset Category<span className="text-red-500">*</span>
                                             </label>
 
-                                            <div className="w-[60%] md:w-[50%]">
+                                            <div className="w-[65%] md:w-[50%]">
                                                 <Dropdown
-                                                    //   value={accountname}
-                                                    //   onChange={(e) => setAccountname(e.value)}
-                                                    //   options={accountoption}
+                                                    value={assetCategory}
+                                                    onChange={(e) => setAssetCategory(e.value)}
+                                                    options={accountoption}
                                                     optionValue="value"
                                                     optionLabel="label"
                                                     filter
@@ -372,28 +424,28 @@ const AssetManagement_details = () => {
                                                     className="w-full   border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                     display="chip"
                                                 />
-                                                {errors.account && (
+                                                {errors.assetCategory && (
                                                     <p className="text-red-500 text-sm mb-4">
-                                                        {errors.account}
+                                                        {errors.assetCategory}
                                                     </p>
                                                 )}
                                             </div>
                                         </div>
                                         {/* asset name */}
-                                        <div className="mb-3 flex justify-between">
+                                        <div className="mt-2 md:mt-5 mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Asset Name <span className="text-red-500">*</span>
                                             </label>
                                             <div className="w-[60%] md:w-[50%]">
                                                 <input
                                                     type="text"
-                                                    value={name}
-                                                    onChange={(e) => setName(e.target.value)}
+                                                    value={assetName}
+                                                    onChange={(e) => setAssetName(e.target.value)}
                                                     placeholder="Enter Asset Name "
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />
-                                                {errors.name && (
-                                                    <p className="text-red-500 text-sm mb-4">{errors.name}</p>
+                                                {errors.assetName && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">{errors.assetName}</p>
                                                 )}
                                             </div>
                                         </div>
@@ -401,21 +453,21 @@ const AssetManagement_details = () => {
 
                                         {/* serial number */}
 
-                                        <div className="mb-3 flex justify-between">
+                                        <div className="mt-2 md:mt-5 mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Serial Number<span className="text-red-500">*</span>
                                             </label>
                                             <div className="w-[60%] md:w-[50%]">
                                                 <input
                                                     type="number"
-                                                    //   value={connects}
-                                                    //   onChange={(e) => setConnects(e.target.value)}
+                                                    value={serialNumber}
+                                                    onChange={(e) => setSerialNumber(e.target.value)}
                                                     placeholder="Enter Serial Number "
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />
-                                                {errors.noOfConnections && (
-                                                    <p className="text-red-500 text-sm mb-4">
-                                                        {errors.noOfConnections}
+                                                {errors.serialNumber && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.serialNumber}
                                                     </p>
                                                 )}
                                             </div>
@@ -423,26 +475,27 @@ const AssetManagement_details = () => {
 
                                         {/* count */}
 
-                                        <div className="mb-3 flex justify-between">
+                                        <div className="mt-2 md:mt-5 mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Count<span className="text-red-500">*</span>
                                             </label>
                                             <div className="w-[60%] md:w-[50%]">
                                                 <input
                                                     type="number"
-                                                    //   value={connects}
-                                                    //   onChange={(e) => setConnects(e.target.value)}
+                                                    value={count}
+                                                    onChange={(e) => setCount(e.target.value)}
                                                     placeholder="Enter Count "
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />
-                                                {errors.noOfConnections && (
-                                                    <p className="text-red-500 text-sm mb-4">
-                                                        {errors.noOfConnections}
+                                                {errors.count && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.count}
                                                     </p>
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="mb-3 flex justify-between">
+                                        {/* purchased date */}
+                                        <div className="mt-2 md:mt-5 mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Purchased date<span className="text-red-500">*</span>
                                             </label>
@@ -451,40 +504,38 @@ const AssetManagement_details = () => {
                                                     type="date"
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 
-                                                //   value={p.date}
-                                                //   onChange={(e) =>
-                                                //     handleChange(index, "date", e.target.value)
-                                                //   }
+                                                    value={purchasedDate}
+                                                    onChange={(e) => setPurchasedDate(e.target.value)}
                                                 //   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
                                                 //     p.errorDate
                                                 //       ? "border-red-500 focus:ring-red-500"
                                                 //       : "border-gray-300 focus:ring-blue-500"
                                                 //   }`}
                                                 />
-                                                {/* {p.errorDate && (
-                          <p className="text-red-500 text-sm mt-1">
-                            {p.errorDate}
-                          </p>
-                        )} */}
+                                                {errors.purchasedDate && (
+                                                    <p className="text-red-500 text-sm mt-1">
+                                                        {errors.purchasedDate}
+                                                    </p>
+                                                )}
                                             </div>
                                         </div>
                                         {/* Each Cost */}
 
-                                        <div className="mb-3 flex justify-between">
+                                        <div className="mt-2 md:mt-5 mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Each Cost<span className="text-red-500">*</span>
                                             </label>
                                             <div className="w-[60%] md:w-[50%]">
                                                 <input
                                                     type="number"
-                                                    //   value={connects}
-                                                    //   onChange={(e) => setConnects(e.target.value)}
+                                                    value={eachCost}
+                                                    onChange={(e) => setEachCost(e.target.value)}
                                                     placeholder="Enter Each Cost "
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />
-                                                {errors.noOfConnections && (
-                                                    <p className="text-red-500 text-sm mb-4">
-                                                        {errors.noOfConnections}
+                                                {errors.eachCost && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.eachCost}
                                                     </p>
                                                 )}
                                             </div>
@@ -492,42 +543,42 @@ const AssetManagement_details = () => {
 
                                         {/* Total cost */}
 
-                                        <div className="mb-3 flex justify-between">
+                                        <div className="mt-2 md:mt-5 mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Total Cost<span className="text-red-500">*</span>
                                             </label>
                                             <div className="w-[60%] md:w-[50%]">
                                                 <input
                                                     type="number"
-                                                    //   value={connects}
-                                                    //   onChange={(e) => setConnects(e.target.value)}
+                                                    value={totalCost}
+                                                    onChange={(e) => setTotalCost(e.target.value)}
                                                     placeholder="Enter Total Cost "
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />
-                                                {errors.noOfConnections && (
-                                                    <p className="text-red-500 text-sm mb-4">
-                                                        {errors.noOfConnections}
+                                                {errors.totalCost && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.totalCost}
                                                     </p>
                                                 )}
                                             </div>
                                         </div>
                                         {/* Warrantly Years */}
 
-                                        <div className="mb-3 flex justify-between">
+                                        <div className="mt-2 md:mt-5 mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Warrantly Years<span className="text-red-500">*</span>
                                             </label>
-                                            <div className="w-[60%] md:w-[50%]">
+                                            <div className="w-[70%] md:w-[50%]">
                                                 <input
                                                     type="number"
-                                                    //   value={connects}
-                                                    //   onChange={(e) => setConnects(e.target.value)}
+                                                    value={warrantyYear}
+                                                    onChange={(e) => setWarrantyYear(e.target.value)}
                                                     placeholder="Enter Warrantly Years "
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />
-                                                {errors.noOfConnections && (
-                                                    <p className="text-red-500 text-sm mb-4">
-                                                        {errors.noOfConnections}
+                                                {errors.warrantyYear && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.warrantyYear}
                                                     </p>
                                                 )}
                                             </div>
@@ -535,48 +586,26 @@ const AssetManagement_details = () => {
 
                                         {/* Disposed Date */}
 
-                                        <div className="mb-3 flex justify-between">
+                                        <div className="mt-2 md:mt-5 mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Disposed Date<span className="text-red-500">*</span>
                                             </label>
                                             <div className="w-[60%] md:w-[50%]">
                                                 <input
-                                                    type="number"
-                                                    //   value={connects}
-                                                    //   onChange={(e) => setConnects(e.target.value)}
+                                                    type="date"
+                                                    value={disposedDate}
+                                                    onChange={(e) => setDisposedDate(e.target.value)}
                                                     placeholder="Enter Disposed Date "
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />
-                                                {errors.noOfConnections && (
-                                                    <p className="text-red-500 text-sm mb-4">
-                                                        {errors.noOfConnections}
+                                                {errors.disposedDate && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.disposedDate}
                                                     </p>
                                                 )}
                                             </div>
                                         </div>
 
-                                        {/* count */}
-
-                                        <div className="mb-3 flex justify-between">
-                                            <label className="block text-md font-medium mb-2">
-                                                Count<span className="text-red-500">*</span>
-                                            </label>
-                                            <div className="w-[60%] md:w-[50%]">
-                                                <input
-                                                    type="number"
-                                                    //   value={connects}
-                                                    //   onChange={(e) => setConnects(e.target.value)}
-                                                    placeholder="Enter Count "
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                />
-                                                {errors.noOfConnections && (
-                                                    <p className="text-red-500 text-sm mb-4">
-                                                        {errors.noOfConnections}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        </div>
-                                        {/* {error.status && <p className="error">{error.status}</p>} */}
 
                                         <div className="flex  justify-end gap-2 mt-6 md:mt-14">
                                             <button
@@ -615,7 +644,7 @@ const AssetManagement_details = () => {
                                     </div>
 
                                     <div className="p-5">
-                                        <p className="text-2xl md:text-3xl font-medium">JobType Edit</p>
+                                        <p className="text-2xl md:text-3xl font-medium">Asset Management Edit</p>
                                         <div className="mt-5 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Name <span className="text-red-500">*</span>
@@ -623,8 +652,8 @@ const AssetManagement_details = () => {
                                             <div className="w-[70%] md:w-[50%]">
                                                 <input
                                                     type="text"
-                                                    value={nameEdit}
-                                                    onChange={(e) => setNameEdit(e.target.value)}
+                                                    value={assetNameEdit}
+                                                    onChange={(e) => setAssetNameEdit(e.target.value)}
                                                     placeholder="Enter Your Name "
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />

@@ -114,6 +114,7 @@ import AssetCategory_mainbar from "./components/Asset management components/Asse
 import Platform_Details from "./components/recruitment components/Platform_Details";
 import Task_details_client from "./components/taskList/Task_details_client";
 import AssetManagement_mainbar from "./pages/AssetManagement_mainbar";
+import BankStatement_Mainbar from "./components/finance components/BankStatement_Mainbar";
 
 
 function App() {
@@ -637,6 +638,16 @@ function App() {
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
           <Finance_account_main />
+        </ProtectedRoute>
+      ),
+    },
+    
+    {
+      path: "/bankstatement",
+      permissionTitle: "Finance",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <BankStatement_Mainbar />
         </ProtectedRoute>
       ),
     },

@@ -135,14 +135,14 @@ const Login = () => {
     <div className="flex w-full max-w-6xl bg-white shadow-xl rounded-3xl overflow-hidden">
 
       {/* Left Section (Form) */}
-      <div className="flex-1 flex flex-col items-center justify-center p-7 md:p-10">
-        <h1 className="text-[#0050aa] font-bold text-xl md:text-4xl mb-6">
+      <div className="flex-1 flex flex-col items-center justify-center p-5 md:p-10">
+        <h1 className="text-[#0050aa] font-bold text-xl md:text-4xl mb-2 md:mb-6">
           ARYU ADMIN LOGIN
         </h1>
 
         {/* Username Field */}
-        <div className="w-full max-w-sm flex items-center gap-3 bg-[#F8F9FB] px-5 py-4 rounded-xl shadow-sm border border-gray-200">
-          <LuUser className="text-2xl text-gray-500" />
+        <div className="w-full max-w-sm flex items-center gap-3 bg-[#F8F9FB] px-3 md:px-5 py-2 md:py-4 rounded-xl shadow-sm border border-gray-200">
+          <LuUser className="text-2xl text-gray-500" size={20} />
           <input
             type="text"
             placeholder="Username"
@@ -158,8 +158,8 @@ const Login = () => {
         )}
 
         {/* Password Field */}
-        <div className="relative w-full max-w-sm flex items-center gap-3 bg-[#F8F9FB] px-5 py-4 mt-3 rounded-xl shadow-sm border border-gray-200">
-          <SlLock className="text-2xl text-gray-500" />
+        <div className="relative w-full max-w-sm flex items-center gap-3 bg-[#F8F9FB] px-3 md:px-5 py-2 md:py-4 mt-3 rounded-xl shadow-sm border border-gray-200">
+          <SlLock className="text-2xl text-gray-500" size={20} />
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Password"

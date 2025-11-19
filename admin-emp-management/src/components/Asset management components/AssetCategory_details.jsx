@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-
 import DataTable from "datatables.net-react";
 import DT from "datatables.net-dt";
 import "datatables.net-responsive-dt/css/responsive.dataTables.css";
@@ -31,30 +30,30 @@ const AssetCategory_details = () => {
   const [errors, setErrors] = useState({});
   console.log("errors:", errors);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [jobTypeDetails, setJobTypeDetails] = useState([])
-  console.log("jobTypeDetails", jobTypeDetails)
+  const [assetDetails, setAssetDetails] = useState([])
+  console.log("assetDetails", assetDetails)
   const [loading, setLoading] = useState(true); // State to manage loading
   let navigate = useNavigate();
 
 
   //  view
   useEffect(() => {
-    fetchJobType();
+    fetchAssetType();
   }, []);
-  const fetchJobType = async () => {
+  const fetchAssetType = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/job-type/view-jobtype`
+        `${API_URL}/api/asset-mannagement-category/assetCatagory`
       );
-      console.log(response);
+      console.log("response get check",response);
 
 
-      setJobTypeDetails(response.data?.jobType)
+      setAssetDetails(response?.data?.data)
               setLoading(false);
 
 
     } catch (err) {
-      setErrors("Failed to fetch JobType.");
+      setErrors("Failed to fetch Asset Category.");
               setLoading(false);
 
     }
@@ -94,7 +93,7 @@ const AssetCategory_details = () => {
       };
 
       const response = await axios.post(
-        `${API_URL}/api/job-type/create-jobtype`,
+        `${API_URL}/api/asset-mannagement-category/create-assetCategory`,
         formdata
       );
 
@@ -103,9 +102,9 @@ const AssetCategory_details = () => {
       setName("");
       setStatus("");
       setErrors("");
-      fetchJobType();
+      fetchAssetType();
 
-      toast.success(" Job Type created successfully.");
+      toast.success(" Asset Category created successfully.");
     } catch (err) {
       if (err.response && err.response.data && err.response.data.errors) {
         setErrors(err.response.data.errors);
@@ -158,22 +157,22 @@ const AssetCategory_details = () => {
       };
 
       const response = await axios.put(
-        `${API_URL}/api/job-type/edit-jobtype/${editId}`,
+        `${API_URL}/api/asset-mannagement-category/edit-assetCategorydetails/${editId}`,
         formData
       );
       console.log("response:", response);
       
 
       setIsEditModalOpen(false);
-      fetchJobType();
+      fetchAssetType();
       setErrors({});
-      toast.success("JobType updated successfully.");
+      toast.success("Asset Category updated successfully.");
     } catch (err) {
       if (err.response?.data?.errors) {
         setErrors(err.response.data.errors);
       } else {
         console.error("Error submitting form:", err);
-        toast.error("Failed to update JobType.");
+        toast.error("Failed to update Asset Category.");
       }
     }
   };
@@ -187,7 +186,7 @@ const AssetCategory_details = () => {
   const deleteRoles = (editId) => {
     Swal.fire({
       title: "Are you sure?",
-      text: "Do you want to delete this JobType?",
+      text: "Do you want to delete this Asset Category?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Yes, delete it!",
@@ -195,18 +194,18 @@ const AssetCategory_details = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/job-type/delete-jobtype/${editId}`)
+          .delete(`${API_URL}/api/asset-mannagement-category/delete-assetCategoryDelete/${editId}`)
           .then((response) => {
             if (response.data) {
-              toast.success("JobType has been deleted.");
-              fetchJobType(); // Refresh the job type
+              toast.success("Asset Category has been deleted.");
+              fetchAssetType(); // Refresh 
             } else {
-              Swal.fire("Error!", "Failed to delete JobType.", "error");
+              Swal.fire("Error!", "Failed to delete Asset Category.", "error");
             }
           })
           .catch((error) => {
-            // console.error("Error deleting role:", error);
-            Swal.fire("Error!", "Failed to delete JobType.", "error");
+           
+            Swal.fire("Error!", "Failed to delete Asset Category.", "error");
           });
       }
     });
@@ -309,12 +308,19 @@ const AssetCategory_details = () => {
                 Dashboard
               </p>
           <p>{">"}</p>
+              <p
+                className="text-sm text-gray-500"
+                onClick={() => navigate("/assetmanagement")}
+              >
+                Asset Management
+              </p>
+          <p>{">"}</p>
 
           <p className="text-sm text-blue-500">Asset Category</p>
         </div>
 
         {/* Add Button */}
-        <div className="flex justify-between mt-8">
+        <div className="flex justify-between mt-4 md:mt-8">
           <div className="">
             <h1 className="text-2xl md:text-3xl font-semibold">Asset Category</h1>
           </div>
@@ -331,7 +337,7 @@ const AssetCategory_details = () => {
           {/* Responsive wrapper for the table */}
           <div className="table-scroll-container" id="datatable">
             <DataTable
-              data={jobTypeDetails}
+              data={assetDetails}
               columns={columns}
               options={{
                 paging: true,

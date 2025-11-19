@@ -213,7 +213,7 @@ const Dashboard_Mainbar = () => {
             </div>
 
             {/* upcoming holiday */}
-            <div className="flex pt-3 flex-wrap md:flex-nowrap gap-4 mb-5 items-center justify-between">
+            <div className="flex pt-3 flex-wrap md:flex-nowrap gap-2 md:gap-4 mb-5 items-center justify-between">
               {/* employee requests */}
               <div className="w-full md:w-[32%] ">
                 <div className="flex flex-col w-full mt-5 h-[210px] rounded-2xl bg-[url('././assets/zigzaglines_large.svg')] bg-cover shadow-lg px-4 py-5 md:px-6 md:py-6">
