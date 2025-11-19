@@ -18,10 +18,12 @@ import Loader from "../Loader";
 import { FaEye } from "react-icons/fa";
 import { TfiPencilAlt } from "react-icons/tfi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
+import { dateUtils } from "../../utils/dateUtils";
 
 const Employees_Card = () => {
   let navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const formatDateTime = dateUtils();
 
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -275,12 +277,8 @@ const Employees_Card = () => {
       data: "employee_dateofjoining",
       render: function (data) {
         if (!data) return "-";
-        const date = new Date(data);
-        return date.toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "numeric",
-          year: "numeric",
-        });
+        
+        return formatDateTime(data)
       },
     },
 
@@ -491,11 +489,11 @@ const Employees_Card = () => {
                   </select>
 
                   {/* JOINING DATE FILTER */}
-                  <input
+                  {/* <input
                     type="date"
                     className="px-3 py-2 w-full md:w-44 cursor-pointer rounded-md border"
                     onChange={(e) => setDateFilter(e.target.value)}
-                  />
+                  /> */}
                 </div>
 
                 {/* <div className="mt-3 md:mt-0 space-x-2">

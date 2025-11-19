@@ -16,10 +16,13 @@ import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { FaFileExport } from "react-icons/fa6";
 import Loader from "../Loader";
+import { dateUtils } from "../../utils/dateUtils";
 
 
 const MonthlyAttendanceDetails_Mainbar = () => {
   let navigate = useNavigate();
+  const formatDateTime = dateUtils();
+  
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [globalFilter, setGlobalFilter] = useState("");
   const [monthlyReportList, setMonthlyReportList] = useState([]);
@@ -32,7 +35,7 @@ const MonthlyAttendanceDetails_Mainbar = () => {
     {
       field: "date",
       header: "Date",
-      body: (rowData) => rowData?.date.split("T")[0] || "-",
+      body: (rowData) => formatDateTime(rowData?.date) || "-",
     },
     {
       field: "status",

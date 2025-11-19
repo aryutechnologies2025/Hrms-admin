@@ -29,6 +29,7 @@ import { VscTasklist } from "react-icons/vsc";
 import { FaTasks } from "react-icons/fa";
 import { GoProjectSymlink } from "react-icons/go";
 import { LuLink } from "react-icons/lu";
+import { dateUtils } from "../../utils/dateUtils";
 
 
 
@@ -39,6 +40,7 @@ const Bidding_details = () => {
   // const ids = window.location.pathname.split("/")[2]
   // console.log("rowdeatsils",ids);
   const navigate = useNavigate();
+  const formatDateTime = dateUtils();
 
   // const [ids, setIds] = useState([]);
   //   console.log("ids",ids);
@@ -211,13 +213,7 @@ const Bidding_details = () => {
       data: null,
       render: (row) => {
         if (!row.date) return "-";
-        return new Date(row.date)
-          .toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
-          .replace(/\//g, "-");
+        return formatDateTime(row.date);
       },
     },
 

@@ -505,41 +505,41 @@ const Settings_details = () => {
                     <div className="mt-5 flex flex-col gap-4">
                       <div className="flex gap-3">
                         <input
-                          id="DD/MM/YYYY"
+                          id="dd/MM/yyyy"
                           name="dateformat"
                           type="radio"
-                          value="DD/MM/YYYY"
+                          value="dd/MM/yyyy"
                           className="cursor-pointer"
-                          checked={dateFormat === "DD/MM/YYYY"}
+                          checked={dateFormat === "dd/MM/yyyy"}
                           onClick={(e) => setDateFormat(e.target.value)}
                         />{" "}
-                        <label htmlFor="DD/MM/YYYY" className="cursor-pointer">DD/MM/YYYY</label>
+                        <label htmlFor="dd/MM/yyyy" className="cursor-pointer">DD/MM/YYYY</label>
                       </div>
 
                       <div className="flex gap-3">
                         <input
-                          id="MM/DD/YYYY"
+                          id="MM/dd/yyyy"
                           name="dateformat"
                           type="radio"
-                          value="MM/DD/YYYY"
+                          value="MM/dd/yyyy"
                           className="cursor-pointer"
-                          checked={dateFormat === "MM/DD/YYYY"}
+                          checked={dateFormat === "MM/dd/yyyy"}
                           onClick={(e) => setDateFormat(e.target.value)}
                         />
-                        <label htmlFor="MM/DD/YYYY" className="cursor-pointer">MM/DD/YYYY</label>
+                        <label htmlFor="MM/dd/yyyy" className="cursor-pointer">MM/DD/YYYY</label>
                       </div>
 
                       <div className="flex gap-3">
                         <input
-                          id="YYYY/MM/DD"
+                          id="yyyy/MM/dd"
                           name="dateformat"
                           type="radio"
-                          value="YYYY/MM/DD"
+                          value="yyyy/MM/dd"
                           className="cursor-pointer"
-                          checked={dateFormat === "YYYY/MM/DD"}
+                          checked={dateFormat === "yyyy/MM/dd"}
                           onClick={(e) => setDateFormat(e.target.value)}
                         />
-                        <label htmlFor="YYYY/MM/DD" className="cursor-pointer">YYYY/MM/DD</label>
+                        <label htmlFor="yyyy/MM/dd" className="cursor-pointer">YYYY/MM/DD</label>
                       </div>
                     </div>
                   </div>

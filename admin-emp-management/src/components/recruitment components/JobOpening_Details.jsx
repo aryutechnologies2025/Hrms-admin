@@ -16,7 +16,9 @@ import { toast } from "react-toastify";
 import { IoIosArrowForward, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import Loader from "../Loader";
 import { Dropdown } from "primereact/dropdown";
+import { dateUtils } from "../../utils/dateUtils";
 const JobOpening_Details = () => {
+  const formatDateTime = dateUtils();
   const navigate = useNavigate();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -291,12 +293,8 @@ const JobOpening_Details = () => {
  render: (row) => {
     if (!row.startFrom) return "-";
 
-    const date = new Date(row.startFrom);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // months are 0-indexed
-    const year = date.getFullYear();
 
-    return `${day}/${month}/${year}`;
+    return formatDateTime(row?.startFrom);
   },    },
     {
       title: "Ending To",
@@ -305,12 +303,8 @@ const JobOpening_Details = () => {
        render: (row) => {
     if (!row.endingTo) return "-";
 
-    const date = new Date(row.endingTo);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // months are 0-indexed
-    const year = date.getFullYear();
 
-    return `${day}/${month}/${year}`;
+    return formatDateTime(row?.endingTo);
   },  
 
     },

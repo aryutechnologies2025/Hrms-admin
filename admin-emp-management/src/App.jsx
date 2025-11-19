@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
-import { lazy } from "react";
+import { createContext, lazy } from "react";
 import Employees from "./pages/Employees";
 import CreateEmployee from "./pages/CreateEmployee";
 import EmployeeDetails from "./pages/EmployeeDetails";
@@ -116,6 +116,8 @@ import Task_details_client from "./components/taskList/Task_details_client";
 import AssetManagement_mainbar from "./pages/AssetManagement_mainbar";
 
 
+export const SettingsContext = createContext();
+
 function App() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -124,6 +126,18 @@ function App() {
 
     return userDetails ? true : false;
   });
+  const [dynamicDateFormat, setDynamicDateFormat] = useState("");
+  
+  const settingsApi = async () => {
+
+     const response = await axios.get(`${API_URL}/api/setting/view-setting`);
+     const dateFormat = response.data.data[0]?.date_format;
+     setDynamicDateFormat(dateFormat);
+     
+    }
+    useEffect(() => {
+      settingsApi();
+    },[]);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -935,9 +949,12 @@ function App() {
     },
   ];
 
+
+
   return (
     <>
       <BrowserRouter>
+      <SettingsContext.Provider value={{ dynamicDateFormat }}>
         <SessionChecker />
         <Routes>
 
@@ -946,6 +963,7 @@ function App() {
           ))}
 
         </Routes>
+        </SettingsContext.Provider>
       </BrowserRouter>
     </>
   );

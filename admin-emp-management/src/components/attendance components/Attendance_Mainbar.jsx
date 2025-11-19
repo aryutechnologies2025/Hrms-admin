@@ -26,6 +26,7 @@ import Loader from "../Loader";
 import { TiEdit } from "react-icons/ti";
 import { ToastContainer, toast } from "react-toastify";
 import { FaFileExport } from "react-icons/fa6";
+import { dateUtils } from "../../utils/dateUtils";
 
 const Attendance_Mainbar = () => {
   let navigate = useNavigate();
@@ -46,6 +47,8 @@ const Attendance_Mainbar = () => {
   const [absentlistIsOpen, setAbsentlistIsOpen] = useState(false);
   const [wfhlistIsOpen, setWfhlistIsOpen] = useState(false);
   const [tooltipData, setTooltipData] = useState(null);
+
+  const formatDateTime = dateUtils();
 
   function onClickMonthlyDetails() {
     navigate("/monthlyattendancedetails");
@@ -738,13 +741,7 @@ const Attendance_Mainbar = () => {
                   Present
                 </p>
                 <p className="text-gray-400 mt-2">
-                  {new Date(selectedDate)
-                    .toLocaleDateString("en-GB", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    })
-                    .replace(/\//g, "-")}
+                  {selectedDate ? formatDateTime(selectedDate) : ""}
                 </p>
                 <p className="text-2xl font-semibold text-blue-500  mt-2">
                   {attendanceData?.summary?.present}
@@ -764,13 +761,8 @@ const Attendance_Mainbar = () => {
                   Absent
                 </p>
                 <p className="text-gray-400 mt-2">
-                  {new Date(selectedDate)
-                    .toLocaleDateString("en-GB", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    })
-                    .replace(/\//g, "-")}
+                  {selectedDate ? formatDateTime(selectedDate) : ""}
+                 
                 </p>{" "}
                 <p className="text-2xl font-semibold text-blue-500 mt-2">
                   {attendanceData?.summary?.absent}
@@ -790,13 +782,7 @@ const Attendance_Mainbar = () => {
                   WFH
                 </p>
                 <p className="text-gray-400 mt-2">
-                  {new Date(selectedDate)
-                    .toLocaleDateString("en-GB", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    })
-                    .replace(/\//g, "-")}
+                 {selectedDate ? formatDateTime(selectedDate) : ""}
                 </p>{" "}
                 <p className="text-2xl font-semibold text-blue-500 mt-2">
                   {attendanceData?.summary?.wfh}

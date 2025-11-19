@@ -29,10 +29,13 @@ import "datatables.net-rowgroup-dt";
 // import "datatables.net-rowgroup";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
+import { dateUtils } from "../utils/dateUtils";
 
 
 const Expense_icome_details = () => {
   const navigate = useNavigate();
+
+  const formatDateTime = dateUtils();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -308,12 +311,8 @@ const Expense_icome_details = () => {
     {
       title: "Date",
       data: "date",
-      render: function (data) {
-        return new Date(data).toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        });
+      render: function (date) {
+        return formatDateTime(date);
       },
     },
     {
