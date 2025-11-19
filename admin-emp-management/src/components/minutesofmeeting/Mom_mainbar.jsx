@@ -429,7 +429,7 @@ const Mom_mainbar = () => {
   }, [formClient]);
 
   const columns = [
-    // { field: "sno", header: "S.NO" },
+    { field: "sno", header: "S.NO" },
     {
       field: "date",
       header: "Date",
@@ -561,7 +561,11 @@ const Mom_mainbar = () => {
                   key={index}
                   field={col.field}
                   header={col.header}
-                  body={col.body}
+                   body={
+                    col.field === "sno"
+                      ? (rowData, { rowIndex }) => rowIndex + 1
+                      : col.body
+                  }
                   style={{
                     minWidth: "150px",
                     wordWrap: "break-word",
