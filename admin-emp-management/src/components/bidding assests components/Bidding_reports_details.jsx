@@ -26,9 +26,11 @@ import { useNavigate } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
 import Loader from "../Loader";
 import { FaLink } from "react-icons/fa";
+import { dateUtils } from "../../utils/dateUtils";
 
 const Bidding_reports_details = () => {
   const navigate = useNavigate();
+  const formatDateTime = dateUtils();
 
   // const location = useLocation();
 
@@ -372,9 +374,7 @@ const Bidding_reports_details = () => {
                                 className="hover:bg-gray-50 transition-colors duration-150"
                               >
                                 <td className="border-b px-4 py-3">
-                                  {new Date(row.date).toLocaleDateString(
-                                    "en-GB"
-                                  )}
+                                  {formatDateTime(row?.date)}
                                 </td>
                                 <td className="border-b px-4 py-2">
                                   {row.client}

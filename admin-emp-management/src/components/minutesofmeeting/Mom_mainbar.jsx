@@ -17,10 +17,11 @@ import { API_URL } from "../../config";
 import Mobile_Sidebar from "../Mobile_Sidebar";
 import Footer from "../Footer";
 import { use } from "react";
+import { dateUtils } from "../../utils/dateUtils";
 
 const Mom_mainbar = () => {
   const navigate = useNavigate();
-
+  const formatDateTime = dateUtils();
   
   const storedDetails = localStorage.getItem("hrmsuser");
   const parsedDetails = storedDetails ? JSON.parse(storedDetails) : null;
@@ -435,8 +436,7 @@ const Mom_mainbar = () => {
       body: (row) => {
         const d = row?.date || row?.createdAt || "";
         if (!d) return "";
-        const iso = d.split("T")[0] || d;
-        return iso.split("-").reverse().join("-");
+        return formatDateTime(d);
       },
     },
     {

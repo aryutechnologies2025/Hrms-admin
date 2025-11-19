@@ -9,8 +9,11 @@ import axios from "axios";
 import { Dropdown } from "primereact/dropdown";
 import { FaFileExport } from "react-icons/fa6";
 import { capitalizeFirstLetter } from "../utils/StringCaps";
+import { dateUtils } from "../utils/dateUtils";
 
 function Reports_details() {
+  const formatDateTime = dateUtils();
+
   const navigate = useNavigate();
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   // console.log("selectedMonth", selectedMonth);
@@ -381,18 +384,7 @@ function Reports_details() {
 
                                                 {/* Date */}
                                                 <div className="text-sm font-semibold text-white px-4 py-1 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 shadow-md">
-                                                  {day.date
-                                                    ? new Date(
-                                                        day.date
-                                                      ).toLocaleDateString(
-                                                        "en-GB",
-                                                        {
-                                                          day: "2-digit",
-                                                          month: "2-digit",
-                                                          year: "numeric",
-                                                        }
-                                                      )
-                                                    : "-"}
+                                                  {day.date ? formatDateTime(day.date) : "-"}
                                                 </div>
 
                                                 {/* Attendance Info */}
@@ -536,13 +528,7 @@ function Reports_details() {
                                                   );
                                                   return isNaN(d)
                                                     ? "-"
-                                                    : `${d.toLocaleDateString(
-                                                        "en-IN",
-                                                        {
-                                                          timeZone:
-                                                            "Asia/Kolkata",
-                                                        }
-                                                      )} ${d.toLocaleTimeString(
+                                                    : `${formatDateTime(task?.startTime)} ${d.toLocaleTimeString(
                                                         "en-IN",
                                                         {
                                                           timeZone:
@@ -566,13 +552,7 @@ function Reports_details() {
                                                   );
                                                   return isNaN(d)
                                                     ? "-"
-                                                    : `${d.toLocaleDateString(
-                                                        "en-IN",
-                                                        {
-                                                          timeZone:
-                                                            "Asia/Kolkata",
-                                                        }
-                                                      )} ${d.toLocaleTimeString(
+                                                    : `${formatDateTime(task?.endTime)} ${d.toLocaleTimeString(
                                                         "en-IN",
                                                         {
                                                           timeZone:

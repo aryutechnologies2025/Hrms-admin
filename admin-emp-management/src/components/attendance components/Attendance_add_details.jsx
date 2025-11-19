@@ -27,9 +27,11 @@ import { IoIosArrowForward } from "react-icons/io";
 import Attendance_add_main from "./Attendance_add_main";
 import { IoClose } from "react-icons/io5";
 import Loader from "../Loader";
+import { dateUtils } from "../../utils/dateUtils";
 
 const Attendance_add_details = () => {
   const navigate = useNavigate();
+  const formatDateTime = dateUtils();
 
   // const location = useLocation();
 
@@ -307,13 +309,7 @@ const Attendance_add_details = () => {
       data: null,
       render: (row) => {
         if (!row.date) return "-";
-        return new Date(row.date)
-          .toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
-          .replace(/\//g, "-");
+        return formatDateTime(row.date)
       },
     },
     {

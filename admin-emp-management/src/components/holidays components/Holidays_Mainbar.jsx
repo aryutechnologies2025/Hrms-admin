@@ -16,8 +16,10 @@ import { toast } from "react-toastify";
 import { TfiPencilAlt } from "react-icons/tfi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { dateUtils } from "../../utils/dateUtils";
 
 const Holidays_Mainbar = () => {
+  const formatDateTime = dateUtils();
   const [holidaysList, setHolidaysList] = useState([]);
   const [holidayDate, setHolidayDate] = useState("");
   const [holidayReason, setHolidayReason] = useState("");
@@ -39,7 +41,7 @@ const Holidays_Mainbar = () => {
       field: "date",
       header: "Date",
       body: (rowData) =>
-        rowData.date.split("T")[0].split("-").reverse().join("-"),
+        formatDateTime(rowData?.date),
     },
     {
       field: "reason",

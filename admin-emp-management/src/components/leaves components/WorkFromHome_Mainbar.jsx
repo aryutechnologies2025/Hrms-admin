@@ -25,8 +25,10 @@ import Swal from "sweetalert2";
 
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import Loader from "../Loader";
+import { dateUtils } from "../../utils/dateUtils";
 
 const WorkFromHome_Mainbar = () => {
+  const formatDateTime = dateUtils();
   const [globalFilter, setGlobalFilter] = useState("");
   const [approvedRejectedList, setApprovedRejectedList] = useState([]);
   // console.log("approvedRejectedList", approvedRejectedList);
@@ -170,7 +172,8 @@ const WorkFromHome_Mainbar = () => {
       body: (rowData) => {
         return (
           <div>
-            {rowData.startDate.split("T")[0]} - {rowData.endDate.split("T")[0]}
+            {formatDateTime(rowData?.startDate)} -{" "}
+            {formatDateTime(rowData?.endDate)}
           </div>
         );
       },
@@ -199,12 +202,12 @@ const WorkFromHome_Mainbar = () => {
           .includes("new leave")
           ? "text-blue-600 border rounded-full border-blue-600"
           : rowData.status.toLowerCase().includes("approved")
-            ? "text-green-600 border rounded-full border-green-600"
-            : rowData.status.toLowerCase().includes("pending")
-              ? "text-yellow-600 border rounded-full border-yellow-600"
-              : rowData.status.toLowerCase().includes("new leave")
-                ? "text-blue-600 border rounded-full border-blue-600"
-                : "text-red-600 border rounded-full border-red-600";
+          ? "text-green-600 border rounded-full border-green-600"
+          : rowData.status.toLowerCase().includes("pending")
+          ? "text-yellow-600 border rounded-full border-yellow-600"
+          : rowData.status.toLowerCase().includes("new leave")
+          ? "text-blue-600 border rounded-full border-blue-600"
+          : "text-red-600 border rounded-full border-red-600";
         return (
           <div
             style={{
@@ -412,7 +415,6 @@ const WorkFromHome_Mainbar = () => {
                 </p>
 
                 <div className="flex items-center gap-5 mt-4 md:mt-8 ">
-                  
                   <button
                     onClick={openAddLeaveRequestModal}
                     className="ml-auto md:ml-0 w-fit cursor-pointer px-5 md:px-7 py-0.5 md:py-2 rounded-full  text-white bg-blue-500 hover:bg-blue-600 font-medium"
@@ -432,7 +434,9 @@ const WorkFromHome_Mainbar = () => {
                   <h2 className="text-lg font-semibold mb-4">Edit Details</h2>
                   <div className="flex flex-wrap md:flex-nowrap gap-1 md:gap-3">
                     <div className="mb-4 w-full">
-                      <label className="block mb-1 font-medium">Start Date</label>
+                      <label className="block mb-1 font-medium">
+                        Start Date
+                      </label>
                       <input
                         type="date"
                         className="w-full border-2 rounded-lg border-gray-300 px-2 py-2 md:px-3 md:py-2"
@@ -461,7 +465,9 @@ const WorkFromHome_Mainbar = () => {
                   </div>
 
                   <div className="mb-4">
-                    <label className="block mb-1 font-medium">Select Option</label>
+                    <label className="block mb-1 font-medium">
+                      Select Option
+                    </label>
                     <select
                       className="w-full border-2 rounded-lg border-gray-300  px-3 py-2"
                       value={dropdownValue}
@@ -560,8 +566,9 @@ const WorkFromHome_Mainbar = () => {
                 ></div>
 
                 <div
-                  className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[70vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
-                    }`}
+                  className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[70vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${
+                    isAnimating ? "translate-x-0" : "translate-x-full"
+                  }`}
                 >
                   <div
                     className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
@@ -581,10 +588,11 @@ const WorkFromHome_Mainbar = () => {
                         {/* Accordion Header */}
                         <div
                           onClick={() => toggleAccordion(index)}
-                          className={`${new Date(item.startDate) <= new Date()
+                          className={`${
+                            new Date(item.startDate) <= new Date()
                               ? "bg-red-100 text-red-600"
                               : ""
-                            } cursor-pointer bg-gray-100 flex flex-wrap justify-between items-center px-2 py-2 sm:px-4 sm:py-4 rounded-xl border-2 border-gray-200`}
+                          } cursor-pointer bg-gray-100 flex flex-wrap justify-between items-center px-2 py-2 sm:px-4 sm:py-4 rounded-xl border-2 border-gray-200`}
                         >
                           <div className="flex gap-4">
                             <div className="flex flex-col sm:flex-row gap-2">
@@ -602,21 +610,26 @@ const WorkFromHome_Mainbar = () => {
                           </div>
                           <div className="flex gap-3">
                             <div>
-                              {new Date(item.updatedAt).toLocaleString("en-IN", {
-                                timeZone: "Asia/Kolkata",
-                                weekday: "long",
-                                year: "numeric",
-                                month: "numeric",
-                                day: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                second: "2-digit",
-                                hour12: true,
-                              })}
+                              {formatDateTime(item?.updatedAt)}{"  "}
+                              {new Date(item.updatedAt).toLocaleString(
+                                "en-IN",
+                                {
+                                  timeZone: "Asia/Kolkata",
+                                  weekday: "long",
+                                  // year: "numeric",
+                                  // month: "numeric",
+                                  // day: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  second: "2-digit",
+                                  hour12: true,
+                                }
+                              )}
                             </div>
                             <svg
-                              className={`w-5 h-5 transition-transform ${expandedIndex === index ? "rotate-180" : ""
-                                }`}
+                              className={`w-5 h-5 transition-transform ${
+                                expandedIndex === index ? "rotate-180" : ""
+                              }`}
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -635,8 +648,9 @@ const WorkFromHome_Mainbar = () => {
                         {/* Accordion Content */}
                         {expandedIndex === index && (
                           <div
-                            className={`flex flex-col px-5 gap-3 mt-5 transition ease-out duration-1000 ${isVisible ? "opacity-100 " : "opacity-0 "
-                              }`}
+                            className={`flex flex-col px-5 gap-3 mt-5 transition ease-out duration-1000 ${
+                              isVisible ? "opacity-100 " : "opacity-0 "
+                            }`}
                           >
                             {/* Content here */}
                             <div className="flex flex-col lg:flex-row gap-1 justify-between">
@@ -671,7 +685,9 @@ const WorkFromHome_Mainbar = () => {
                               {/* </div> */}
                               <input
                                 type="text"
-                                value={item?.employeeId?.roleId?.departmentId?.name}
+                                value={
+                                  item?.employeeId?.roleId?.departmentId?.name
+                                }
                                 readOnly
                                 id="companyName"
                                 className="border-2 rounded-xl px-4 text-sm border-gray-300 outline-none h-10 w-full md:w-96"
@@ -759,7 +775,6 @@ const WorkFromHome_Mainbar = () => {
                                 <span>
                                   {item.settingWfh.wfh_leave - item.wfhCount}
                                 </span>
-
                               </div>
                             </div>
                             <div className="flex flex-col lg:flex-row gap-1 justify-between">
@@ -876,7 +891,9 @@ const WorkFromHome_Mainbar = () => {
                           </button> */}
 
                               <button
-                                onClick={() => handleReject("rejected", item._id)}
+                                onClick={() =>
+                                  handleReject("rejected", item._id)
+                                }
                                 className="px-8 py-2 text-sm rounded-full bg-red-500 font-bold text-white hover:bg-red-600 transition-all"
                               >
                                 Reject

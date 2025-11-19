@@ -13,6 +13,7 @@ import Loader from "../Loader.jsx";
 import Swal from "sweetalert2";
 import { ToastContainer, toast } from "react-toastify";
 import { IoIosLink } from "react-icons/io";
+import { dateUtils } from "../../utils/dateUtils.js";
 
 // import { formatDate } from "react-datepicker/dist/date_utils.js";
 // import { formatDate } from "../../dateformate.js";
@@ -20,6 +21,8 @@ import { IoIosLink } from "react-icons/io";
 const EmployeeDetails_Mainbar = () => {
   let navigate = useNavigate();
   const location = useLocation();
+   const formatDateTime = dateUtils();
+
 
   const employeeIds = window.location.pathname.split("/")[2];
   console.log("window.location.pathname", employeeIds);
@@ -357,10 +360,8 @@ const EmployeeDetails_Mainbar = () => {
                   <div className="flex justify-between mt-3">
                     <p className="text-sm ">Birthday</p>
                     <p className=" text-sm">
-                      {employee?.dateOfBirth
-                        ? new Date(employee?.dateOfBirth)
-                          .toLocaleDateString("en-IN")
-                          .replaceAll("/", "-")
+                      {employee?.dateOfBirth ?
+                        formatDateTime(employee?.dateOfBirth)
                         : ""}
                     </p>
                   </div>
@@ -492,9 +493,7 @@ const EmployeeDetails_Mainbar = () => {
                     <p className="text-sm ">PF Join Date.</p>
                     <p className="text-sm ">
                       {employee?.pfJoinDate
-                        ? new Date(employee.pfJoinDate).toLocaleDateString(
-                          "en-GB"
-                        )
+                        ? formatDateTime(employee.pfJoinDate)
                         : "N/A"}
                     </p>
                   </div>
@@ -503,9 +502,7 @@ const EmployeeDetails_Mainbar = () => {
                     <p className="text-sm ">PF Exp Date.</p>
                     <p className="text-sm ">
                       {employee?.pfExpDate
-                        ? new Date(employee.pfExpDate).toLocaleDateString(
-                          "en-GB"
-                        )
+                        ? formatDateTime(employee.pfExpDate)
                         : "N/A"}
                     </p>
                   </div>
@@ -849,7 +846,7 @@ const EmployeeDetails_Mainbar = () => {
               <div className="flex justify-between mt-3">
                 <p className="text-sm ">Last working date</p>
                 <p className=" text-sm">
-                  {employee?.last_working_date || "-"}{" "}
+                  {employee?.last_working_date ? formatDateTime(employee?.last_working_date): "-"}{" "}
                 </p>
               </div>
               <hr className="my-3" />
@@ -891,9 +888,7 @@ const EmployeeDetails_Mainbar = () => {
                   {/* {employee?.relivingDate || "-"} */}
 
                   {employee?.relivingDate
-                    ? new Date(employee.relivingDate).toLocaleDateString(
-                      "en-GB"
-                    )
+                    ? formatDateTime(employee.relivingDate)
                     : "-"}
                 </p>
               </div>

@@ -27,10 +27,12 @@ import { Chart } from "chart.js/auto";
 import "datatables.net-rowgroup-dt";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
-
+import { dateUtils } from "../utils/dateUtils";
 
 
 const Income_details = () => {
+  const formatDateTime = dateUtils();
+
   const navigate = useNavigate();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -303,11 +305,7 @@ const Income_details = () => {
       title: "Date",
       data: "date",
       render: function (data) {
-        return new Date(data).toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        });
+        return formatDateTime(data)
       },
     },
     {

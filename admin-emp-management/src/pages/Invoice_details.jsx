@@ -26,9 +26,11 @@ import { useNavigate } from "react-router-dom";
 import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { use } from "react";
+import { dateUtils } from "../utils/dateUtils";
 
 const Invoice_details = () => {
   const navigate = useNavigate();
+  const formatDateTime = dateUtils();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -201,11 +203,7 @@ const Invoice_details = () => {
       title: "Invoice Date",
       data: "invoice_date",
       render: function (data) {
-        return new Date(data).toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        });
+        return formatDateTime(data);
       },
     },
 

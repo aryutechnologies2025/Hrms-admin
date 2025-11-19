@@ -30,14 +30,15 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import Loader from "../Loader";
 import { FiDownload, FiPrinter } from "react-icons/fi";
+import { dateUtils } from "../../utils/dateUtils";
 
 const Releiving_Mainbar = () => {
   const navigate = useNavigate();
-
+  const formatDateTime = dateUtils();
   // const location = useLocation();
 
   const employeeIds = window.location.pathname.split("/")[2];
-  console.log("window.location.pathname", employeeIds);
+  // console.log("window.location.pathname", employeeIds);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -48,7 +49,6 @@ const Releiving_Mainbar = () => {
 
   // console.log("EmpolyeeId",EmpolyeeId);
 
-  console.log("alldatarow", alldatarow);
 
   const openAddModal = (row) => {
     setAlldatarow(row);
@@ -235,16 +235,16 @@ const Releiving_Mainbar = () => {
       data: "resignationEmailDate",
       render: (data) => {
         if (!data) return "-";
-        return new Date(data).toLocaleDateString("en-GB").replace(/\//g, "-");
+        return formatDateTime(data);
       },
     },
 
     {
       title: "Notice period",
       data: "noticePeriod",
-      render: (data) => {
-        return data || "-";
-      },
+      // render: (data) => {
+      //   return data || "-";
+      // },
     },
 
     {
@@ -252,7 +252,7 @@ const Releiving_Mainbar = () => {
       data: "lastDate",
       render: (data) => {
         if (!data) return "-";
-        return new Date(data).toLocaleDateString("en-GB").replace(/\//g, "-");
+        return formatDateTime(data);
       },
     },
 
@@ -891,11 +891,7 @@ const Releiving_Mainbar = () => {
                     type="text"
                     // value={alldatarow?.dateOfBirth}
                     value={
-                      alldatarow?.dateOfBirth
-                        ? new Date(alldatarow.dateOfBirth).toLocaleDateString(
-                            "en-GB"
-                          )
-                        : "-"
+                      formatDateTime(alldatarow?.dateOfBirth)
                     }
                     disabled
                     className="w-[50%] px-3 py-2 border border-gray-300 bg-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -909,11 +905,7 @@ const Releiving_Mainbar = () => {
                   <input
                     type="text"
                     value={
-                      alldatarow?.lastDate
-                        ? new Date(alldatarow.lastDate).toLocaleDateString(
-                            "en-GB"
-                          )
-                        : "-"
+                      formatDateTime(alldatarow?.lastDate)
                     }
                     disabled
                     className="w-[50%] px-3 py-2 border border-gray-300 bg-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"

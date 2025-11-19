@@ -20,9 +20,12 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 import { FaEye } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { dateUtils } from "../../utils/dateUtils";
 
 
 const Leaves_Mainbar = () => {
+  const formatDateTime = dateUtils();
+
   const [globalFilter, setGlobalFilter] = useState("");
   const [approvedRejectedList, setApprovedRejectedList] = useState([]);
   console.log("approvedRejectedList", approvedRejectedList);
@@ -184,16 +187,11 @@ const Leaves_Mainbar = () => {
       field: "period",
       header: "Period",
       body: (rowData) => {
-        const format = (d) =>
-          new Date(d).toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "numeric",
-            year: "numeric",
-          });
+       
 
         return (
           <div>
-            {format(rowData.startDate)} - {format(rowData.endDate)}
+            {formatDateTime(rowData.startDate)} - {formatDateTime(rowData.endDate)}
           </div>
         );
       },
@@ -990,17 +988,19 @@ const Leaves_Mainbar = () => {
 
                           <div className="flex gap-3">
                             <div>
+                              {formatDateTime(item?.updatedAt)}{"  "}
                               {new Date(item.updatedAt).toLocaleString("en-IN", {
                                 timeZone: "Asia/Kolkata",
                                 weekday: "long",
-                                year: "numeric",
-                                month: "numeric",
-                                day: "numeric",
+                                // year: "numeric",
+                                // month: "numeric",
+                                // day: "numeric",
                                 hour: "2-digit",
                                 minute: "2-digit",
                                 second: "2-digit",
                                 hour12: true,
                               })}
+                              
                             </div>
 
                             <svg
@@ -1161,14 +1161,14 @@ const Leaves_Mainbar = () => {
                                   <input
                                     type="text"
                                     id="startWork"
-                                    value={item.startDate.split("T")[0]}
+                                    value={formatDateTime(item.startDate)}
                                     readOnly
                                     className="border-2 w-[50%] text-sm rounded-xl px-4 border-gray-300 outline-none"
                                   />
                                   <input
                                     type="text"
                                     id="endWork"
-                                    value={item.endDate.split("T")[0]}
+                                    value={formatDateTime(item.endDate.split("T")[0])}
                                     readOnly
                                     className="border-2 w-[50%] text-sm rounded-xl px-4 border-gray-300 outline-none"
                                   />
@@ -1271,7 +1271,7 @@ const Leaves_Mainbar = () => {
                                     <input
                                       type="text"
                                       id="startWork"
-                                      value={data.date.split("T")[0]}
+                                      value={formatDateTime(data.date)}
                                       readOnly
                                       className="border-2 w-36   text-sm rounded-xl px-4 border-gray-300 outline-none"
                                     />

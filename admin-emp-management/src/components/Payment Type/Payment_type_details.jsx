@@ -30,9 +30,11 @@ import { IoMdAdd } from "react-icons/io";
 import { MdCancel } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
 import loader from "../Loader"
+import { dateUtils } from "../../utils/dateUtils";
 
 const Payment_type_details = () => {
   const navigate = useNavigate();
+  const formatDateTime = dateUtils();
 
   // const location = useLocation();
 
@@ -1114,7 +1116,7 @@ const Payment_type_details = () => {
                       >
                         {/* Show Payment 1, Payment 2, ... */}
                         <span className="font-medium">
-                          Payment {index + 1} – {p.date}
+                          Payment {index + 1} – {formatDateTime(p.date)}
                         </span>
 
                         <span className="font-semibold">
