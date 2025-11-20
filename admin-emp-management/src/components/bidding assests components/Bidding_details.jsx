@@ -29,7 +29,7 @@ import { VscTasklist } from "react-icons/vsc";
 import { FaTasks } from "react-icons/fa";
 import { GoProjectSymlink } from "react-icons/go";
 import { LuLink } from "react-icons/lu";
-import { dateUtils } from "../../utils/dateUtils";
+import { useDateUtils  } from "../../hooks/useDateUtils";
 
 
 
@@ -40,7 +40,7 @@ const Bidding_details = () => {
   // const ids = window.location.pathname.split("/")[2]
   // console.log("rowdeatsils",ids);
   const navigate = useNavigate();
-  const formatDateTime = dateUtils();
+  const formatDateTime = useDateUtils();
 
   // const [ids, setIds] = useState([]);
   //   console.log("ids",ids);

@@ -26,11 +26,11 @@ import { useNavigate } from "react-router-dom";
 import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { use } from "react";
-import { dateUtils } from "../utils/dateUtils";
+import { useDateUtils  } from "../hooks/useDateUtils";
 
 const Invoice_details = () => {
   const navigate = useNavigate();
-  const formatDateTime = dateUtils();
+  const formatDateTime = useDateUtils();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);

@@ -29,13 +29,13 @@ import "datatables.net-rowgroup-dt";
 // import "datatables.net-rowgroup";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
-import { dateUtils } from "../utils/dateUtils";
+import { useDateUtils  } from "../hooks/useDateUtils";
 
 
 const Expense_icome_details = () => {
   const navigate = useNavigate();
 
-  const formatDateTime = dateUtils();
+  const formatDateTime = useDateUtils();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);

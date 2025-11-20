@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import DataTable from "datatables.net-react";
 import DT from "datatables.net-dt";
@@ -14,9 +14,11 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import Loader from "../components/Loader";
+import { SettingsContext } from "../App";
 // import { toast } from "react-toastify";
 
 const Settings_details = () => {
+   const {setDynamicDateFormat} = useContext(SettingsContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -70,11 +72,15 @@ const Settings_details = () => {
         setPayrollErf(response.data.data[0]?.payroll_erpf_percent);
         setCasualLeave(response.data.data[0]?.casual_leave);
         setDateFormat(response.data.data[0]?.date_format);
+        
         setCompensatoryLeave(response.data.data[0]?.complementary_leave);
         setUnhappyLeave(response.data.data[0]?.unhappy_leave);
         setPermission(response.data.data[0]?.permission);
         setUnhappyLeaveOption(response.data.data[0]?.unhappy_leave_option);
         setWfh(response.data.data[0]?.wfh_leave);
+
+      // dynamic update date format in context
+   
         setLoading(false);
       } else {
         setErrors("Failed to fetch roles.");

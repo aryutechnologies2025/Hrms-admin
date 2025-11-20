@@ -25,10 +25,10 @@ import Swal from "sweetalert2";
 
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import Loader from "../Loader";
-import { dateUtils } from "../../utils/dateUtils";
+import { useDateUtils  } from "../../hooks/useDateUtils";
 
 const WorkFromHome_Mainbar = () => {
-  const formatDateTime = dateUtils();
+  const formatDateTime = useDateUtils();
   const [globalFilter, setGlobalFilter] = useState("");
   const [approvedRejectedList, setApprovedRejectedList] = useState([]);
   // console.log("approvedRejectedList", approvedRejectedList);

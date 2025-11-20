@@ -9,7 +9,7 @@ const TaskListPage = () => {
       <div className="bg-gray-100 md:bg-white">
         <Sidebar />
       </div>
-    <TaskList className/>
+    <TaskList />
     </div>
   )
 }

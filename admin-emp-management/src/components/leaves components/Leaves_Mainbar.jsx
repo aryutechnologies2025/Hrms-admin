@@ -20,11 +20,11 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 import { FaEye } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { dateUtils } from "../../utils/dateUtils";
+import { useDateUtils  } from "../../hooks/useDateUtils";
 
 
 const Leaves_Mainbar = () => {
-  const formatDateTime = dateUtils();
+  const formatDateTime = useDateUtils();
 
   const [globalFilter, setGlobalFilter] = useState("");
   const [approvedRejectedList, setApprovedRejectedList] = useState([]);

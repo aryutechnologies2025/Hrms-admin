@@ -16,12 +16,12 @@ import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { FaFileExport } from "react-icons/fa6";
 import Loader from "../Loader";
-import { dateUtils } from "../../utils/dateUtils";
+import { useDateUtils  } from "../../hooks/useDateUtils";
 
 
 const MonthlyAttendanceDetails_Mainbar = () => {
   let navigate = useNavigate();
-  const formatDateTime = dateUtils();
+  const formatDateTime = useDateUtils();
   
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [globalFilter, setGlobalFilter] = useState("");

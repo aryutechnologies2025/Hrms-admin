@@ -27,11 +27,11 @@ import { IoIosArrowForward } from "react-icons/io";
 import Attendance_add_main from "./Attendance_add_main";
 import { IoClose } from "react-icons/io5";
 import Loader from "../Loader";
-import { dateUtils } from "../../utils/dateUtils";
+import { useDateUtils  } from "../../hooks/useDateUtils";
 
 const Attendance_add_details = () => {
   const navigate = useNavigate();
-  const formatDateTime = dateUtils();
+  const formatDateTime = useDateUtils();
 
   // const location = useLocation();
 
