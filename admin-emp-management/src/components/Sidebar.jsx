@@ -340,6 +340,7 @@ const Sidebar = () => {
                             "/departments",
                             "/joining-list",
                             "/releiving-letter",
+                            "/relieved-list",
                             "/Declaration-deatils",
                             "/letters-form",
                           ].includes(currentPath)
@@ -378,7 +379,7 @@ const Sidebar = () => {
                                 : "hover:bg-blue-100 text-gray-500"
                               }`}
                           >
-                            Add Employee
+                          Employees
                           </button>
 
                           <button
@@ -401,6 +402,18 @@ const Sidebar = () => {
                               }`}
                           >
                             Relieving List
+                          </button>
+
+
+                           <button
+                            onClick={() => navigate("/relieved-list")}
+                            className={`px-2 py-1 rounded-full 
+                        ${currentPath === "/relieved-list"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
+                          >
+                            Relieved List
                           </button>
 
                           <button
