@@ -213,6 +213,18 @@ const EmployeeDetails_Mainbar = () => {
         >
           Edit
         </button>
+        <button
+          onClick={() =>
+            navigate("/employees", {
+              state: {
+                employee_id: employee._id, // Pass the employee ID here
+              },
+            })
+          }
+          className="text-sm bg-gray-200 hover:bg-gray-300 px-5 py-2 mt-2 md:mt-0 rounded-3xl"
+        >
+          Back
+        </button>
       </div>
 
       {loading ? (

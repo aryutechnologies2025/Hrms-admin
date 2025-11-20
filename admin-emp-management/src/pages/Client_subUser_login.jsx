@@ -118,10 +118,10 @@ const inactiveClass = "hover:underline";
    <div className="min-h-screen bg-[#F3F4F6] flex flex-col">
 
   {/* Top Navigation */}
-  <div className="flex justify-end gap-6 px-8 py-4 text-lg font-semibold text-[#0050AA]">
+  <div className="flex justify-center md:justify-end gap-3 md:gap-6 px-1 md:px-5 md:pt-2 text-sm md:text-lg font-semibold text-[#0050AA]">
     {/* <Link to="/" className="hover:underline">Admin Login</Link>
     <Link to="/client" className="hover:underline">Client Login</Link> */}
-     <nav className="flex gap-4">
+     <nav className="flex text-center gap-2 md:gap-4 p-2">
           <NavLink
             to="/"
             className={({ isActive }) =>
@@ -152,23 +152,24 @@ const inactiveClass = "hover:underline";
   </div>
 
   {/* Logo */}
-  <div className="flex justify-center mt-4">
+  <div className="flex justify-center p-2">
     <img src={aryu_logo} alt="Logo" className="w-20" />
   </div>
+  <p className='text-center text-lg md:text-xl font-semibold text-[#0050AA]'>ARYU PORTAL</p>
 
   {/* Main Content */}
-  <div className="flex flex-1 items-center justify-center px-4">
+  <div className="flex md:flex-1 items-center justify-center px-4">
     <div className="flex w-full max-w-6xl bg-white shadow-xl rounded-3xl overflow-hidden">
 
       {/* Left Section (Form) */}
-      <div className="flex-1 flex flex-col items-center justify-center p-10">
-        <h1 className="text-[#0050aa] font-bold text-3xl md:text-4xl mb-6">
-          HRMS CLIENT USER 
+      <div className="flex-1 flex flex-col items-center justify-center p-5 md:p-10">
+        <h1 className="text-[#0050aa] font-bold text-xl md:text-4xl mb-2 md:mb-6">
+          ARYU CLIENT USER 
         </h1>
 
         {/* Username Field */}
-        <div className="w-full max-w-sm flex items-center gap-3 bg-[#F8F9FB] px-5 py-4 rounded-xl shadow-sm border border-gray-200">
-          <LuUser className="text-2xl text-gray-500" />
+        <div className="relative w-full max-w-sm flex items-center gap-3 bg-[#F8F9FB] px-3 md:px-5 py-2 md:py-4 md:mt-3 rounded-xl shadow-sm border border-gray-200">
+          <LuUser className="text-2xl text-gray-500" size={20} />
           <input
             type="text"
             placeholder="Username"
@@ -184,8 +185,8 @@ const inactiveClass = "hover:underline";
         )}
 
         {/* Password Field */}
-        <div className="relative w-full max-w-sm flex items-center gap-3 bg-[#F8F9FB] px-5 py-4 mt-4 rounded-xl shadow-sm border border-gray-200">
-          <SlLock className="text-2xl text-gray-500" />
+        <div className="relative w-full max-w-sm flex items-center gap-3 bg-[#F8F9FB] px-3 md:px-5 py-2 md:py-4 mt-3 rounded-xl shadow-sm border border-gray-200">
+          <SlLock className="text-2xl text-gray-500" size={20} />
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Password"
@@ -214,7 +215,7 @@ const inactiveClass = "hover:underline";
         {/* Login Button */}
         <button
           onClick={onCLickLogin}
-          className="mt-6 bg-gradient-to-r from-[#004faac3] to-[#0050aa] px-10 py-3 rounded-full text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+          className="mt-3 bg-gradient-to-r from-[#004faac3] to-[#0050aa] px-10 py-3 rounded-full text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
         >
           Login Now
         </button>

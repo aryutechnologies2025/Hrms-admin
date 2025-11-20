@@ -117,10 +117,10 @@ const inactiveClass = "hover:underline";
    <div className="min-h-screen bg-[#F3F4F6] flex flex-col">
 
   {/* Top Navigation */}
-  <div className="flex justify-end gap-6 px-5 md:pt-2 text-lg font-semibold text-[#0050AA]"> 
+  <div className="flex justify-center md:justify-end gap-3 md:gap-6 px-1 md:px-5 md:pt-2 text-sm md:text-lg font-semibold text-[#0050AA]"> 
     {/* <Link to="/client" className="hover:underline">Client Login</Link> */}
     {/* <Link to="/client-user" className="hover:underline">Client User Login</Link> */}
-     <nav className="flex gap-4">
+     <nav className="flex text-center gap-2 md:gap-4 p-2">
           <NavLink
             to="/"
             className={({ isActive }) =>
@@ -161,7 +161,7 @@ const inactiveClass = "hover:underline";
 
 
   {/* Main Content */}
-  <div className="flex flex-1 items-center justify-center px-4">
+  <div className="flex md:flex-1 items-center justify-center px-4">
     <div className="flex w-full max-w-6xl bg-white shadow-xl rounded-3xl overflow-hidden">
 
       {/* Left Section (Form) */}

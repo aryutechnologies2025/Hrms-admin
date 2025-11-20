@@ -329,7 +329,7 @@ const Departments_Mainbar = () => {
         <div>
         <Mobile_Sidebar />
 
-        <div className="flex gap-2 items-center cursor-pointer mt-2">
+        <div className="flex gap-2 items-center cursor-pointer md:mt-2">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
@@ -342,13 +342,13 @@ const Departments_Mainbar = () => {
         </div>
 
         {/* Add Button */}
-        <div className="flex justify-between mt-6 mb-4">
+        <div className="flex justify-between mt-1 md:mt-6 md:mb-4">
           <div className="">
-            <h1 className="text-3xl  font-semibold">Departments</h1>
+            <h1 className="text-2xl md:text-3xl font-semibold">Departments</h1>
           </div>
           <button
             onClick={openAddModal}
-            className=" px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
+            className=" px-1 md:px-3 py-1 md:py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
           >
             Add
           </button>

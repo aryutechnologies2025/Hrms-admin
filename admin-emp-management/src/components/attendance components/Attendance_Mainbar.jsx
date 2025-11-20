@@ -590,7 +590,7 @@ const Attendance_Mainbar = () => {
   }, []);
 
   return (
-    <div className="flex flex-col justify-between overflow-x-hidden bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-5">
+    <div className="flex flex-col justify-between overflow-x-hidden bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-1 md:pt-5">
       {loading ? (
         <Loader />
       ) : (
@@ -611,7 +611,7 @@ const Attendance_Mainbar = () => {
                 <p className="text-sm text-blue-500">Attendance</p>
               </div>
 
-              <div className="font-medium text-md  lg:text-left mt-2 md:mt-5 w-full md:w-fit text-right bg-white px-3 py-1 md:px-4 md:py-2 rounded-full">
+              {/* <div className="font-medium text-md  lg:text-left mt-2 md:mt-5 w-full md:w-fit text-right bg-white px-3 py-1 md:px-4 md:py-2 rounded-full">
                 
                 <span>{day}, </span>
                 <span>{date} </span>
@@ -619,19 +619,19 @@ const Attendance_Mainbar = () => {
                 <span className="inline-block  text-center">
                   {hours}:{minutes}:{seconds} {amPm}
                 </span>
-              </div>
+              </div> */}
             </div>
 
             {/* Heading */}
-            <section className="flex flex-wrap md:flex-row justify-between items-center mt-3 md:mt-8 ">
-              <div className="flex flex-wrap md:flex-nowrap gap-2 md:gap-5">
-                <p className="text-2xl md:text-3xl font-semibold  ">
+            <section className="flex flex-wrap md:flex-row justify-between items-center mt-1 md:mt-8 ">
+              <div className="flex flex-wrap md:flex-nowrap gap-1 md:gap-5">
+                <p className="text-xl md:text-3xl font-semibold  ">
                   Attendance
                 </p>
                 <input
                   type="date"
                   value={selectedDate}
-                  className="px-3 py-2 rounded-md shadow-sm cursor-pointer "
+                  className="px-1 py-1 md:px-3 md:py-2 rounded-md shadow-sm cursor-pointer "
                   onChange={(e) => {
                     getAttendanceData(e.target.value);
                     setSelectedDate(e.target.value);
@@ -796,16 +796,16 @@ const Attendance_Mainbar = () => {
             >
               {/* Global Search Input */}
 
-              <div className="flex flex-wrap gap-4 items-center mt-6 justify-between ">
+              <div className="flex flex-wrap gap-1 md:gap-4 items-center mt-2 md:mt-6 justify-between ">
                 <InputText
                   value={globalFilter}
                   onChange={(e) => setGlobalFilter(e.target.value)}
                   placeholder="Search"
-                  className="px-2 py-2 rounded-md"
+                  className="w-[50%] px-2 py-2 rounded-md"
                 />
                 <button
                   onClick={exportToCSV}
-                  className=" flex flex-wrap bg-blue-500 hover:bg-blue-600 text-white font-semibold px-2 py-1 md:py-2 md:px-4 rounded-md items-center gap-2"
+                  className=" flex flex-wrap bg-blue-500 hover:bg-blue-600 text-white font-semibold px-2 py-2 md:py-2 md:px-4 rounded-md items-center gap-2"
                 >
                   Export CSV
                   <FaFileExport />
