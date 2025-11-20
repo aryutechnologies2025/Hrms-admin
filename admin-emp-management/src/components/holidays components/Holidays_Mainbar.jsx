@@ -16,10 +16,10 @@ import { toast } from "react-toastify";
 import { TfiPencilAlt } from "react-icons/tfi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { dateUtils } from "../../utils/dateUtils";
+import { useDateUtils  } from "../../hooks/useDateUtils";
 
 const Holidays_Mainbar = () => {
-  const formatDateTime = dateUtils();
+  const formatDateTime = useDateUtils();
   const [holidaysList, setHolidaysList] = useState([]);
   const [holidayDate, setHolidayDate] = useState("");
   const [holidayReason, setHolidayReason] = useState("");

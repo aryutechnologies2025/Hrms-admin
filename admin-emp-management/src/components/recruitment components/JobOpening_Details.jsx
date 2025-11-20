@@ -16,9 +16,9 @@ import { toast } from "react-toastify";
 import { IoIosArrowForward, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import Loader from "../Loader";
 import { Dropdown } from "primereact/dropdown";
-import { dateUtils } from "../../utils/dateUtils";
+import { useDateUtils  } from "../../hooks/useDateUtils";
 const JobOpening_Details = () => {
-  const formatDateTime = dateUtils();
+  const formatDateTime = useDateUtils();
   const navigate = useNavigate();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);

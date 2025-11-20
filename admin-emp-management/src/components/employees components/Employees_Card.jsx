@@ -18,12 +18,12 @@ import Loader from "../Loader";
 import { FaEye } from "react-icons/fa";
 import { TfiPencilAlt } from "react-icons/tfi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
-import { dateUtils } from "../../utils/dateUtils";
+import { useDateUtils  } from "../../hooks/useDateUtils";
 
 const Employees_Card = () => {
   let navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const formatDateTime = dateUtils();
+  const formatDateTime = useDateUtils();
 
   const [currentTime, setCurrentTime] = useState(new Date());
 

@@ -30,11 +30,11 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import Loader from "../Loader";
 import { FiDownload, FiPrinter } from "react-icons/fi";
-import { dateUtils } from "../../utils/dateUtils";
+import { useDateUtils  } from "../../hooks/useDateUtils";
 
 const Releiving_Mainbar = () => {
   const navigate = useNavigate();
-  const formatDateTime = dateUtils();
+  const formatDateTime = useDateUtils();
   // const location = useLocation();
 
   const employeeIds = window.location.pathname.split("/")[2];

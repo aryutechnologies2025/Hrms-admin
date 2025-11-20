@@ -27,11 +27,11 @@ import { Chart } from "chart.js/auto";
 import "datatables.net-rowgroup-dt";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
-import { dateUtils } from "../utils/dateUtils";
+import { useDateUtils  } from "../hooks/useDateUtils";
 
 
 const Income_details = () => {
-  const formatDateTime = dateUtils();
+  const formatDateTime = useDateUtils();
 
   const navigate = useNavigate();
 

@@ -8,13 +8,13 @@
  * @returns {string} Formatted date-time string.
  */
 
-import { useContext } from "react";
+import { useCallback, useContext } from "react";
 import { SettingsContext } from "../App";
 
-export const dateUtils = () => {
+export const useDateUtils  = () => {
   const { dynamicDateFormat } = useContext(SettingsContext);
 
-  const formatDateTime = (
+  const formatDateTime = useCallback((
     date,
     { includeTime = false, includeSeconds = false, timeOnly = false } = {}
   ) => {
@@ -98,7 +98,7 @@ export const dateUtils = () => {
       // Date only
       return formatPattern(format.dateFormat, date);
     }
-  };
+  }, [dynamicDateFormat] );
 
   return formatDateTime;
 };

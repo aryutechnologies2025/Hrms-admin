@@ -17,11 +17,11 @@ import { API_URL } from "../../config";
 import Mobile_Sidebar from "../Mobile_Sidebar";
 import Footer from "../Footer";
 import { use } from "react";
-import { dateUtils } from "../../utils/dateUtils";
+import { useDateUtils  } from "../../hooks/useDateUtils";
 
 const Mom_mainbar = () => {
   const navigate = useNavigate();
-  const formatDateTime = dateUtils();
+  const formatDateTime = useDateUtils();
   
   const storedDetails = localStorage.getItem("hrmsuser");
   const parsedDetails = storedDetails ? JSON.parse(storedDetails) : null;

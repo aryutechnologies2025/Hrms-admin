@@ -898,6 +898,7 @@ import {
   FaLock,
   FaSpinner,
 } from "react-icons/fa6";
+import { useDateUtils  } from "../../hooks/useDateUtils";
 
 // const initialData = {
 //   columns: {
@@ -926,6 +927,7 @@ import {
 // };
 
 const TaskList = () => {
+  const formatDateTime = useDateUtils();
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
   const [buttonLoading, setButtonLoading] = useState(false);
@@ -2228,7 +2230,8 @@ const TaskList = () => {
                                             <span className="text-xs flex gap-2 items-center">
                                               #{item.taskId}
                                               <span className="text-xs">
-                                                ({item.createdAt.split("T")[0]})
+                                      ({formatDateTime(item?.createdAt)})
+                                              
                                               </span>
                                             </span>
                                             <div

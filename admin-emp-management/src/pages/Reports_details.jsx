@@ -9,10 +9,10 @@ import axios from "axios";
 import { Dropdown } from "primereact/dropdown";
 import { FaFileExport } from "react-icons/fa6";
 import { capitalizeFirstLetter } from "../utils/StringCaps";
-import { dateUtils } from "../utils/dateUtils";
+import { useDateUtils  } from "../hooks/useDateUtils";
 
 function Reports_details() {
-  const formatDateTime = dateUtils();
+  const formatDateTime = useDateUtils();
 
   const navigate = useNavigate();
   const [selectedMonth, setSelectedMonth] = useState(new Date());

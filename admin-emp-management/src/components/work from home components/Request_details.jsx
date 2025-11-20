@@ -24,10 +24,10 @@ import { TfiPencilAlt } from "react-icons/tfi";
 import Swal from "sweetalert2";
 
 import { MdOutlineDeleteOutline } from "react-icons/md";
-import { dateUtils } from "../../utils/dateUtils";
+import { useDateUtils  } from "../../hooks/useDateUtils";
 
 const Request_details = () => {
-  const formatDateTime = dateUtils();
+  const formatDateTime = useDateUtils();
   const [globalFilter, setGlobalFilter] = useState("");
   const [approvedRejectedList, setApprovedRejectedList] = useState([]);
   // console.log("approvedRejectedList",approvedRejectedList)

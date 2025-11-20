@@ -26,7 +26,7 @@ import Loader from "../Loader";
 import { TiEdit } from "react-icons/ti";
 import { ToastContainer, toast } from "react-toastify";
 import { FaFileExport } from "react-icons/fa6";
-import { dateUtils } from "../../utils/dateUtils";
+import { useDateUtils  } from "../../hooks/useDateUtils";
 
 const Attendance_Mainbar = () => {
   let navigate = useNavigate();
@@ -48,7 +48,7 @@ const Attendance_Mainbar = () => {
   const [wfhlistIsOpen, setWfhlistIsOpen] = useState(false);
   const [tooltipData, setTooltipData] = useState(null);
 
-  const formatDateTime = dateUtils();
+  const formatDateTime = useDateUtils();
 
   function onClickMonthlyDetails() {
     navigate("/monthlyattendancedetails");

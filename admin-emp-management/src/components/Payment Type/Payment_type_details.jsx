@@ -30,11 +30,11 @@ import { IoMdAdd } from "react-icons/io";
 import { MdCancel } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
 import loader from "../Loader"
-import { dateUtils } from "../../utils/dateUtils";
+import { useDateUtils  } from "../../hooks/useDateUtils";
 
 const Payment_type_details = () => {
   const navigate = useNavigate();
-  const formatDateTime = dateUtils();
+  const formatDateTime = useDateUtils();
 
   // const location = useLocation();
 

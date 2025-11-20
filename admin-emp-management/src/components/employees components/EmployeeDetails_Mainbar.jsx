@@ -13,7 +13,7 @@ import Loader from "../Loader.jsx";
 import Swal from "sweetalert2";
 import { ToastContainer, toast } from "react-toastify";
 import { IoIosLink } from "react-icons/io";
-import { dateUtils } from "../../utils/dateUtils.js";
+import { useDateUtils  } from "../../hooks/useDateUtils.js";
 
 // import { formatDate } from "react-datepicker/dist/date_utils.js";
 // import { formatDate } from "../../dateformate.js";
@@ -21,7 +21,7 @@ import { dateUtils } from "../../utils/dateUtils.js";
 const EmployeeDetails_Mainbar = () => {
   let navigate = useNavigate();
   const location = useLocation();
-   const formatDateTime = dateUtils();
+   const formatDateTime = useDateUtils();
 
 
   const employeeIds = window.location.pathname.split("/")[2];

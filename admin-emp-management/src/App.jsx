@@ -153,7 +153,8 @@ function App() {
     };
   }, []);
 
-  const user = JSON.parse(localStorage.getItem("hrmsuser"));
+const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
+
 
 
   const fetchPermissionModule = async () => {
@@ -965,7 +966,7 @@ function App() {
   return (
     <>
       <BrowserRouter>
-      <SettingsContext.Provider value={{ dynamicDateFormat }}>
+      <SettingsContext.Provider value={{ dynamicDateFormat,setDynamicDateFormat }}>
         <SessionChecker />
         <Routes>
 

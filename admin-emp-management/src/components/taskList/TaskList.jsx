@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Editor } from "primereact/editor";
 import { FileUpload } from "primereact/fileupload";
@@ -32,7 +32,8 @@ import {
   FaLock,
   FaSpinner,
 } from "react-icons/fa6";
-import { dateUtils } from "../../utils/dateUtils";
+import { useDateUtils  } from "../../hooks/useDateUtils";
+import { SettingsContext } from "../../App";
 
 // const initialData = {
 //   columns: {
@@ -61,7 +62,10 @@ import { dateUtils } from "../../utils/dateUtils";
 // };
 
 const TaskList = () => {
-  const formatDateTime = dateUtils();
+  const { dynamicDateFormat } = useContext(SettingsContext);
+console.log("Current date format:", dynamicDateFormat);
+
+  const formatDateTime = useDateUtils();
 
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
