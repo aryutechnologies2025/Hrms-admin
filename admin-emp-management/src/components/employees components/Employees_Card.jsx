@@ -340,7 +340,7 @@ const Employees_Card = () => {
   // console.log(location.state.employee);
 
   return (
-    <div className="flex flex-col justify-between bg-gray-100 w-full min-h-screen px-3 md:px-5 pt-2 md:pt-10 overflow-x-auto">
+    <div className="flex flex-col justify-between bg-gray-100 w-full min-h-screen px-3 md:px-5 pt-1 md:pt-10 overflow-x-auto">
       {loading ? (
         <Loader />
       ) : (
@@ -349,7 +349,8 @@ const Employees_Card = () => {
             <Mobile_Sidebar />
 
             {/* header */}
-            <div className="flex justify-between items-center bg-white ps-2 pe-4 py-2 mt-5  rounded-2xl">
+            {/* date & timing */}
+            {/* <div className="flex justify-between items-center bg-white ps-2 pe-4 py-2 mt-5  rounded-2xl">
               <input
                 type="text"
                 value={filterInput}
@@ -366,12 +367,12 @@ const Employees_Card = () => {
                   {hours}:{minutes}:{seconds} {amPm}
                 </span>
               </div>
-              {/* </div> */}
-            </div>
+              
+            </div> */}
 
             {/* breadcrumbs */}
 
-            <div className="flex gap-2 mt-5 items-center cursor-pointer">
+            <div className="flex gap-1 md:gap-2 md:mt-5 items-center cursor-pointer">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
@@ -383,16 +384,16 @@ const Employees_Card = () => {
               <p className="text-sm text-blue-500">Employees</p>
             </div>
 
-            <div className="flex flex-wrap flex-col md:flex-row  justify-between ">
-              <p className="text-2xl md:text-3xl  font-semibold mt-5 md:mt-8">
+            <div className="flex flex-wrap  md:flex-row  justify-between ">
+              <p className="text-xl md:text-3xl  font-semibold mt-1 md:mt-8">
                 Employees
               </p>
               <button
                 onClick={onClickAddNewMember}
-                className=" w-fit text-xs md:text-base  mt-5 md:mt-8  text-white bg-blue-500 hover:bg-blue-600 font-medium font-medium px-3 py-2 rounded-full "
+                className=" w-fit text-xs md:text-base text-center mt-1 md:mt-8  text-white bg-blue-500 hover:bg-blue-600 font-medium px-1 md:px-3 py-2 rounded-full "
               >
                 Add New Member{" "}
-                <BiSolidMessageAltAdd className="inline-block  ms-3" />
+                <BiSolidMessageAltAdd className="inline-block ms-1 md:ms-3" />
               </button>
             </div>
 

@@ -132,7 +132,13 @@ const Request_details = () => {
     }
   };
 
+
   const columns = [
+    {
+      field: "sno",
+      header: "S.No",
+      body: (_, { rowIndex }) => rowIndex + 1,
+    },
     {
       field: "profile",
       header: "Employee Id",
@@ -153,10 +159,7 @@ const Request_details = () => {
       header: "Name",
       body: (rowData) => rowData.employeeId?.employeeName || "-",
     },
-    // {
-    //   field: "role_name",
-    //   header: "Role",
-    // },
+
     { field: "subject", header: "Subject" },
     {
       field: "status",
@@ -167,12 +170,12 @@ const Request_details = () => {
           .includes("new leave")
           ? "text-blue-600 border rounded-full border-blue-600"
           : rowData.status.toLowerCase().includes("approved")
-          ? "text-green-600 border rounded-full border-green-600"
-          : rowData.status.toLowerCase().includes("rejected")
-          ? "text-red-600 border rounded-full border-red-600"
-          : rowData.status.toLowerCase().includes("later")
-          ? "text-yellow-600 border rounded-full border-yellow-600"
-          : "text-red-600 border rounded-full border-red-600";
+            ? "text-green-600 border rounded-full border-green-600"
+            : rowData.status.toLowerCase().includes("rejected")
+              ? "text-red-600 border rounded-full border-red-600"
+              : rowData.status.toLowerCase().includes("later")
+                ? "text-yellow-600 border rounded-full border-yellow-600"
+                : "text-red-600 border rounded-full border-red-600";
         return (
           <div
             style={{
@@ -405,7 +408,7 @@ const Request_details = () => {
             <Mobile_Sidebar />
 
             {/* breadcrumb */}
-            <div className="flex gap-2 items-center cursor-pointer mt-6">
+            <div className="flex gap-2 items-center cursor-pointer mt-1 md:mt-6">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
@@ -419,11 +422,11 @@ const Request_details = () => {
 
             <div>
               <div className="flex flex-wrap md:flex-row justify-between">
-                <p className="text-2xl md:text-3xl font-semibold mt-3 md:mt-8">
+                <p className="text-2xl md:text-3xl font-semibold mt-1 md:mt-8">
                   Request
                 </p>
 
-                <div className="flex items-center gap-5 justify-end mt-4 md:mt-8 ">
+                <div className="flex items-center gap-5 justify-end mt-1 md:mt-8 ">
                   <button
                     onClick={openAddLeaveRequestModal}
                     className="md:ml-0 w-fit cursor-pointer px-5 md:px-7 py-0.5 md:py-2 rounded-full text-white bg-blue-500 hover:bg-blue-600 font-medium"
@@ -439,12 +442,12 @@ const Request_details = () => {
 
             <div className="w-full mx-auto relative">
               {/* Global Search Input */}
-              <div className="mt-3 md:mt-8 flex md:justify-end">
+              <div className="mt-1 md:mt-8 flex md:justify-end">
                 <InputText
                   value={globalFilter}
                   onChange={(e) => setGlobalFilter(e.target.value)}
                   placeholder="Search"
-                  className="px-2 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500"
+                  className="px-2 py-2 w-full md:w-1/4 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500"
                 />
               </div>
 
@@ -455,7 +458,7 @@ const Request_details = () => {
 
                 {/* DataTable */}
                 <DataTable
-                  className="mt-8"
+                  className="mt-1 md:mt-8"
                   value={approvedRejectedList}
                   paginator
                   rows={10}
@@ -495,9 +498,8 @@ const Request_details = () => {
                 ></div>
 
                 <div
-                  className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[70vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${
-                    isAnimating ? "translate-x-0" : "translate-x-full"
-                  }`}
+                  className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[70vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                    }`}
                 >
                   <div
                     className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
@@ -532,7 +534,7 @@ const Request_details = () => {
                             <div>
                               {formatDateTime(item?.updatedAt)}
                               {new Date(item.updatedAt).toLocaleString(
-                                  "en-IN",
+                                "en-IN",
                                 {
                                   timeZone: "Asia/Kolkata",
                                   weekday: "long",
@@ -548,9 +550,8 @@ const Request_details = () => {
                             </div>
 
                             <svg
-                              className={`w-5 h-5 transition-transform ${
-                                expandedIndex === index ? "rotate-180" : ""
-                              }`}
+                              className={`w-5 h-5 transition-transform ${expandedIndex === index ? "rotate-180" : ""
+                                }`}
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -569,9 +570,8 @@ const Request_details = () => {
                         {/* Accordion Content */}
                         {expandedIndex === index && (
                           <div
-                            className={`flex flex-col px-5 gap-3 mt-5 transition ease-out duration-1000 ${
-                              isVisible ? "opacity-100 " : "opacity-0 "
-                            }`}
+                            className={`flex flex-col px-5 gap-3 mt-5 transition ease-out duration-1000 ${isVisible ? "opacity-100 " : "opacity-0 "
+                              }`}
                           >
                             {/* Content here */}
                             <div className="flex flex-col lg:flex-row gap-1 justify-between">
