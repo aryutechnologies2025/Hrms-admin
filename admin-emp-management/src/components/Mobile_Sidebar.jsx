@@ -226,6 +226,16 @@ const Mobile_Sidebar = () => {
                             >
                               Relieving List
                             </button>
+
+
+                              <button
+                              onClick={() =>
+                                onClickSidebarMenu("relieved-list")
+                              }
+                              className="hover:bg-blue-100 px-2 py-1 rounded-full"
+                            >
+                              Relieved List
+                            </button>
                             <button
                               onClick={() => onClickSidebarMenu("letters-form")}
                               className="hover:bg-blue-100 px-2 py-1 rounded-full"

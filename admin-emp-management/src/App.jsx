@@ -115,6 +115,7 @@ import Platform_Details from "./components/recruitment components/Platform_Detai
 import Task_details_client from "./components/taskList/Task_details_client";
 import AssetManagement_mainbar from "./pages/AssetManagement_mainbar";
 import BankStatement_Mainbar from "./components/finance components/BankStatement_Mainbar";
+import Relieved_main from "./pages/Relieved_main";
 
 
 export const SettingsContext = createContext();
@@ -411,6 +412,16 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
           <Reliving_list/>
+        </ProtectedRoute>
+      ),
+    },
+
+     {
+      path: "/relieved-list",
+      permissionTitle: "On Boarding",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Relieved_main/>
         </ProtectedRoute>
       ),
     },
