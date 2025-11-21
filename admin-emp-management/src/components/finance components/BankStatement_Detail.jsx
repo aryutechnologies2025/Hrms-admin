@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import DataTable from "datatables.net-react";
 import DT from "datatables.net-dt";
 import "datatables.net-responsive-dt/css/responsive.dataTables.css";
@@ -12,6 +12,7 @@ import Footer from "../Footer";
 import Mobile_Sidebar from "../Mobile_Sidebar";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { AiFillDelete } from "react-icons/ai";
 import { toast } from "react-toastify";
 import {
     IoIosArrowDown,
@@ -26,7 +27,8 @@ const BankStatement_Detail = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const storedDetatis = localStorage.getItem("hrmsuser");
-    const parsedDetails = JSON.parse(null);
+const parsedDetails = storedDetatis ? JSON.parse(storedDetatis) : null;
+
     const userid = parsedDetails ? parsedDetails.id : null;
     const [errors, setErrors] = useState({});
     console.log("errors:", errors);
@@ -35,6 +37,16 @@ const BankStatement_Detail = () => {
     console.log("bank statement", bankStatementDetails)
     const [loading, setLoading] = useState(true); // State to manage loading
     let navigate = useNavigate();
+    const [attachmentedit, setAttachmentedit] = useState(null);
+    const [attachment, setAttachment] = useState(null);
+    const fileInputRef = useRef(null);
+    const fileInputRefedit = useRef(null);
+    const [selectedAccount, setSelectedAccount] = useState("");
+    console.log("selectproject checking:",selectedAccount)
+    const [accountOption, setAccountOption] = useState([]);
+    console.log("accountoption checking:",accountOption)
+    const [selectedAllAccount, setSelectedAllAccount] = useState(null);
+    
 
 
     //  view
@@ -44,12 +56,12 @@ const BankStatement_Detail = () => {
     const fetchBank = async () => {
         try {
             const response = await axios.get(
-                `${API_URL}/api/job-type/view-jobtype`
+                `${API_URL}/api/statement/getAllStatementDetails`
             );
-            console.log(response);
+            console.log("response get:",response);
 
 
-            setBankStatementDetails(response.data?.jobType)
+            setBankStatementDetails(response.data.allStatementDetails)
             setLoading(false);
 
 
@@ -59,6 +71,36 @@ const BankStatement_Detail = () => {
 
         }
     };
+    
+    useEffect(() => {
+        if (!selectedAllAccount) {
+          setAccountOption([]);
+          setSelectedAccount(null);
+          return;
+        }
+    
+    const fetchProjectList = async () => {
+          try {
+            const response = await axios.get(
+                `${API_URL}/api/income/view-financecompany`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                }
+            );
+            console.log("account api:",response);
+
+            setAccountOption(response.data.data); 
+            setLoading(false);
+          } catch (error) {
+            console.error("Project fetch error:", error);
+            setLoading(false);
+          }
+        };
+    
+        fetchProjectList();
+      }, [selectedAllAccount, API_URL]);
 
     const openAddModal = () => {
         setIsAddModalOpen(true);
@@ -70,11 +112,62 @@ const BankStatement_Detail = () => {
         setTimeout(() => setIsAddModalOpen(false), 250);
     };
 
+    const handleFileChange = (e) => {
+        if (e.target.files[0]) {
+            setAttachment(e.target.files[0]);
+        }
+    };
+
+    const handleFileChangeedit = (e) => {
+        if (e.target.files[0]) {
+            setAttachment(e.target.files[0]);
+        }
+    };
+    const handleDeleteFileedit = () => {
+        setAttachmentedit(null);
+        if (fileInputRefedit.current) {
+            fileInputRefedit.current.value = "";
+        }
+    };
+
+    const handleDeleteFile = () => {
+        setAttachment(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
 
 
     const closeEditModal = () => {
         setIsAnimating(false);
         setTimeout(() => setIsEditModalOpen(false), 250);
+    };
+
+    const handleChange = (index, field, newValue) => {
+        const updated = [...payments];
+        updated[index][field] = newValue;
+
+        // Simple per-field validation
+        if (field === "value") {
+            updated[index].errorValue =
+                !newValue || newValue <= 0 ? "Enter valid amount" : "";
+            if (newValue && !updated[index].date) {
+                updated[index].errorDate = "Enter date before amount";
+            } else if (updated[index].date) {
+                updated[index].errorDate = "";
+            }
+        }
+
+        if (field === "date") {
+            updated[index].errorDate = newValue ? "" : "Please select a date";
+            // if there's already a value, re-validate it
+            if (updated[index].value && newValue) {
+                updated[index].errorValue =
+                    updated[index].value > 0 ? "" : "Enter  amount";
+            }
+        }
+
+        setPayments(updated);
     };
 
     const [name, setName] = useState("");
@@ -94,10 +187,10 @@ const BankStatement_Detail = () => {
             };
 
             const response = await axios.post(
-                `${API_URL}/api/job-type/create-jobtype`,
+                `${API_URL}/api/statement/import`,
                 formdata
             );
-
+            console.log("response post :",response);
 
             setIsAddModalOpen(false);
             setName("");
@@ -158,7 +251,7 @@ const BankStatement_Detail = () => {
             };
 
             const response = await axios.put(
-                `${API_URL}/api/job-type/edit-jobtype/${editId}`,
+                `${API_URL}/api/statement/editStatementDetails/${editId}`,
                 formData
             );
             console.log("response:", response);
@@ -195,7 +288,7 @@ const BankStatement_Detail = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 axios
-                    .delete(`${API_URL}/api/job-type/delete-jobtype/${editId}`)
+                    .delete(`${API_URL}/api/statement/deleteStatementDetails/${editId}`)
                     .then((response) => {
                         if (response.data) {
                             toast.success("Bank Statement has been deleted.");
@@ -213,34 +306,38 @@ const BankStatement_Detail = () => {
     };
 
     const columns = [
-        {
-            title: "Sno",
-            data: null,
-            render: function (data, type, row, meta) {
-                return meta.row + 1;
-            },
-        },
-        {
-            title: "Narration",
-            data: "name",
-        },
+    {
+        title: "Sno",
+        data: null,
+        render: (data, type, row, meta) => meta.row + 1,
+    },
+    {
+        title: "Date",
+        data: "date",
+        render: (data) => new Date(data).toLocaleDateString() 
+    },
+    {
+        title: "Narration",
+        data: "narration",
+    },
+    {
+        title: "Ledger",
+        data: "ledger",
+    },
+    {
+        title: "Amount",
+        data: "amount",
+    },
+    {
+        title: "Type",
+        data: "type",
+    },
+    {
+        title: "Reason",
+        data: "reason",
+    }
+];
 
-        {
-            title: "Amount",
-            data: "name",
-        },
-
-        {
-            title: "Type(Debit/Credit)",
-            data: "name",
-        },
-
-        {
-            title: "Notes",
-            data: "name",
-        },
-
-    ];
 
 
 
@@ -283,7 +380,7 @@ const BankStatement_Detail = () => {
                             {/* Responsive wrapper for the table */}
                             <div className="table-scroll-container" id="datatable">
                                 <DataTable
-                                    //   data={bankStatementDetails}
+                                      data={bankStatementDetails}
                                     columns={columns}
                                     options={{
                                         paging: true,
@@ -346,24 +443,55 @@ const BankStatement_Detail = () => {
 
                                         <div className="mt-3 flex justify-between">
                                             <label className="block text-sm font-medium mb-2">
-                                                Amount<span className="text-red-500">*</span>
+                                                Account<span className="text-red-500">*</span>
                                             </label>
                                             <div className="w-[60%] md:w-[50%]">
                                                 <Dropdown
-                                                    // value={selectedProject}
-                                                    // onChange={(e) => setSelectedProject(e.value)}
-                                                    // options={projectOption}
+                                                    value={selectedAccount}
+                                                    onChange={(e) => setSelectedAccount(e.value)}
+                                                    options={accountOption}
                                                     optionLabel="name"
                                                     filter
-                                                    placeholder="Select a Project"
+                                                    placeholder="Select a Account"
                                                     className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />
+                                                
                                                 {/* {errors.project_name && (
                                                     <p className="text-red-500 text-sm mb-4">
                                                         {errors.project_name}
                                                     </p>
                                                 )} */}
                                             </div>
+                                        </div>
+
+                                        {/* Attachment */}
+                                        <div className="mt-3 flex justify-between">
+                                            <label className="block text-sm font-medium mb-2">
+                                                File Upload
+                                            </label>
+                                            <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                onChange={handleFileChange}
+                                                className="w-[60%] md:w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+                                        <div className="mt-3 flex justify-between ">
+                                            {attachment && (
+                                                <div className=" px-3 py-2  flex justify-between">
+                                                    <span className="text-sm text-gray-700 truncate">
+                                                        {attachment.name}
+                                                    </span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleDeleteFile}
+                                                        title="Delete"
+                                                        className="text-red-600 hover:text-red-800 text-[18px] font-medium ml-4"
+                                                    >
+                                                        <AiFillDelete />
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
 
 

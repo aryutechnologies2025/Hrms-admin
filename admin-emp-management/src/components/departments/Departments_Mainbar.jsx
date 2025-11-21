@@ -453,12 +453,12 @@ const Departments_Mainbar = () => {
                 <IoIosArrowForward className="w-3 h-3" />
               </div>
 
-              <div className="px-5 lg:px-14 py-10  ">
+              <div className="px-5 lg:px-14 py-3 md:py-10  ">
                 <p className="text-2xl md:text-3xl font-medium">
                   Add Department
                 </p>
 
-                <div className="mt-5 md:mt-14 flex justify-between">
+                <div className="mt-3 md:mt-14 flex justify-between">
                   <div className="">
                     <label
                       htmlFor="roleName"
@@ -471,8 +471,9 @@ const Departments_Mainbar = () => {
                   <div className="w-[50%]">
                     <input
                       type="text"
-                      id="rolename"
-                      name="rolename"
+                      id="department"
+                      name="department"
+                      placeholder="Enter Name"
                       onChange={(e) => {
                         setRoleName(e.target.value);
                         validateRoleName(e.target.value);
@@ -485,7 +486,7 @@ const Departments_Mainbar = () => {
                   </div>
                 </div>
 
-                <div className="mt-8 flex justify-between">
+                <div className="mt-2 md:mt-8 flex justify-between">
                   <div className="">
                     <label
                       htmlFor="roleName"

@@ -980,7 +980,7 @@ console.log("Current date format:", dynamicDateFormat);
             <div className="w-12 h-12 border-4 border-blue-500 rounded-full animate-ping"></div>
           </div>
         ) : (
-          <div className="p-5 w-full md:mt-10 ">
+          <div className="p-2 md:p-5 w-full md:mt-10 ">
             <Mobile_Sidebar />
 
             <div className="flex gap-2 items-center cursor-pointer">
@@ -994,8 +994,8 @@ console.log("Current date format:", dynamicDateFormat);
               <p>{">"}</p>
               <p className="text-sm text-blue-500">Task List</p>
             </div>
-            <div className="flex flex-wrap md:flex-nowrap justify-around  gap-8 my-8 text-[#6b7280] ">
-              <div className="flex justify-between bg-[#f3f4f610] border px-8 py-6 rounded-lg shadow-sm w-full">
+            <div className="flex flex-wrap md:flex-nowrap justify-around gap-3 md:gap-8 my-4 md:my-8 text-[#6b7280] ">
+              <div className="flex justify-between bg-[#f3f4f610] border px-8 py-3 md:py-6 rounded-lg shadow-sm w-full">
                 <div className="">
                   <h2 className="text-[16px] font-semibold">Total Project</h2>
                   <p className="text-[14px]  mt-2 ">

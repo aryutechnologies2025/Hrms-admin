@@ -370,7 +370,7 @@ const Roles_Mainbar = () => {
         </div>
 
         {/* Add Button */}
-        <div className="flex justify-between mt-8">
+        <div className="flex justify-between mt-1 md:mt-8">
           <div className="">
             <h1 className="text-3xl  font-semibold">Roles</h1>
           </div>
@@ -524,9 +524,9 @@ const Roles_Mainbar = () => {
                 <IoIosArrowForward className="w-3 h-3" />
               </div>
 
-              <div className="px-5 lg:px-14 py-10">
+              <div className="px-5 lg:px-14 py-2 md:py-10">
                 <p className="text-2xl md:text-3xl font-medium">Add Role</p>
-                <div className="mt-10 flex justify-between items-center ">
+                <div className="mt-2 md:mt-10 flex justify-between items-center ">
                   <div className="">
                     <label className="block text-[15px] md:text-md font-medium mb-2">
                       Department <span className="text-red-500">*</span>
@@ -575,7 +575,7 @@ const Roles_Mainbar = () => {
                 </div>
                 
 
-                <div className="mt-8 flex justify-between items-center ">
+                <div className="mt-2 md:mt-8 flex justify-between items-center ">
                   <div className="">
                     <label
                       htmlFor="roleName"
@@ -605,7 +605,7 @@ const Roles_Mainbar = () => {
                 </div>
                 {/* {error.rolename && <p className="error">{error.rolename}</p>} */}
 
-                <div className="mt-8 flex justify-between items-center">
+                <div className="mt-2 md:mt-8 flex justify-between items-center">
                   <div className="">
                     <label
                       htmlFor="status"
@@ -638,7 +638,7 @@ const Roles_Mainbar = () => {
                 </div>
                 {/* {error.status && <p className="error">{error.status}</p>} */}
 
-                <div className="flex  justify-end gap-2 mt-14">
+                <div className="flex  justify-end gap-2 mt-5 md:mt-14">
                   <button
                     onClick={closeAddModal}
                     className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-5 py-1 md:py-2 font-semibold rounded-full"

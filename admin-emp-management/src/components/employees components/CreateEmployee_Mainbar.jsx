@@ -1528,7 +1528,7 @@ const CreateEmployee_Mainbar = () => {
         
       <Mobile_Sidebar />
 
-      <div className="flex gap-2 mt-5 text-sm items-center">
+      <div className="flex gap-2 mt-2 md:mt-5 text-sm items-center">
         <p
           onClick={() => navigate("/employees")}
           className=" text-gray-500 cursor-pointer "
@@ -1545,7 +1545,7 @@ const CreateEmployee_Mainbar = () => {
           <p className="text-xl md:text-3xl font-semibold ">Create Employee</p>
 
           {/* Heading */}
-          <div className="flex justify-end gap-5 mt-4 md:mt-8">
+          <div className="flex justify-end gap-5 mt-3 md:mt-8">
             <button
               onClick={onClickCreateEmployeeCancelButton}
               className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
@@ -1572,10 +1572,10 @@ const CreateEmployee_Mainbar = () => {
         </div>
 
         {/*main flex */}
-        <div className="flex flex-col  lg:flex-row gap-3 my-5">
+        <div className="flex flex-col  lg:flex-row gap-3 md:my-5">
           {/* leftside bar */}
           <div className="basis-[50vw] flex-grow flex flex-col gap-3 ">
-            <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
+            <div className="rounded-2xl border-2 border-gray-200 bg-white py-2 md:py-4 px-4 lg:px-6">
               <div className="flex items-center justify-between flex-wrap">
                 <p className="text-xl font-semibold">Basic Information</p>
                 <label

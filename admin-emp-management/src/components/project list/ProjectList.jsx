@@ -822,7 +822,7 @@ const ProjectList = () => {
             </div>
 
             {/* Add Button */}
-            <div className="flex justify-between mt-8 mb-3">
+            <div className="flex justify-between mt-2 md:mt-8 mb-1 md:mb-3">
               <h1 className="text-2xl md:text-3xl font-semibold">
                 Project List
               </h1>
@@ -872,7 +872,7 @@ const ProjectList = () => {
                   >
                     <IoIosArrowForward className="w-3 h-3" />
                   </div>
-                  <div className="px-5 lg:px-14 py-10">
+                  <div className="px-5 lg:px-14 py-3 md:py-10">
                     <div className="flex justify-between items-center gap-2 ">
                       <h2 className="text-xl font-semibold mb-4">
                         Add Project

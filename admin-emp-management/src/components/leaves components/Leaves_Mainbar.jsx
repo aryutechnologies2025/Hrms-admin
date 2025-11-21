@@ -151,6 +151,11 @@ const Leaves_Mainbar = () => {
 
   const columns = [
     {
+      field: "S.No",
+      header: "S.No",
+      body: (_rowData, { rowIndex }) => rowIndex + 1,
+    },
+    {
       field: "profile",
       header: "Employee Id",
       body: (rowData) => rowData.employeeId?.employeeId || "-",
@@ -505,7 +510,7 @@ const Leaves_Mainbar = () => {
             <Mobile_Sidebar />
 
             {/* breadcrumb */}
-            <div className="flex gap-2 items-center cursor-pointer mt-4">
+            <div className="flex gap-2 items-center cursor-pointer md:mt-4">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
@@ -520,7 +525,7 @@ const Leaves_Mainbar = () => {
 
             <div>
               <div className="flex flex-wrap md:flex-row justify-between">
-                <span className="text-2xl md:text-3xl font-semibold mt-5 md:mt-8">
+                <span className="text-2xl md:text-3xl font-semibold mt-2 md:mt-8">
                   Leaves
                 </span>
 
@@ -868,7 +873,7 @@ const Leaves_Mainbar = () => {
                     >
                       <div
                         onClick={(e) => e.stopPropagation()}
-                        className="bg-white rounded-lg shadow-lg py-6 px-8 w-[800px] max-h-[500px] overflow-y-auto"
+                        className="bg-white rounded-lg shadow-lg py-3 md:py-6 px-4 md:px-8 w-[300px] md:w-[800px] max-h-[900px] md:max-h-[500px] overflow-y-auto"
                       >
                         <div className="flex items-center justify-between text-wrap">
                           <h2 className="text-xl font-semibold">
@@ -916,7 +921,7 @@ const Leaves_Mainbar = () => {
                   >
                     <div
                       onClick={(e) => e.stopPropagation()}
-                      className="bg-white rounded-lg shadow-lg py-6 px-8 w-[800px] max-h-[500px] overflow-y-auto"
+                      className="bg-white rounded-lg shadow-lg py-3 md:py-6 px-3 md:px-8 w-[300px] md:w-[800px] max-h-[800px] md:max-h-[500px] overflow-y-auto"
                     >
                       <div className="flex items-center justify-between text-wrap">
                         <h2 className="text-xl font-semibold">Note </h2>

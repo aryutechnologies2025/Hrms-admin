@@ -216,7 +216,7 @@ const Dashboard_Mainbar = () => {
             <div className="flex pt-1 md:pt-3 flex-wrap md:flex-nowrap gap-2 md:gap-4 md:mb-5 items-center justify-between">
               {/* employee requests */}
               <div className="w-full md:w-[32%] ">
-                <div className="flex flex-col w-full mt-1 md:mt-5 h-[210px] rounded-2xl bg-[url('././assets/zigzaglines_large.svg')] bg-cover shadow-lg px-3 py-3 md:px-6 md:py-6">
+                <div className="flex flex-col w-full mt-1 md:mt-5 h-auto md:h-[210px] rounded-2xl bg-[url('././assets/zigzaglines_large.svg')] bg-cover shadow-lg px-3 py-3 md:px-6 md:py-6">
                   <div className="flex justify-between items-center mb-1 md:mb-4">
                     <div>
                       <h2 className="text-xl font-semibold md:font-bold text-gray-800">
@@ -282,7 +282,7 @@ const Dashboard_Mainbar = () => {
               </div>
               {/* attendance */}
               <div className="w-full md:w-[32%]">
-                <div className="flex flex-col w-full mt-1 md:mt-5 h-[210px] rounded-2xl bg-[url('././assets/zigzaglines_large.svg')] bg-cover shadow-lg px-3 py-3 md:px-6 md:py-6">
+                <div className="flex flex-col w-full mt-1 md:mt-5 h-auto md:h-[210px] rounded-2xl bg-[url('././assets/zigzaglines_large.svg')] bg-cover shadow-lg px-3 py-3 md:px-6 md:py-6">
                   <div className="flex justify-between items-center mb-1 md:mb-2">
                     <div>
                       <h2 className="text-xl font-semibold md:font-bold text-gray-800">
@@ -353,7 +353,7 @@ const Dashboard_Mainbar = () => {
                   <div
                     ref={buttonRef}
                     onMouseEnter={handleConfetti}
-                    className="bg-[#e4e0f3] text-[#5c3e98] mt-1 md:mt-5 h-[190px] rounded-2xl px-3 py-3 md:px-5 md:py-4 cursor-pointer group"
+                    className="bg-[#e4e0f3] text-[#5c3e98] mt-1 md:mt-5 h-auto md:h-[190px] rounded-2xl px-3 py-3 md:px-5 md:py-4 cursor-pointer group"
                   >
                     <p className="flex justify-center gap-1 font-semibold px-1 text-1xl font-serif">
                       Birthday's Today{" "}
@@ -397,7 +397,7 @@ const Dashboard_Mainbar = () => {
               {" "}
               <div className="w-full md:w-[32%]">
                 <div
-                  className="relative flex flex-col w-full mt-1 md:mt-5 h-[260px] rounded-2xl
+                  className="relative flex flex-col w-full mt-1 md:mt-5 h-auto md:h-[260px] rounded-2xl
                bg-[url('././assets/zigzaglines_large.svg')] bg-cover shadow-lg px-3 py-3 md:px-6 md:py-6"
                 >
                   {/* Heading */}
@@ -475,7 +475,7 @@ const Dashboard_Mainbar = () => {
               {/*Intern Duration */}
               <div className="w-full md:w-[32%]">
                 <div
-                  className="relative flex flex-col w-full mt-1 md:mt-5 h-[260px] rounded-2xl
+                  className="relative flex flex-col w-full mt-1 md:mt-5 h-auto md:h-[260px] rounded-2xl
                bg-[url('././assets/zigzaglines_large.svg')] bg-cover shadow-lg px-3 py-3 md:px-6 md:py-6"
                 >
                   {/* Heading */}
