@@ -26,7 +26,7 @@ import Loader from "../Loader";
 import { TiEdit } from "react-icons/ti";
 import { ToastContainer, toast } from "react-toastify";
 import { FaFileExport } from "react-icons/fa6";
-import { useDateUtils  } from "../../hooks/useDateUtils";
+import { useDateUtils } from "../../hooks/useDateUtils";
 
 const Attendance_Mainbar = () => {
   let navigate = useNavigate();
@@ -183,12 +183,12 @@ const Attendance_Mainbar = () => {
         (
           <p
             className={`${rowData?.login.split(":")[0] > 10
+              ? "text-red-500"
+              : (rowData?.login.split(":")[0] == 10 &&
+                rowData?.login.split(":")[1] >= 30) ||
+                rowData?.login.split(" ")[1] == "pm"
                 ? "text-red-500"
-                : (rowData?.login.split(":")[0] == 10 &&
-                  rowData?.login.split(":")[1] >= 30) ||
-                  rowData?.login.split(" ")[1] == "pm"
-                  ? "text-red-500"
-                  : ""
+                : ""
               }`}
           >
             {rowData.login}
@@ -216,35 +216,35 @@ const Attendance_Mainbar = () => {
     //   body: (rowData) =>
     //     rowData.result ? <p>{rowData.result.totalBreakInCount}</p> : "-",
     // },
-{
-  field: "total_break_count",
-  header: "Break Count",
-  body: (rowData) => (
-    <div
-      className="cursor-pointer"
-      onMouseEnter={(e) => {
-        setTooltipData({
-          data: rowData?.entries || [],
-          x: e.pageX,
-          y: e.pageY,
-          date: rowData?.date,
-          isHoveringTooltip: false,
-        });
-      }}
-      onMouseLeave={() => {
-        // Small delay before hiding, so user can move to tooltip
-        setTimeout(() => {
-          setTooltipData((prev) => {
-            if (!prev?.isHoveringTooltip) return null;
-            return prev;
-          });
-        }, 150);
-      }}
-    >
-      {rowData?.result?.totalBreakInCount ?? 0}
-    </div>
-  ),
-},
+    {
+      field: "total_break_count",
+      header: "Break Count",
+      body: (rowData) => (
+        <div
+          className="cursor-pointer"
+          onMouseEnter={(e) => {
+            setTooltipData({
+              data: rowData?.entries || [],
+              x: e.pageX,
+              y: e.pageY,
+              date: rowData?.date,
+              isHoveringTooltip: false,
+            });
+          }}
+          onMouseLeave={() => {
+            // Small delay before hiding, so user can move to tooltip
+            setTimeout(() => {
+              setTooltipData((prev) => {
+                if (!prev?.isHoveringTooltip) return null;
+                return prev;
+              });
+            }, 150);
+          }}
+        >
+          {rowData?.result?.totalBreakInCount ?? 0}
+        </div>
+      ),
+    },
 
     {
       field: "total_hours_worked",
@@ -301,8 +301,8 @@ const Attendance_Mainbar = () => {
         rowData?.result ? (
           <p
             className={`${rowData?.result?.payableTime?.hours >= 8
-                ? "text-green-600"
-                : "text-red-600"
+              ? "text-green-600"
+              : "text-red-600"
               }`}
           >
             {`${String(rowData?.result?.payableTime?.hours).padStart(2, "0")}:${String(
@@ -631,7 +631,7 @@ const Attendance_Mainbar = () => {
                 <input
                   type="date"
                   value={selectedDate}
-                  className="px-1 py-1 md:px-3 md:py-2 rounded-md shadow-sm cursor-pointer "
+                  className="px-1 py-1 md:px-3 md:py-2 hidden md:block rounded-md shadow-sm cursor-pointer "
                   onChange={(e) => {
                     getAttendanceData(e.target.value);
                     setSelectedDate(e.target.value);
@@ -681,76 +681,86 @@ const Attendance_Mainbar = () => {
                   </button>
                 </div>
               </div>
-              
+
             </section>
             {/* Mobile Hamburger Menu */}
-                <div className="md:hidden relative" ref={menuRef}>
-                  <button
-                    onClick={() => setMenuOpen(!menuOpen)}
-                    className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600"
-                  >
-                    {menuOpen ? <IoClose size={22} /> : <GiHamburgerMenu size={22} />}
-                  </button>
+            <div className="md:hidden relative flex justify-between" ref={menuRef}>
+              <input
+                type="date"
+                value={selectedDate}
+                className="px-1 py-1 md:px-3 md:py-2  md:hidden rounded-md shadow-sm cursor-pointer "
+                onChange={(e) => {
+                  getAttendanceData(e.target.value);
+                  setSelectedDate(e.target.value);
+                }}
+              />
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600"
+              >
+                {menuOpen ? <IoClose size={22} /> : <GiHamburgerMenu size={22} />}
+              </button>
 
-                  {menuOpen && (
-                    <div className="absolute left-0 md:right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg p-3 flex flex-col gap-2 z-50">
-                      <button
-                        onClick={() => {
-                          onClickaddadtence();
-                          setMenuOpen(false);
-                        }}
-                        className="px-3 py-2 rounded-full text-white bg-blue-500 hover:bg-blue-600 text-sm"
-                      >
-                        Add Attendance
-                      </button>
-                      <button
-                        onClick={() => {
-                          onClickMonthlytracker();
-                          setMenuOpen(false);
-                        }}
-                        className="px-3 py-2 rounded-full text-white bg-blue-500 hover:bg-blue-600 text-sm"
-                      >
-                        Attendance Tracker
-                      </button>
-                      <button
-                        onClick={() => {
-                          onClickMonthlyDetails();
-                          setMenuOpen(false);
-                        }}
-                        className="px-3 py-2 rounded-full text-white bg-blue-500 hover:bg-blue-600 text-sm"
-                      >
-                        Monthly Details
-                      </button>
-                    </div>
-                  )}
+              {menuOpen && (
+                <div className="absolute right-0 top-10 w-48 bg-white border border-gray-200 rounded-lg shadow-lg p-3 flex flex-col gap-2 z-50">
+                  <button
+                    onClick={() => {
+                      onClickaddadtence();
+                      setMenuOpen(false);
+                    }}
+                    className="px-3 py-2 rounded-full text-white bg-blue-500 hover:bg-blue-600 text-sm"
+                  >
+                    Add Attendance
+                  </button>
+                  <button
+                    onClick={() => {
+                      onClickMonthlytracker();
+                      setMenuOpen(false);
+                    }}
+                    className="px-3 py-2 rounded-full text-white bg-blue-500 hover:bg-blue-600 text-sm"
+                  >
+                    Attendance Tracker
+                  </button>
+                  <button
+                    onClick={() => {
+                      onClickMonthlyDetails();
+                      setMenuOpen(false);
+                    }}
+                    className="px-3 py-2 rounded-full text-white bg-blue-500 hover:bg-blue-600 text-sm"
+                  >
+                    Monthly Details
+                  </button>
                 </div>
+              )}
+            </div>
 
             {/* Cards */}
             <div className="flex flex-col sm:flex-row mt-5 flex-grow gap-3">
               <div
-                // onClick={() => onCLickCard("/presentedemployees")}
-                className="flex flex-grow w-full sm:w-1/4  transition-all duration-100 flex-col bg-white   px-5 py-5 rounded-xl"
+                className="hidden md:flex flex-grow w-full sm:w-1/4  transition-all duration-100 flex-col bg-white px-5 py-5 rounded-xl"
               >
                 <div className="flex items-center justify-between text-4xl">
                   <img src={WFH} alt="" className="h-12 w-12" />
-                  {/* <MdArrowForwardIos className="" /> */}
                   {attendanceCount?.present}
                 </div>
 
-                <p className="text-xl font-semibold  text-gray-500  mt-3 md:mt-8 uppercase">
+                <p className="text-xl font-semibold text-gray-500 mt-3 md:mt-8 uppercase">
                   Present
                 </p>
-                <p className="text-gray-400 mt-2">
+
+                <p className="hidden md:block text-gray-400 mt-2">
                   {selectedDate ? formatDateTime(selectedDate) : ""}
                 </p>
-                <p className="text-2xl font-semibold text-blue-500  mt-2">
+
+                <p className="text-2xl font-semibold text-blue-500 mt-2">
                   {attendanceData?.summary?.present}
                 </p>
               </div>
 
+
               <div
                 onClick={() => setAbsentlistIsOpen(true)}
-                className="flex flex-grow w-full  transition-all duration-100 cursor-pointer sm:w-1/4 flex-col bg-white px-5 py-5 rounded-xl"
+                className="flex flex-grow w-full transition-all duration-100 cursor-pointer sm:w-1/4 md:flex-col bg-white px-5 py-5 rounded-xl"
               >
                 <div className="flex items-center justify-between text-4xl">
                   <img src={not_present} alt="" className="h-12 w-12" />
@@ -760,9 +770,9 @@ const Attendance_Mainbar = () => {
                 <p className="text-xl font-semibold  mt-3 md:mt-8 text-gray-500 uppercase">
                   Absent
                 </p>
-                <p className="text-gray-400 mt-2">
+                <p className="hidden md:block text-gray-400 mt-2">
                   {selectedDate ? formatDateTime(selectedDate) : ""}
-                 
+
                 </p>{" "}
                 <p className="text-2xl font-semibold text-blue-500 mt-2">
                   {attendanceData?.summary?.absent}
@@ -771,7 +781,7 @@ const Attendance_Mainbar = () => {
 
               <div
                 onClick={() => setWfhlistIsOpen(true)}
-                className="flex flex-grow w-full cursor-pointer sm:w-1/4 flex-col bg-white px-5 py-5  transition-all duration-100 rounded-xl"
+                className="flex flex-grow w-full cursor-pointer sm:w-1/4 md:flex-col bg-white px-5 py-5 transition-all duration-100 rounded-xl"
               >
                 <div className="flex items-center justify-between text-4xl">
                   <img src={WFH} alt="" className="h-12 w-12" />
@@ -781,8 +791,8 @@ const Attendance_Mainbar = () => {
                 <p className="text-xl font-semibold  mt-3 md:mt-8 text-gray-500 uppercase">
                   WFH
                 </p>
-                <p className="text-gray-400 mt-2">
-                 {selectedDate ? formatDateTime(selectedDate) : ""}
+                <p className="hidden md:block text-gray-400 mt-2">
+                  {selectedDate ? formatDateTime(selectedDate) : ""}
                 </p>{" "}
                 <p className="text-2xl font-semibold text-blue-500 mt-2">
                   {attendanceData?.summary?.wfh}

@@ -760,7 +760,7 @@ const Relieved_list_details = () => {
           <p className="text-sm text-blue-500">Relieved List</p>
         </div>
         {/* Add Button */}
-        <div className="flex justify-between mt-8 mb-3">
+        <div className="flex justify-between mt-2 md:mt-8 mb-3">
           <h1 className="text-2xl md:text-3xl font-semibold">Relieved List</h1>
           <div className="flex gap-3">
             {" "}

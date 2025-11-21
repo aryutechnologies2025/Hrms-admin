@@ -151,6 +151,11 @@ const WorkFromHome_Mainbar = () => {
     //   body: (rowData) => rowData.employee?.photo ? (<img src={`${API_URL}/api/uploads/${rowData.employeeId?.photo}`} className="w-14 h-14 mx-auto rounded-full"  />) : ( "-" )
     //  },
     {
+      field: "S.No",
+      header: "S.No",
+      body: (_rowData, { rowIndex }) => rowIndex + 1,
+    },
+    {
       field: "employeeId",
       header: "Employee Id",
       body: (rowData) => rowData.employee?.employeeId || "-",

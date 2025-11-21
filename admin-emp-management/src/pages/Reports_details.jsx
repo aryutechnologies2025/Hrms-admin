@@ -235,7 +235,7 @@ function Reports_details() {
           <p>{">"}</p>
           <p className="text-sm text-blue-500 ">Reports</p>
         </div>
-        <p className="text-2xl md:text-3xl mt-8 font-semibold">
+        <p className="text-2xl md:text-3xl mt-2 md:mt-8 font-semibold">
           Monthly Report
         </p>
         <div className="bg-white mt-8 px-5 py-5 rounded-2xl">

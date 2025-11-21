@@ -5,7 +5,6 @@ import { BsBellFill } from "react-icons/bs";
 import { IoMdSettings } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { IoClose } from "react-icons/io5";
 import { IoSettingsOutline } from "react-icons/io5";
 import { BsCalendar4 } from "react-icons/bs";
 import { CiDeliveryTruck, CiBoxList } from "react-icons/ci";
@@ -22,14 +21,20 @@ import Mobile_Sidebar from "../Mobile_Sidebar";
 import Loader from "../Loader";
 import { TfiPencilAlt } from "react-icons/tfi";
 import Swal from "sweetalert2";
-
+import { FaEye } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
-import { useDateUtils  } from "../../hooks/useDateUtils";
+import { useDateUtils } from "../../hooks/useDateUtils";
+import { IoClose } from "react-icons/io5";
 
 const Request_details = () => {
   const formatDateTime = useDateUtils();
   const [globalFilter, setGlobalFilter] = useState("");
   const [approvedRejectedList, setApprovedRejectedList] = useState([]);
+  const [reason, setReason] = useState(null);
+  const [reasonVisible, setReasonVisible] = useState(false);
+  const [noteContent, setNoteContent] = useState("");
+  const [noteVisible, setNoteVisible] = useState(false);
+
   // console.log("approvedRejectedList",approvedRejectedList)
 
   const [pendingRequestList, setPendingRequestList] = useState([]);
@@ -195,11 +200,26 @@ const Request_details = () => {
         );
       },
     },
+
     {
-      field: "notes",
+      field: "note",
       header: "Notes",
-      body: (rowData) => rowData.notes || "-",
+      body: (rowData) => {
+        return (
+          <button
+            className="p-button-text p-button-sm"
+            onClick={() => {
+              setNoteContent(rowData || "");
+              setNoteVisible(true);
+            }}
+          // disabled={!rowData.note} // optional: disable if no note
+          >
+            <FaEye />
+          </button>
+        );
+      },
     },
+
     {
       field: "",
       header: "Action",
@@ -486,6 +506,31 @@ const Request_details = () => {
                     />
                   ))}
                 </DataTable>
+
+                {noteVisible && (
+                  <div
+                    onClick={() => setNoteVisible(false)}
+                    className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/20 z-50"
+                  >
+                    <div
+                      onClick={(e) => e.stopPropagation()}
+                      className="bg-white rounded-lg shadow-lg py-6 px-8 w-[800px] max-h-[500px] overflow-y-auto"
+                    >
+                      <div className="flex items-center justify-between text-wrap">
+                        <h2 className="text-xl font-semibold">Note </h2>
+                        <span
+                          onClick={() => setNoteVisible(false)}
+                          className="bg-gray-100 w-7 text-lg cursor-pointer h-7 flex justify-center items-center rounded-full"
+                        >
+                          <IoClose />
+                        </span>
+                      </div>
+                      <p className="mt-4 text-[16px] break-words">
+                        {noteContent.notes || "-"}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -566,6 +611,8 @@ const Request_details = () => {
                             </svg>
                           </div>
                         </div>
+
+
 
                         {/* Accordion Content */}
                         {expandedIndex === index && (
@@ -831,7 +878,8 @@ const Request_details = () => {
                   </div>
                 </div>
               </div>
-            )}
+            )
+            }
           </div>
         </>
       )}

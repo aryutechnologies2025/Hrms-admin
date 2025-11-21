@@ -565,7 +565,7 @@ const handlePrint = async (row) => {
           </div>
 
           {/* Add Button */}
-          <div className="flex justify-between mt-8 mb-3">
+          <div className="flex justify-between mt-2 md:mt-8 mb-1 md:mb-3">
             <h1 className="text-2xl md:text-3xl font-semibold">Declaration</h1>
             <button
               onClick={openAddModal}
@@ -611,8 +611,8 @@ const handlePrint = async (row) => {
                 >
                   <IoIosArrowForward className="w-3 h-3" />
                 </div>{" "}
-                <div className="p-5">
-                  <h2 className="text-xl font-semibold mb-4">
+                <div className="p-2 md:p-5">
+                  <h2 className="text-xl font-semibold mb-2 md:mb-4">
                     Add Declaration
                   </h2>
 
@@ -645,6 +645,7 @@ const handlePrint = async (row) => {
                     <input
                       type="text"
                       value={empId}
+                      placeholder="Enter Emp Id"
                       readOnly
                       className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -658,6 +659,7 @@ const handlePrint = async (row) => {
                     <input
                       type="text"
                       value={designation}
+                      placeholder="Desgination"
                       readOnly
                       className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -670,6 +672,7 @@ const handlePrint = async (row) => {
                     <input
                       type="text"
                       value={certificateName}
+                      placeholder="Certificate Name"
                       onChange={(e) => setCertificateName(e.target.value)}
                       className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -682,6 +685,7 @@ const handlePrint = async (row) => {
                     <input
                       type="text"
                       value={certificateNo}
+                      placeholder="Certificate No"
                       onChange={(e) => setCertificateNo(e.target.value)}
                       className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -741,8 +745,8 @@ const handlePrint = async (row) => {
                 >
                   <IoIosArrowForward className="w-3 h-3" />
                 </div>{" "}
-                <div className="p-5">
-                  <h2 className="text-xl font-semibold mb-4">
+                <div className="p-3 md:p-5">
+                  <h2 className="text-xl font-semibold mb-2 md:mb-4">
                     Edit Declaration
                   </h2>
 

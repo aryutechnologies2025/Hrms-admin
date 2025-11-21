@@ -461,7 +461,7 @@ const Employees_Card = () => {
               </div>
             ) : (
               <>
-                <div className="flex flex-wrap justify-start md:justify-end mt-6 md:space-x-3">
+                <div className="flex flex-wrap justify-start md:justify-end gap-1 mt-6 md:space-x-3">
                   {/* STATUS FILTER */}
                   <select
                     className="px-3 py-2 w-full md:w-40 cursor-pointer rounded-md border"

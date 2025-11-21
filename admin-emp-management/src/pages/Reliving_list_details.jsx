@@ -388,7 +388,7 @@ const handleAddOptionEdit = () => {
           <p className="text-sm text-blue-500">Relieving Details</p>
         </div>
         {/* Add Button */}
-        <div className="flex justify-between mt-8 mb-3">
+        <div className="flex justify-between mt-2 md:mt-8 mb-3">
           <h1 className="text-2xl md:text-3xl font-semibold">Relieving Details</h1>
           <button
             onClick={openAddModal}

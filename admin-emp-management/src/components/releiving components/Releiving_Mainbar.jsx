@@ -759,7 +759,7 @@ const Releiving_Mainbar = () => {
           <p className="text-sm text-blue-500">Relieving List</p>
         </div>
         {/* Add Button */}
-        <div className="flex justify-between mt-8 mb-3">
+        <div className="flex justify-between mt-2 md:mt-8 mb-3">
           <h1 className="text-2xl md:text-3xl font-semibold">Relieving List</h1>
           <div className="flex gap-3">
             {" "}
