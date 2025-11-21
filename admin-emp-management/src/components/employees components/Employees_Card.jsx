@@ -257,13 +257,28 @@ const Employees_Card = () => {
         return data || "-";
       },
     },
+    // {
+    //   title: "Current Part",
+    //   data: "employee_Position",
+    //   render: function (data) {
+    //     return data || "-";
+    //   },
+    // },
     {
-      title: "Current Part",
-      data: "employee_Position",
-      render: function (data) {
-        return data || "-";
-      },
-    },
+  title: "Current Part",
+  data: "employee_Position",
+  render: function (data) {
+    if (!data) return "-";
+
+    const map = {
+      Intern: "Internship",
+      "Full Time": "Employee",
+    };
+
+    return map[data] || data;
+  },
+},
+
     {
       title: "Employee Email",
       data: "employee_mailId",
