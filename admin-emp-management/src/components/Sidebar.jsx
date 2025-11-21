@@ -343,8 +343,9 @@ const Sidebar = () => {
                             "/relieved-list",
                             "/Declaration-deatils",
                             "/letters-form",
+                            "/inter",
                           ].includes(currentPath)
-                          ? "max-h-52 opacity-100"
+                          ? "max-h-72 opacity-100"
                           : "max-h-0 opacity-0"
                           }`}
                       >
@@ -380,6 +381,17 @@ const Sidebar = () => {
                               }`}
                           >
                           Employees
+                          </button>
+
+                           <button
+                            onClick={() => navigate("/inter")}
+                            className={`px-2 py-1 rounded-full 
+                        ${currentPath === "/inter"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
+                          >
+                          Intership
                           </button>
 
                           <button
@@ -701,6 +713,8 @@ const Sidebar = () => {
                                     [
                                       "/client-details",
                                       "/invoice-details",
+                                      "/mom-details",
+                                      "/document-details",
                                     ].includes(currentPath) ? (
                                     <IoIosArrowUp />
                                   ) : (
@@ -713,7 +727,7 @@ const Sidebar = () => {
                           {/*  */}
                           <div
                             className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "clients" ||
-                              ["/client-details", "/invoice-details"].includes(
+                              ["/client-details", "/invoice-details","/mom-details","/document-details"].includes(
                                 currentPath
                               )
                               ? "max-h-40 opacity-100"
@@ -751,6 +765,19 @@ const Sidebar = () => {
                                   }`}
                               >
                                 MOM
+                              </button>
+
+
+                              
+                              <button
+                                onClick={() => navigate("/document-details")}
+                                className={`px-2 py-1 rounded-full 
+                                    ${currentPath === "/document-details"
+                                    ? " text-[#4F46E5]"
+                                    : "hover:bg-blue-100 text-gray-500"
+                                  }`}
+                              >
+                                Document
                               </button>
 
                               {/* <div

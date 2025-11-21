@@ -37,6 +37,8 @@ const CreateEmployee_Mainbar = () => {
   const [selectedDocs, setSelectedDocs] = useState([]);
   const [githubEmailId, setGithubEmailId] = useState("");
 
+  const [linkedIn ,setLinkedIn] = useState("");
+
 
   const handleCheckboxChangeVerification = (event) => {
     const { name, checked } = event.target;
@@ -1008,7 +1010,8 @@ const CreateEmployee_Mainbar = () => {
       roleId: selectedPositionId,
       employeeType: employeeWorkType,
       driveLink: driveLink,
-      gitHubEmail: githubEmailId
+      gitHubEmail: githubEmailId,
+      linkedIn: linkedIn,
     };
 
     setError("");
@@ -1803,8 +1806,8 @@ const CreateEmployee_Mainbar = () => {
                       <option value="" selected disabled>
                         Choose Type
                       </option>
-                      <option value="Intern">Intern</option>
-                      <option value="Full Time">Full Time</option>
+                      <option value="Intern">Internship</option>
+                      <option value="Full Time">Employee</option>
                       <option value="Part Time">Part Time</option>
                       <option value="Freelancer">Freelancer</option>
                     </select>
@@ -2166,6 +2169,34 @@ const CreateEmployee_Mainbar = () => {
                     value={githubEmailId}
                     onChange={(e) => {
                       setGithubEmailId(e.target.value);
+                    }}
+                    className={`border-2 rounded-xl px-4 h-10  w-full  lg:w-72 border-gray-300
+                    `}
+                    onKeyUp={handleKeyUp}
+                  />
+                </div>
+                {/* linked in */}
+
+                          <div className="flex flex-col xl:flex-row justify-between gap-1">
+                  <div className="flex flex-col w-full sm:w-auto">
+                    <label
+                      className="font-medium text-sm"
+                      htmlFor="linkedIn"
+                      id="linkedIn"
+                      name="linkedIn"
+                      aria-readonly
+                    >
+                      linkedIn Url
+                    </label>
+                    {/* <p className="text-sm">Add employee id</p> */}
+                  </div>
+                  <input
+                    id="linkedIn"
+                    type="email"
+                    placeholder="Github Email Address"
+                    value={linkedIn}
+                    onChange={(e) => {
+                      setLinkedIn(e.target.value);
                     }}
                     className={`border-2 rounded-xl px-4 h-10  w-full  lg:w-72 border-gray-300
                     `}

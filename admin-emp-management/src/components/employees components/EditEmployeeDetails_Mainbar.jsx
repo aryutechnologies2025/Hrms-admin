@@ -1610,8 +1610,8 @@ const handleLastworkdate = (date) => {
                           <option value="" selected disabled>
                             Choose Type
                           </option>
-                          <option value="Intern">Intern</option>
-                          <option value="Full Time">Full Time</option>
+                          <option value="Intern">Internship</option>
+                          <option value="Full Time">Employee</option>
                           <option value="Part Time">Part Time</option>
                           <option value="Part Time">Freelancer</option>
                         </select>
@@ -2004,6 +2004,43 @@ const handleLastworkdate = (date) => {
                           setFormData({
                             ...formData,
                             gitHubEmail: e.target.value,
+                          })
+                        }
+                        className={`border-2 rounded-xl px-4 h-10 outline-none w-full  lg:w-72 ${
+                          !touched.employeeId
+                            ? "border-red-400"
+                            : "border-gray-300"
+                        }`}
+                        onKeyUp={handleKeyUp}
+                      />
+                    </div>
+
+
+                    {/* link */}
+
+
+                       <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="linkedIn"
+                          id="linkedIn"
+                          name="linkedIn"
+                        >
+                          LinkedIn Url
+                        </label>
+                        {/* <p className="text-sm">Add employee id</p> */}
+                      </div>
+                      <input
+                        id="linkedIn"
+                        type="text"
+                        placeholder="LinkedIn Url"
+                        // disabled
+                        value={formData?.linkedIn || ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            linkedIn: e.target.value,
                           })
                         }
                         className={`border-2 rounded-xl px-4 h-10 outline-none w-full  lg:w-72 ${

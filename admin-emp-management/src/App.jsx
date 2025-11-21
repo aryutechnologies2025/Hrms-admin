@@ -116,6 +116,8 @@ import Task_details_client from "./components/taskList/Task_details_client";
 import AssetManagement_mainbar from "./pages/AssetManagement_mainbar";
 import BankStatement_Mainbar from "./components/finance components/BankStatement_Mainbar";
 import Relieved_main from "./pages/Relieved_main";
+import Document_main from "./pages/Document_main";
+import Inter_card from "./pages/Inter_card";
 
 
 export const SettingsContext = createContext();
@@ -310,6 +312,15 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn}  requiredRole="admin">
           <Employees />
+        </ProtectedRoute>
+      ),
+    },
+      {
+      path: "/inter",
+      permissionTitle: "On Boarding",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn}  requiredRole="admin">
+          <Inter_card/>
         </ProtectedRoute>
       ),
     },
@@ -933,6 +944,16 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
         </ProtectedRoute>
       ),
     },
+
+       {
+      path: "/document-details",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole={["client", "subuser","admin"]}>
+          <Document_main />
+        </ProtectedRoute>
+      ),
+    },
+
     {
       path: "/settings",
       element: (

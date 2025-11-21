@@ -13,7 +13,8 @@ import Loader from "../Loader.jsx";
 import Swal from "sweetalert2";
 import { ToastContainer, toast } from "react-toastify";
 import { IoIosLink } from "react-icons/io";
-import { useDateUtils  } from "../../hooks/useDateUtils.js";
+import { useDateUtils } from "../../hooks/useDateUtils.js";
+import { FaLinkedin } from "react-icons/fa";
 
 // import { formatDate } from "react-datepicker/dist/date_utils.js";
 // import { formatDate } from "../../dateformate.js";
@@ -21,7 +22,7 @@ import { useDateUtils  } from "../../hooks/useDateUtils.js";
 const EmployeeDetails_Mainbar = () => {
   let navigate = useNavigate();
   const location = useLocation();
-   const formatDateTime = useDateUtils();
+  const formatDateTime = useDateUtils();
 
 
   const employeeIds = window.location.pathname.split("/")[2];
@@ -147,6 +148,10 @@ const EmployeeDetails_Mainbar = () => {
       behavior: "instant",
     });
   }
+
+  const linkedinUrl = employee?.linkedIn?.startsWith("http")
+    ? employee.linkedIn
+    : `https://${employee?.linkedIn}`;
 
   return (
     <div className="w-screen min-h-screen bg-gray-100 px-3 md:px-5 py-2 md:py-10">
@@ -287,7 +292,15 @@ const EmployeeDetails_Mainbar = () => {
 
                   <div className="flex flex-col gap-1">
                     <p className="text-xs text-gray-600">EMPLOYEE TYPE</p>
-                    <p className="font-semibold">{employee?.employeeType}</p>
+                    {/* <p className="font-semibold">{employee?.employeeType}</p> */}
+                    <p className="font-semibold">
+                      {employee?.employeeType === "Intern"
+                        ? "Internship"
+                        : employee?.employeeType === "Full Time"
+                          ? "Employee"
+                          : employee?.employeeType}
+                    </p>
+
                   </div>
                 </div>
 
@@ -300,8 +313,8 @@ const EmployeeDetails_Mainbar = () => {
                   <hr className="w-full border-gray-300" />
                   <p
                     className={`mt-2 text-md  ${employee.dutyStatus === "1"
-                        ? "text-green-500"
-                        : "text-orange-600"
+                      ? "text-green-500"
+                      : "text-orange-600"
                       }`}
                   >
                     {employee.dutyStatus === "1" ? "On Duty" : "Relieved "}
@@ -318,12 +331,43 @@ const EmployeeDetails_Mainbar = () => {
                       </p>
                     )}
                 </div>
+                <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl shadow-sm mt-3">
+                  <p className="text-[14px] font-medium text-gray-700">LinkedIn</p>
+
+                  {linkedinUrl ? (
+                    <a
+                      href={linkedinUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-all"
+                    >
+                      <FaLinkedin className="text-lg" />
+                    </a>
+                  ) : (
+                    <span className="text-gray-500">-</span>
+                  )}
+                </div>
+
               </div>
               <div className="border-2 bg-white flex-grow rounded-2xl  px-5 md:px-7 py-5">
                 {/* <div className="flex justify-between"> */}
                 <p className="text-[18px] font-semibold">Personal Info 1</p>
 
-                <div className="flex flex-col gap-3">
+
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center justify-between mt-3 flex-wrap ">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm">Email Address</p>
+                    </div>
+
+                    <p className="text-sm ms-3 ">
+                      {employee?.personalEmail ?? "-"}
+                    </p>
+                  </div>
+                  <hr />
+                </div>
+
+                {/* <div className="flex flex-col gap-3">
                   <div className="flex flex-wrap justify-between mt-3">
                     <p className="text-sm ">Email Address</p>
                     <p className=" text-sm ms-3 ">
@@ -331,8 +375,9 @@ const EmployeeDetails_Mainbar = () => {
                     </p>
                   </div>
                   <hr />
-                </div>
-                <div className="flex flex-col gap-3">
+                  
+                  
+                {/* <div className="flex flex-col gap-3">
                   <div className="flex flex-wrap justify-between mt-3">
                     <p className="text-sm ">Github Email Address</p>
                     <p className="text-sm ms-3 ">
@@ -340,7 +385,23 @@ const EmployeeDetails_Mainbar = () => {
                     </p>
                   </div>
                   <hr />
+                </div> */}
+
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center justify-between mt-3 flex-wrap ">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm">GitHub Email</p>
+                    </div>
+
+                    <p className="text-sm ms-3 ">
+                      {employee?.gitHubEmail ?? "-"}
+                    </p>
+                  </div>
+                  <hr />
                 </div>
+
+
+
 
                 <div className="flex flex-col gap-3">
                   <div className="flex justify-between mt-3">
@@ -858,7 +919,7 @@ const EmployeeDetails_Mainbar = () => {
               <div className="flex justify-between mt-3">
                 <p className="text-sm ">Last working date</p>
                 <p className=" text-sm">
-                  {employee?.last_working_date ? formatDateTime(employee?.last_working_date): "-"}{" "}
+                  {employee?.last_working_date ? formatDateTime(employee?.last_working_date) : "-"}{" "}
                 </p>
               </div>
               <hr className="my-3" />

@@ -91,7 +91,12 @@ const Relieved_list_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/employees/reliving-list`
+        `${API_URL}/api/employees/reliving-list`,{
+          params: {
+             type: "relieved",
+          }
+         
+        }
       );
       console.log("re", response);
       if (response.data.success) {
