@@ -118,6 +118,7 @@ import BankStatement_Mainbar from "./components/finance components/BankStatement
 import Relieved_main from "./pages/Relieved_main";
 import Document_main from "./pages/Document_main";
 import Inter_card from "./pages/Inter_card";
+import Announcement from "./pages/Announcement";
 
 
 export const SettingsContext = createContext();
@@ -973,7 +974,11 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       path: "/assetcategory",
       element: <AssetCategory_mainbar />
     },
-
+    
+    {
+      path: "/announcement",
+      element: <Announcement />
+    },
 
     {
       path: "/sitemap.html",

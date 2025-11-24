@@ -417,7 +417,7 @@ const Bidding_details = () => {
               <p className=" text-blue-500">Bidding Details</p>
               <p>{">"}</p>
             </div>
-            <h1 className="text-2xl md:text-3xl font-semibold mt-8">
+            <h1 className="text-2xl md:text-3xl font-semibold mt-1 md:mt-8 mb-2 md:mb-3">
               Bidding Details
             </h1>
 

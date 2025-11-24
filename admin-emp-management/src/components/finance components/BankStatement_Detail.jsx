@@ -12,7 +12,7 @@ import Footer from "../Footer";
 import Mobile_Sidebar from "../Mobile_Sidebar";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { AiFillDelete } from "react-icons/ai";
+import { FaEye } from "react-icons/fa";
 import { toast } from "react-toastify";
 import {
     IoIosArrowDown,
@@ -21,17 +21,19 @@ import {
 } from "react-icons/io";
 import Loader from "../Loader";
 import { Dropdown } from "primereact/dropdown";
+import { IoClose } from "react-icons/io5";
+import { AiFillDelete } from "react-icons/ai";
 
 
 const BankStatement_Detail = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const storedDetatis = localStorage.getItem("hrmsuser");
-const parsedDetails = storedDetatis ? JSON.parse(storedDetatis) : null;
+    const parsedDetails = storedDetatis ? JSON.parse(storedDetatis) : null;
 
     const userid = parsedDetails ? parsedDetails.id : null;
     const [errors, setErrors] = useState({});
-    console.log("errors:", errors);
+    // console.log("errors:", errors);
     const [isAnimating, setIsAnimating] = useState(false);
     const [bankStatementDetails, setBankStatementDetails] = useState([])
     console.log("bank statement", bankStatementDetails)
@@ -42,45 +44,80 @@ const parsedDetails = storedDetatis ? JSON.parse(storedDetatis) : null;
     const fileInputRef = useRef(null);
     const fileInputRefedit = useRef(null);
     const [selectedAccount, setSelectedAccount] = useState("");
-    console.log("selectproject checking:",selectedAccount)
+    // console.log("selectproject checking:", selectedAccount)
     const [accountOption, setAccountOption] = useState([]);
-    console.log("accountoption checking:",accountOption)
-    const [selectedAllAccount, setSelectedAllAccount] = useState(null);
-    
+    // console.log("accountoption checking:", accountOption)
+
+    const [openViewPopup, setOpenViewPopup] = useState(false);
+    const [selectedRowData, setSelectedRowData] = useState(null);
+    console.log("checking:", selectedRowData)
+
+    const [selectedDate, setSelectedDate] = useState(
+        new Date().toISOString().split("T")[0]
+    );
+
+
+    // Keep these (but not used as default)
+    const today = new Date().toISOString().split("T")[0];
+    const lastWeek = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0];
+
+    // Set filters EMPTY by default
+    const [filterType, setFilterType] = useState("");
+    const [filterAccount, setFilterAccount] = useState("");
+    const [filterStartDate, setFilterStartDate] = useState(today);
+    const [filterEndDate, setFilterEndDate] = useState(today);
+
+
+
+
+
 
 
     //  view
     useEffect(() => {
         fetchBank();
-    }, []);
+    }, [filterType, filterAccount, filterStartDate, filterEndDate]);
     const fetchBank = async () => {
         try {
-            const response = await axios.get(
-                `${API_URL}/api/statement/getAllStatementDetails`
-            );
-            console.log("response get:",response);
+            let query = [];
 
+            if (filterType) query.push(`type=${filterType}`);
+            if (filterAccount) query.push(`account=${filterAccount}`);
+            if (filterStartDate) query.push(`startDate=${filterStartDate}`);
+            if (filterEndDate) query.push(`endDate=${filterEndDate}`);
 
-            setBankStatementDetails(response.data.allStatementDetails)
+            const finalURL = `${API_URL}/api/statement/getAllStatementDetails${query.length > 0 ? "?" + query.join("&") : ""
+                }`;
+
+            console.log("Final filter URL:", finalURL);
+
+            const response = await axios.get(finalURL);
+
+            setBankStatementDetails(response.data.allStatementDetails);
             setLoading(false);
-
 
         } catch (err) {
             setErrors("Failed to fetch Bank Statement.");
             setLoading(false);
-
         }
     };
-    
+
+
+    // useEffect(() => {
+    //     if (!selectedAllAccount) {
+    //       setAccountOption([]);
+    //       setSelectedAccount(null);
+    //       return;
+    //     }
     useEffect(() => {
-        if (!selectedAllAccount) {
-          setAccountOption([]);
-          setSelectedAccount(null);
-          return;
-        }
-    
-    const fetchProjectList = async () => {
-          try {
+        fetchAccountList();
+    }, [isAddModalOpen]);
+
+
+    const fetchAccountList = async () => {
+        try {
             const response = await axios.get(
                 `${API_URL}/api/income/view-financecompany`,
                 {
@@ -89,18 +126,14 @@ const parsedDetails = storedDetatis ? JSON.parse(storedDetatis) : null;
                     },
                 }
             );
-            console.log("account api:",response);
 
-            setAccountOption(response.data.data); 
-            setLoading(false);
-          } catch (error) {
-            console.error("Project fetch error:", error);
-            setLoading(false);
-          }
-        };
-    
-        fetchProjectList();
-      }, [selectedAllAccount, API_URL]);
+            setAccountOption(response.data.data);
+            console.log("Account Options:", response.data.data);
+        } catch (error) {
+            console.error("Account list fetch error:", error);
+        }
+    };
+
 
     const openAddModal = () => {
         setIsAddModalOpen(true);
@@ -190,7 +223,7 @@ const parsedDetails = storedDetatis ? JSON.parse(storedDetatis) : null;
                 `${API_URL}/api/statement/import`,
                 formdata
             );
-            console.log("response post :",response);
+            console.log("response post :", response);
 
             setIsAddModalOpen(false);
             setName("");
@@ -210,66 +243,36 @@ const parsedDetails = storedDetatis ? JSON.parse(storedDetatis) : null;
 
 
     //  edit  
-    const [nameEdit, setNameEdit] = useState("");
-    const [statusEdit, setStatusEdit] = useState("");
+
+    const [notesEdit, setNotesEdit] = useState("");
     const [editId, setEditid] = useState("");
 
     const openEditModal = (row) => {
-        console.log("rowData", row);
-
         setEditid(row._id);
-        setNameEdit(row.name);
-
-        setStatusEdit(row.status);
-
+        setSelectedRowData(row);
+        setNotesEdit(row.notes || "");
         setIsEditModalOpen(true);
         setTimeout(() => setIsAnimating(true), 10);
     };
 
 
-    const handlesubmitedit = async (e) => {
-        e.preventDefault();
-        setErrors({});
-
-        // Client-side validation
-        const newErrors = {};
-        if (!nameEdit.trim()) {
-            newErrors.name = "Name is required.";
-        }
-        if (!statusEdit) {
-            newErrors.status = "Status is required.";
-        }
-
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            return;
-        }
+    const handlesubmitedit = async () => {
         try {
-            const formData = {
-                name: nameEdit,
-                status: statusEdit,
-            };
+            const formData = { notes: notesEdit };
 
-            const response = await axios.put(
+            await axios.put(
                 `${API_URL}/api/statement/editStatementDetails/${editId}`,
                 formData
             );
-            console.log("response:", response);
 
-
-            setIsEditModalOpen(false);
+            toast.success("Notes updated.");
             fetchBank();
-            setErrors({});
-            toast.success("Bank Statement updated successfully.");
+            setIsEditModalOpen(false);
         } catch (err) {
-            if (err.response?.data?.errors) {
-                setErrors(err.response.data.errors);
-            } else {
-                console.error("Error submitting form:", err);
-                toast.error("Failed to update Bank Statement.");
-            }
+            toast.error("Failed to update notes.");
         }
     };
+
 
 
 
@@ -306,43 +309,118 @@ const parsedDetails = storedDetatis ? JSON.parse(storedDetatis) : null;
     };
 
     const columns = [
-    {
-        title: "Sno",
-        data: null,
-        render: (data, type, row, meta) => meta.row + 1,
-    },
-    {
-        title: "Date",
-        data: "date",
-        render: (data) => new Date(data).toLocaleDateString() 
-    },
-    {
-        title: "Narration",
-        data: "narration",
-    },
-    {
-        title: "Ledger",
-        data: "ledger",
-    },
-    {
-        title: "Amount",
-        data: "amount",
-    },
-    {
-        title: "Type",
-        data: "type",
-    },
-    {
-        title: "Reason",
-        data: "reason",
-    }
-];
+        {
+            title: "Sno",
+            data: null,
+            render: (data, type, row, meta) => meta.row + 1,
+        },
+        {
+            title: "Date",
+            data: "date",
+            render: (data) => new Date(data).toLocaleDateString() || "-",
+        },
+        {
+            title: "Account",
+            data: "account.name",
+            defaultContent: "-",
+        },
+        {
+            title: "Narration",
+            data: "narration",
+            defaultContent: "-",
+        },
+        {
+            title: "Ledger",
+            data: "ledger",
+            defaultContent: "-",
+        },
+        {
+            title: "Amount",
+            data: "amount",
+            render: (data, type, row, meta) => {
+                const id = `amount-eye-${meta.row}`;
+
+                setTimeout(() => {
+                    const container = document.getElementById(id);
+                    if (container && !container.hasChildNodes()) {
+                        const root = ReactDOM.createRoot(container);
+                        root.render(
+                            <FaEye
+                                className="cursor-pointer text-blue-600 ml-2"
+                                onClick={() => {
+                                    setSelectedRowData(row);
+                                    setOpenViewPopup(true);
+                                }}
+                            />
+                        );
+                    }
+                }, 0);
+
+                return `<span id="${id}"></span>`;
+            },
+        },
+
+        {
+            title: "Type",
+            data: "type",
+            defaultContent: "-",
+        },
+        {
+            title: "Reason",
+            data: "reason",
+            defaultContent: "-",
+        },
+        {
+            title: "Action",
+            data: null,
+            render: (data, type, row) => {
+                const id = `actions-${row.sno || Math.random()}`;
+                setTimeout(() => {
+                    const container = document.getElementById(id);
+                    if (container && !container.hasChildNodes()) {
+                        ReactDOM.render(
+                            <div
+                                className="action-container"
+                                style={{
+                                    display: "flex",
+                                    gap: "15px",
+                                    alignItems: "flex-end",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <div
+                                    className="modula-icon-edit  flex gap-2"
+                                    style={{
+                                        color: "#000",
+                                    }}
+                                >
+                                    <TfiPencilAlt
+                                        className=" cursor-pointer"
+                                        onClick={() => {
+                                            openEditModal(row);
+                                        }}
+                                    />
+
+                                </div>
+
+                            </div>,
+                            container
+                        );
+                    }
+                }, 0);
+                return `<div id="${id}"></div>`;
+            },
+        },
+    ];
+
+
+
 
 
 
 
     return (
-        <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
+        <div className="flex flex-col justify-between bg-gray-100 w-full min-h-screen px-3 md:px-5 pt-2 md:pt-10 overflow-x-auto">
             {loading ? (
                 <Loader />
             ) : (
@@ -363,14 +441,55 @@ const parsedDetails = storedDetatis ? JSON.parse(storedDetatis) : null;
                         </div>
 
                         {/* Add Button */}
-                        <div className="flex justify-between mt-8">
+                        <div className="flex flex-wrap justify-between mt-2 md:mt-8">
                             <div className="">
                                 <h1 className="text-2xl md:text-3xl font-semibold">Bank Statement</h1>
                             </div>
+                            <div className='flex flex-wrap justify-center mb-1 md:mb-0 gap-1 md:gap-3'>
+                                <Dropdown
+                                    value={filterType}
+                                    onChange={(e) => setFilterType(e.value)}
+                                    options={[
+                                        { label: "Credit", value: "credit" },
+                                        { label: "Debit", value: "debit" }
+                                    ]}
+                                    placeholder="Select Type"
+                                    className="w-full md:w-[150px]"
+                                />
 
+                                <Dropdown
+                                    value={filterAccount}
+                                    onChange={(e) => setFilterAccount(e.value)}
+                                    options={accountOption}
+                                    optionLabel="name"
+                                    optionValue="_id"
+                                    placeholder="Select Account"
+                                    className="w-full md:w-[150px]"
+                                />
+
+                                <input
+                                    type="date"
+                                    value={filterStartDate}
+                                    onChange={(e) => {
+                                        setFilterStartDate(e.target.value);
+                                    }}
+                                    className="w-full md:w-[150px] border px-3 py-1 rounded"
+                                />
+
+                                <input
+                                    type="date"
+                                    value={filterEndDate}
+                                    onChange={(e) => {
+                                        setFilterEndDate(e.target.value);
+                                    }}
+                                    className="w-full md:w-[150px] border px-3 py-1 rounded"
+                                />
+
+
+                            </div>
                             <button
                                 onClick={openAddModal}
-                                className=" px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
+                                className="px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
                             >
                                 Import
                             </button>
@@ -380,7 +499,7 @@ const parsedDetails = storedDetatis ? JSON.parse(storedDetatis) : null;
                             {/* Responsive wrapper for the table */}
                             <div className="table-scroll-container" id="datatable">
                                 <DataTable
-                                      data={bankStatementDetails}
+                                    data={bankStatementDetails}
                                     columns={columns}
                                     options={{
                                         paging: true,
@@ -415,84 +534,75 @@ const parsedDetails = storedDetatis ? JSON.parse(storedDetatis) : null;
 
                                     <div className="p-5">
                                         <p className="text-2xl md:text-3xl font-medium">Bank Statement</p>
-                                        <div className="mt-3 flex justify-between">
-                                            <label className="block text-md font-medium mb-2">
+                                        {/* Date */}
+                                        <div className="mt-3 flex justify-between items-center">
+                                            <label className="block text-md font-medium">
                                                 Date<span className="text-red-500">*</span>
                                             </label>
+
                                             <div className="w-[60%] md:w-[50%]">
                                                 <input
                                                     type="date"
-                                                    // value={p.date}
-                                                    onChange={(e) =>
-                                                        handleChange(index, "date", e.target.value)
-                                                    }
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                // className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${p.errorDate
-                                                //         ? "border-red-500 focus:ring-red-500"
-                                                //         : "border-gray-300 focus:ring-blue-500"
-                                                //     }`}
+                                                    value={selectedDate}
+                                                    onChange={(e) => {
+                                                        setSelectedDate(e.target.value);
+                                                        handleChange(index, "date", e.target.value);
+                                                    }}
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg 
+               focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />
-                                                {/* {p.errorDate && (
-                                                    <p className="text-red-500 text-sm mt-1">
-                                                        {p.errorDate}
-                                                    </p>
-                                                )} */}
+
                                             </div>
                                         </div>
-                                        {/* Each Cost */}
 
-                                        <div className="mt-3 flex justify-between">
-                                            <label className="block text-sm font-medium mb-2">
+                                        {/* Account */}
+                                        <div className="mt-3 flex justify-between items-center">
+                                            <label className="block text-md font-medium">
                                                 Account<span className="text-red-500">*</span>
                                             </label>
+
                                             <div className="w-[60%] md:w-[50%]">
                                                 <Dropdown
                                                     value={selectedAccount}
                                                     onChange={(e) => setSelectedAccount(e.value)}
                                                     options={accountOption}
                                                     optionLabel="name"
+                                                    placeholder="Select an Account"
                                                     filter
-                                                    placeholder="Select a Account"
-                                                    className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className="w-full border border-gray-300 rounded-lg"
                                                 />
-                                                
-                                                {/* {errors.project_name && (
-                                                    <p className="text-red-500 text-sm mb-4">
-                                                        {errors.project_name}
-                                                    </p>
-                                                )} */}
                                             </div>
                                         </div>
 
-                                        {/* Attachment */}
-                                        <div className="mt-3 flex justify-between">
-                                            <label className="block text-sm font-medium mb-2">
-                                                File Upload
-                                            </label>
-                                            <input
-                                                type="file"
-                                                ref={fileInputRef}
-                                                onChange={handleFileChange}
-                                                className="w-[60%] md:w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                            />
+                                        {/* File Upload */}
+                                        <div className="mt-3 flex justify-between items-center">
+                                            <label className="block text-md font-medium">File Upload</label>
+
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="file"
+                                                    ref={fileInputRef}
+                                                    onChange={handleFileChange}
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg 
+                 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+
+                                                {attachment && (
+                                                    <div className="flex justify-between mt-2 items-center bg-gray-50 px-3 py-2 rounded-lg border">
+                                                        <span className="text-sm text-gray-700 truncate w-[80%]">{attachment.name}</span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={handleDeleteFile}
+                                                            title="Delete"
+                                                            className="text-red-600 hover:text-red-800 text-[18px]"
+                                                        >
+                                                            <AiFillDelete />
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
-                                        <div className="mt-3 flex justify-between ">
-                                            {attachment && (
-                                                <div className=" px-3 py-2  flex justify-between">
-                                                    <span className="text-sm text-gray-700 truncate">
-                                                        {attachment.name}
-                                                    </span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={handleDeleteFile}
-                                                        title="Delete"
-                                                        className="text-red-600 hover:text-red-800 text-[18px] font-medium ml-4"
-                                                    >
-                                                        <AiFillDelete />
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
+
 
 
                                         <div className="flex  justify-end gap-2 mt-6 md:mt-14">
@@ -533,59 +643,56 @@ const parsedDetails = storedDetatis ? JSON.parse(storedDetatis) : null;
 
                                     <div className="p-5">
                                         <p className="text-2xl md:text-3xl font-medium">Bank Statement Edit</p>
-                                        <div className="mt-5 flex justify-between items-center">
-                                            <label className="block text-md font-medium mb-2">
-                                                Name <span className="text-red-500">*</span>
-                                            </label>
-                                            <div className="w-[70%] md:w-[50%]">
-                                                <input
-                                                    type="text"
-                                                    value={nameEdit}
-                                                    onChange={(e) => setNameEdit(e.target.value)}
-                                                    placeholder="Enter Your Name "
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                />
-                                                {errors.name && (
-                                                    <p className="text-red-500 text-sm mb-4">{errors.name}</p>
-                                                )}
-                                            </div>
+                                        <div className="mt-3">
+                                            <label className="font-medium">Amount</label>
+                                            <input
+                                                type="text"
+                                                value={selectedRowData?.amount}
+                                                disabled
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                                            />
+                                        </div>
+                                        <div className="mt-3">
+                                            <label className="font-medium">Account</label>
+                                            <input
+                                                type="text"
+                                                value={selectedRowData?.account.name}
+                                                disabled
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                                            />
+                                        </div>
+                                        <div className="mt-3">
+                                            <label className="font-medium">Narration</label>
+                                            <input
+                                                type="text"
+                                                value={selectedRowData?.narration}
+                                                disabled
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                                            />
+                                        </div>
+
+                                        <div className="mt-3">
+                                            <label className="font-medium">Ledger</label>
+                                            <input
+                                                type="text"
+                                                value={selectedRowData?.ledger}
+                                                disabled
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                                            />
+                                        </div>
+
+                                        <div className="mt-3">
+                                            <label className="font-medium">Notes</label>
+                                            <textarea
+                                                value={notesEdit}
+                                                onChange={(e) => setNotesEdit(e.target.value)}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                                                rows={4}
+                                                placeholder="Add notes..."
+                                            />
                                         </div>
 
 
-                                        {/* {error.rolename && <p className="error">{error.rolename}</p>} */}
-
-                                        <div className="mt-5 flex justify-between items-center">
-                                            <div className="">
-                                                <label
-                                                    htmlFor="status"
-                                                    className="block text-md font-medium mb-2 mt-3"
-                                                >
-                                                    Status <span className="text-red-500">*</span>
-                                                </label>
-
-                                            </div>
-                                            <div className="w-[70%] md:w-[50%]">
-                                                <select
-                                                    name="status"
-                                                    id="status"
-                                                    value={statusEdit}
-                                                    onChange={(e) => {
-                                                        setStatusEdit(e.target.value);
-                                                    }}
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                >
-                                                    <option value="">Select a status</option>
-                                                    <option value="1">Active</option>
-                                                    <option value="0">InActive</option>
-                                                </select>
-                                                {errors.status && (
-                                                    <p className="text-red-500 text-sm mb-4 mt-1">
-                                                        {errors.status}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        </div>
-                                        {/* {error.status && <p className="error">{error.status}</p>} */}
 
                                         <div className="flex  justify-end gap-2 mt-7 md:mt-14">
                                             <button
@@ -605,6 +712,25 @@ const parsedDetails = storedDetatis ? JSON.parse(storedDetatis) : null;
                                 </div>
                             </div>
                         )}
+                        {openViewPopup && (
+                            <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+                                <div className="bg-white p-5 rounded-lg w-[350px] relative shadow-lg">
+
+                                    <IoClose
+                                        className="absolute top-3 right-3 text-2xl cursor-pointer"
+                                        onClick={() => setOpenViewPopup(false)}
+                                    />
+
+                                    <h2 className="text-xl font-semibold mb-2">Amount Details</h2>
+                                    <hr />
+
+                                    <div className="mt-3 space-y-2">
+                                        <p><strong>Amount:</strong> ₹{selectedRowData?.amount}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                     </div>
                 </>
             )}

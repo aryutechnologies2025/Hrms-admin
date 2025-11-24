@@ -317,10 +317,15 @@ table.dataTable {
   flex-wrap: wrap !important;
 
 }
+ .dt-length,.dt-search {
+    display: none !important;
+  }
+
+
 }
 
 #datatable .dataTables_info,
-#datatable .dt-info,
+#datatable .dt-info
 #datatable .dataTables_length {
   display: none !important;
 }

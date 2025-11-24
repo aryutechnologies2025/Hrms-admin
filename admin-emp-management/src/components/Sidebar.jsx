@@ -26,6 +26,7 @@ import { GiCrystalGrowth } from "react-icons/gi";
 import { LuUserSearch } from "react-icons/lu";
 import { BsFillCameraReelsFill } from "react-icons/bs";
 import { MdManageAccounts } from "react-icons/md";
+import { GrAnnounce } from "react-icons/gr";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -1260,6 +1261,24 @@ const Sidebar = () => {
                     </>
                   )}
 
+                  {/* announcement */}
+
+                  {hasPermission("Announcement") && (
+                    <>
+                      <div
+                        onClick={() => onClickSidebarMenu("announcement")}
+                        className={`flex items-center w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                          } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/payroll"
+                            ? "bg-blue-100 text-[#4F46E5]"
+                            : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
+                          }`}
+                      >
+                        <GrAnnounce />
+                        {!arrowClicked && <p className="text-sm">Announcement</p>}
+                      </div>
+                    </>
+                  )}
+
                   {/* payroll */}
 
                   {hasPermission("Payroll") && (
@@ -1338,17 +1357,7 @@ const Sidebar = () => {
                     </div>
                   )}
 
-                  <div
-                    onClick={() => onClickSidebarMenu("mom-details")}
-                    className={`flex items-center h-10 w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
-                      } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/mom-details"
-                        ? "bg-blue-100 text-[#4F46E5]"
-                        : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                      }`}
-                  >
-                    <FaBusinessTime />
-                    {!arrowClicked && <p className="text-sm">MOM</p>}
-                  </div>
+                  
 
                   {hasPermission("Settings") && (
                     <div
