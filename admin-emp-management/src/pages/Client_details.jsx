@@ -84,6 +84,7 @@ const Client_details = () => {
   const [companyName, setCompanyName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [source, setSource] = useState("");
   const [address, setAddress] = useState("");
   const [notes, setNotes] = useState("");
   const [contactPerson, setContactPerson] = useState("");
@@ -106,6 +107,7 @@ const Client_details = () => {
         company_name: companyName,
         email: email,
         phone_number: phoneNumber,
+        source: source,
         address: address,
         contact_person: contactPerson,
         password: password,
@@ -132,6 +134,7 @@ const Client_details = () => {
       setCompanyName("");
       setEmail("");
       setPhoneNumber("");
+      setSource("");
       setAddress("");
       setNotes("");
       setContactPerson("");
@@ -162,6 +165,7 @@ const Client_details = () => {
   const [companyNameedit, setCompanyNameedit] = useState("");
   const [emailedit, setEmailedit] = useState("");
   const [phoneNumberedit, setPhoneNumberedit] = useState("");
+  const [sourceedit, setSourceedit] = useState("");
   const [addressedit, setAddressedit] = useState("");
   const [notesedit, setNotesedit] = useState("");
   const [contactPersonedit, setContactPersonedit] = useState("");
@@ -183,6 +187,7 @@ const Client_details = () => {
     setCompanyNameedit(row.company_name || "");
     setEmailedit(row.email || "");
     setPhoneNumberedit(row.phone_number || "");
+    setSourceedit(row.source || "");
     setAddressedit(row.address || "");
     setNotesedit(row.notes || "");
     setContactPersonedit(row.contact_person || "");
@@ -226,6 +231,7 @@ const Client_details = () => {
         company_name: companyNameedit,
         email: emailedit,
         phone_number: phoneNumberedit,
+        source: sourceedit,
         address: addressedit,
         contact_person: contactPersonedit,
         contact_person_role: contactPersonRoleedit,
@@ -467,7 +473,7 @@ const Client_details = () => {
         </div>
 
         {/* Add Button */}
-        <div className="flex justify-between mt-8 mb-3">
+        <div className="flex justify-between mt-1 md:mt-8 mb-2 md:mb-3">
           <h1 className="text-2xl md:text-3xl font-semibold">Client List</h1>
           <button
             onClick={openAddModal}
@@ -558,6 +564,7 @@ const Client_details = () => {
                   )} */}
                 </div>
               </div>
+              
               {/* email phonenumber */}
 
               <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3">
@@ -772,7 +779,30 @@ const Client_details = () => {
               {/* {errors.name && (
                 <p className="text-red-500 text-sm mb-4">{errors.name}</p>
               )} */}
-              <div className="flex justify-between gap-5 mt-3">
+              
+              <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3">
+                {/* source */}
+              
+              <div className="w-full">
+                  <label
+                    htmlFor="roleName"
+                    className="block text-sm font-medium mb-2"
+                  >
+                    Source<span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={source}
+                    onChange={(e) => setSource(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  {errors.source && (
+                    <p className="text-red-500 text-sm mb-4">
+                      {errors.source}
+                    </p>
+                  )}
+                </div>
+                {/* status */}
                 <div className="w-full">
                   <p className="block text-sm font-medium mb-2 ">
                     Status <span className="text-red-500">*</span>
@@ -796,7 +826,8 @@ const Client_details = () => {
                 </div>
                 {/* {error.status && <p className="error">{error.status}</p>} */}
               </div>
-            </div>
+              </div>
+          
           </div>
         )}
 

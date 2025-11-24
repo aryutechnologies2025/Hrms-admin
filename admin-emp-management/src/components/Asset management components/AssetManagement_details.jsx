@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import DataTable from "datatables.net-react";
 import DT from "datatables.net-dt";
@@ -21,6 +21,7 @@ import {
 } from "react-icons/io";
 import Loader from "../Loader";
 import { Dropdown } from "primereact/dropdown";
+import { AiFillDelete } from "react-icons/ai";
 
 
 const AssetManagement_details = () => {
@@ -36,6 +37,10 @@ const AssetManagement_details = () => {
     console.log("assetManageDetails check", assetManageDetails)
     const [loading, setLoading] = useState(true); // State to manage loading
     let navigate = useNavigate();
+        const fileInputRef = useRef(null);
+        const fileInputRefedit = useRef(null);
+            const [attachmentedit, setAttachmentedit] = useState(null);
+            const [attachment, setAttachment] = useState(null);
 
 
     //  view
@@ -55,7 +60,7 @@ const AssetManagement_details = () => {
 
 
         } catch (err) {
-            setErrors("Failed to fetch Asset Management.");
+            setErrors("Failed to fetch Asset.");
             setLoading(false);
 
         }
@@ -93,11 +98,32 @@ const AssetManagement_details = () => {
         setTimeout(() => setIsAddModalOpen(false), 250);
     };
 
-
-
     const closeEditModal = () => {
         setIsAnimating(false);
         setTimeout(() => setIsEditModalOpen(false), 250);
+    };
+
+       const handleDeleteFile = () => {
+        setAttachment(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
+        const handleDeleteFileedit = () => {
+        setAttachmentedit(null);
+        if (fileInputRefedit.current) {
+            fileInputRefedit.current.value = "";
+        }
+    };
+        const handleFileChangeedit = (e) => {
+        if (e.target.files[0]) {
+            setAttachment(e.target.files[0]);
+        }
+    };
+        const handleFileChange = (e) => {
+        if (e.target.files[0]) {
+            setAttachment(e.target.files[0]);
+        }
     };
 
 
@@ -237,7 +263,7 @@ const AssetManagement_details = () => {
     const deleteRoles = (editId) => {
         Swal.fire({
             title: "Are you sure?",
-            text: "Do you want to delete this Asset Management?",
+            text: "Do you want to delete this Asset?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "Yes, delete it!",
@@ -248,15 +274,15 @@ const AssetManagement_details = () => {
                     .delete(`${API_URL}/api/asset-mannagement/delete-asset/${editId}`)
                     .then((response) => {
                         if (response.data) {
-                            toast.success("Asset Management has been deleted.");
+                            toast.success("Asset has been deleted.");
                             fetchAssetManagement(); // Refresh
                         } else {
-                            Swal.fire("Error!", "Failed to delete Asset Management.", "error");
+                            Swal.fire("Error!", "Failed to delete Asset.", "error");
                         }
                     })
                     .catch((error) => {
                         // console.error("Error deleting role:", error);
-                        Swal.fire("Error!", "Failed to delete Asset Management.", "error");
+                        Swal.fire("Error!", "Failed to delete Asset.", "error");
                     });
             }
         });
@@ -340,13 +366,13 @@ const AssetManagement_details = () => {
                             </p>
                             <p>{">"}</p>
 
-                            <p className="text-sm text-blue-500">Asset Management</p>
+                            <p className="text-sm text-blue-500">Asset</p>
                         </div>
 
                         {/* Add Button */}
                         <div className="flex justify-between mt-8">
                             <div className=" ">
-                                <h1 className="text-2xl md:text-3xl font-semibold">Asset Management</h1>
+                                <h1 className="text-2xl md:text-3xl font-semibold">Asset</h1>
                             </div>
 
                             <div className="flex flex-wrap md:flex-nowrap justify-end items-center gap-1 md:gap-3">
@@ -404,14 +430,14 @@ const AssetManagement_details = () => {
                                     </div>
 
                                     <div className="p-2 md:p-5">
-                                        <p className="text-2xl md:text-3xl font-medium">Asset Management</p>
+                                        <p className="text-2xl md:text-3xl font-medium">Asset</p>
                                         {/* assest category */}
-                                        <div className="mt-2 md:mt-5 mb-2 flex justify-between items-center">
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Asset Category<span className="text-red-500">*</span>
                                             </label>
 
-                                            <div className="w-[65%] md:w-[50%]">
+                                            <div className="w-[60%] md:w-[50%]">
                                                 <Dropdown
                                                     value={assetCategory}
                                                     onChange={(e) => setAssetCategory(e.value)}
@@ -421,7 +447,7 @@ const AssetManagement_details = () => {
                                                     filter
                                                     placeholder="Select Category"
                                                     maxSelectedLabels={3}
-                                                    className="w-full   border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className="w-full px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                     display="chip"
                                                 />
                                                 {errors.assetCategory && (
@@ -432,7 +458,7 @@ const AssetManagement_details = () => {
                                             </div>
                                         </div>
                                         {/* asset name */}
-                                        <div className="mt-2 md:mt-5 mb-2 flex justify-between items-center">
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Asset Name <span className="text-red-500">*</span>
                                             </label>
@@ -453,7 +479,7 @@ const AssetManagement_details = () => {
 
                                         {/* serial number */}
 
-                                        <div className="mt-2 md:mt-5 mb-2 flex justify-between items-center">
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Serial Number<span className="text-red-500">*</span>
                                             </label>
@@ -475,7 +501,7 @@ const AssetManagement_details = () => {
 
                                         {/* count */}
 
-                                        <div className="mt-2 md:mt-5 mb-2 flex justify-between items-center">
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Count<span className="text-red-500">*</span>
                                             </label>
@@ -495,7 +521,7 @@ const AssetManagement_details = () => {
                                             </div>
                                         </div>
                                         {/* purchased date */}
-                                        <div className="mt-2 md:mt-5 mb-2 flex justify-between items-center">
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Purchased date<span className="text-red-500">*</span>
                                             </label>
@@ -521,7 +547,7 @@ const AssetManagement_details = () => {
                                         </div>
                                         {/* Each Cost */}
 
-                                        <div className="mt-2 md:mt-5 mb-2 flex justify-between items-center">
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Each Cost<span className="text-red-500">*</span>
                                             </label>
@@ -543,7 +569,7 @@ const AssetManagement_details = () => {
 
                                         {/* Total cost */}
 
-                                        <div className="mt-2 md:mt-5 mb-2 flex justify-between items-center">
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Total Cost<span className="text-red-500">*</span>
                                             </label>
@@ -563,30 +589,31 @@ const AssetManagement_details = () => {
                                             </div>
                                         </div>
                                         {/* Warrantly Years */}
-
-                                        <div className="mt-2 md:mt-5 mb-2 flex justify-between items-center">
-                                            <label className="block text-md font-medium mb-2">
+                                        
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-1 md:mb-2">
                                                 Warrantly Years<span className="text-red-500">*</span>
                                             </label>
-                                            <div className="w-[70%] md:w-[50%]">
+                                            <div className="w-[60%] md:w-[50%]">
                                                 <input
                                                     type="number"
                                                     value={warrantyYear}
                                                     onChange={(e) => setWarrantyYear(e.target.value)}
-                                                    placeholder="Enter Warrantly Years "
+                                                    placeholder="Enter Warrantly Years"
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />
                                                 {errors.warrantyYear && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
-                                                        {errors.warrantyYear}
+                                                        {errors.totalCost}
                                                     </p>
                                                 )}
                                             </div>
                                         </div>
+                                        
 
                                         {/* Disposed Date */}
 
-                                        <div className="mt-2 md:mt-5 mb-2 flex justify-between items-center">
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Disposed Date<span className="text-red-500">*</span>
                                             </label>
@@ -604,6 +631,35 @@ const AssetManagement_details = () => {
                                                     </p>
                                                 )}
                                             </div>
+                                        </div>
+                                        {/* file upload */}
+                                        <div className="mt-2 md:mt-3 flex justify-between">
+                                            <label className="block text-md font-medium mb-2">
+                                                File Upload
+                                            </label>
+                                            <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                onChange={handleFileChange}
+                                                className="w-[60%] md:w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+                                        <div className="mt-3 flex justify-between ">
+                                            {attachment && (
+                                                <div className=" px-3 py-2  flex justify-between">
+                                                    <span className="text-sm text-gray-700 truncate">
+                                                        {attachment.name}
+                                                    </span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleDeleteFile}
+                                                        title="Delete"
+                                                        className="text-red-600 hover:text-red-800 text-[18px] font-medium ml-4"
+                                                    >
+                                                        <AiFillDelete />
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
 
 
@@ -644,7 +700,7 @@ const AssetManagement_details = () => {
                                     </div>
 
                                     <div className="p-5">
-                                        <p className="text-2xl md:text-3xl font-medium">Asset Management Edit</p>
+                                        <p className="text-2xl md:text-3xl font-medium">Asset Edit</p>
                                         <div className="mt-5 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Name <span className="text-red-500">*</span>

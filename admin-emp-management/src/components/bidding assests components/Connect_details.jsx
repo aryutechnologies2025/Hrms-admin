@@ -433,7 +433,7 @@ const Connect_details = () => {
             </div>
 
             {/* Add Button */}
-            <div className="flex justify-between mt-8 mb-3">
+            <div className="flex justify-between mt-1 md:mt-8 mb-2 md:mb-3">
               <h1 className="text-2xl md:text-3xl font-semibold">Connects</h1>
               <button
                 onClick={openAddModal}

@@ -342,7 +342,7 @@ const Finance_account_details = () => {
         </div>
 
         {/* Add Button */}
-        <div className="flex justify-between mt-8 mb-3">
+        <div className="flex justify-between mt-1 md:mt-8 mb-2 md:mb-3">
           <h1 className="text-xl md:text-3xl font-semibold">
             {" "}
             Company Account

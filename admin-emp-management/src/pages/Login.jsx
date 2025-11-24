@@ -167,7 +167,7 @@ const inactiveClass = "hover:underline";
       {/* Left Section (Form) */}
       <div className="flex-1 flex flex-col items-center justify-center p-5 md:p-10">
         <h1 className="text-[#0050aa] font-bold text-xl md:text-4xl mb-2 md:mb-6">
-          ARYU ADMIN LOGIN
+           ADMIN LOGIN
         </h1>
 
         {/* Username Field */}

@@ -30,8 +30,6 @@ const Request_details = () => {
   const formatDateTime = useDateUtils();
   const [globalFilter, setGlobalFilter] = useState("");
   const [approvedRejectedList, setApprovedRejectedList] = useState([]);
-  const [reason, setReason] = useState(null);
-  const [reasonVisible, setReasonVisible] = useState(false);
   const [noteContent, setNoteContent] = useState("");
   const [noteVisible, setNoteVisible] = useState(false);
 

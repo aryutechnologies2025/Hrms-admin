@@ -22,10 +22,10 @@ import Mobile_Sidebar from "../Mobile_Sidebar";
 
 import { TfiPencilAlt } from "react-icons/tfi";
 import Swal from "sweetalert2";
-
+import { FaEye } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import Loader from "../Loader";
-import { useDateUtils  } from "../../hooks/useDateUtils";
+import { useDateUtils } from "../../hooks/useDateUtils";
 
 const WorkFromHome_Mainbar = () => {
   const formatDateTime = useDateUtils();
@@ -49,11 +49,12 @@ const WorkFromHome_Mainbar = () => {
   const [textareaValue, setTextareaValue] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-
+  const [reason, setReason] = useState(null);
+  const [reasonVisible, setReasonVisible] = useState(false);
   const [permissionStartTime, setPermissionStartTime] = useState("");
   const [permissionEndTime, setPermissionEndTime] = useState("");
-
-  // const [leaveType, setLeavetype] = useState("");
+  const [noteContent, setNoteContent] = useState("");
+  const [noteVisible, setNoteVisible] = useState(false);
   const [subleavetype, setSubleavetype] = useState("");
 
   const handleEditClick = (rowData) => {
@@ -197,7 +198,25 @@ const WorkFromHome_Mainbar = () => {
     //     );
     //   },
     // },
-    { field: "leaveReason", header: "Reason" },
+
+    {
+      field: "leaveReason",
+      header: "Reason",
+      body: (rowData) => {
+        return (
+          <button
+            className="p-button-text p-button-sm"
+            onClick={() => {
+              setReason(rowData || "");
+              setReasonVisible(true);
+            }}
+
+          >
+            <FaEye />
+          </button>
+        );
+      },
+    },
     {
       field: "status",
       header: "Status",
@@ -207,12 +226,12 @@ const WorkFromHome_Mainbar = () => {
           .includes("new leave")
           ? "text-blue-600 border rounded-full border-blue-600"
           : rowData.status.toLowerCase().includes("approved")
-          ? "text-green-600 border rounded-full border-green-600"
-          : rowData.status.toLowerCase().includes("pending")
-          ? "text-yellow-600 border rounded-full border-yellow-600"
-          : rowData.status.toLowerCase().includes("new leave")
-          ? "text-blue-600 border rounded-full border-blue-600"
-          : "text-red-600 border rounded-full border-red-600";
+            ? "text-green-600 border rounded-full border-green-600"
+            : rowData.status.toLowerCase().includes("pending")
+              ? "text-yellow-600 border rounded-full border-yellow-600"
+              : rowData.status.toLowerCase().includes("new leave")
+                ? "text-blue-600 border rounded-full border-blue-600"
+                : "text-red-600 border rounded-full border-red-600";
         return (
           <div
             style={{
@@ -232,7 +251,24 @@ const WorkFromHome_Mainbar = () => {
         );
       },
     },
-    { field: "note", header: "Notes", body: (rowData) => rowData.note || "-" },
+    {
+          field: "note",
+          header: "Notes",
+          body: (rowData) => {
+            return (
+              <button
+                className="p-button-text p-button-sm"
+                onClick={() => {
+                  setNoteContent(rowData || "");
+                  setNoteVisible(true);
+                }}
+              // disabled={!rowData.note} // optional: disable if no note
+              >
+                <FaEye />
+              </button>
+            );
+          },
+        },
     {
       field: "",
       header: "Action",
@@ -519,7 +555,7 @@ const WorkFromHome_Mainbar = () => {
                   value={globalFilter}
                   onChange={(e) => setGlobalFilter(e.target.value)}
                   placeholder="Search"
-                  className="px-2 py-2 rounded-md border border-gray-300 focus:outline-none  focus:border-blue-500"
+                  className="w-full md:w-[20%] px-2 py-2 rounded-md border border-gray-300 focus:outline-none  focus:border-blue-500"
                 />
               </div>
 
@@ -571,9 +607,8 @@ const WorkFromHome_Mainbar = () => {
                 ></div>
 
                 <div
-                  className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[70vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${
-                    isAnimating ? "translate-x-0" : "translate-x-full"
-                  }`}
+                  className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[70vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                    }`}
                 >
                   <div
                     className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
@@ -593,11 +628,10 @@ const WorkFromHome_Mainbar = () => {
                         {/* Accordion Header */}
                         <div
                           onClick={() => toggleAccordion(index)}
-                          className={`${
-                            new Date(item.startDate) <= new Date()
-                              ? "bg-red-100 text-red-600"
-                              : ""
-                          } cursor-pointer bg-gray-100 flex flex-wrap justify-between items-center px-2 py-2 sm:px-4 sm:py-4 rounded-xl border-2 border-gray-200`}
+                          className={`${new Date(item.startDate) <= new Date()
+                            ? "bg-red-100 text-red-600"
+                            : ""
+                            } cursor-pointer bg-gray-100 flex flex-wrap justify-between items-center px-2 py-2 sm:px-4 sm:py-4 rounded-xl border-2 border-gray-200`}
                         >
                           <div className="flex gap-4">
                             <div className="flex flex-col sm:flex-row gap-2">
@@ -632,9 +666,8 @@ const WorkFromHome_Mainbar = () => {
                               )}
                             </div>
                             <svg
-                              className={`w-5 h-5 transition-transform ${
-                                expandedIndex === index ? "rotate-180" : ""
-                              }`}
+                              className={`w-5 h-5 transition-transform ${expandedIndex === index ? "rotate-180" : ""
+                                }`}
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -653,9 +686,8 @@ const WorkFromHome_Mainbar = () => {
                         {/* Accordion Content */}
                         {expandedIndex === index && (
                           <div
-                            className={`flex flex-col px-5 gap-3 mt-5 transition ease-out duration-1000 ${
-                              isVisible ? "opacity-100 " : "opacity-0 "
-                            }`}
+                            className={`flex flex-col px-5 gap-3 mt-5 transition ease-out duration-1000 ${isVisible ? "opacity-100 " : "opacity-0 "
+                              }`}
                           >
                             {/* Content here */}
                             <div className="flex flex-col lg:flex-row gap-1 justify-between">
@@ -912,6 +944,56 @@ const WorkFromHome_Mainbar = () => {
                 </div>
               </div>
             )}
+
+            {reasonVisible && (
+              <div
+                onClick={() => setReasonVisible(false)}
+                className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/20 z-50"
+              >
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="bg-white rounded-lg shadow-lg py-6 px-8 w-[800px] max-h-[500px] overflow-y-auto"
+                >
+                  <div className="flex items-center justify-between text-wrap">
+                    <h2 className="text-xl font-semibold">Reason</h2>
+                    <span
+                      onClick={() => setReasonVisible(false)}
+                      className="bg-gray-100 w-7 text-lg cursor-pointer h-7 flex justify-center items-center rounded-full"
+                    >
+                      <IoClose />
+                    </span>
+                  </div>
+                  <p className="mt-4 text-[16px] break-words">
+                    {reason.leaveReason || "-"}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {noteVisible && (
+                              <div
+                                onClick={() => setNoteVisible(false)}
+                                className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/20 z-50"
+                              >
+                                <div
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="bg-white rounded-lg shadow-lg py-6 px-8 w-[800px] max-h-[500px] overflow-y-auto"
+                                >
+                                  <div className="flex items-center justify-between text-wrap">
+                                    <h2 className="text-xl font-semibold">Note </h2>
+                                    <span
+                                      onClick={() => setNoteVisible(false)}
+                                      className="bg-gray-100 w-7 text-lg cursor-pointer h-7 flex justify-center items-center rounded-full"
+                                    >
+                                      <IoClose />
+                                    </span>
+                                  </div>
+                                  <p className="mt-4 text-[16px] break-words">
+                                    {noteContent.note || "-"}
+                                  </p>
+                                </div>
+                              </div>
+                            )}
           </div>
         </>
       )}
