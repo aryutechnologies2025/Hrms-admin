@@ -366,13 +366,13 @@ const AssetManagement_details = () => {
                             </p>
                             <p>{">"}</p>
 
-                            <p className="text-sm text-blue-500">Asset</p>
+                            <p className="text-sm text-blue-500">Assets</p>
                         </div>
 
                         {/* Add Button */}
                         <div className="flex justify-between mt-8">
                             <div className=" ">
-                                <h1 className="text-2xl md:text-3xl font-semibold">Asset</h1>
+                                <h1 className="text-2xl md:text-3xl font-semibold">Assets</h1>
                             </div>
 
                             <div className="flex flex-wrap md:flex-nowrap justify-end items-center gap-1 md:gap-3">
@@ -381,6 +381,12 @@ const AssetManagement_details = () => {
                                     className=" px-1 py-2  text-white bg-blue-500 hover:bg-blue-600 font-normal md:font-medium w-24 rounded-2xl"
                                 >
                                     Category
+                                </button>
+                                <button
+                                    onClick={() => navigate("/assetcategory")}
+                                    className=" px-1 py-2  text-white bg-blue-500 hover:bg-blue-600 font-normal md:font-medium w-28 rounded-2xl"
+                                >
+                                    Subcategory
                                 </button>
                                 <button
                                     onClick={openAddModal}

@@ -286,7 +286,7 @@ const Source_Details = () => {
         </div>
 
         {/* Add Button */}
-        <div className="flex justify-between mt-4 md:mt-8">
+        <div className="flex justify-between mt-2 md:mt-8">
           <div className="">
             <h1 className="text-2xl md:text-3xl font-semibold">Technologies</h1>
           </div>

@@ -546,9 +546,9 @@ const Candidate_Details = () => {
             </div>
 
             {/* Add Button */}
-            <div className="flex justify-between mt-4 md:mt-8">
+            <div className="flex justify-between mt-2 md:mt-8">
               <div className="">
-                <h1 className="text-3xl  font-semibold">Candidate</h1>
+                <h1 className="text-xl md:text-3xl  font-semibold">Candidate</h1>
               </div>
 
               <button

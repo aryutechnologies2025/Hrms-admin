@@ -117,7 +117,7 @@ const Mobile_Sidebar = () => {
 
   return (
     <div>
-      <div className="flex my-3 justify-start items-center w-full md:hidden">
+      <div className="flex md:my-3 justify-start items-center w-full md:hidden">
         <GiHamburgerMenu className="text-xl" onClick={onClickHamburgerIcon} />
       </div>
 

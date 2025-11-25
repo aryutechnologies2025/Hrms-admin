@@ -235,10 +235,10 @@ function Reports_details() {
           <p>{">"}</p>
           <p className="text-sm text-blue-500 ">Reports</p>
         </div>
-        <p className="text-2xl md:text-3xl mt-2 md:mt-8 font-semibold">
+        <p className="text-2xl md:text-3xl mt-1 md:mt-8 font-semibold">
           Monthly Report
         </p>
-        <div className="bg-white mt-8 px-5 py-5 rounded-2xl">
+        <div className="bg-white mt-1 md:mt-8 px-2 md:px-5 py-2 md:py-5 rounded-2xl">
           {/* <p className="text-2xl font-bold text-gray-500">Attendance List</p> */}
           <div
             style={{ width: "auto", margin: "0 auto" }}
