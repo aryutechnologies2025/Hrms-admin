@@ -293,7 +293,7 @@ const JobType_Details = () => {
 
 
   return (
-    <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
+    <div className="flex flex-col justify-between bg-gray-100 w-full min-h-screen px-3 md:px-5 pt-2 md:pt-10 overflow-x-auto">
       {loading ? (
               <Loader />
             ) : (
@@ -314,7 +314,7 @@ const JobType_Details = () => {
         </div>
 
         {/* Add Button */}
-        <div className="flex justify-between mt-8">
+        <div className="flex justify-between mt-1 md:mt-8">
           <div className="">
             <h1 className="text-2xl md:text-3xl font-semibold">Job Type</h1>
           </div>

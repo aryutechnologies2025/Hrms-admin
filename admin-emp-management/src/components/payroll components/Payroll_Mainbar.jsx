@@ -585,12 +585,12 @@ const Payroll_Mainbar = () => {
               <p className=" text-blue-500 ">Payroll</p>
             </div>
 
-            <p className="text-2xl md:text-3xl mt-5 md:mt-8 font-semibold">
+            <p className="text-2xl md:text-3xl mt-2 md:mt-8 font-semibold">
               Payroll
             </p>
 
             {/* data table */}
-            <div className="bg-white mt-4 md:mt-8 px-5 py-5 rounded-2xl">
+            <div className="bg-white mt-2 md:mt-8 md:px-2 px-5 py-2 md:py-5 rounded-2xl">
               <div
                 className="overflow-x-hidden"
                 style={{ width: "auto", margin: "0 auto" }}

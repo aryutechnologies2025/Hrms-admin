@@ -397,7 +397,7 @@ const JobOpening_Details = () => {
             </div>
 
             {/* Add Button */}
-            <div className="flex justify-between mt-8">
+            <div className="flex justify-between mt-1 md:mt-8">
               <div className="">
                 <h1 className="text-2xl md:text-3xl font-semibold">Job Opening</h1>
               </div>

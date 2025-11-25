@@ -52,9 +52,10 @@ const BankStatement_Detail = () => {
     const [selectedRowData, setSelectedRowData] = useState(null);
     console.log("checking:", selectedRowData)
 
-    const [selectedDate, setSelectedDate] = useState(
-        new Date().toISOString().split("T")[0]
-    );
+    const [selectedDate, setSelectedDate] = useState(() => {
+        return new Date().toISOString().split("T")[0];
+    });
+
 
 
     // Keep these (but not used as default)
@@ -66,8 +67,8 @@ const BankStatement_Detail = () => {
     // Set filters EMPTY by default
     const [filterType, setFilterType] = useState("");
     const [filterAccount, setFilterAccount] = useState("");
-    const [filterStartDate, setFilterStartDate] = useState(today);
-    const [filterEndDate, setFilterEndDate] = useState(today);
+    const [filterStartDate, setFilterStartDate] = useState("");
+    const [filterEndDate, setFilterEndDate] = useState("");
 
 
 
@@ -94,6 +95,7 @@ const BankStatement_Detail = () => {
             console.log("Final filter URL:", finalURL);
 
             const response = await axios.get(finalURL);
+            console.log("API RESPONSE:", response.data);
 
             setBankStatementDetails(response.data.allStatementDetails);
             setLoading(false);
@@ -317,7 +319,7 @@ const BankStatement_Detail = () => {
         {
             title: "Date",
             data: "date",
-            render: (data) => new Date(data).toLocaleDateString() || "-",
+            render: (data) => new Date(data).toLocaleDateString(),
         },
         {
             title: "Account",
@@ -337,27 +339,29 @@ const BankStatement_Detail = () => {
         {
             title: "Amount",
             data: "amount",
-            render: (data, type, row, meta) => {
-                const id = `amount-eye-${meta.row}`;
-
+            render: (data, type, row) => {
+                const id = `amt-${row._id}`;
                 setTimeout(() => {
                     const container = document.getElementById(id);
                     if (container && !container.hasChildNodes()) {
-                        const root = ReactDOM.createRoot(container);
-                        root.render(
-                            <FaEye
-                                className="cursor-pointer text-blue-600 ml-2"
-                                onClick={() => {
-                                    setSelectedRowData(row);
-                                    setOpenViewPopup(true);
-                                }}
-                            />
+                        ReactDOM.render(
+                            <div className="flex items-center gap-2">
+
+                                <FaEye
+                                    className="text-blue-500 cursor-pointer"
+                                    onClick={() => {
+                                        setSelectedRowData(row);
+                                        setOpenViewPopup(true);
+                                    }}
+                                />
+                            </div>,
+                            container
                         );
                     }
                 }, 0);
 
-                return `<span id="${id}"></span>`;
-            },
+                return `<div id="${id}"></div>`;
+            }
         },
 
         {
@@ -428,24 +432,30 @@ const BankStatement_Detail = () => {
                     <div>
                         <Mobile_Sidebar />
 
-                        <div className="flex gap-2 text-sm items-center">
+                        <div className="flex justify-between gap-1">
+                            <div className="">
+                                <h1 className="text-xl md:text-3xl font-semibold">Bank Statement</h1>
+                            </div>
+                            <div className="flex justify-end gap-1 md:gap-2 text-sm items-center">
+                            <p className="text-xs md:text-sm text-blue-500">Bank Statement</p>
+                            <p>{">"}</p>
                             <p
-                                className="text-sm text-gray-500"
+                                className="text-xs md:text-sm text-gray-500"
                                 onClick={() => navigate("/dashboard-Recruitment")}
                             >
                                 Dashboard
                             </p>
-                            <p>{">"}</p>
+                            </div>
 
-                            <p className="text-sm text-blue-500">Bank Statement</p>
+
+
                         </div>
 
                         {/* Add Button */}
                         <div className="flex flex-wrap justify-between mt-2 md:mt-8">
-                            <div className="">
-                                <h1 className="text-2xl md:text-3xl font-semibold">Bank Statement</h1>
-                            </div>
-                            <div className='flex flex-wrap justify-center mb-1 md:mb-0 gap-1 md:gap-3'>
+                            
+                            <div className='flex flex-wrap items-end mb-1 md:mb-0 gap-3'>
+                                <div className="flex gap-1 ">
                                 <Dropdown
                                     value={filterType}
                                     onChange={(e) => setFilterType(e.value)}
@@ -466,39 +476,72 @@ const BankStatement_Detail = () => {
                                     placeholder="Select Account"
                                     className="w-full md:w-[150px]"
                                 />
-
+                                </div>
+                                <div className="flex gap-1 " >
+                                 <div className="flex flex-col  ">
+                                <lable>Start Date:</lable>
                                 <input
                                     type="date"
                                     value={filterStartDate}
                                     onChange={(e) => {
                                         setFilterStartDate(e.target.value);
                                     }}
-                                    className="w-full md:w-[150px] border px-3 py-1 rounded"
+                                    className="w-[150px] md:w-[160px] border px-1 md:px-3 py-1 rounded"
                                 />
-
+                               </div>
+                               <div className="flex flex-col  ">
+                                <lable>End Date:</lable>
                                 <input
                                     type="date"
                                     value={filterEndDate}
                                     onChange={(e) => {
                                         setFilterEndDate(e.target.value);
                                     }}
-                                    className="w-full md:w-[150px] border px-3 py-1 rounded"
+                                    className="w-[150px] md:w-[160px] border px-1 md:px-3 py-1 rounded"
                                 />
+                                </div>
+                                </div>
+                                
+                                <button
+                                    onClick={() => {
+                                        fetchBank(); // Apply filters
+                                    }}
+                                    className="px-2 md:px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
+                                >
+                                    Submit
+                                </button>
+
+                                <button
+                                    onClick={() => {
+                                        setFilterType("");
+                                        setFilterAccount("");
+                                        setFilterStartDate("");
+                                        setFilterEndDate("");
+
+                                        fetchBank(); // Load all data again
+                                    }}
+                                    className="bg-gray-300 text-gray-800 px-2 md:px-3 py-2 font-medium w-20 rounded-2xl"
+                                >
+                                    Reset
+                                </button>
 
 
                             </div>
+                            <div className="flex items-center">
                             <button
                                 onClick={openAddModal}
-                                className="px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
+                                className="px-2 md:px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
                             >
                                 Import
                             </button>
+                            </div>
                         </div>
 
                         <div className="datatable-container">
                             {/* Responsive wrapper for the table */}
                             <div className="table-scroll-container" id="datatable">
                                 <DataTable
+                                    key={bankStatementDetails.length}   // 🔥 REQUIRED FIX
                                     data={bankStatementDetails}
                                     columns={columns}
                                     options={{
@@ -511,6 +554,8 @@ const BankStatement_Detail = () => {
                                     }}
                                     className="display nowrap bg-white"
                                 />
+
+
                             </div>
                         </div>
 
