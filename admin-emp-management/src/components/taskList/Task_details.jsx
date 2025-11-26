@@ -991,7 +991,7 @@ const Task_details = () => {
                   columns={columns}
                   options={{
                     paging: false,
-                    searching: true,
+                    searching: false,
                     ordering: true,
                     scrollX: true,
                     responsive: true,

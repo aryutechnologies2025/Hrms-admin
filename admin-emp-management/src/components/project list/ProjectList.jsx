@@ -87,6 +87,7 @@ const ProjectList = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/client/view-clientdetails`,
+        {params:{dropDown:true}},
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
