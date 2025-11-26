@@ -2481,7 +2481,7 @@ const Task_details_client = () => {
                   columns={columns}
                   options={{
                     paging: false,
-                    searching: true,
+                    searching: false,
                     ordering: true,
                     scrollX: true,
                     responsive: true,

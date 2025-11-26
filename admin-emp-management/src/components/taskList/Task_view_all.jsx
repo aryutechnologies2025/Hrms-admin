@@ -36,6 +36,7 @@ import { FaFileExport, FaUpload, FaUser } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import { PiFlagPennantFill } from "react-icons/pi";
 import { AiFillDelete, AiTwotoneDelete } from "react-icons/ai";
+import { Dropdown } from "primereact/dropdown";
 
 function Task_view_all() {
   const employeeDetails = JSON.parse(localStorage.getItem("hrmsuser"));
@@ -54,6 +55,10 @@ function Task_view_all() {
   // console.log("startTime", startTime);
 
   const [stopTime, setStopTime] = useState("");
+  // subTask List
+  const [assignTo, setAssignTo] = useState("");
+  const [projectDescription, setProjectDescription] = useState("");
+  const [priority, setPriority] = useState("");
 
   // const handleStatusChange = (e) => {
   //   const newStatus = e.target.value;
@@ -81,7 +86,7 @@ function Task_view_all() {
       "PNG",
       "JPG",
       "SVG",
-      "MP4"
+      "MP4",
     ];
     const excelFormats = ["xlsx", "xls", "csv"];
     const wordFormats = ["docx", "doc", "word"];
@@ -90,11 +95,15 @@ function Task_view_all() {
 
     const commonClass = "w-7 h-7 object-contain";
 
-   if (imageFormats.includes(type)) {
-      return type !== "mp4" ? <img src={Image} className={commonClass} alt="Image" /> : <LuFileVideo2 className="text-xl text-blue-600" />;
+    if (imageFormats.includes(type)) {
+      return type !== "mp4" ? (
+        <img src={Image} className={commonClass} alt="Image" />
+      ) : (
+        <LuFileVideo2 className="text-xl text-blue-600" />
+      );
     }
     if (SavFormats.includes(type)) {
-      return <img src={Sav} className={commonClass} alt="Image"/>;
+      return <img src={Sav} className={commonClass} alt="Image" />;
     }
 
     if (excelFormats.includes(type)) {
@@ -146,7 +155,6 @@ function Task_view_all() {
             pauseComments[pauseComments.length - 1].pauseCondition;
           setpauseProject(lastPauseCondition);
         }
-
         setHolddata(response?.data?.data?.pauseComments);
         setProjectManager(response?.data?.data?.projectManagerId);
         setTester(response?.data?.data?.testerStatus || "-");
@@ -247,13 +255,69 @@ function Task_view_all() {
   };
 
   // messages
+  const [message, setMessage] = useState([]);
+
+  const fetchProject = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/project/view-projects`);
+      // console.log(response);
+      if (response.data.success) {
+        const projectName = response.data.data.map((emp) => ({
+          label: emp.name,
+          value: emp._id,
+          teamMembers: emp.teamMembers,
+          projectManager: emp.projectManager,
+        }));
+
+        setProject(projectName);
+      } else {
+        setErrors("Failed to fetch project.");
+      }
+    } catch (err) {
+      setErrors("Failed to fetch project.");
+    }
+  };
+
+  useEffect(() => {
+    // fetchProjectall();
+    fetchProject();
+  }, []);
 
   const [editorContent, setEditorContent] = useState("");
   // const fileUploadRef = useR/ef(null);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const fileUploadRef = useRef(null);
   const [errors, setErrors] = useState("");
+  ///subtask list
+  const [project, setProject] = useState([]);
+  const [employeeOption, setEmployeeOption] = useState(null);
+  const fetchEmployeeList = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/employees/all-employees`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
+      // const employeeIds = response.data.data.map(emp => `${emp.employeeId} - ${emp.employeeName}`);
+      // const employeeemail = response.data.data.map((emp) => emp.email);
+      // console.log("employeeemail", employeeemail);
+      const employeeName = response.data.data.map((emp) => ({
+        label: emp.employeeName,
+        value: emp._id,
+      }));
+      setEmployeeOption(employeeName);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchEmployeeList();
+  }, []);
   const handleSubmit = async () => {
     const formData = new FormData();
 
@@ -283,27 +347,6 @@ function Task_view_all() {
       // alert("Upload failed!");
     }
   };
-  const [message, setMessage] = useState([]);
-
-  const fetchProject = async () => {
-    try {
-      const response = await axios.get(
-        `${API_URL}/api/task/particular-task-comment/${taskId}`
-      );
-      // console.log(response);
-      if (response.data.success) {
-        setMessage(response.data.data);
-      } else {
-        console.log("Failed to fetch roles.");
-      }
-    } catch (err) {
-      console.log("Failed to fetch roles.");
-    }
-  };
-
-  useEffect(() => {
-    fetchProject();
-  }, []);
 
   const getTimeDifference = (startTime, stopTime) => {
     if (!startTime || !stopTime) return "";
@@ -328,6 +371,50 @@ function Task_view_all() {
   const [showModal, setShowModal] = useState(false);
   const [note, setNote] = useState("");
 
+  //  useEffect trigger to clear all filter date
+
+  // const fetchProject = async () => {
+  //   try {
+  //     const response = await axios.get(`${API_URL}/api/project/view-projects`);
+  //     // console.log(response);
+  //     if (response.data.success) {
+  //       const projectName = response.data.data.map((emp) => ({
+  //         label: emp.name,
+  //         value: emp._id,
+  //         teamMembers: emp.teamMembers,
+  //         projectManager: emp.projectManager,
+  //       }));
+
+  //       setProject(projectName);
+  //     } else {
+  //       setErrors("Failed to fetch project.");
+  //     }
+  //   } catch (err) {
+  //     setErrors("Failed to fetch project.");
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   // fetchProjectall();
+  //   fetchProject();
+  // }, []);
+
+  console.log("alldata?.projectIdFilter", alldata?.projectIdFilter);
+  // const filteredEmployees = (() => {
+  //   const selectedRole = project.find(
+  //     (proj) =>console.log( proj.value) proj.value === alldata?.projectIdFilter
+  //   );
+  //   console.log("selectedRole", selectedRole);
+
+  //   return selectedRole
+  //     && employeeOption.filter(
+  //         (emp) =>
+  //           selectedRole.teamMembers?.includes(emp.value) ||
+  //           selectedRole.projectManager.includes(emp.value)
+  //       )
+
+  // })();
+
   //  const handleholdChange = (e) => {
   //   const selectedValue = e.target.value;
   //   setpauseProject(selectedValue);
@@ -348,6 +435,24 @@ function Task_view_all() {
   //     // handleholdSubmit("restart");
   //   }
   // };
+  const filteredEmployees = (() => {
+    console.log("project", project);
+    const selectedRole = project.find((proj) => {
+      console.log("hhhhh", proj.value);
+      return proj.value === alldata?.projectIdFilter;
+    });
+
+    console.log("selectedRole", selectedRole);
+
+    return (
+      selectedRole &&
+      employeeOption.filter(
+        (emp) =>
+          selectedRole.teamMembers?.includes(emp.value) ||
+          selectedRole.projectManager.includes(emp.value)
+      )
+    );
+  })();
 
   const handleholdChange = (e) => {
     const selectedValue = e.target.value;
@@ -591,25 +696,134 @@ function Task_view_all() {
 
   const [newTask, setNewTask] = useState("");
   const [isAddingTask, setIsAddingTask] = useState(false);
+  const openPopup = () => setIsAddingTask(true);
+  const closePopup = () => setIsAddingTask(false);
 
   // Handle adding a new task
-  const handleAddTask = () => {
+  // const handleAddTask = () => {
+  //   try {
+  //     let validationErrors = {};
+
+  // // --- Validation Rules ---
+  // if (!newTask?.trim()) {
+  //   validationErrors.title = "Task title is required.";
+  // }
+
+  // if (!assignTo) {
+  //   validationErrors.assignTo = "Please select an employee.";
+  // }
+
+  // if (!projectDescription?.trim()) {
+  //   validationErrors.projectDescription = "Task description is required.";
+  // }
+
+  // if (!priority) {
+  //   validationErrors.priority = "Please select a priority.";
+  // }
+
+  // // If validation fails, stop and show errors
+  // if (Object.keys(validationErrors).length > 0) {
+  //   setErrors(validationErrors);
+  //   return;
+  // }
+  //     const payload = {
+  //       taskId: alldata._id,
+  //       title: newTask,
+  //       createdById: employeeeId,
+  //       projectId: alldata.projectIdFilter,
+  //       assignTo: assignTo,
+  //       projectManagerId: alldata.projectManagerId?._id,
+  //       projectDescription,
+  //       priority,
+  //     };
+  //     const response = axios.post(
+  //       `${API_URL}/api/subtasks/create-subtask`,
+  //       payload
+  //     );
+  //     fetchProjectall();
+  //     setProjectDescription("");
+
+  //   } catch (error) {
+  //     console.log("error to add subtask");
+  //   }
+  //   setNewTask("");
+  //   setAssignTo("");
+  //   setIsAddingTask(false);
+  // };
+
+  const handleAddTask = async () => {
     try {
+      let validationErrors = {};
+
+      // Validation Rules
+      if (!newTask?.trim()) {
+        validationErrors.title = "Task title is required.";
+      }
+
+      if (!assignTo) {
+        validationErrors.assignTo = "Please select an employee.";
+      }
+
+      if (!projectDescription?.trim()) {
+        validationErrors.projectDescription = "Task description is required.";
+      }
+
+      if (!priority) {
+        validationErrors.priority = "Please select a priority.";
+      }
+
+      // If validation fails
+      if (Object.keys(validationErrors).length > 0) {
+        // const errorMessage = Object.values(validationErrors)
+        //   .map((msg) => `• ${msg}`)
+        //   .join("<br>");
+
+        // Swal.fire({
+        //   icon: "error",
+        //   title: "Validation Error",
+        //   html: errorMessage,
+        // });
+
+        setErrors(validationErrors);
+        return;
+      }
+
       const payload = {
         taskId: alldata._id,
         title: newTask,
         createdById: employeeeId,
+        projectId: alldata.projectIdFilter,
+        assignTo,
+        projectManagerId: alldata.projectManagerId?._id,
+        projectDescription,
+        priority,
       };
-      const response = axios.post(
-        `${API_URL}/api/subtasks/create-subtask`,
-        payload
-      );
-      fetchProjectall();
+
+      await axios.post(`${API_URL}/api/subtasks/create-subtask`, payload);
+
+      await fetchProjectall();
+
+      Swal.fire({
+        icon: "success",
+        title: "Task Added!",
+        timer: 1200,
+        showConfirmButton: false,
+      });
+
+      // Reset values
+      setNewTask("");
+      setAssignTo("");
+      setProjectDescription("");
+      setPriority("");
+      setIsAddingTask(false);
     } catch (error) {
-      console.log("error to add subtask");
+      Swal.fire({
+        icon: "error",
+        title: "Failed to add task",
+        text: "Something went wrong. Please try again.",
+      });
+      // console.log(error);
     }
-    setNewTask("");
-    setIsAddingTask(false);
   };
 
   const handleSubTaskStatus = (id, value) => {
@@ -653,6 +867,16 @@ function Task_view_all() {
       header: "Sub Task",
     },
     {
+  field: "projectDescription",
+  header: "Description",
+  body: (rowData) => (
+    <div
+      className="text-sm"
+      dangerouslySetInnerHTML={{ __html: rowData?.projectDescription || "-" }}
+    />
+  ),
+},
+    {
       field: "status",
       header: "priority",
       body: (rowData) => (
@@ -670,6 +894,19 @@ function Task_view_all() {
           >
             <span className="font-normal">{rowData.priority}</span>
             <PiFlagPennantFill />
+          </div>
+        </div>
+      ),
+    },
+    {
+      field: "AssignTo",
+      header: "Assign To",
+      body: (rowData) => (
+        <div className="flex items-center justify-center gap-1">
+          <div>
+            <span className="font-normal">
+              {rowData?.assignedTo?.employeeName || "-"}
+            </span>
           </div>
         </div>
       ),
@@ -853,28 +1090,128 @@ function Task_view_all() {
                   </div>
 
                   {isAddingTask && (
-                    <div className="mt-2 relative">
-                      <InputText
-                        value={newTask}
-                        onChange={(e) => setNewTask(e.target.value)}
-                        placeholder="Enter task title"
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") handleAddTask();
-                        }}
-                        className="p-inputtext-sm py-2 px-3 border rounded-md w-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      <div
-                        onClick={handleAddTask}
-                        className="right-0 top-0 absolute p-button-sm rounded-r-md p-button-success bg-blue-600 text-white text-xl font-bold flex justify-center items-center h-full px-2"
-                      >
-                        <HiOutlineArrowTurnUpLeft />
+                    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+                      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
+                        {/* Close Button */}
+                        <button
+                          onClick={closePopup}
+                          className="absolute top-3 right-3 text-red-500 hover:text-black text-xl"
+                        >
+                          ×
+                        </button>
+
+                        <h2 className="text-lg font-bold mb-4">SUB TASK </h2>
+                        <div>
+                          {/* Task Input */}
+                          <label className="block text-sm font-medium mb-2">
+                            Title <span className="text-red-500">*</span> 
+                          </label>
+                          <InputText
+                            value={newTask}
+                            onChange={(e) => setNewTask(e.target.value)}
+                            placeholder="Enter task title"
+                            onKeyDown={(e) =>
+                              e.key === "Enter" && handleAddTask()
+                            }
+                            className="p-inputtext-sm py-2 px-3 border rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                        {errors.title && (
+                          <p className="text-red-500 text-sm">{errors.title}</p>
+                        )}
+
+                        {/* Assign To Dropdown */}
+                        <div className="my-4">
+                          <label className="block text-sm font-medium mb-2">
+                            Assign To <span className="text-red-500">*</span>
+                          </label>
+
+                          <Dropdown
+                            value={assignTo}
+                            onChange={(e) => setAssignTo(e.value)}
+                            options={filteredEmployees}
+                            placeholder="Select Employee"
+                            filter
+                            className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                        {errors.assignTo && (
+                          <p className="text-red-500 text-sm">
+                            {errors.assignTo}
+                          </p>
+                        )}
+
+                        <label
+                          htmlFor="roleName"
+                          className="block text-sm font-medium mb-2 mt-2"
+                        >
+                          Description <span className="text-red-500">*</span>
+                        </label>
+                        <div className="card">
+                          <Editor
+                            value={projectDescription}
+                            onTextChange={(e) =>
+                              setProjectDescription(e.htmlValue)
+                            }
+                            style={{ height: "100px" }}
+                          />
+                        </div>
+                        {errors.projectDescription && (
+                          <p className="text-red-500 text-sm">
+                            {errors.projectDescription}
+                          </p>
+                        )}
+
+                        {/* {error.rolename && <p className="error">{error.rolename}</p>} */}
+                        {/* {errors.description && (
+                          <p className="text-red-500 text-sm mb-4">
+                            {errors.description}
+                          </p>
+                        )} */}
+                        <p className="block text-sm font-medium mb-2 mt-3">
+                          Priority <span className="text-red-500">*</span>
+                        </p>
+                        <select
+                          name="status"
+                          id="status"
+                          value={priority}
+                          onChange={(e) => setPriority(e.target.value)}
+                          className="w-full px-2 py-2  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">Select a Priority</option>
+                          <option value="high">High</option>
+                          <option value="medium">Medium</option>
+                          <option value="low">Low</option>
+                        </select>
+                        {errors.priority && (
+                          <p className="text-red-500 text-sm">
+                            {errors.priority}
+                          </p>
+                        )}
+
+                        {/* {error.status && <p className="error">{error.status}</p>} */}
+                        {/* {errors.priority && (
+                  <p className="text-red-500 text-sm mb-4">{errors.priority}</p>
+                )} */}
+
+                        {/* Submit Button */}
+                        <div className="flex justify-end mt-1">
+                          <button
+                            onClick={() => {
+                              handleAddTask();
+                            }}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-bold"
+                          >
+                            Submit
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}
                 </div>
 
                 {/* comments */}
-                <div className="mt-6">
+                <div className="mt-6 h-auto">
                   <h2 className="text-[15px] md:text-[16px] text-gray-500 font-bold">
                     Comments:
                   </h2>
@@ -983,9 +1320,9 @@ function Task_view_all() {
                     </div>
                   </div>
 
-                  <div className="text-end">
+                  {/* <div className="text-end">
                     <span className="text-red-600 text-sm">{errors}</span>
-                  </div>
+                  </div> */}
                 </div>
 
                 <Editor
@@ -1294,7 +1631,7 @@ function Task_view_all() {
               className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center"
               onClick={handleClose}
             >
-              <div className="bg-white p-6 rounded-xl shadow-lg max-w-3xl w-full max-h-[80vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+              <div className="bg-white p-6 rounded-xl shadow-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-xl font-semibold">Details</h2>
                   <button
