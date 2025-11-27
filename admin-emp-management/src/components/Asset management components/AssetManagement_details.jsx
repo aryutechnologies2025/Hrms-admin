@@ -7,7 +7,7 @@ DataTable.use(DT);
 import axios from "../../api/axiosConfig";
 import { API_URL } from "../../config";
 import { TfiPencilAlt } from "react-icons/tfi";
-import ReactDOM from "react-dom";
+import ReactDOM, { render } from "react-dom";
 import Swal from "sweetalert2";
 import Footer from "../Footer";
 import Mobile_Sidebar from "../Mobile_Sidebar";
@@ -41,7 +41,9 @@ const AssetManagement_details = () => {
         const fileInputRefedit = useRef(null);
             const [attachmentedit, setAttachmentedit] = useState(null);
             const [attachment, setAttachment] = useState(null);
-
+   const [selectedDate, setSelectedDate] = useState(() => {
+        return new Date().toISOString().split("T")[0];
+    });
 
     //  view
     useEffect(() => {
@@ -66,11 +68,12 @@ const AssetManagement_details = () => {
         }
     };
 
+    //fetch asset categories
     useEffect(() => {
         const fetchCategories = async () => {
             try {
                 const res = await axios.get(
-                    `${API_URL}/api/asset-mannagement-category/assetCatagory`
+                    `${API_URL}/api/asset-mannagement-category/assetCategory`
                 );
                 console.log("asset category get response", res);
                 const formatted = res.data?.data?.map((item) => ({
@@ -87,9 +90,37 @@ const AssetManagement_details = () => {
         fetchCategories();
     }, []);
 
+//fetch asset subcategories
+    useEffect(() => {
+        const fetchSubCategories = async () => {
+            try {
+                const res = await axios.get(
+                    `${API_URL}/api/sub-asset-category/subCategory`
+                );
+                console.log("asset subCategory get response", res);
+                const formatted = res.data?.data?.map((item) => ({
+                    label: item?.name,
+                    value: item?._id
+                }));
+
+                setAssetSubCategoryOption(formatted);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchSubCategories();
+    }, []);
+
+
+    const getTodayDate = () => {
+    return new Date().toISOString().split("T")[0];   // "2025-11-27"
+};
 
     const openAddModal = () => {
         setIsAddModalOpen(true);
+        setPurchasedDate(getTodayDate());  //  set default date
+        setDisposedDate(getTodayDate());  //  set default date
         setTimeout(() => setIsAnimating(true), 10);
     };
 
@@ -121,6 +152,7 @@ const AssetManagement_details = () => {
         }
     };
         const handleFileChange = (e) => {
+            console.log("e 1233 :",e)
         if (e.target.files[0]) {
             setAttachment(e.target.files[0]);
         }
@@ -131,14 +163,26 @@ const AssetManagement_details = () => {
     console.log("assetCategory", assetCategory)
     const [accountoption, setAccountoption] = useState([]);
     console.log("accountoption", accountoption)
-    const [assetName, setAssetName] = useState("");
-    const [serialNumber, setSerialNumber] = useState("");
-    const [count, setCount] = useState("");
+      const [assetSubCategory, setAssetSubCategory] = useState("");
+    console.log("assetSubCategory", assetSubCategory)
+    const [assetSubCategoryOption, setAssetSubCategoryOption] = useState([]);
+    const [ledger, setLedger] = useState("");
+    const [title, setTitle] = useState("");
+    const [invoiceNumber, setInvoiceNumber] = useState("");
+    const [depreciationPercentage, setDepreciationPercentage] = useState("");
+    const [quantity, setQuantity] = useState("");
     const [purchasedDate, setPurchasedDate] = useState("");
-    const [eachCost, setEachCost] = useState("");
-    const [totalCost, setTotalCost] = useState("");
+    const [rate, setRate] = useState("");
+    const [taxable, setTaxable] = useState("");
+    const [gst, setGst] = useState("");
+    const [cgst, setCgst] = useState("");
+    const [sgst, setSgst] = useState("");
+    const [igst, setIgst] = useState("");
+    const [invoiceValue, setInvoiceValue] = useState("");
     const [warrantyYear, setWarrantyYear] = useState("");
     const [disposedDate, setDisposedDate] = useState("");
+    const [fileUpload, setFileUpload] = useState(null);
+   
 
 
 
@@ -147,26 +191,42 @@ const AssetManagement_details = () => {
 
     // create
     const handlesubmit = async (e) => {
+        console.log("fileUpload",fileUpload)
         e.preventDefault();
 
         const formdata = {
-            assetCategory,
-            assetName,
-            serialNumber: Number(serialNumber),
-            count: Number(count),
+            invoiceNumber: String(invoiceNumber),
             purchasedDate,
-            eachCost: Number(eachCost),
-            totalCost: Number(totalCost),
+             ledger,
+            assetCategory,
+            assetSubCategory,
+            title,
+           depreciationPercentage,
+            quantity: Number(quantity),
+            rate: Number(rate),
+            gst: Number(gst),
+            taxable: Number(taxable),
+            cgst: Number(cgst),
+            sgst: Number(sgst),
+            igst: Number(igst),
+            invoiceValue: Number(invoiceValue),
             warrantyYear: Number(warrantyYear),
             disposedDate,
+            fileUpload: attachment
         };
 
 
         try {
             const response = await axios.post(
                 `${API_URL}/api/asset-mannagement/create-asset`,
-                formdata
+                formdata,
+                {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
             );
+            
 
             toast.success("Asset created successfully");
 
@@ -174,15 +234,24 @@ const AssetManagement_details = () => {
             fetchAssetManagement();
 
             // Reset fields
-            setAssetName("");
+            setLedger("");
             setAssetCategory("");
-            setSerialNumber("");
-            setCount("");
+            setAssetSubCategory("");
+            setTitle("");
+            setInvoiceNumber("");
+            setQuantity("");
             setPurchasedDate("");
-            setEachCost("");
-            setTotalCost("");
+            setDepreciationPercentage("");
+            setRate("");
+            setTaxable("");
+            setGst("");
+            setCgst("");
+            setSgst("");
+            setIgst("");
+            setInvoiceValue("");
             setWarrantyYear("");
             setDisposedDate("");
+            setFileUpload(null);
 
         } catch (err) {
             console.log(err);
@@ -194,29 +263,46 @@ const AssetManagement_details = () => {
 
     //  edit  
     const [assetCategoryEdit, setAssetCategoryEdit] = useState("");
-    const [assetNameEdit, setAssetNameEdit] = useState("");
-    const [serialNumberEdit, setSerialNumberEdit] = useState("");
-    const [countEdit, setCountEdit] = useState("");
+    const [assetSubCategoryEdit, setAssetSubCategoryEdit] = useState("");
+    const [titleEdit, setTitleEdit] = useState("");
+    const [ledgerEdit, setLedgerEdit] = useState("");
+    const [invoiceNumberEdit, setInvoiceNumberEdit] = useState("");
+    const [quantityEdit, setQuantityEdit] = useState("");
     const [purchasedDateEdit, setPurchasedDateEdit] = useState("");
-    const [eachCostEdit, setEachCostEdit] = useState("");
-    const [totalCostEdit, setTotalCostEdit] = useState("");
+    const [depreciationPercentageEdit, setDepreciationPercentageEdit ] = useState("");
+    const [rateEdit, setRateEdit] = useState("");
+    const [gstEdit, setGstEdit] = useState("");
+    const [cgstEdit, setCgstEdit] = useState("");
+    const [sgstEdit, setSgstEdit] = useState("");
+    const [igstEdit, setIgstEdit] = useState("");
+    const [taxableEdit, setTaxableEdit] = useState("");
+    const [invoiceValueEdit, setInvoiceValueEdit] = useState("");
     const [warrantyYearEdit, setWarrantyYearEdit] = useState("");
     const [disposedDateEdit, setDisposedDateEdit] = useState("");
+    const [fileUploadEdit, setFileUploadEdit] = useState(null);
     const [editId, setEditid] = useState("");
 
     const openEditModal = (row) => {
 
         setEditid(row._id);
         setAssetCategoryEdit(row.assetCategory?._id || "");
-        setAssetNameEdit(row.assetName);
-        setSerialNumberEdit(row.serialNumber);
-        setCountEdit(row.count);
+        setAssetSubCategoryEdit(row.assetSubCategory?._id || "");
+        setLedgerEdit(row.ledger);
+        setTitleEdit(row.title);
+        setInvoiceNumberEdit(row.invoiceNumber);
+        setQuantityEdit(row.quantity);
         setPurchasedDateEdit(row.purchasedDate?.slice(0, 10));
         setDisposedDateEdit(row.disposedDate?.slice(0, 10));
-        setEachCostEdit(row.eachCost);
-        setTotalCostEdit(row.totalCost);
+        setRateEdit(row.rate);
+        setTaxableEdit(row.taxable);
+        setGst(row.gst);
+        setCgst(row.cgst);
+        setSgst(row.sgst);
+        setIgst(row.igst);
+        setInvoiceValue(row.invoiceValue);
         setWarrantyYearEdit(row.warrantyYear);
         setDisposedDateEdit(row.disposedDate);
+        setFileUploadEdit(row.fileUpload);
         setIsEditModalOpen(true);
         setTimeout(() => setIsAnimating(true), 10);
     };
@@ -228,14 +314,23 @@ const AssetManagement_details = () => {
 
         const formData = {
             assetCategory: assetCategoryEdit,
-            assetName: assetNameEdit,
-            serialNumber: serialNumberEdit,
-            count: countEdit,
+            assetSubCategory: assetSubCategoryEdit,
+            ledger: ledgerEdit,
+            title: titleEdit,
+            invoiceNumber: invoiceNumberEdit,
+            quantity: quantityEdit,
+            depreciationPercentage: depreciationPercentageEdit,
             purchasedDate: purchasedDateEdit,
-            eachCost: eachCostEdit,
-            totalCost: totalCostEdit,
+            rate: rateEdit,
+            gst: gstEdit,
+            taxable: taxableEdit,
+            cgst: cgstEdit,
+            sgst: sgstEdit,
+            igst: igstEdit,
+            invoiceValue: invoiceValueEdit,
             warrantyYear: warrantyYearEdit,
             disposedDate: disposedDateEdit,
+            fileUpload: fileUploadEdit
         };
 
         try {
@@ -294,7 +389,7 @@ const AssetManagement_details = () => {
             data: null,
             render: (data, type, row, meta) => meta.row + 1,
         },
-        {
+         {
             title: "Asset Category",
             data: "assetCategory",
             render: function (data) {
@@ -302,20 +397,27 @@ const AssetManagement_details = () => {
                 return data.name || "-";
             }
         },
-
         {
-            title: "Asset Name",
-            data: "assetName",
+            title: "Asset SubCategory",
+            data: "assetSubCategory",
+            render: function (data) {
+                if (!data) return "-";
+                return data.name || "-";
+            }
+        },
+           {
+            title: "Ledger",
+            data: "ledger",
             defaultContent: "-"
         },
         {
-            title: "Serial Number",
-            data: "serialNumber",
+            title: "Title",
+            data: "title",
             defaultContent: "-"
         },
-        {
-            title: "Count",
-            data: "count",
+         {
+            title: "Invoice Number",
+            data: "invoiceNumber",
             defaultContent: "-"
         },
         {
@@ -323,31 +425,110 @@ const AssetManagement_details = () => {
             data: "purchasedDate",
             render: (data) => data ? new Date(data).toLocaleDateString("en-GB") : "-",
         },
-        {
-            title: "Each Cost",
-            data: "eachCost",
+       
+         {
+            title: "Quantity",
+            data: "quantity",
             defaultContent: "-"
         },
+
         {
-            title: "Total Cost",
-            data: "totalCost",
+    title: "Depreciation Percentage(%)",
+    data: "depreciationPercentage",
+    render: function (data) {
+        return data ? data + "%" : "-";
+    },
+    defaultContent: "-"
+},
+      
+        
+        {
+            title: "Rate",
+            data: "rate",
+            render: function (data) {
+    if (data === null || data === undefined || data === "") {
+        return "-";
+    }
+    return "₹" + Number(data).toFixed(2);
+},
             defaultContent: "-"
         },
+
         {
-            title: "Warranty Years",
-            data: "warrantyYear",
+            title: "Invoice Value",
+            data: "invoiceValue",
+            render: function (data) {
+    if (data === null || data === undefined || data === "") {
+        return "-";
+    }
+    return "₹" + Number(data).toFixed(2);
+},
             defaultContent: "-"
         },
-        {
-            title: "Disposed Date",
-            data: "disposedDate",
-            render: (data) => data ? new Date(data).toLocaleDateString("en-GB") : "-",
-        },
+//         {
+//             title: "GST Rate(%)",
+//             data: "gstRate",
+//              render: function (data) {
+//         return data ? data + "%" : "-";
+//     },
+//             defaultContent: "18%"
+//         },
+
+//         {
+//             title: "Taxable Amount",
+//             data: "taxable",
+//             render: function (data) {
+//     if (data === null || data === undefined || data === "") {
+//         return "-";
+//     }
+//     return "₹" + Number(data).toFixed(2);
+// },
+//             defaultContent: "-"
+//         },
+//         {
+//             title: "CGST Amount",
+//             data: "cgst",
+//             render: function (data) {
+//     if (data === null || data === undefined || data === "") {
+//         return "-";
+//     }
+//     return "₹" + Number(data).toFixed(2);
+// },   
+//             defaultContent: "-"
+//         },
+//         {
+//             title: "SGST Amount ",
+//             data: "sgst",
+//             render: function (data) {
+//     if (data === null || data === undefined || data === "") {
+//         return "-";
+//     }
+//     return "₹" + Number(data).toFixed(2);
+// } ,  
+//             defaultContent: "-"
+//         },
+//         {
+//             title: "IGST Amount",
+//             data: "igst",
+//             defaultContent: "-"
+//         },
+        
+//         {
+//             title: "Warranty Years",
+//             data: "warrantyYear",
+//             defaultContent: "-"
+//         },
+//         {
+//             title: "Disposed Date",
+//             data: "disposedDate",
+//             render: (data) => data ? new Date(data).toLocaleDateString("en-GB") : "-",
+//         },
+       
     ];
 
 
 
-
+console.log("fileIattachmentnputRef 123",attachment);
     return (
         <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
             {loading ? (
@@ -424,7 +605,7 @@ const AssetManagement_details = () => {
                                 <div className="absolute inset-0 " onClick={closeAddModal}></div>
 
                                 <div
-                                    className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                                    className={`fixed top-0 right-0 h-screen overflow-x-auto w-full sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
                                         }`}
                                 >
                                     <div
@@ -437,6 +618,8 @@ const AssetManagement_details = () => {
 
                                     <div className="p-2 md:p-5">
                                         <p className="text-2xl md:text-3xl font-medium">Asset</p>
+
+                                        
                                         {/* assest category */}
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
@@ -463,70 +646,102 @@ const AssetManagement_details = () => {
                                                 )}
                                             </div>
                                         </div>
+                                       
+                                        {/* assest subcategory */}
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                Asset SubCategory<span className="text-red-500">*</span>
+                                            </label>
+
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <Dropdown
+                                                    value={assetSubCategory}
+                                                    onChange={(e) => setAssetSubCategory(e.value)}
+                                                    options={assetSubCategoryOption}
+                                                    optionValue="value"
+                                                    optionLabel="label"
+                                                    filter
+                                                    placeholder="Select subCategory"
+                                                    maxSelectedLabels={3}
+                                                    className="w-full px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    display="chip"
+                                                />
+                                                {errors.assetSubCategory && (
+                                                    <p className="text-red-500 text-sm mb-4">
+                                                        {errors.assetSubCategory}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                         {/* ledger */}
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                Ledger <span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <select
+                                                    name="asset"
+                                                    type="text"
+                                                    value={ledger}
+                                                    onChange={(e) => setLedger(e.target.value)}
+                                                    // placeholder="Enter Asset Name "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                >
+                                                    <option value="">Select Asset Type</option>
+                                                    <option value="fixedAsset">Fixed Asset</option>
+                                                    <option value="currentAsset">Current Asset</option>
+                                                </select>
+                                                {errors.ledger && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">{errors.ledger}</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                       
                                         {/* asset name */}
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
-                                                Asset Name <span className="text-red-500">*</span>
+                                                Title <span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    name="assetName"
+                                                    type="text"
+                                                    value={title}
+                                                    onChange={(e) => setTitle(e.target.value)}
+                                                    placeholder="Enter Title "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                    
+                                                {errors.title && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">{errors.title}</p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                         {/* invoice number */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                Invoice Number<span className="text-red-500">*</span>
                                             </label>
                                             <div className="w-[60%] md:w-[50%]">
                                                 <input
                                                     type="text"
-                                                    value={assetName}
-                                                    onChange={(e) => setAssetName(e.target.value)}
-                                                    placeholder="Enter Asset Name "
+                                                    value={invoiceNumber}
+                                                    onChange={(e) => setInvoiceNumber(e.target.value)}
+                                                    placeholder="Enter Invoice Number "
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />
-                                                {errors.assetName && (
-                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">{errors.assetName}</p>
-                                                )}
-                                            </div>
-                                        </div>
-
-
-                                        {/* serial number */}
-
-                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
-                                            <label className="block text-md font-medium mb-2">
-                                                Serial Number<span className="text-red-500">*</span>
-                                            </label>
-                                            <div className="w-[60%] md:w-[50%]">
-                                                <input
-                                                    type="number"
-                                                    value={serialNumber}
-                                                    onChange={(e) => setSerialNumber(e.target.value)}
-                                                    placeholder="Enter Serial Number "
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                />
-                                                {errors.serialNumber && (
+                                                {errors.invoiceNumber && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
-                                                        {errors.serialNumber}
+                                                        {errors.invoiceNumber}
                                                     </p>
                                                 )}
                                             </div>
                                         </div>
 
-                                        {/* count */}
-
-                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
-                                            <label className="block text-md font-medium mb-2">
-                                                Count<span className="text-red-500">*</span>
-                                            </label>
-                                            <div className="w-[60%] md:w-[50%]">
-                                                <input
-                                                    type="number"
-                                                    value={count}
-                                                    onChange={(e) => setCount(e.target.value)}
-                                                    placeholder="Enter Count "
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                />
-                                                {errors.count && (
-                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
-                                                        {errors.count}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        </div>
-                                        {/* purchased date */}
+                                             {/* purchased date */}
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Purchased date<span className="text-red-500">*</span>
@@ -551,49 +766,208 @@ const AssetManagement_details = () => {
                                                 )}
                                             </div>
                                         </div>
-                                        {/* Each Cost */}
+
+
+                                        {/* depreciation percentage */}
 
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
-                                                Each Cost<span className="text-red-500">*</span>
+                                               Depreciation Percentage(%)<span className="text-red-500">*</span>
                                             </label>
                                             <div className="w-[60%] md:w-[50%]">
                                                 <input
                                                     type="number"
-                                                    value={eachCost}
-                                                    onChange={(e) => setEachCost(e.target.value)}
-                                                    placeholder="Enter Each Cost "
+                                                    value={depreciationPercentage}
+                                                    onChange={(e) => setDepreciationPercentage(e.target.value)}
+                                                    placeholder="Enter depreciation Percentage "
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />
-                                                {errors.eachCost && (
+                                                
+                                                {errors.depreciationPercentage && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
-                                                        {errors.eachCost}
+                                                        {errors.depreciationPercentage}
                                                     </p>
                                                 )}
                                             </div>
                                         </div>
 
-                                        {/* Total cost */}
+                                        {/* quantity */}
 
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
-                                                Total Cost<span className="text-red-500">*</span>
+                                                Quantity<span className="text-red-500">*</span>
                                             </label>
                                             <div className="w-[60%] md:w-[50%]">
                                                 <input
                                                     type="number"
-                                                    value={totalCost}
-                                                    onChange={(e) => setTotalCost(e.target.value)}
-                                                    placeholder="Enter Total Cost "
+                                                    value={quantity}
+                                                    onChange={(e) => setQuantity(e.target.value)}
+                                                    placeholder="Enter Quantity "
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />
-                                                {errors.totalCost && (
+                                                {errors.quantity && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
-                                                        {errors.totalCost}
+                                                        {errors.quantity}
                                                     </p>
                                                 )}
                                             </div>
                                         </div>
+ 
+                                        {/* rate */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                               Rate<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="number"
+                                                    value={rate}
+                                                    onChange={(e) => setRate(e.target.value)}
+                                                    placeholder="Enter Rate "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                {errors.rate && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.rate}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                         {/* gst rate */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                GST Rate(%)<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="number"
+                                                    value={gst}
+                                                    onChange={(e) => setGst(e.target.value)}
+                                                    placeholder="Enter GST Rate "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                {errors.gst && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.gst}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Taxable Amount */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                               Taxable Amount<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="number"
+                                                    value={taxable}
+                                                    onChange={(e) => setTaxable(e.target.value)}
+                                                    placeholder="Enter Taxable Amount "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                {errors.taxable && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.taxable}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                         {/* cgst rate */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                CGST Rate 
+                                                <span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="number"
+                                                    value={cgst}
+                                                    onChange={(e) => setCgst(e.target.value)}
+                                                    placeholder="Enter CGST Rate "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                {errors.cgst && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.cgst}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                         {/* sgst rate */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                SGST Rate<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="number"
+                                                    value={sgst}
+                                                    onChange={(e) => setSgst(e.target.value)}
+                                                    placeholder="Enter SGST Rate "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                {errors.sgst && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.sgst}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                         {/* igst rate */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                IGST Rate<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="number"
+                                                    value={igst}
+                                                    onChange={(e) => setIgst(e.target.value)}
+                                                    placeholder="Enter IGST Rate "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                {errors.igst && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.igst}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+{/* Invoice Amount */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                               Invoice Value<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="number"
+                                                    value={invoiceValue}
+                                                    onChange={(e) => setInvoiceValue(e.target.value)}
+                                                    placeholder="Enter Invoice Amount "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                {errors.invoiceValue && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.invoiceValue}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
                                         {/* Warrantly Years */}
                                         
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
@@ -610,7 +984,7 @@ const AssetManagement_details = () => {
                                                 />
                                                 {errors.warrantyYear && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
-                                                        {errors.totalCost}
+                                                        {errors.warrantyYear}
                                                     </p>
                                                 )}
                                             </div>
@@ -638,6 +1012,7 @@ const AssetManagement_details = () => {
                                                 )}
                                             </div>
                                         </div>
+                                        
                                         {/* file upload */}
                                         <div className="mt-2 md:mt-3 flex justify-between">
                                             <label className="block text-md font-medium mb-2">
@@ -645,7 +1020,8 @@ const AssetManagement_details = () => {
                                             </label>
                                             <input
                                                 type="file"
-                                                ref={fileInputRef}
+                                                name="fileUpload"
+                                                // ref={fileInputRef}
                                                 onChange={handleFileChange}
                                                 className="w-[60%] md:w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                             />
@@ -714,8 +1090,8 @@ const AssetManagement_details = () => {
                                             <div className="w-[70%] md:w-[50%]">
                                                 <input
                                                     type="text"
-                                                    value={assetNameEdit}
-                                                    onChange={(e) => setAssetNameEdit(e.target.value)}
+                                                    value={ledgerEdit}
+                                                    onChange={(e) => setLedgerEdit(e.target.value)}
                                                     placeholder="Enter Your Name "
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />
