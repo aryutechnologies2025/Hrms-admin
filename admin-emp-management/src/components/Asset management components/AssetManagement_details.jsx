@@ -22,9 +22,13 @@ import {
 import Loader from "../Loader";
 import { Dropdown } from "primereact/dropdown";
 import { AiFillDelete } from "react-icons/ai";
+import { AiOutlineEye } from "react-icons/ai";
+import { FaEye } from "react-icons/fa";
+import { useDateUtils } from "../../hooks/useDateUtils";
 
 
 const AssetManagement_details = () => {
+    const formDateTime = useDateUtils();
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const storedDetatis = localStorage.getItem("hrmsuser");
@@ -36,12 +40,17 @@ const AssetManagement_details = () => {
     const [assetManageDetails, setAssetManageDetails] = useState([])
     console.log("assetManageDetails check", assetManageDetails)
     const [loading, setLoading] = useState(true); // State to manage loading
+    const [isInvoiceViewModalOpen, setIsInvoiceViewModalOpen] = useState(false);
+    const [selectedInvoice, setSelectedInvoice] = useState(null);
+    const [isInvoiceEditModalOpen, setIsInvoiceEditModalOpen] = useState(false);
     let navigate = useNavigate();
-        const fileInputRef = useRef(null);
-        const fileInputRefedit = useRef(null);
-            const [attachmentedit, setAttachmentedit] = useState(null);
-            const [attachment, setAttachment] = useState(null);
-   const [selectedDate, setSelectedDate] = useState(() => {
+    const fileInputRef = useRef(null);
+    const fileInputRefedit = useRef(null);
+    const [attachmentedit, setAttachmentedit] = useState(null);
+    const [attachments, setAttachments] = useState([]);
+    
+    const [existingFiles, setExistingFiles] = useState([]); 
+    const [selectedDate, setSelectedDate] = useState(() => {
         return new Date().toISOString().split("T")[0];
     });
 
@@ -90,7 +99,7 @@ const AssetManagement_details = () => {
         fetchCategories();
     }, []);
 
-//fetch asset subcategories
+    //fetch asset subcategories
     useEffect(() => {
         const fetchSubCategories = async () => {
             try {
@@ -114,8 +123,8 @@ const AssetManagement_details = () => {
 
 
     const getTodayDate = () => {
-    return new Date().toISOString().split("T")[0];   // "2025-11-27"
-};
+        return new Date().toISOString().split("T")[0];   // "2025-11-27"
+    };
 
     const openAddModal = () => {
         setIsAddModalOpen(true);
@@ -125,6 +134,7 @@ const AssetManagement_details = () => {
     };
 
     const closeAddModal = () => {
+        resetAll();
         setIsAnimating(false);
         setTimeout(() => setIsAddModalOpen(false), 250);
     };
@@ -134,36 +144,74 @@ const AssetManagement_details = () => {
         setTimeout(() => setIsEditModalOpen(false), 250);
     };
 
-       const handleDeleteFile = () => {
-        setAttachment(null);
-        if (fileInputRef.current) {
-            fileInputRef.current.value = "";
-        }
-    };
-        const handleDeleteFileedit = () => {
+    // const handleDeleteFile = () => {
+    //     setAttachments(null);
+    //     if (fileInputRef.current) {
+    //         fileInputRef.current.value = "";
+    //     }
+    // };
+
+    const handleDeleteNewFile = (fileToDelete) => {
+    setAttachments((prev) => prev.filter((file) => file !== fileToDelete));
+};
+
+ const handleDeleteFile = (index) => {
+    setAttachments((prev) => prev.filter((_,i) => i !== index));
+};
+
+const handleDeleteOldFile = (file) => {
+    setExistingFiles(prev => prev.filter(f => f !== file));
+};
+
+    const handleDeleteFileedit = () => {
         setAttachmentedit(null);
         if (fileInputRefedit.current) {
             fileInputRefedit.current.value = "";
         }
     };
-        const handleFileChangeedit = (e) => {
-        if (e.target.files[0]) {
-            setAttachment(e.target.files[0]);
-        }
+    const handleFileChangeEdit = (e) => {
+        // if (e.target.files[0]) {
+        //     setAttachment(e.target.files[0]);
+        // }
+        const files = Array.from(e.target.files);  
+
+    setAttachments((prev) => [...prev, ...files]);
     };
-        const handleFileChange = (e) => {
-            console.log("e 1233 :",e)
-        if (e.target.files[0]) {
-            setAttachment(e.target.files[0]);
-        }
+    const handleFileChange = (e) => {
+        // console.log("e 1233 :", e)
+        // if (e.target.files[0]) {
+        //     setAttachments(e.target.files[0]);
+        // }
+         const files = Array.from(e.target.files);
+        setAttachments(prev => [...prev, ...files]);
     };
 
+    const openInvoiceViewModal = (row) => {
+        console.log("Invoice row data :", row)
+       
+        setSelectedInvoice(row)
+        setIsInvoiceViewModalOpen(true)
+    }
+
+    const closeInvoiceViewModal = () => {
+        setIsInvoiceViewModalOpen(false)
+    }
+
+    const openInvoiceEditModal = (row) => {
+        console.log("Invoice row data :", row)
+        setSelectedInvoice(row)
+        setIsInvoiceEditModalOpen(true)
+    }
+
+    const closeInvoiceEditModal = () => {
+        setIsInvoiceEditModalOpen(false)
+    }
 
     const [assetCategory, setAssetCategory] = useState("");
     console.log("assetCategory", assetCategory)
     const [accountoption, setAccountoption] = useState([]);
     console.log("accountoption", accountoption)
-      const [assetSubCategory, setAssetSubCategory] = useState("");
+    const [assetSubCategory, setAssetSubCategory] = useState("");
     console.log("assetSubCategory", assetSubCategory)
     const [assetSubCategoryOption, setAssetSubCategoryOption] = useState([]);
     const [ledger, setLedger] = useState("");
@@ -182,8 +230,29 @@ const AssetManagement_details = () => {
     const [warrantyYear, setWarrantyYear] = useState("");
     const [disposedDate, setDisposedDate] = useState("");
     const [fileUpload, setFileUpload] = useState(null);
-   
 
+
+    
+    const resetAll = () => {
+        setLedger("");
+        setAssetCategory("");
+        setAssetSubCategory("");
+        setTitle("");
+        setInvoiceNumber("");
+        setQuantity("");
+        setPurchasedDate("");
+        setDepreciationPercentage("");
+        setRate("");
+        setTaxable("");
+        setGst("");
+        setCgst("");
+        setSgst("");
+        setIgst("");
+        setInvoiceValue("");
+        setWarrantyYear("");
+        setDisposedDate("");
+        setFileUpload(null);
+    }
 
 
     // console.log("chech:", nameEdit, statusEdit);
@@ -191,20 +260,20 @@ const AssetManagement_details = () => {
 
     // create
     const handlesubmit = async (e) => {
-        console.log("fileUpload",fileUpload)
+        console.log("fileUpload", fileUpload)
         e.preventDefault();
 
         const formdata = {
             invoiceNumber: String(invoiceNumber),
             purchasedDate,
-             ledger,
+            ledger,
             assetCategory,
             assetSubCategory,
             title,
-           depreciationPercentage,
+            depreciationPercentage: Number(depreciationPercentage),
             quantity: Number(quantity),
             rate: Number(rate),
-            gst: Number(gst),
+            gstRate: Number(gst),
             taxable: Number(taxable),
             cgst: Number(cgst),
             sgst: Number(sgst),
@@ -212,7 +281,7 @@ const AssetManagement_details = () => {
             invoiceValue: Number(invoiceValue),
             warrantyYear: Number(warrantyYear),
             disposedDate,
-            fileUpload: attachment
+            fileUpload: attachments
         };
 
 
@@ -221,12 +290,12 @@ const AssetManagement_details = () => {
                 `${API_URL}/api/asset-mannagement/create-asset`,
                 formdata,
                 {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            }
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
             );
-            
+
 
             toast.success("Asset created successfully");
 
@@ -234,24 +303,7 @@ const AssetManagement_details = () => {
             fetchAssetManagement();
 
             // Reset fields
-            setLedger("");
-            setAssetCategory("");
-            setAssetSubCategory("");
-            setTitle("");
-            setInvoiceNumber("");
-            setQuantity("");
-            setPurchasedDate("");
-            setDepreciationPercentage("");
-            setRate("");
-            setTaxable("");
-            setGst("");
-            setCgst("");
-            setSgst("");
-            setIgst("");
-            setInvoiceValue("");
-            setWarrantyYear("");
-            setDisposedDate("");
-            setFileUpload(null);
+            resetAll();
 
         } catch (err) {
             console.log(err);
@@ -269,7 +321,7 @@ const AssetManagement_details = () => {
     const [invoiceNumberEdit, setInvoiceNumberEdit] = useState("");
     const [quantityEdit, setQuantityEdit] = useState("");
     const [purchasedDateEdit, setPurchasedDateEdit] = useState("");
-    const [depreciationPercentageEdit, setDepreciationPercentageEdit ] = useState("");
+    const [depreciationPercentageEdit, setDepreciationPercentageEdit] = useState("");
     const [rateEdit, setRateEdit] = useState("");
     const [gstEdit, setGstEdit] = useState("");
     const [cgstEdit, setCgstEdit] = useState("");
@@ -284,6 +336,13 @@ const AssetManagement_details = () => {
 
     const openEditModal = (row) => {
 
+          // Convert backend string → array
+    const files = Array.isArray(row.fileUpload)
+        ? row.fileUpload
+        : row.fileUpload
+        ? [row.fileUpload]
+        : [];
+
         setEditid(row._id);
         setAssetCategoryEdit(row.assetCategory?._id || "");
         setAssetSubCategoryEdit(row.assetSubCategory?._id || "");
@@ -295,65 +354,116 @@ const AssetManagement_details = () => {
         setDisposedDateEdit(row.disposedDate?.slice(0, 10));
         setRateEdit(row.rate);
         setTaxableEdit(row.taxable);
-        setGst(row.gst);
-        setCgst(row.cgst);
-        setSgst(row.sgst);
-        setIgst(row.igst);
-        setInvoiceValue(row.invoiceValue);
+        setGstEdit(row.gstRate);
+        setCgstEdit(row.cgst);
+        setSgstEdit(row.sgst);
+        setIgstEdit(row.igst);
+        setInvoiceValueEdit(row.invoiceValue);
         setWarrantyYearEdit(row.warrantyYear);
-        setDisposedDateEdit(row.disposedDate);
-        setFileUploadEdit(row.fileUpload);
+        setDepreciationPercentageEdit(row.depreciationPercentage);
+        // setFileUploadEdit(row.fileUpload);
+        setFileUploadEdit(row.fileUpload ? [row.fileUpload] : []);
+        setExistingFiles(files);  // existing files
+    setAttachments([]);       
         setIsEditModalOpen(true);
         setTimeout(() => setIsAnimating(true), 10);
     };
 
 
 
-    const handlesubmitedit = async (e) => {
-        e.preventDefault();
+    // const handlesubmitedit = async (e) => {
+    //     e.preventDefault();
 
-        const formData = {
-            assetCategory: assetCategoryEdit,
-            assetSubCategory: assetSubCategoryEdit,
-            ledger: ledgerEdit,
-            title: titleEdit,
-            invoiceNumber: invoiceNumberEdit,
-            quantity: quantityEdit,
-            depreciationPercentage: depreciationPercentageEdit,
-            purchasedDate: purchasedDateEdit,
-            rate: rateEdit,
-            gst: gstEdit,
-            taxable: taxableEdit,
-            cgst: cgstEdit,
-            sgst: sgstEdit,
-            igst: igstEdit,
-            invoiceValue: invoiceValueEdit,
-            warrantyYear: warrantyYearEdit,
-            disposedDate: disposedDateEdit,
-            fileUpload: fileUploadEdit
-        };
+    //     const formData = {
+    //         assetCategory: assetCategoryEdit,
+    //         assetSubCategory: assetSubCategoryEdit,
+    //         ledger: ledgerEdit,
+    //         title: titleEdit,
+    //         invoiceNumber: invoiceNumberEdit,
+    //         quantity: quantityEdit,
+    //         depreciationPercentage: depreciationPercentageEdit,
+    //         purchasedDate: purchasedDateEdit,
+    //         rate: rateEdit,
+    //         gst: gstEdit,
+    //         taxable: taxableEdit,
+    //         cgst: cgstEdit,
+    //         sgst: sgstEdit,
+    //         igst: igstEdit,
+    //         invoiceValue: invoiceValueEdit,
+    //         warrantyYear: warrantyYearEdit,
+    //         disposedDate: disposedDateEdit,
+    //         fileUpload: fileUploadEdit
+    //     };
 
-        try {
-            await axios.put(
-                `${API_URL}/api/asset-mannagement/edit-assetdetails/${editId}`,
-                formData
-            );
+    //     try {
+    //         await axios.put(
+    //             `${API_URL}/api/asset-mannagement/edit-assetdetails/${editId}`,
+    //             formData
+    //         );
 
-            toast.success("Asset updated successfully");
+    //         toast.success("Asset updated successfully");
 
-            closeEditModal();
-            fetchAssetManagement();
-        } catch (err) {
-            console.log(err);
-            toast.error("Failed to update asset");
-        }
-    };
+    //         closeEditModal();
+    //         fetchAssetManagement();
+    //     } catch (err) {
+    //         console.log(err);
+    //         toast.error("Failed to update asset");
+    //     }
+    // };
 
 
 
 
 
     // delete
+
+const handleSubmitEdit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+
+    formData.append("assetCategory", assetCategoryEdit);
+    formData.append("assetSubCategory", assetSubCategoryEdit);
+    formData.append("ledger", ledgerEdit);
+    formData.append("title", titleEdit);
+    formData.append("invoiceNumber", invoiceNumberEdit);
+    formData.append("quantity", quantityEdit);
+    formData.append("rate", rateEdit);
+    formData.append("gstRate", gstEdit);
+    formData.append("taxable", taxableEdit);
+    formData.append("cgst", cgstEdit);
+    formData.append("sgst", sgstEdit);
+    formData.append("igst", igstEdit);
+    formData.append("invoiceValue", invoiceValueEdit);
+    formData.append("disposedDate", disposedDateEdit);
+    formData.append("warrantyYear", warrantyYearEdit);
+    formData.append("depreciationPercentage", depreciationPercentageEdit);
+
+    // Add existing files (strings)
+    existingFiles.forEach(file => {
+        formData.append("existingFiles", file);
+    });
+
+    // Add new uploaded files
+    attachments.forEach(file => {
+        formData.append("fileUpload", file);
+    });
+
+    try {
+    await axios.put(
+        `${API_URL}/api/asset-mannagement/edit-assetdetails/${editId}`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+    );
+
+    toast.success("Asset Updated Successfully");
+    closeEditModal();
+    fetchAssetManagement();
+    } catch (err) {
+    console.log(err);
+    toast.error("Failed to update asset");
+    }
+};
 
     const deleteRoles = (editId) => {
         Swal.fire({
@@ -389,7 +499,7 @@ const AssetManagement_details = () => {
             data: null,
             render: (data, type, row, meta) => meta.row + 1,
         },
-         {
+        {
             title: "Asset Category",
             data: "assetCategory",
             render: function (data) {
@@ -405,7 +515,7 @@ const AssetManagement_details = () => {
                 return data.name || "-";
             }
         },
-           {
+        {
             title: "Ledger",
             data: "ledger",
             defaultContent: "-"
@@ -415,7 +525,7 @@ const AssetManagement_details = () => {
             data: "title",
             defaultContent: "-"
         },
-         {
+        {
             title: "Invoice Number",
             data: "invoiceNumber",
             defaultContent: "-"
@@ -423,34 +533,34 @@ const AssetManagement_details = () => {
         {
             title: "Purchased Date",
             data: "purchasedDate",
-            render: (data) => data ? new Date(data).toLocaleDateString("en-GB") : "-",
+            render: (data) => data ? formDateTime(data) : "-",
         },
-       
-         {
+
+        {
             title: "Quantity",
             data: "quantity",
             defaultContent: "-"
         },
 
-        {
-    title: "Depreciation Percentage(%)",
-    data: "depreciationPercentage",
-    render: function (data) {
-        return data ? data + "%" : "-";
-    },
-    defaultContent: "-"
-},
-      
-        
+        //         {
+        //     title: "Depreciation Percentage(%)",
+        //     data: "depreciationPercentage",
+        //     render: function (data) {
+        //         return data ? data + "%" : "-";
+        //     },
+        //     defaultContent: "-"
+        // },
+
+
         {
             title: "Rate",
             data: "rate",
             render: function (data) {
-    if (data === null || data === undefined || data === "") {
-        return "-";
-    }
-    return "₹" + Number(data).toFixed(2);
-},
+                if (data === null || data === undefined || data === "") {
+                    return "-";
+                }
+                return "₹" + Number(data).toFixed(2);
+            },
             defaultContent: "-"
         },
 
@@ -458,77 +568,164 @@ const AssetManagement_details = () => {
             title: "Invoice Value",
             data: "invoiceValue",
             render: function (data) {
-    if (data === null || data === undefined || data === "") {
-        return "-";
-    }
-    return "₹" + Number(data).toFixed(2);
-},
+                if (data === null || data === undefined || data === "") {
+                    return "-";
+                }
+                return "₹" + Number(data).toFixed(2);
+            },
             defaultContent: "-"
         },
-//         {
-//             title: "GST Rate(%)",
-//             data: "gstRate",
-//              render: function (data) {
-//         return data ? data + "%" : "-";
-//     },
-//             defaultContent: "18%"
-//         },
 
-//         {
-//             title: "Taxable Amount",
-//             data: "taxable",
-//             render: function (data) {
-//     if (data === null || data === undefined || data === "") {
-//         return "-";
-//     }
-//     return "₹" + Number(data).toFixed(2);
-// },
-//             defaultContent: "-"
-//         },
-//         {
-//             title: "CGST Amount",
-//             data: "cgst",
-//             render: function (data) {
-//     if (data === null || data === undefined || data === "") {
-//         return "-";
-//     }
-//     return "₹" + Number(data).toFixed(2);
-// },   
-//             defaultContent: "-"
-//         },
-//         {
-//             title: "SGST Amount ",
-//             data: "sgst",
-//             render: function (data) {
-//     if (data === null || data === undefined || data === "") {
-//         return "-";
-//     }
-//     return "₹" + Number(data).toFixed(2);
-// } ,  
-//             defaultContent: "-"
-//         },
-//         {
-//             title: "IGST Amount",
-//             data: "igst",
-//             defaultContent: "-"
-//         },
-        
-//         {
-//             title: "Warranty Years",
-//             data: "warrantyYear",
-//             defaultContent: "-"
-//         },
-//         {
-//             title: "Disposed Date",
-//             data: "disposedDate",
-//             render: (data) => data ? new Date(data).toLocaleDateString("en-GB") : "-",
-//         },
-       
+        {
+            title: "Invoice Details",
+            data: "invoiceDetails",
+            render: (data, type, row) => {
+                const id = `invoice-${row._id}`;
+                setTimeout(() => {
+                    const container = document.getElementById(id);
+                    if (container && !container.hasChildNodes()) {
+                        ReactDOM.render(
+                            <div className="flex items-center gap-2 justify-center">
+
+                                <FaEye
+                                    className="text-blue-500 cursor-pointer text-center"
+                                    onClick={() => openInvoiceViewModal(row)}
+                                />
+                            </div>,
+                            container
+                        );
+                    }
+                }, 0);
+                return `<div id="${id}"></div>`;
+
+                // return `
+                //     <button 
+                //         class="p-button-text p-button-sm"
+                //         onclick='window.openInvoiceViewModal(${JSON.stringify(row)})'
+                //         style="background: none; border: none; cursor: pointer;"
+                //     >
+                //         <i class="fa fa-eye"></i>
+                //     </button>
+                // `;
+            },
+        },
+
+        {
+            title: "Action",
+            data: null,
+            render: (data, type, row) => {
+                const id = `actions-${row.sno || Math.random()}`;
+                setTimeout(() => {
+                    const container = document.getElementById(id);
+                    if (container && !container.hasChildNodes()) {
+                        ReactDOM.render(
+                            <div
+                                className="action-container"
+                                style={{
+                                    display: "flex",
+                                    gap: "15px",
+                                    alignItems: "flex-end",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <div
+                                    className="modula-icon-edit flex gap-2"
+                                    style={{
+                                        color: "#000",
+                                    }}
+                                >
+                                    <TfiPencilAlt
+                                        className="cursor-pointer "
+                                        onClick={() => {
+                                            openEditModal(
+                                                row
+                                            );
+                                        }}
+                                    />
+                                    <MdOutlineDeleteOutline
+                                        className="text-red-600 text-xl cursor-pointer"
+                                        onClick={() => {
+                                            deleteRoles(row._id);
+                                        }}
+                                    />
+                                </div>
+
+
+                            </div>,
+                            container
+                        );
+                    }
+                }, 0);
+                return `<div id="${id}"></div>`;
+            },
+        },
+
+
+
+        //         {
+        //             title: "GST Rate(%)",
+        //             data: "gstRate",
+        //              render: function (data) {
+        //         return data ? data + "%" : "-";
+        //     },
+        //             defaultContent: "18%"
+        //         },
+
+        //         {
+        //             title: "Taxable Amount",
+        //             data: "taxable",
+        //             render: function (data) {
+        //     if (data === null || data === undefined || data === "") {
+        //         return "-";
+        //     }
+        //     return "₹" + Number(data).toFixed(2);
+        // },
+        //             defaultContent: "-"
+        //         },
+        //         {
+        //             title: "CGST Amount",
+        //             data: "cgst",
+        //             render: function (data) {
+        //     if (data === null || data === undefined || data === "") {
+        //         return "-";
+        //     }
+        //     return "₹" + Number(data).toFixed(2);
+        // },   
+        //             defaultContent: "-"
+        //         },
+        //         {
+        //             title: "SGST Amount ",
+        //             data: "sgst",
+        //             render: function (data) {
+        //     if (data === null || data === undefined || data === "") {
+        //         return "-";
+        //     }
+        //     return "₹" + Number(data).toFixed(2);
+        // } ,  
+        //             defaultContent: "-"
+        //         },
+        //         {
+        //             title: "IGST Amount",
+        //             data: "igst",
+        //             defaultContent: "-"
+        //         },
+
+        //         {
+        //             title: "Warranty Years",
+        //             data: "warrantyYear",
+        //             defaultContent: "-"
+        //         },
+        //         {
+        //             title: "Disposed Date",
+        //             data: "disposedDate",
+        //             render: (data) => data ? new Date(data).toLocaleDateString("en-GB") : "-",
+        //         },
+
     ];
 
 
 
-console.log("fileIattachmentnputRef 123",attachment);
+    console.log("fileIattachmentsInputRef 123", attachments);
     return (
         <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
             {loading ? (
@@ -583,6 +780,7 @@ console.log("fileIattachmentnputRef 123",attachment);
                             {/* Responsive wrapper for the table */}
                             <div className="overflow-x-auto w-full" id="datatable">
                                 <DataTable
+                                    key={assetManageDetails.length}
                                     data={assetManageDetails}
                                     columns={columns}
                                     options={{
@@ -598,6 +796,82 @@ console.log("fileIattachmentnputRef 123",attachment);
                             </div>
                         </div>
 
+                       
+                     {/* View Invoice Modal */}
+{isInvoiceViewModalOpen && selectedInvoice && (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="bg-white p-6 rounded-xl w-[450px] shadow-lg">
+
+            {/* Header */}
+            <div className="flex justify-between items-center mb-4">
+                <div className="flex gap-2">
+                    <h3 className="text-xl font-semibold text-gray-800">
+                        {selectedInvoice.title || selectedInvoice.ledger}
+                    </h3>
+                </div>
+                <button
+                    onClick={closeInvoiceViewModal}
+                    className="text-gray-500 hover:text-red-500 transition"
+                >
+                    ✕
+                </button>
+            </div>
+
+            {/* Convert fileUpload to array */}
+            {(() => {
+                var viewFiles = Array.isArray(selectedInvoice.fileUpload)
+                    ? selectedInvoice.fileUpload
+                    : selectedInvoice.fileUpload
+                    ? [selectedInvoice.fileUpload]
+                    : [];
+                
+                return (
+                    <div className="grid grid-cols-2 gap-y-3 text-sm">
+                        <p><b>Asset Category : </b><br />{selectedInvoice.assetCategory?.name || "-"}</p>
+                        <p><b>Asset Subcategory : </b><br />{selectedInvoice.assetSubCategory?.name || "-"}</p>
+                        <p><b>Ledger : </b><br />{selectedInvoice.ledger}</p>
+                        <p><b>Asset Invoice Number : </b><br />{selectedInvoice.invoiceNumber}</p>
+                        <p><b>Purchased Date : </b><br />{selectedInvoice.purchasedDate ? formDateTime(selectedInvoice.purchasedDate) : "-"}</p>
+                        <p><b>Quantity :</b><br />{selectedInvoice.quantity}</p>
+                        <p><b>Rate(₹) :</b><br />₹{selectedInvoice.rate}</p>
+                        <p><b>Depreciation Percentage(%) : </b><br />{selectedInvoice.depreciationPercentage ? `${selectedInvoice.depreciationPercentage}%` : "-"}</p>
+                        <p><b>GST Rate(%) :</b><br />{selectedInvoice.gstRate}%</p>
+                        <p><b>Taxable Amount :</b><br />₹{selectedInvoice.taxable}</p>
+                        <p><b>CGST Amount :</b><br />₹{selectedInvoice.cgst}</p>
+                        <p><b>SGST Amount :</b><br />₹{selectedInvoice.sgst}</p>
+                        <p><b>IGST Amount :</b><br />₹{selectedInvoice.igst}</p>
+                        <p><b>Total Amount :</b><br />₹{selectedInvoice.invoiceValue}</p>
+                        <p><b>Warranty Years :</b><br />{selectedInvoice.warrantyYear}</p>
+                        <p><b>Disposed Date :</b><br />{selectedInvoice.disposedDate ? formDateTime(selectedInvoice.disposedDate) : "-"}</p>
+
+                        <h3 className="font-medium col-span-2 mt-2">Files</h3>
+
+                        {viewFiles.length > 0 ? (
+                            viewFiles.map((file, idx) => (
+                                <p key={idx} className="col-span-2">
+                                    <a 
+                                        href={`${API_URL}/uploads/uploads/${file}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 underline"
+                                    >
+                                        {file}
+                                    </a>
+                                </p>
+                            ))
+                        ) : (
+                            <p className="col-span-2 text-gray-500">No files uploaded</p>
+                        )}
+                    </div>
+                );
+            })()}
+
+        </div>
+    </div>
+)}
+
+
+                        {/* Add Modal */}
 
                         {isAddModalOpen && (
                             <div className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
@@ -619,7 +893,7 @@ console.log("fileIattachmentnputRef 123",attachment);
                                     <div className="p-2 md:p-5">
                                         <p className="text-2xl md:text-3xl font-medium">Asset</p>
 
-                                        
+
                                         {/* assest category */}
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
@@ -646,7 +920,7 @@ console.log("fileIattachmentnputRef 123",attachment);
                                                 )}
                                             </div>
                                         </div>
-                                       
+
                                         {/* assest subcategory */}
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
@@ -674,7 +948,7 @@ console.log("fileIattachmentnputRef 123",attachment);
                                             </div>
                                         </div>
 
-                                         {/* ledger */}
+                                        {/* ledger */}
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Ledger <span className="text-red-500">*</span>
@@ -697,7 +971,7 @@ console.log("fileIattachmentnputRef 123",attachment);
                                                 )}
                                             </div>
                                         </div>
-                                       
+
                                         {/* asset name */}
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
@@ -712,14 +986,14 @@ console.log("fileIattachmentnputRef 123",attachment);
                                                     placeholder="Enter Title "
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />
-                                                    
+
                                                 {errors.title && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">{errors.title}</p>
                                                 )}
                                             </div>
                                         </div>
 
-                                         {/* invoice number */}
+                                        {/* invoice number */}
 
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
@@ -741,7 +1015,7 @@ console.log("fileIattachmentnputRef 123",attachment);
                                             </div>
                                         </div>
 
-                                             {/* purchased date */}
+                                        {/* purchased date */}
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
                                                 Purchased date<span className="text-red-500">*</span>
@@ -772,7 +1046,7 @@ console.log("fileIattachmentnputRef 123",attachment);
 
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
-                                               Depreciation Percentage(%)<span className="text-red-500">*</span>
+                                                Depreciation Percentage(%)<span className="text-red-500">*</span>
                                             </label>
                                             <div className="w-[60%] md:w-[50%]">
                                                 <input
@@ -782,7 +1056,7 @@ console.log("fileIattachmentnputRef 123",attachment);
                                                     placeholder="Enter depreciation Percentage "
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />
-                                                
+
                                                 {errors.depreciationPercentage && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
                                                         {errors.depreciationPercentage}
@@ -812,12 +1086,12 @@ console.log("fileIattachmentnputRef 123",attachment);
                                                 )}
                                             </div>
                                         </div>
- 
+
                                         {/* rate */}
 
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
-                                               Rate<span className="text-red-500">*</span>
+                                                Rate<span className="text-red-500">*</span>
                                             </label>
                                             <div className="w-[60%] md:w-[50%]">
                                                 <input
@@ -835,7 +1109,7 @@ console.log("fileIattachmentnputRef 123",attachment);
                                             </div>
                                         </div>
 
-                                         {/* gst rate */}
+                                        {/* gst rate */}
 
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
@@ -861,7 +1135,7 @@ console.log("fileIattachmentnputRef 123",attachment);
 
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
-                                               Taxable Amount<span className="text-red-500">*</span>
+                                                Taxable Amount<span className="text-red-500">*</span>
                                             </label>
                                             <div className="w-[60%] md:w-[50%]">
                                                 <input
@@ -879,11 +1153,11 @@ console.log("fileIattachmentnputRef 123",attachment);
                                             </div>
                                         </div>
 
-                                         {/* cgst rate */}
+                                        {/* cgst rate */}
 
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
-                                                CGST Rate 
+                                                CGST Rate
                                                 <span className="text-red-500">*</span>
                                             </label>
                                             <div className="w-[60%] md:w-[50%]">
@@ -902,7 +1176,7 @@ console.log("fileIattachmentnputRef 123",attachment);
                                             </div>
                                         </div>
 
-                                         {/* sgst rate */}
+                                        {/* sgst rate */}
 
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
@@ -924,7 +1198,7 @@ console.log("fileIattachmentnputRef 123",attachment);
                                             </div>
                                         </div>
 
-                                         {/* igst rate */}
+                                        {/* igst rate */}
 
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
@@ -946,11 +1220,11 @@ console.log("fileIattachmentnputRef 123",attachment);
                                             </div>
                                         </div>
 
-{/* Invoice Amount */}
+                                        {/* Invoice Amount */}
 
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
-                                               Invoice Value<span className="text-red-500">*</span>
+                                                Invoice Value<span className="text-red-500">*</span>
                                             </label>
                                             <div className="w-[60%] md:w-[50%]">
                                                 <input
@@ -969,7 +1243,7 @@ console.log("fileIattachmentnputRef 123",attachment);
                                         </div>
 
                                         {/* Warrantly Years */}
-                                        
+
                                         <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-1 md:mb-2">
                                                 Warrantly Years<span className="text-red-500">*</span>
@@ -989,7 +1263,7 @@ console.log("fileIattachmentnputRef 123",attachment);
                                                 )}
                                             </div>
                                         </div>
-                                        
+
 
                                         {/* Disposed Date */}
 
@@ -1012,7 +1286,7 @@ console.log("fileIattachmentnputRef 123",attachment);
                                                 )}
                                             </div>
                                         </div>
-                                        
+
                                         {/* file upload */}
                                         <div className="mt-2 md:mt-3 flex justify-between">
                                             <label className="block text-md font-medium mb-2">
@@ -1020,29 +1294,28 @@ console.log("fileIattachmentnputRef 123",attachment);
                                             </label>
                                             <input
                                                 type="file"
+                                                 multiple
                                                 name="fileUpload"
-                                                // ref={fileInputRef}
+                                                ref={fileInputRef}
                                                 onChange={handleFileChange}
                                                 className="w-[60%] md:w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                             />
                                         </div>
-                                        <div className="mt-3 flex justify-between ">
-                                            {attachment && (
-                                                <div className=" px-3 py-2  flex justify-between">
-                                                    <span className="text-sm text-gray-700 truncate">
-                                                        {attachment.name}
-                                                    </span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={handleDeleteFile}
-                                                        title="Delete"
-                                                        className="text-red-600 hover:text-red-800 text-[18px] font-medium ml-4"
-                                                    >
-                                                        <AiFillDelete />
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
+                                       <div className="mt-3">
+    {attachments.map((file, index) => (
+        <div key={index} className="flex items-center gap-2 mb-1">
+            <span className="text-sm">{file.name}</span>
+            <button
+                type="button"
+                onClick={() => handleDeleteFile(index)}
+                className="text-red-600 text-lg"
+            >
+                <AiFillDelete />
+            </button>
+        </div>
+    ))}
+</div>
+
 
 
                                         <div className="flex  justify-end gap-2 mt-6 md:mt-14">
@@ -1081,61 +1354,434 @@ console.log("fileIattachmentnputRef 123",attachment);
                                         <IoIosArrowForward className="w-3 h-3" />
                                     </div>
 
-                                    <div className="p-5">
-                                        <p className="text-2xl md:text-3xl font-medium">Asset Edit</p>
-                                        <div className="mt-5 flex justify-between items-center">
+                                    <div className="p-2 md:p-5">
+                                        <p className="text-2xl md:text-3xl font-medium">Edit Asset</p>
+
+
+                                        {/* assest category */}
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
                                             <label className="block text-md font-medium mb-2">
-                                                Name <span className="text-red-500">*</span>
+                                                Asset Category<span className="text-red-500">*</span>
                                             </label>
-                                            <div className="w-[70%] md:w-[50%]">
-                                                <input
-                                                    type="text"
-                                                    value={ledgerEdit}
-                                                    onChange={(e) => setLedgerEdit(e.target.value)}
-                                                    placeholder="Enter Your Name "
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <Dropdown
+                                                    value={assetCategoryEdit}
+                                                    onChange={(e) => setAssetCategoryEdit(e.value)}
+                                                    options={accountoption}
+                                                    optionValue="value"
+                                                    optionLabel="label"
+                                                    filter
+                                                    placeholder="Select Category"
+                                                    maxSelectedLabels={3}
+                                                    className="w-full px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    display="chip"
                                                 />
-                                                {errors.name && (
-                                                    <p className="text-red-500 text-sm mb-4">{errors.name}</p>
-                                                )}
-                                            </div>
-                                        </div>
-
-
-                                        {/* {error.rolename && <p className="error">{error.rolename}</p>} */}
-
-                                        <div className="mt-5 flex justify-between items-center">
-                                            <div className="">
-                                                <label
-                                                    htmlFor="status"
-                                                    className="block text-md font-medium mb-2 mt-3"
-                                                >
-                                                    Status <span className="text-red-500">*</span>
-                                                </label>
-
-                                            </div>
-                                            <div className="w-[70%] md:w-[50%]">
-                                                <select
-                                                    name="status"
-                                                    id="status"
-                                                    value={statusEdit}
-                                                    onChange={(e) => {
-                                                        setStatusEdit(e.target.value);
-                                                    }}
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                >
-                                                    <option value="">Select a status</option>
-                                                    <option value="1">Active</option>
-                                                    <option value="0">InActive</option>
-                                                </select>
-                                                {errors.status && (
-                                                    <p className="text-red-500 text-sm mb-4 mt-1">
-                                                        {errors.status}
+                                                {errors.assetCategoryEdit && (
+                                                    <p className="text-red-500 text-sm mb-4">
+                                                        {errors.assetCategoryEdit}
                                                     </p>
                                                 )}
                                             </div>
                                         </div>
-                                        {/* {error.status && <p className="error">{error.status}</p>} */}
+
+                                        {/* assest subcategory */}
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                Asset SubCategory<span className="text-red-500">*</span>
+                                            </label>
+
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <Dropdown
+                                                    value={assetSubCategoryEdit}
+                                                    onChange={(e) => setAssetSubCategoryEdit(e.value)}
+                                                    options={assetSubCategoryOption}
+                                                    optionValue="value"
+                                                    optionLabel="label"
+                                                    filter
+                                                    placeholder="Select subCategory"
+                                                    maxSelectedLabels={3}
+                                                    className="w-full px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    display="chip"
+                                                />
+                                                {errors.assetSubCategoryEdit && (
+                                                    <p className="text-red-500 text-sm mb-4">
+                                                        {errors.assetSubCategoryEdit}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* ledger */}
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                Ledger <span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <select
+                                                    name="asset"
+                                                    type="text"
+                                                    value={ledgerEdit}
+                                                    onChange={(e) => setLedgerEdit(e.target.value)}
+                                                    // placeholder="Enter Asset Name "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                >
+                                                    <option value="">Select Asset Type</option>
+                                                    <option value="fixedAsset">Fixed Asset</option>
+                                                    <option value="currentAsset">Current Asset</option>
+                                                </select>
+                                                {errors.ledgerEdit && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">{errors.ledgerEdit}</p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* asset name */}
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                Title <span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    name="assetName"
+                                                    type="text"
+                                                    value={titleEdit}
+                                                    onChange={(e) => setTitleEdit(e.target.value)}
+                                                    placeholder="Enter Title "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+
+                                                {errors.titleEdit && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">{errors.titleEdit}</p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* invoice number */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                Invoice Number<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="text"
+                                                    value={invoiceNumberEdit}
+                                                    onChange={(e) => setInvoiceNumberEdit(e.target.value)}
+                                                    placeholder="Enter Invoice Number "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                {errors.invoiceNumberEdit && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.invoiceNumberEdit}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* purchased date */}
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                Purchased date<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="date"
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+
+                                                    value={purchasedDateEdit}
+                                                    onChange={(e) => setPurchasedDateEdit(e.target.value)}
+                                                //   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                                                //     p.errorDate
+                                                //       ? "border-red-500 focus:ring-red-500"
+                                                //       : "border-gray-300 focus:ring-blue-500"
+                                                //   }`}
+                                                />
+                                                {errors.purchasedDateEdit && (
+                                                    <p className="text-red-500 text-sm mt-1">
+                                                        {errors.purchasedDateEdit}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+
+                                        {/* depreciation percentage */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                Depreciation Percentage(%)<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="number"
+                                                    value={depreciationPercentageEdit}
+                                                    onChange={(e) => setDepreciationPercentageEdit(e.target.value)}
+                                                    placeholder="Enter depreciation Percentage "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+
+                                                {errors.depreciationPercentageEdit && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.depreciationPercentageEdit}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* quantity */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                Quantity<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="number"
+                                                    value={quantityEdit}
+                                                    onChange={(e) => setQuantityEdit(e.target.value)}
+                                                    placeholder="Enter Quantity "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                {errors.quantityEdit && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.quantityEdit}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* rate */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                Rate<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="number"
+                                                    value={rateEdit}
+                                                    onChange={(e) => setRateEdit(e.target.value)}
+                                                    placeholder="Enter Rate "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                {errors.rateEdit && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.rateEdit}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* gst rate */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                GST Rate(%)<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="number"
+                                                    value={gstEdit}
+                                                    onChange={(e) => setGstEdit(e.target.value)}
+                                                    placeholder="Enter GST Rate "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                {errors.gstEdit && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.gstEdit}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Taxable Amount */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                Taxable Amount<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="number"
+                                                    value={taxableEdit}
+                                                    onChange={(e) => setTaxableEdit(e.target.value)}
+                                                    placeholder="Enter Taxable Amount "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                {errors.taxableEdit && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.taxableEdit}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* cgst rate */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                CGST Rate
+                                                <span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="number"
+                                                    value={cgstEdit}
+                                                    onChange={(e) => setCgstEdit(e.target.value)}
+                                                    placeholder="Enter CGST Rate "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                {errors.cgstEdit && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.cgstEdit}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* sgst rate */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                SGST Rate<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="number"
+                                                    value={sgstEdit}
+                                                    onChange={(e) => setSgstEdit(e.target.value)}
+                                                    placeholder="Enter SGST Rate "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                {errors.sgstEdit && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.sgstEdit}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* igst rate */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                IGST Rate<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="number"
+                                                    value={igstEdit}
+                                                    onChange={(e) => setIgstEdit(e.target.value)}
+                                                    placeholder="Enter IGST Rate "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                {errors.igstEdit && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.igstEdit}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Invoice Amount */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                Invoice Value<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="number"
+                                                    value={invoiceValueEdit}
+                                                    onChange={(e) => setInvoiceValueEdit(e.target.value)}
+                                                    placeholder="Enter Invoice Amount "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                {errors.invoiceValueEdit && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.invoiceValueEdit}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Warrantly Years */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-1 md:mb-2">
+                                                Warrantly Years<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="number"
+                                                    value={warrantyYearEdit}
+                                                    onChange={(e) => setWarrantyYearEdit(e.target.value)}
+                                                    placeholder="Enter Warrantly Years"
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                {errors.warrantyYearEdit && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.warrantyYearEdit}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+
+                                        {/* Disposed Date */}
+
+                                        <div className="mt-2 md:mt-5 mb-1 md:mb-2 flex justify-between items-center">
+                                            <label className="block text-md font-medium mb-2">
+                                                Disposed Date<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="w-[60%] md:w-[50%]">
+                                                <input
+                                                    type="date"
+                                                    value={disposedDateEdit}
+                                                    onChange={(e) => setDisposedDateEdit(e.target.value)}
+                                                    placeholder="Enter Disposed Date "
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                                {errors.disposedDateEdit && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">
+                                                        {errors.disposedDateEdit}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                 {/* file upload */}
+                                        <div className="mt-2 md:mt-3 flex justify-between">
+                                            <label className="block text-md font-medium mb-2">
+                                                File Upload
+                                            </label>
+                                            <input
+                                                type="file"
+                                                 multiple
+                                                name="fileUpload"
+                                                ref={fileInputRef}
+                                                onChange={handleFileChangeEdit}
+                                                className="w-[60%] md:w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+                                       <div className="mt-3">
+    {attachments.map((file, index) => (
+        <div key={index} className="flex items-center gap-2 mb-1">
+            <span className="text-sm">{file.name}</span>
+            <button
+                type="button"
+                onClick={() => handleDeleteFile(index)}
+                className="text-red-600 text-lg"
+            >
+                <AiFillDelete />
+            </button>
+        </div>
+    ))}
+</div>
+
+
+
 
                                         <div className="flex  justify-end gap-2 mt-7 md:mt-14">
                                             <button
@@ -1146,7 +1792,7 @@ console.log("fileIattachmentnputRef 123",attachment);
                                             </button>
                                             <button
                                                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 md:px-5 py-2 font-semibold rounded-full"
-                                                onClick={handlesubmitedit}
+                                                onClick={handleSubmitEdit}
                                             >
                                                 Submit
                                             </button>
