@@ -412,7 +412,7 @@ const Sidebar = () => {
                             : "hover:bg-blue-100 text-gray-500"
                         }`}
                           >
-                            Intership
+                            Internship
                           </button>
 
                           <button

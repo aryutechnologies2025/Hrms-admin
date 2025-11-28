@@ -768,7 +768,7 @@ const handleSubmitEdit = async (e) => {
                                     Category
                                 </button>
                                 <button
-                                    onClick={() => navigate("/assetcategory")}
+                                    onClick={() => navigate("/assetsubcategory")}
                                     className=" px-1 py-2  text-white bg-blue-500 hover:bg-blue-600 font-normal md:font-medium w-28 rounded-2xl"
                                 >
                                     Subcategory
