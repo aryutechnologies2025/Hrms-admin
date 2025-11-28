@@ -1005,7 +1005,7 @@ const Attendance_Mainbar = () => {
                     <h2 className="text-xl font-semibold mb-2">
                       Absent List{" "}
                       <span className="text-gray-500 text-[16px]">
-                        ({selectedDate})
+                        ({formatDateTime(selectedDate)})
                       </span>
                     </h2>
 
@@ -1053,7 +1053,7 @@ const Attendance_Mainbar = () => {
                     <h2 className="text-xl font-semibold mb-2">
                       WFH List{" "}
                       <span className="text-gray-500 text-[16px]">
-                        ({selectedDate})
+                        ({formatDateTime(selectedDate)})
                       </span>
                     </h2>
 

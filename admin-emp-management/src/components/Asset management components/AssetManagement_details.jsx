@@ -22,9 +22,11 @@ import {
 import Loader from "../Loader";
 import { Dropdown } from "primereact/dropdown";
 import { AiFillDelete } from "react-icons/ai";
+import { useDateUtils } from "../../hooks/useDateUtils";
 
 
 const AssetManagement_details = () => {
+    const formatDateTime = useDateUtils();
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const storedDetatis = localStorage.getItem("hrmsuser");
@@ -321,7 +323,7 @@ const AssetManagement_details = () => {
         {
             title: "Purchased Date",
             data: "purchasedDate",
-            render: (data) => data ? new Date(data).toLocaleDateString("en-GB") : "-",
+            render: (data) => data ? formatDateTime(data) : "-",
         },
         {
             title: "Each Cost",
@@ -341,7 +343,7 @@ const AssetManagement_details = () => {
         {
             title: "Disposed Date",
             data: "disposedDate",
-            render: (data) => data ? new Date(data).toLocaleDateString("en-GB") : "-",
+            render: (data) => data ? formatDateTime(data) : "-",
         },
     ];
 

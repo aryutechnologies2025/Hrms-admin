@@ -37,10 +37,12 @@ import { toast } from "react-toastify";
 import { PiFlagPennantFill } from "react-icons/pi";
 import { AiFillDelete, AiTwotoneDelete } from "react-icons/ai";
 import { Dropdown } from "primereact/dropdown";
+import { useDateUtils } from "../../hooks/useDateUtils";
 
 function Task_view_all() {
   const employeeDetails = JSON.parse(localStorage.getItem("hrmsuser"));
   // console.log("employeeDetails:", employeeDetails.email);
+  const formatDateTime = useDateUtils();
 
   const employeeemail = employeeDetails?.email;
   const employeeeId = employeeDetails?._id;
@@ -59,6 +61,7 @@ function Task_view_all() {
   const [assignTo, setAssignTo] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [priority, setPriority] = useState("");
+  const [assignToChange, setAssignToChange] = useState("");
 
   // const handleStatusChange = (e) => {
   //   const newStatus = e.target.value;
@@ -159,6 +162,7 @@ function Task_view_all() {
         setProjectManager(response?.data?.data?.projectManagerId);
         setTester(response?.data?.data?.testerStatus || "-");
         setSubTasks(response?.data?.data?.subtasks || []);
+        setAssignToChange(response?.data?.data?.assignedTo?._id || "");
       } else {
         console.log("Failed to fetch roles.");
       }
@@ -176,7 +180,7 @@ function Task_view_all() {
     if (!str) return "";
     return str.replace(/<[^>]*>/g, "");
   }
-
+  console.log("assignToChange 123", assignToChange);
   // download image to see
 
   const handleCommonFileDownload = (filePath) => {
@@ -249,6 +253,51 @@ function Task_view_all() {
       console.error("Error updating status:", error);
       toast.error(
         error?.response?.data?.message || "Failed to update task status."
+      );
+      fetchProjectall();
+    }
+  };
+  const handleAssignedtoChange = async (e) => {
+    console.log("coming asss");
+    const newAssignedTo = e.value;
+    console.log("newAssignedTo", newAssignedTo);
+    setAssignToChange(newAssignedTo);
+
+    const now = new Date().toISOString();
+    // let updatedStartTime = startTime;
+    // let updatedStopTime = stopTime;
+
+    // if (newStatus === "in-progress" && !startTime) {
+    //   updatedStartTime = now;
+    //   setStartTime(now);
+    // } else if (newStatus === "in-review" && !stopTime) {
+    //   updatedStopTime = now;
+    //   setStopTime(now);
+    // }
+    console.log("coming asss 1");
+    const payload = {
+      assignedTo: newAssignedTo,
+      // startTime: updatedStartTime,
+      // endTime: updatedStopTime,
+      updatedAt: now,
+      updatedBy: employeeeId,
+    };
+
+    console.log("coming asss 2,", payload);
+    try {
+      const response = await axios.patch(
+        `${API_URL}/api/task/updated-status/${taskId}`,
+        payload
+      );
+
+      console.log("Assigned updated:", response.data);
+
+      toast.success("Task assigned updated successfully");
+      fetchProjectlogs();
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error(
+        error?.response?.data?.message || "Failed to update task  asssignedTo."
       );
       fetchProjectall();
     }
@@ -867,15 +916,17 @@ function Task_view_all() {
       header: "Sub Task",
     },
     {
-  field: "projectDescription",
-  header: "Description",
-  body: (rowData) => (
-    <div
-      className="text-sm"
-      dangerouslySetInnerHTML={{ __html: rowData?.projectDescription || "-" }}
-    />
-  ),
-},
+      field: "projectDescription",
+      header: "Description",
+      body: (rowData) => (
+        <div
+          className="text-sm"
+          dangerouslySetInnerHTML={{
+            __html: rowData?.projectDescription || "-",
+          }}
+        />
+      ),
+    },
     {
       field: "status",
       header: "priority",
@@ -1006,8 +1057,14 @@ function Task_view_all() {
                   <span className="text-[15px] md:text-[16px] text-gray-500 font-bold">
                     Task Description:
                   </span>
-                  <div
+                  {/* <div
                     className="text-gray-500 text-[14px] w-full md:w-[90%] mt-2 leading-relaxed break-words "
+                    dangerouslySetInnerHTML={{
+                      __html: formatHtml(alldata?.description),
+                    }}
+                  ></div> */}
+                  <div
+                    className="custom-html text-gray-500 text-[14px] w-full md:w-[90%] mt-2 leading-relaxed break-words"
                     dangerouslySetInnerHTML={{
                       __html: formatHtml(alldata?.description),
                     }}
@@ -1104,7 +1161,7 @@ function Task_view_all() {
                         <div>
                           {/* Task Input */}
                           <label className="block text-sm font-medium mb-2">
-                            Title <span className="text-red-500">*</span> 
+                            Title <span className="text-red-500">*</span>
                           </label>
                           <InputText
                             value={newTask}
@@ -1272,14 +1329,25 @@ function Task_view_all() {
                           <div className="flex justify-between text-xs text-gray-500 pt-1 border-t border-gray-300">
                             <span></span>
                             <span>
-                              {new Date(msg.createdAt).toLocaleString("en-GB", {
-                                day: "2-digit",
-                                month: "short",
-                                year: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: true,
-                              })}
+                              {/* {formatDateTime(msg.createdAt)} */}
+
+                              {msg.createdAt ? (
+                                <>
+                                  {formatDateTime(msg.createdAt)} <br />
+                                  {new Date(msg.createdAt).toLocaleTimeString(
+                                    "en-IN",
+                                    {
+                                      timeZone: "Asia/Kolkata",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      second: "2-digit",
+                                      hour12: true,
+                                    }
+                                  )}
+                                </>
+                              ) : (
+                                ""
+                              )}
                             </span>
                           </div>
                         </div>
@@ -1522,9 +1590,17 @@ function Task_view_all() {
                   </div>
                   <div
                     className="w-full py-2 text-gray-700 text-[14px] cursor-pointer hover:text-blue-500"
-                    onClick={() => onClickCard(alldata?.assignedTo?._id)}
+                    // onClick={() => onClickCard(alldata?.assignedTo?._id)}
                   >
-                    {alldata?.assignedTo?.employeeName}
+                    {/* {alldata?.assignedTo?.employeeName} */}
+                    <Dropdown
+                      value={assignToChange} // must be the email for edit mode to work
+                      onChange={handleAssignedtoChange}
+                      filter
+                      options={filteredEmployees}
+                      placeholder="Select Employee"
+                      className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
                   </div>
                 </div>
 
@@ -1672,16 +1748,7 @@ function Task_view_all() {
                             </span>
                           </td>
                           <td className="p-2 border text-center">
-                            {item.time
-                              ? new Date(item.time).toLocaleString("en-GB", {
-                                  day: "2-digit",
-                                  month: "2-digit",
-                                  year: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  hour12: true,
-                                })
-                              : ""}
+                            {item.time ? formatDateTime(item.time) : ""}
                           </td>
                           <td className="p-2 border">
                             {capitalizeFirstLetter(item.note)}
@@ -1734,7 +1801,7 @@ function Task_view_all() {
                 <table className="min-w-full border border-gray-300">
                   <thead>
                     <tr className="bg-gray-100">
-                      <th className="p-2 border">S.No</th>
+                      <th className="p-2 border">S.No </th>
                       <th className="p-2 border">Status</th>
                       <th className="p-2 border">Date</th>
                       <th className="p-2 border">Notes</th>
@@ -1770,19 +1837,23 @@ function Task_view_all() {
                             </span>
                           </td>
                           <td className="p-2 border text-center">
-                            {item.updatedAt
-                              ? new Date(item.updatedAt).toLocaleString(
-                                  "en-GB",
+                            {item.updatedAt ? (
+                              <>
+                                {formatDateTime(item.updatedAt)} <br />
+                                {new Date(item.updatedAt).toLocaleTimeString(
+                                  "en-IN",
                                   {
-                                    day: "2-digit",
-                                    month: "2-digit",
-                                    year: "numeric",
+                                    timeZone: "Asia/Kolkata",
                                     hour: "2-digit",
                                     minute: "2-digit",
+                                    second: "2-digit",
                                     hour12: true,
                                   }
-                                )
-                              : ""}
+                                )}
+                              </>
+                            ) : (
+                              ""
+                            )}
                           </td>
                           <td className="p-2 border">
                             {capitalizeFirstLetter(item.note || "-")}

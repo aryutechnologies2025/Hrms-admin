@@ -106,6 +106,7 @@ import SessionChecker from "./auth/SessionChecker";
 import DashboardClientSubUserMain from "./pages/DashboardSubUserClient";
 import Mom from "./pages/Mom";
 
+
 import Client_view_SubUser_details from "./pages/client_view_subUser_details";
 import Client_view_subuser from "./pages/client_subuser_view";
 import Client_login from "./pages/Client_login";
@@ -119,6 +120,10 @@ import Relieved_main from "./pages/Relieved_main";
 import Document_main from "./pages/Document_main";
 import Inter_card from "./pages/Inter_card";
 import Announcement from "./pages/Announcement";
+import 'quill/dist/quill.snow.css';
+import 'quill/dist/quill.core.css';
+import AssectDocument from "./components/Assect Document/AssectDocument";
+import AssentDocumentPage from "./pages/AssentDocumentPage";
 
 
 export const SettingsContext = createContext();
@@ -532,7 +537,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
     },
 
      {
-      path: "/requestdetails",
+      path:"/requestdetails",
       permissionTitle: "Employee",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
@@ -618,7 +623,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
     },
 
     {
-      path: "/invoice-details",
+      path:"/invoice-details",
       permissionTitle: "Clients",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
@@ -945,7 +950,14 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
         </ProtectedRoute>
       ),
     },
-
+     {
+      path: "/assect-document",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole={["client", "subuser","admin"]}>
+          <AssentDocumentPage />
+        </ProtectedRoute>
+      ),
+    },
        {
       path: "/document-details",
       element: (
