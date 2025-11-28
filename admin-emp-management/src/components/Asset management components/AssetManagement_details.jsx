@@ -534,6 +534,7 @@ const handleSubmitEdit = async (e) => {
             title: "Purchased Date",
             data: "purchasedDate",
             render: (data) => data ? formDateTime(data) : "-",
+
         },
 
         {
@@ -565,6 +566,11 @@ const handleSubmitEdit = async (e) => {
         },
 
         {
+
+//             title: "Disposed Date",
+//             data: "disposedDate",
+//             render: (data) => data ? formatDateTime(data) : "-",
+
             title: "Invoice Value",
             data: "invoiceValue",
             render: function (data) {
@@ -574,6 +580,7 @@ const handleSubmitEdit = async (e) => {
                 return "₹" + Number(data).toFixed(2);
             },
             defaultContent: "-"
+
         },
 
         {

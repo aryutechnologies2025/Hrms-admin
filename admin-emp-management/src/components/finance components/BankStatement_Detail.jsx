@@ -360,6 +360,7 @@ const BankStatement_Detail = () => {
                                         setOpenViewPopup(true);
                                     }}
                                 />
+                                
                             </div>,
                             container
                         );
