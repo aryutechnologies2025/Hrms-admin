@@ -23,9 +23,11 @@ import Loader from "../Loader";
 import { Dropdown } from "primereact/dropdown";
 import { IoClose } from "react-icons/io5";
 import { AiFillDelete } from "react-icons/ai";
+import { useDateUtils } from "../../hooks/useDateUtils";
 
 
 const BankStatement_Detail = () => {
+    const formDateTime=useDateUtils();
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const storedDetatis = localStorage.getItem("hrmsuser");
@@ -67,8 +69,12 @@ const BankStatement_Detail = () => {
     // Set filters EMPTY by default
     const [filterType, setFilterType] = useState("");
     const [filterAccount, setFilterAccount] = useState("");
-    const [filterStartDate, setFilterStartDate] = useState("");
-    const [filterEndDate, setFilterEndDate] = useState("");
+    const [filterStartDate, setFilterStartDate] = useState(()=>{
+        return new Date().toISOString().split("T")[0];
+    });
+    const [filterEndDate, setFilterEndDate] = useState(()=>{
+        return new Date().toISOString().split("T")[0];
+    });
 
 
 
@@ -319,7 +325,7 @@ const BankStatement_Detail = () => {
         {
             title: "Date",
             data: "date",
-            render: (data) => new Date(data).toLocaleDateString(),
+            render: (data) => data ? formDateTime(data) : "-",
         },
         {
             title: "Account",
@@ -345,7 +351,7 @@ const BankStatement_Detail = () => {
                     const container = document.getElementById(id);
                     if (container && !container.hasChildNodes()) {
                         ReactDOM.render(
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center justify-center gap-2">
 
                                 <FaEye
                                     className="text-blue-500 cursor-pointer"
