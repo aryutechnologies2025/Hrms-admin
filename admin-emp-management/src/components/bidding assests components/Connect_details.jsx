@@ -94,7 +94,16 @@ const Connect_details = () => {
 
   const [accountoption, setAccountOption] = useState(null);
 
-  const [date, setDate] = useState("");
+  // const [date, setDate] = useState("");
+   const getToday = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0"); // Months start at 0
+    const dd = String(today.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  const [date, setDate] = useState(getToday());
   const [accountname, setAccountname] = useState(null);
   const [connects, setConnects] = useState("");
   const [amount, setAmount] = useState("");
