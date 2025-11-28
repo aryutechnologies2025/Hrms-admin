@@ -400,12 +400,12 @@ const Inter_card_details = () => {
                             </p>
                             <p>{">"}</p>
 
-                            <p className="text-sm text-blue-500">Intership</p>
+                            <p className="text-sm text-blue-500">Internship</p>
                         </div>
 
                         <div className="flex flex-wrap  md:flex-row  justify-between ">
                             <p className="text-xl md:text-3xl  font-semibold mt-1 md:mt-8">
-                                Intership
+                                Internship
                             </p>
                             {/* <button
                 onClick={onClickAddNewMember}

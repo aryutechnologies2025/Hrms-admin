@@ -124,6 +124,7 @@ import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.core.css';
 import AssectDocument from "./components/Assect Document/AssectDocument";
 import AssentDocumentPage from "./pages/AssentDocumentPage";
+import AssetSubCategory_mainbar from "./components/Asset management components/AssetSubCategory_mainbar";
 
 
 export const SettingsContext = createContext();
@@ -987,6 +988,10 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       element: <AssetCategory_mainbar />
     },
     
+    {
+      path: "/assetsubcategory",
+      element: <AssetSubCategory_mainbar />
+    },
     {
       path: "/announcement",
       element: <Announcement />
