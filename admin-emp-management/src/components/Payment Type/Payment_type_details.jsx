@@ -894,9 +894,11 @@ const Payment_type_details = () => {
       ) : (
         <>
       <div>
-        <Mobile_Sidebar />
+       
 
-        <div className="flex gap-2 items-center cursor-pointer">
+        <div className="flex justify-between gap-2 items-center cursor-pointer">
+           <Mobile_Sidebar />
+           <div className="flex gap-1 items-center">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
@@ -906,9 +908,10 @@ const Payment_type_details = () => {
           <p>{">"}</p>
           <p className=" text-blue-500">Payment Type</p>
           <p>{">"}</p>
+          </div>
         </div>
 
-        <div className="flex justify-between mt-1 md:mt-8 mb-2 md:mb-3">
+        <div className="flex justify-between mt-1 md:mt-4 mb-2 md:mb-3">
           <h1 className="text-2xl md:text-3xl font-semibold">Payment Type</h1>
           <button
             onClick={openAddModal}

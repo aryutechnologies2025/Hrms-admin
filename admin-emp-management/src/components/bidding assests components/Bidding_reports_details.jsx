@@ -187,9 +187,11 @@ const Bidding_reports_details = () => {
       ) : (
         <>
           <div>
-            <Mobile_Sidebar />
+            
 
-            <div className="flex gap-2 items-center cursor-pointer">
+            <div className="flex justify-betwwen gap-2 items-center cursor-pointer">
+              <Mobile_Sidebar />
+              <div className="flex gap-1 items-center">
               <p
                 className=" text-gray-500 cursor-pointer"
                 onClick={() => navigate("/")}
@@ -199,13 +201,14 @@ const Bidding_reports_details = () => {
               <p>{">"}</p>
               <p className=" text-blue-500">Bidding Reports</p>
               <p>{">"}</p>
+              </div>
             </div>
 
             <div className="p-2 md:p-5">
               {/* Filters */}
               <div className="   flex flex-wrap gap-4 items-end ">
                 {/* Account */}
-                <div className="flex flex-col w-40 md:w-48">
+                <div className="flex flex-col w-full md:w-48">
                   <label className="text-sm font-medium text-gray-700 mb-1">
                     Account
                   </label>
@@ -224,7 +227,7 @@ const Bidding_reports_details = () => {
                 </div>
 
                 {/* Bidder */}
-                <div className="flex flex-col w-40 md:w-48">
+                <div className="flex flex-col w-full md:w-48">
                   <label className="text-sm font-medium text-gray-700 mb-1">
                     Bidder
                   </label>
@@ -242,7 +245,7 @@ const Bidding_reports_details = () => {
                   </select>
                 </div>
                 {/* Technology */}
-                <div className="flex flex-col w-40 md:w-48">
+                <div className="flex flex-col w-full md:w-48">
                   <label className="text-sm font-medium text-gray-700 mb-1">
                     Technology
                   </label>
@@ -259,7 +262,7 @@ const Bidding_reports_details = () => {
                     ))}
                   </select>
                 </div>
-                <div className="flex flex-col w-40 md:w-48">
+                <div className="flex flex-col w-full md:w-48">
                   <label className="text-sm font-medium text-gray-700 mb-1">
                     Reply
                   </label>
@@ -275,7 +278,7 @@ const Bidding_reports_details = () => {
                 </div>
 
                 {/* Date */}
-                <div className="flex flex-col w-40 md:w-48">
+                <div className="flex flex-col w-full md:w-48">
                   <label className="text-sm font-medium text-gray-700 mb-1">
                     Date
                   </label>
@@ -313,7 +316,7 @@ const Bidding_reports_details = () => {
                   placeholder="Search..."
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
-                  className=" w-[50%] md:w-[20%] border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  className=" w-full md:w-[20%] border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 />
               </div>
 

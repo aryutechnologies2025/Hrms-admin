@@ -430,10 +430,12 @@ const WorkFromHome_Mainbar = () => {
       ) : (
         <>
           <div>
-            <Mobile_Sidebar />
+            
 
             {/* breadcrumb */}
-            <div className="flex gap-2 items-center mt-6 cursor-pointer">
+            <div className="flex justify-between gap-2 items-center cursor-pointer">
+              <Mobile_Sidebar />
+              <div className="flex gap-1 items-center">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
@@ -443,6 +445,7 @@ const WorkFromHome_Mainbar = () => {
               <p>{">"}</p>
 
               <p className="text-sm text-blue-500">Work From Home</p>
+              </div>
             </div>
             {/* <div className="flex gap-2 mt-5 text-sm items-center">
           <p className=" text-blue-500 ">Work From Home</p>
@@ -451,11 +454,11 @@ const WorkFromHome_Mainbar = () => {
 
             <div>
               <div className="flex flex-wrap md:flex-row justify-between md:items-center">
-                <p className="text-2xl md:text-3xl font-semibold mt-5 md:mt-8">
+                <p className="text-2xl md:text-3xl font-semibold mt-2 md:mt-4">
                   WFH
                 </p>
 
-                <div className="flex items-center gap-5 mt-4 md:mt-8 ">
+                <div className="flex items-center gap-5 mt-2 md:mt-4 ">
                   <button
                     onClick={openAddLeaveRequestModal}
                     className="ml-auto md:ml-0 w-fit cursor-pointer px-5 md:px-7 py-0.5 md:py-2 rounded-full  text-white bg-blue-500 hover:bg-blue-600 font-medium"
@@ -618,7 +621,7 @@ const WorkFromHome_Mainbar = () => {
                     <IoIosArrowForward className="w-3 h-3" />
                   </div>
 
-                  <div className="px-5 lg:px-14 py-10">
+                  <div className="px-5 lg:px-14 py-2 md:py-5">
                     <p className="text-2xl md:text-3xl font-medium">
                       Work From Request
                     </p>

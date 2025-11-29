@@ -272,9 +272,11 @@ const Source_Details = () => {
         <>
 
         <div>
-        <Mobile_Sidebar />
+        
 
-       <div className="flex gap-2 text-sm items-center">
+       <div className="flex justify-between gap-2 text-sm items-center">
+        <Mobile_Sidebar />
+        <div className="flex gap-1 items-center">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard-Recruitment")}
@@ -283,6 +285,7 @@ const Source_Details = () => {
               </p>
           <IoIosArrowForward className="w-3 h-3" />
           <p className="text-sm text-blue-500">Technologies</p>
+          </div>
         </div>
 
         {/* Add Button */}

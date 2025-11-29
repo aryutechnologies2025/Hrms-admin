@@ -223,9 +223,11 @@ function Reports_details() {
   return (
     <div className="flex  flex-col justify-between w-screen min-h-screen bg-gray-100 px-3 md:px-5 pt-2 md:pt-10 ">
       <div className="p-3 ">
-        <Mobile_Sidebar />
+        
         {/* breadcrumb */}
-        <div className="flex gap-2  text-sm items-center">
+        <div className="flex justify-between gap-2 text-sm items-center">
+          <Mobile_Sidebar />
+          <div className="flex gap-1 items-center">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
@@ -234,11 +236,12 @@ function Reports_details() {
           </p>
           <p>{">"}</p>
           <p className="text-sm text-blue-500 ">Reports</p>
+          </div>
         </div>
-        <p className="text-2xl md:text-3xl mt-1 md:mt-8 font-semibold">
+        <p className="text-2xl md:text-3xl mt-1 md:mt-4 font-semibold">
           Monthly Report
         </p>
-        <div className="bg-white mt-1 md:mt-8 px-2 md:px-5 py-2 md:py-5 rounded-2xl">
+        <div className="bg-white mt-1 md:mt-4 px-2 md:px-5 py-2 md:py-5 rounded-2xl">
           {/* <p className="text-2xl font-bold text-gray-500">Attendance List</p> */}
           <div
             style={{ width: "auto", margin: "0 auto" }}

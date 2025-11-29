@@ -596,10 +596,13 @@ const Attendance_Mainbar = () => {
       ) : (
         <>
           <div>
-            <Mobile_Sidebar />
-            <ToastContainer />
-            <div className="flex flex-wrap justify-between">
-              <div className="flex gap-2 items-center cursor-pointer ">
+            
+            
+           
+              <div className="flex justify-between gap-2 items-center cursor-pointer ">
+                <Mobile_Sidebar />
+                <ToastContainer />
+                <div className="flex gap-1 items-center">
                 <p
                   className="text-sm text-gray-500"
                   onClick={() => navigate("/dashboard")}
@@ -609,6 +612,7 @@ const Attendance_Mainbar = () => {
                 <p>{">"}</p>
 
                 <p className="text-sm text-blue-500">Attendance</p>
+                </div>
               </div>
 
               {/* <div className="font-medium text-md  lg:text-left mt-2 md:mt-5 w-full md:w-fit text-right bg-white px-3 py-1 md:px-4 md:py-2 rounded-full">
@@ -620,10 +624,10 @@ const Attendance_Mainbar = () => {
                   {hours}:{minutes}:{seconds} {amPm}
                 </span>
               </div> */}
-            </div>
+            
 
             {/* Heading */}
-            <section className="flex flex-wrap md:flex-row justify-between items-center mt-1 md:mt-8 ">
+            <section className="flex flex-wrap md:flex-row justify-between items-center mt-1 md:mt-4 ">
               <div className="flex flex-wrap md:flex-nowrap gap-1 md:gap-5">
                 <p className="text-xl md:text-3xl font-semibold  ">
                   Attendance
@@ -737,7 +741,7 @@ const Attendance_Mainbar = () => {
             {/* Cards */}
             <div className="flex flex-col sm:flex-row mt-5 flex-grow gap-3">
               <div
-                className="hidden md:flex flex-grow w-full sm:w-1/4  transition-all duration-100 flex-col bg-white px-5 py-5 rounded-xl"
+                className="hidden md:flex flex-grow gap-2 w-full sm:w-1/4  transition-all duration-100 flex-col bg-white px-5 py-5 rounded-xl"
               >
                 <div className="flex items-center justify-between text-4xl">
                   <img src={WFH} alt="" className="h-12 w-12" />
@@ -760,7 +764,7 @@ const Attendance_Mainbar = () => {
 
               <div
                 onClick={() => setAbsentlistIsOpen(true)}
-                className="flex flex-grow w-full transition-all duration-100 cursor-pointer sm:w-1/4 md:flex-col bg-white px-5 py-5 rounded-xl"
+                className="flex flex-grow gap-2 w-full transition-all duration-100 cursor-pointer sm:w-1/4 md:flex-col bg-white px-5 py-5 rounded-xl"
               >
                 <div className="flex items-center justify-between text-4xl">
                   <img src={not_present} alt="" className="h-12 w-12" />
@@ -781,7 +785,7 @@ const Attendance_Mainbar = () => {
 
               <div
                 onClick={() => setWfhlistIsOpen(true)}
-                className="flex flex-grow w-full cursor-pointer sm:w-1/4 md:flex-col bg-white px-5 py-5 transition-all duration-100 rounded-xl"
+                className="flex flex-grow w-full gap-2 cursor-pointer sm:w-1/4 md:flex-col bg-white px-5 py-5 transition-all duration-100 rounded-xl"
               >
                 <div className="flex items-center justify-between text-4xl">
                   <img src={WFH} alt="" className="h-12 w-12" />

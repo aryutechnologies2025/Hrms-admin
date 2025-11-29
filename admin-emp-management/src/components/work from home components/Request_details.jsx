@@ -423,10 +423,12 @@ const Request_details = () => {
       ) : (
         <>
           <div>
-            <Mobile_Sidebar />
+            
 
             {/* breadcrumb */}
-            <div className="flex gap-2 items-center cursor-pointer mt-1 md:mt-6">
+            <div className="flex justify-between gap-2 items-center cursor-pointer">
+              <Mobile_Sidebar />
+              <div className="flex gap-1 items-center">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
@@ -436,15 +438,16 @@ const Request_details = () => {
               <p>{">"}</p>
 
               <p className="text-sm text-blue-500">Request</p>
+              </div>
             </div>
 
             <div>
               <div className="flex flex-wrap md:flex-row justify-between">
-                <p className="text-2xl md:text-3xl font-semibold mt-1 md:mt-8">
+                <p className="text-2xl md:text-3xl font-semibold mt-1 md:mt-4">
                   Request
                 </p>
 
-                <div className="flex items-center gap-5 justify-end mt-1 md:mt-8 ">
+                <div className="flex items-center gap-5 justify-end mt-1 md:mt-4 ">
                   <button
                     onClick={openAddLeaveRequestModal}
                     className="md:ml-0 w-fit cursor-pointer px-5 md:px-7 py-0.5 md:py-2 rounded-full text-white bg-blue-500 hover:bg-blue-600 font-medium"
@@ -592,7 +595,7 @@ const Request_details = () => {
                               )}
                             </div>
 
-                            <svg
+                            {/* <svg
                               className={`w-5 h-5 transition-transform ${expandedIndex === index ? "rotate-180" : ""
                                 }`}
                               fill="none"
@@ -606,7 +609,7 @@ const Request_details = () => {
                                 strokeWidth={2}
                                 d="M19 9l-7 7-7-7"
                               />
-                            </svg>
+                            </svg> */}
                           </div>
                         </div>
 
@@ -732,7 +735,7 @@ const Request_details = () => {
                               />
                             </div>
 
-                            <div className="flex flex-wrap md:justify-end gap-2 md:gap-5 pb-3">
+                            <div className="flex flex-wrap md:justify-end gap-2 md:gap-5 pb-5">
                               <button
                                 onClick={
                                   () => handleApprove("approved", item._id)

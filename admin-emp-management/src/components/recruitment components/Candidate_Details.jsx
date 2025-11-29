@@ -531,9 +531,11 @@ const Candidate_Details = () => {
       ) : (
         <>
           <div>
-            <Mobile_Sidebar />
+            
 
-            <div className="flex gap-2 text-sm items-center">
+            <div className="flex justify-between gap-2 text-sm items-center">
+              <Mobile_Sidebar />
+              <div className="flex gap-1 items-center">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard-Recruitment")}
@@ -543,10 +545,11 @@ const Candidate_Details = () => {
               <p>{">"}</p>
 
               <p className="text-sm text-blue-500">Candidate</p>
+              </div>
             </div>
 
             {/* Add Button */}
-            <div className="flex justify-between mt-2 md:mt-8">
+            <div className="flex justify-between mt-2 md:mt-4">
               <div className="">
                 <h1 className="text-xl md:text-3xl  font-semibold">Candidate</h1>
               </div>

@@ -355,13 +355,13 @@ const Employees_Card = () => {
   // console.log(location.state.employee);
 
   return (
-    <div className="flex flex-col justify-between bg-gray-100 w-full min-h-screen px-3 md:px-5 pt-1 md:pt-10 overflow-x-auto">
+    <div className="flex flex-col justify-between bg-gray-100 w-full min-h-screen px-3 md:px-5 pt-1 md:pt-5 overflow-x-auto">
       {loading ? (
         <Loader />
       ) : (
         <>
           <div>
-            <Mobile_Sidebar />
+            
 
             {/* header */}
             {/* date & timing */}
@@ -387,7 +387,9 @@ const Employees_Card = () => {
 
             {/* breadcrumbs */}
 
-            <div className="flex gap-1 md:gap-2 md:mt-5 items-center cursor-pointer">
+            <div className="flex justify-between gap-1 md:gap-2 md:mt-5 items-center cursor-pointer">
+              <Mobile_Sidebar />
+              <div className="flex gap-2 items-center">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
@@ -397,15 +399,16 @@ const Employees_Card = () => {
               <p>{">"}</p>
 
               <p className="text-sm text-blue-500">Employees</p>
+              </div>
             </div>
 
             <div className="flex flex-wrap  md:flex-row  justify-between ">
-              <p className="text-xl md:text-3xl  font-semibold mt-1 md:mt-8">
+              <p className="text-xl md:text-3xl  font-semibold mt-1 md:mt-4">
                 Employees
               </p>
               <button
                 onClick={onClickAddNewMember}
-                className=" w-fit text-xs md:text-base text-center mt-1 md:mt-8  text-white bg-blue-500 hover:bg-blue-600 font-medium px-1 md:px-3 py-2 rounded-full "
+                className=" w-fit text-xs md:text-base text-center mt-1 md:mt-4  text-white bg-blue-500 hover:bg-blue-600 font-medium px-1 md:px-3 py-2 rounded-full "
               >
                 Add New Member{" "}
                 <BiSolidMessageAltAdd className="inline-block ms-1 md:ms-3" />

@@ -734,15 +734,17 @@ const handleSubmitEdit = async (e) => {
 
     console.log("fileIattachmentsInputRef 123", attachments);
     return (
-        <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
+        <div className="flex flex-col justify-between bg-gray-100 w-full min-h-screen px-3 md:px-5 pt-2 md:pt-10 overflow-x-auto">
             {loading ? (
                 <Loader />
             ) : (
                 <>
                     <div>
-                        <Mobile_Sidebar />
+                        
 
-                        <div className="flex gap-2 text-sm items-center">
+                        <div className="flex justify-between gap-2 text-sm items-center">
+                            <Mobile_Sidebar />
+                            <div className="flex gap-1 items-center">
                             <p
                                 className="text-sm text-gray-500 cursor-pointer"
                                 onClick={() => navigate("/dashboard")}
@@ -752,10 +754,11 @@ const handleSubmitEdit = async (e) => {
                             <p>{">"}</p>
 
                             <p className="text-sm text-blue-500">Assets</p>
+                            </div>
                         </div>
 
                         {/* Add Button */}
-                        <div className="flex justify-between mt-8">
+                        <div className="flex justify-between mt-2 md:mt-4">
                             <div className=" ">
                                 <h1 className="text-2xl md:text-3xl font-semibold">Assets</h1>
                             </div>

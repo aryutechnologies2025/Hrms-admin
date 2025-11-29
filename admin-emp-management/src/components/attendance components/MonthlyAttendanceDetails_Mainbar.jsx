@@ -391,9 +391,10 @@ const MonthlyAttendanceDetails_Mainbar = () => {
       ) : (
         <>
       <div>
-        <Mobile_Sidebar />
-
-        <div className="flex gap-2 mt-5 text-sm items-center">
+        
+        <div className="flex justify-between gap-2 mt-5 text-sm items-center">
+          <Mobile_Sidebar />
+          <div className="flex gap-1 items-center">
           <p
             className=" text-gray-500 cursor-pointer"
             onClick={() => navigate("/attendance")}
@@ -403,13 +404,14 @@ const MonthlyAttendanceDetails_Mainbar = () => {
           <p>{">"}</p>
           <p className=" text-blue-500">Monthly Attendance</p>
           <p>{">"}</p>
+          </div>
         </div>
 
-        <p className="text-2xl md:text-3xl mt-8 font-semibold">
+        <p className="text-2xl md:text-3xl mt-2 md:mt-4 font-semibold">
           Monthly Report
         </p>
 
-        <div className="bg-white mt-8 px-5 py-5 rounded-2xl">
+        <div className="bg-white mt-2 md:mt-4 px-5 py-5 rounded-2xl">
           {/* <p className="text-2xl font-bold text-gray-500">Attendance List</p> */}
           <div
             style={{ width: "auto", margin: "0 auto" }}

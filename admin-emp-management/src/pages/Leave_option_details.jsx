@@ -514,9 +514,11 @@ const Leave_option_details = () => {
       ) : (
         <>
       <div>
-        <Mobile_Sidebar />
+        
 
-        <div className="flex flex-wrap gap-2 items-center cursor-pointer">
+        <div className="flex justify-between flex-wrap gap-2 items-center cursor-pointer">
+          <Mobile_Sidebar />
+          <div className="flex gap-1 items-center ">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
@@ -534,10 +536,11 @@ const Leave_option_details = () => {
           <p>{">"}</p>
 
           <p className="text-sm text-blue-500">Add Leave</p>
+          </div>
         </div>
 
         {/* Add Button */}
-        <div className="flex justify-between mt-8 mb-3">
+        <div className="flex justify-between mt-2 md:mt-4 mb-1 md:mb-3">
           <h1 className="text-2xl md:text-3xl font-semibold">Add Leave</h1>
           <button
             onClick={openAddModal}
@@ -583,7 +586,7 @@ const Leave_option_details = () => {
               >
                 <IoIosArrowForward className="w-3 h-3" />
               </div>{" "}
-              <div className="p-5">
+              <div className="p-3 md:p-5">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-semibold ">Add Leave Option</h2>
                   {/* <button
