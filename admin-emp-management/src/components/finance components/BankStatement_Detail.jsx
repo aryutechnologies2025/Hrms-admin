@@ -437,13 +437,12 @@ const BankStatement_Detail = () => {
             ) : (
                 <>
                     <div>
-                        <Mobile_Sidebar />
+                        
 
                         <div className="flex justify-between gap-1">
-                            <div className="">
-                                <h1 className="text-xl md:text-3xl font-semibold">Bank Statement</h1>
-                            </div>
-                            <div className="flex justify-end gap-1 md:gap-2 text-sm items-center">
+                            <Mobile_Sidebar />
+                           
+                            <div className="flex gap-1 items-center">
                             <p className="text-xs md:text-sm text-blue-500">Bank Statement</p>
                             <p>{">"}</p>
                             <p
@@ -457,6 +456,9 @@ const BankStatement_Detail = () => {
 
 
                         </div>
+                        <div className="">
+                                <h1 className="text-xl md:text-3xl font-semibold">Bank Statement</h1>
+                            </div>
 
                         {/* Add Button */}
                         <div className="flex flex-wrap justify-between mt-2 md:mt-8">
@@ -493,7 +495,7 @@ const BankStatement_Detail = () => {
                                     onChange={(e) => {
                                         setFilterStartDate(e.target.value);
                                     }}
-                                    className="w-[150px] md:w-[160px] border px-1 md:px-3 py-1 rounded"
+                                    className="w-[130px] md:w-[160px] border px-1 md:px-3 py-1 rounded"
                                 />
                                </div>
                                <div className="flex flex-col  ">
@@ -504,7 +506,7 @@ const BankStatement_Detail = () => {
                                     onChange={(e) => {
                                         setFilterEndDate(e.target.value);
                                     }}
-                                    className="w-[150px] md:w-[160px] border px-1 md:px-3 py-1 rounded"
+                                    className="w-[130px] md:w-[160px] border px-1 md:px-3 py-1 rounded"
                                 />
                                 </div>
                                 </div>

@@ -1526,9 +1526,11 @@ const CreateEmployee_Mainbar = () => {
       ) : (
         <>
         
-      <Mobile_Sidebar />
+      
 
-      <div className="flex gap-2 mt-2 md:mt-5 text-sm items-center">
+      <div className="flex justify-between gap-2 text-sm items-center">
+        <Mobile_Sidebar />
+        <div className="flex gap-2 items-center">
         <p
           onClick={() => navigate("/employees")}
           className=" text-gray-500 cursor-pointer "
@@ -1537,7 +1539,8 @@ const CreateEmployee_Mainbar = () => {
         </p>
         <p>{">"}</p>
         <p className=" text-blue-500 ">Create Employees</p>
-        <p>{">"}</p>
+        {/* <p>{">"}</p> */}
+        </div>
       </div>
 
       <div>

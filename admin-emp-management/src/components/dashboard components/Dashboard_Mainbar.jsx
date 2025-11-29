@@ -188,18 +188,20 @@ const Dashboard_Mainbar = () => {
   ];
 
   return (
-    <div className=" w-screen min-h-screen flex flex-col justify-between bg-gray-100 md:px-5 px-3 py-2 md:pt-10 ">
+    <div className=" w-screen min-h-screen flex flex-col justify-between bg-gray-100 md:px-5 px-3 py-2 md:pt-5 ">
       {loading ? (
         <Loader />
       ) : (
         <>
           <div>
-            <Mobile_Sidebar />
-
-            <div className="flex gap-2 items-center">
-              <p className="text-sm text-blue-500">Dashboard</p>
+            <div className="flex justify-between gap-2 items-center">
+              <Mobile_Sidebar />
+              <p className="text-sm md:text-md text-blue-500">Dashboard</p>
             </div>
-            <div className="bg-white rounded-2xl px-2 py-2 md:px-5 md:py-5 flex justify-between mt-1 md:mt-3">
+            
+
+           
+            <div className="bg-white rounded-2xl px-2 py-2 md:px-5 md:py-5 flex justify-between mt-1 ">
               <p className="font-semibold">Dashboard</p>
 
               <div className="font-medium text-sm lg:text-base text-center lg:text-left">

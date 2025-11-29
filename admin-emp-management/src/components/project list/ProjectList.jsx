@@ -807,9 +807,11 @@ const ProjectList = () => {
       ) : (
         <>
           <div>
-            <Mobile_Sidebar />
+            
 
-            <div className="flex gap-2 items-center cursor-pointer">
+            <div className="flex justify-between gap-2 items-center cursor-pointer">
+              <Mobile_Sidebar />
+              <div className="flex gap-1 items-center">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
@@ -820,10 +822,11 @@ const ProjectList = () => {
               <p>{">"}</p>
 
               <p className="text-sm text-blue-500">Project List</p>
+              </div>
             </div>
 
             {/* Add Button */}
-            <div className="flex justify-between mt-2 md:mt-8 mb-1 md:mb-3">
+            <div className="flex justify-between mt-2 md:mt-4 mb-1 md:mb-3">
               <h1 className="text-2xl md:text-3xl font-semibold">
                 Project List
               </h1>
@@ -1696,12 +1699,12 @@ const ProjectList = () => {
                   </div>
 
 
-                  <div className="px-5 lg:px-14 py-10">
+                  <div className="px-5 lg:px-14 py-2 md:py-5">
                     <p className="text-2xl md:text-3xl font-medium">
                       Edit Project
                     </p>
 
-                    <div className="mt-10  rounded-lg ">
+                    <div className="mt-2 md:mt-4 rounded-lg ">
                       <div className="">
                         <div className="flex justify-between items-center "></div>
                         <label className="block text-sm font-medium mb-2">

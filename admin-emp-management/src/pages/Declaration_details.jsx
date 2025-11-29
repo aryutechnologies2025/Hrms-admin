@@ -537,15 +537,17 @@ const handlePrint = async (row) => {
   //   const [selectedCountry, setSelectedCountry] = useState(null);
 
   return (
-      <div className="flex flex-col justify-between bg-gray-100 w-full min-h-screen px-3 md:px-5 pt-2 md:pt-10 overflow-x-auto">
+      <div className="flex flex-col justify-between bg-gray-100 w-full min-h-screen px-3 md:px-5 pt-2 md:pt-5 overflow-x-auto">
         {loading ? (
         <Loader />
       ) : (
         <>
         <div>
-          <Mobile_Sidebar />
+          
 
-          <div className="flex gap-2 items-center cursor-pointer">
+          <div className="flex justify-between gap-2 items-center cursor-pointer">
+            <Mobile_Sidebar />
+            <div className="flex gap-1 items-center c">
             <p
               className="text-sm text-gray-500"
               onClick={() => navigate("/dashboard")}
@@ -562,10 +564,11 @@ const handlePrint = async (row) => {
             <p>{">"}</p>
 
             <p className="text-sm text-blue-500">Declaration</p>
+            </div>
           </div>
 
           {/* Add Button */}
-          <div className="flex justify-between mt-2 md:mt-8 mb-1 md:mb-3">
+          <div className="flex justify-between mt-2 mb-1 md:mb-3">
             <h1 className="text-2xl md:text-3xl font-semibold">Declaration</h1>
             <button
               onClick={openAddModal}

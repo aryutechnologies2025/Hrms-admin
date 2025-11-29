@@ -188,7 +188,7 @@ const Mobile_Sidebar = () => {
                         <div
                           className={`transition-all duration-700 ease-in-out ${
                             openSection === "onboarding"
-                              ? "max-h-60 opacity-100"
+                              ? "max-h-70 opacity-100"
                               : "max-h-0 opacity-0"
                           }`}
                         >

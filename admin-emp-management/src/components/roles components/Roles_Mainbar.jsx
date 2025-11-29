@@ -355,9 +355,11 @@ const Roles_Mainbar = () => {
       ) : (
         <>
       <div>
-        <Mobile_Sidebar />
+        
 
-        <div className="flex gap-2 items-center cursor-pointer">
+        <div className="flex justify-between gap-2 items-center cursor-pointer">
+          <Mobile_Sidebar />
+          <div className="flex gap-2 items-center">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
@@ -366,11 +368,12 @@ const Roles_Mainbar = () => {
           </p>
           <p>{">"}</p>
 
-          <p className="text-sm text-blue-500">Roles</p>
+          <p className="text-sm md:text-md text-blue-500">Roles</p>
+          </div>
         </div>
 
         {/* Add Button */}
-        <div className="flex justify-between mt-1 md:mt-8">
+        <div className="flex justify-between mt-1 md:mt-4">
           <div className="">
             <h1 className="text-3xl  font-semibold">Roles</h1>
           </div>

@@ -257,8 +257,10 @@ const Leave_Report = () => {
           <Sidebar />
           <div className="flex flex-col justify-between overflow-x-hidden bg-gray-100 min-h-screen px-5 pt-2 md:pt-5 w-screen ">
             <div>
-              <Mobile_Sidebar />
-              <div className="flex gap-2 mt-5 text-sm items-center">
+              
+              <div className="flex justify-between gap-2 text-sm items-center">
+                <Mobile_Sidebar />
+                <div className="flex gap-1 items-center">
                 <p
                   className=" text-gray-500 cursor-pointer"
                   onClick={() => navigate("/leaves")}
@@ -268,19 +270,20 @@ const Leave_Report = () => {
                 <p>{">"}</p>
                 <p className=" text-blue-500">Leave Reports</p>
                 <p>{">"}</p>
+                </div>
               </div>
 
-              <p className="text-2xl md:text-3xl mt-4 md:mt-8 font-semibold">
+              <p className="text-2xl md:text-3xl mt-2 md:mt-4 font-semibold">
                 Leave Reports
               </p>
 
-              <div className="bg-white mt-8 px-5 py-5 rounded-2xl">
+              <div className="bg-white mt-2 md:mt-4 px-5 py-5 rounded-2xl">
                 {/* <p className="text-2xl font-bold text-gray-500">Attendance List</p> */}
                 <div
                   style={{ width: "auto", margin: "0 auto" }}
                   className="overflow-x-hidden"
                 >
-                  <div className="flex flex-wrap gap-8 justify-between items-center mt-5 ">
+                  <div className="flex flex-wrap gap-8 justify-between items-center md:mt-5 ">
                     {/* Global Search Input */}
                     <div className="card flex gap-4">
                       <DatePicker
