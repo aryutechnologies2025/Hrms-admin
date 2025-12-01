@@ -48,8 +48,10 @@ const AssetManagement_details = () => {
     const fileInputRefedit = useRef(null);
     const [attachmentedit, setAttachmentedit] = useState(null);
     const [attachments, setAttachments] = useState([]);
-    
-    const [existingFiles, setExistingFiles] = useState([]); 
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [filesToDelete, setFilesToDelete] = useState([]);
+
+    const [existingFiles, setExistingFiles] = useState([]);  // For URLs from DB
     const [selectedDate, setSelectedDate] = useState(() => {
         return new Date().toISOString().split("T")[0];
     });
@@ -121,6 +123,33 @@ const AssetManagement_details = () => {
         fetchSubCategories();
     }, []);
 
+    // When you fetch asset data for editing
+    const fetchAssetForEdit = async (id) => {
+        try {
+            const response = await axios.get(`${API_URL}/api/asset-mannagement/view-asset/${id}`);
+            const asset = response.data;
+
+            // Set other fields...
+
+            // Handle existing files
+            if (asset.fileUpload && asset.fileUpload.length > 0) {
+                // Store existing files as objects with type indicator
+                const existingFileObjects = asset.fileUpload.map(url => ({
+                    url: url,
+                    name: url.split('/').pop(), // Extract filename from URL
+                    isExisting: true,
+                    type: 'url'
+                }));
+
+                setAttachments(existingFileObjects);
+                setExistingFiles(row.fileUpload); // Store as separate array too
+            }
+
+        } catch (error) {
+            console.error("Error fetching asset:", error);
+        }
+    };
+
 
     const getTodayDate = () => {
         return new Date().toISOString().split("T")[0];   // "2025-11-27"
@@ -152,16 +181,29 @@ const AssetManagement_details = () => {
     // };
 
     const handleDeleteNewFile = (fileToDelete) => {
-    setAttachments((prev) => prev.filter((file) => file !== fileToDelete));
-};
+        setAttachments((prev) => prev.filter((file) => file !== fileToDelete));
+    };
 
- const handleDeleteFile = (index) => {
-    setAttachments((prev) => prev.filter((_,i) => i !== index));
-};
+    const handleDeleteFile = (index) => {
+        const fileToDelete = attachments[index];
 
-const handleDeleteOldFile = (file) => {
-    setExistingFiles(prev => prev.filter(f => f !== file));
-};
+        if (fileToDelete.isExisting) {
+            // If it's an existing file, mark it for deletion
+            setFilesToDelete(prev => [...prev, fileToDelete.url]);
+
+            // Remove from display
+            const updatedFiles = attachments.filter((_, i) => i !== index);
+            setAttachments(updatedFiles);
+        } else {
+            // If it's a new file (File object), just remove it
+            const updatedFiles = attachments.filter((_, i) => i !== index);
+            setAttachments(updatedFiles);
+        }
+    };
+
+    const handleDeleteOldFile = (file) => {
+        setExistingFiles(prev => prev.filter(f => f !== file));
+    };
 
     const handleDeleteFileedit = () => {
         setAttachmentedit(null);
@@ -169,26 +211,71 @@ const handleDeleteOldFile = (file) => {
             fileInputRefedit.current.value = "";
         }
     };
-    const handleFileChangeEdit = (e) => {
-        // if (e.target.files[0]) {
-        //     setAttachment(e.target.files[0]);
-        // }
-        const files = Array.from(e.target.files);  
+    // const handleFileChangeEdit = (e) => {
+    //     // if (e.target.files[0]) {
+    //     //     setAttachment(e.target.files[0]);
+    //     // }
+    //     const files = Array.from(e.target.files);
 
-    setAttachments((prev) => [...prev, ...files]);
-    };
+    //     setAttachments((prev) => [...prev, ...files]);
+    // };
+    // const handleFileChange = (e) => {
+    //     // console.log("e 1233 :", e)
+    //     // if (e.target.files[0]) {
+    //     //     setAttachments(e.target.files[0]);
+    //     // }
+    //     const files = Array.from(e.target.files);
+    //     setAttachments(prev => [...prev, ...files]);
+    // };
+
+    // For Add Mode
     const handleFileChange = (e) => {
-        // console.log("e 1233 :", e)
-        // if (e.target.files[0]) {
-        //     setAttachments(e.target.files[0]);
-        // }
-         const files = Array.from(e.target.files);
-        setAttachments(prev => [...prev, ...files]);
+        const files = Array.from(e.target.files);
+
+        // Check for duplicates
+        const newFiles = files.filter(file =>
+            !attachments.some(existing =>
+                existing.name === file.name &&
+                existing.size === file.size
+            )
+        );
+
+        const updatedFiles = [...attachments, ...newFiles];
+        setAttachments(updatedFiles);
+
+        // Reset file input
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
+    // For Edit Mode - handles both new and existing files
+    const handleFileChangeEdit = (e) => {
+        const files = Array.from(e.target.files);
+
+        // Combine existing files (strings/URLs) with new File objects
+        const newFiles = files.filter(file =>
+            !attachments.some(existing => {
+                if (existing instanceof File) {
+                    return existing.name === file.name && existing.size === file.size;
+                }
+                return false; // If it's a URL string, don't check for duplicates
+            })
+        );
+
+        // Add new files to attachments
+        const updatedFiles = [...attachments, ...newFiles];
+        setAttachments(updatedFiles);
+
+        // Reset file input
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
     };
 
     const openInvoiceViewModal = (row) => {
         console.log("Invoice row data :", row)
-       
+
         setSelectedInvoice(row)
         setIsInvoiceViewModalOpen(true)
     }
@@ -232,8 +319,15 @@ const handleDeleteOldFile = (file) => {
     const [fileUpload, setFileUpload] = useState(null);
 
 
-    
+
+
     const resetAll = () => {
+        setAttachments([]);
+        setExistingFiles([]);
+        setFilesToDelete([]);
+        setIsEditMode(false);
+
+        //fields
         setLedger("");
         setAssetCategory("");
         setAssetSubCategory("");
@@ -251,8 +345,11 @@ const handleDeleteOldFile = (file) => {
         setInvoiceValue("");
         setWarrantyYear("");
         setDisposedDate("");
-        setFileUpload(null);
-    }
+        // Reset file input
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
 
 
     // console.log("chech:", nameEdit, statusEdit);
@@ -260,49 +357,69 @@ const handleDeleteOldFile = (file) => {
 
     // create
     const handlesubmit = async (e) => {
-        console.log("fileUpload", fileUpload)
         e.preventDefault();
+        console.log("attachments", attachments);
 
-        const formdata = {
-            invoiceNumber: String(invoiceNumber),
-            purchasedDate,
-            ledger,
-            assetCategory,
-            assetSubCategory,
-            title,
-            depreciationPercentage: Number(depreciationPercentage),
-            quantity: Number(quantity),
-            rate: Number(rate),
-            gstRate: Number(gst),
-            taxable: Number(taxable),
-            cgst: Number(cgst),
-            sgst: Number(sgst),
-            igst: Number(igst),
-            invoiceValue: Number(invoiceValue),
-            warrantyYear: Number(warrantyYear),
-            disposedDate,
-            fileUpload: attachments
-        };
+        // Create FormData object
+        const formData = new FormData();
 
+        // Add all text fields
+        formData.append("invoiceNumber", String(invoiceNumber));
+        formData.append("purchasedDate", purchasedDate);
+        formData.append("ledger", ledger);
+        formData.append("assetCategory", assetCategory);
+        formData.append("assetSubCategory", assetSubCategory);
+        formData.append("title", title);
+        formData.append("depreciationPercentage", Number(depreciationPercentage));
+        formData.append("quantity", Number(quantity));
+        formData.append("rate", Number(rate));
+        formData.append("gstRate", Number(gst));
+        formData.append("taxable", Number(taxable));
+        formData.append("cgst", Number(cgst));
+        formData.append("sgst", Number(sgst));
+        formData.append("igst", Number(igst));
+        formData.append("invoiceValue", Number(invoiceValue));
+        formData.append("warrantyYear", Number(warrantyYear));
+
+        //field only if it exists
+        if (disposedDate) {
+            formData.append("disposedDate", disposedDate);
+        }
+
+        //  files (assuming attachments is a File or FileList)
+        // If attachments is an array of files
+        if (attachments && attachments.length > 0) {
+            if (Array.isArray(attachments)) {
+
+                attachments.forEach((file, index) => {
+
+                    formData.append("fileUpload", file);
+                });
+            } else if (attachments instanceof FileList) {
+                // If it's a FileList from input type="file" multiple
+                for (let i = 0; i < attachments.length; i++) {
+                    formData.append("fileUpload", attachments[i]);
+                }
+            } else if (attachments instanceof File) {
+                // Single file
+                formData.append("fileUpload", attachments);
+            }
+        }
 
         try {
             const response = await axios.post(
                 `${API_URL}/api/asset-mannagement/create-asset`,
-                formdata,
-                {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
+                formData,
+                // {
+                //     headers: {
+                //         "Content-Type": "multipart/form-data",
+                //     },
+                // }
             );
 
-
             toast.success("Asset created successfully");
-
             closeAddModal();
             fetchAssetManagement();
-
-            // Reset fields
             resetAll();
 
         } catch (err) {
@@ -336,35 +453,56 @@ const handleDeleteOldFile = (file) => {
 
     const openEditModal = (row) => {
 
-          // Convert backend string → array
-    const files = Array.isArray(row.fileUpload)
-        ? row.fileUpload
-        : row.fileUpload
-        ? [row.fileUpload]
-        : [];
 
+        // // Convert backend string → array
+        // const files = Array.isArray(row.fileUpload)
+        //     ? row.fileUpload
+        //     : row.fileUpload
+        //         ? [row.fileUpload]
+        //         : [];
+        setIsEditMode(true);
         setEditid(row._id);
         setAssetCategoryEdit(row.assetCategory?._id || "");
         setAssetSubCategoryEdit(row.assetSubCategory?._id || "");
-        setLedgerEdit(row.ledger);
-        setTitleEdit(row.title);
-        setInvoiceNumberEdit(row.invoiceNumber);
-        setQuantityEdit(row.quantity);
+        setLedgerEdit(row.ledger || "");
+        setTitleEdit(row.title || "");
+        setInvoiceNumberEdit(row.invoiceNumber || "");
+        setQuantityEdit(row.quantity || "");
         setPurchasedDateEdit(row.purchasedDate?.slice(0, 10));
         setDisposedDateEdit(row.disposedDate?.slice(0, 10));
-        setRateEdit(row.rate);
-        setTaxableEdit(row.taxable);
-        setGstEdit(row.gstRate);
-        setCgstEdit(row.cgst);
-        setSgstEdit(row.sgst);
-        setIgstEdit(row.igst);
-        setInvoiceValueEdit(row.invoiceValue);
-        setWarrantyYearEdit(row.warrantyYear);
-        setDepreciationPercentageEdit(row.depreciationPercentage);
+        setRateEdit(row.rate || "");
+        setTaxableEdit(row.taxable || "");
+        setGstEdit(row.gstRate || "");
+        setCgstEdit(row.cgst || "");
+        setSgstEdit(row.sgst || "");
+        setIgstEdit(row.igst || "");
+        setInvoiceValueEdit(row.invoiceValue || "");
+        setWarrantyYearEdit(row.warrantyYear || "");
+        setDepreciationPercentageEdit(row.depreciationPercentage || "");
         // setFileUploadEdit(row.fileUpload);
         setFileUploadEdit(row.fileUpload ? [row.fileUpload] : []);
-        setExistingFiles(files);  // existing files
-    setAttachments([]);       
+
+
+        // Reset files tracking
+        setFilesToDelete([]);
+        setAttachments([]);
+
+        // Handle existing files - Convert to proper format
+        if (row.fileUpload && row.fileUpload.length > 0) {
+            // Convert string URLs to objects
+            const existingFileObjects = row.fileUpload.map(url => ({
+                url: url,
+                name: url.split('/').pop().split('\\').pop(), // Handle both forward and backslashes
+                isExisting: true,
+                type: 'url'
+            }));
+
+            setAttachments(existingFileObjects);
+            setExistingFiles(row.fileUpload); // Store as separate array too
+        } else {
+            setAttachments([]);
+            setExistingFiles([]);
+        }
         setIsEditModalOpen(true);
         setTimeout(() => setIsAnimating(true), 10);
     };
@@ -417,53 +555,84 @@ const handleDeleteOldFile = (file) => {
 
     // delete
 
-const handleSubmitEdit = async (e) => {
-    e.preventDefault();
+    const handleSubmitEdit = async (e) => {
+        e.preventDefault();
 
-    const formData = new FormData();
+        const formData = new FormData();
 
-    formData.append("assetCategory", assetCategoryEdit);
-    formData.append("assetSubCategory", assetSubCategoryEdit);
-    formData.append("ledger", ledgerEdit);
-    formData.append("title", titleEdit);
-    formData.append("invoiceNumber", invoiceNumberEdit);
-    formData.append("quantity", quantityEdit);
-    formData.append("rate", rateEdit);
-    formData.append("gstRate", gstEdit);
-    formData.append("taxable", taxableEdit);
-    formData.append("cgst", cgstEdit);
-    formData.append("sgst", sgstEdit);
-    formData.append("igst", igstEdit);
-    formData.append("invoiceValue", invoiceValueEdit);
-    formData.append("disposedDate", disposedDateEdit);
-    formData.append("warrantyYear", warrantyYearEdit);
-    formData.append("depreciationPercentage", depreciationPercentageEdit);
+        formData.append("assetCategory", assetCategoryEdit);
+        formData.append("assetSubCategory", assetSubCategoryEdit);
+        formData.append("ledger", ledgerEdit);
+        formData.append("title", titleEdit);
+        formData.append("invoiceNumber", invoiceNumberEdit);
+        formData.append("quantity", quantityEdit);
+        formData.append("rate", rateEdit);
+        formData.append("gstRate", gstEdit);
+        formData.append("taxable", taxableEdit);
+        formData.append("cgst", cgstEdit);
+        formData.append("sgst", sgstEdit);
+        formData.append("igst", igstEdit);
+        formData.append("invoiceValue", invoiceValueEdit);
+        formData.append("disposedDate", disposedDateEdit);
+        formData.append("warrantyYear", warrantyYearEdit);
+        formData.append("depreciationPercentage", depreciationPercentageEdit);
 
-    // Add existing files (strings)
-    existingFiles.forEach(file => {
-        formData.append("existingFiles", file);
-    });
+        // Separate new files from existing files
+        const newFiles = attachments.filter(file => file instanceof File);
+        const existingFileUrls = attachments
+            .filter(file => file.isExisting && typeof file.url === 'string')
+            .map(file => file.url);
 
-    // Add new uploaded files
-    attachments.forEach(file => {
-        formData.append("fileUpload", file);
-    });
+        // new files
+        newFiles.forEach(file => {
+            formData.append("fileUpload", file);
+        });
 
-    try {
-    await axios.put(
-        `${API_URL}/api/asset-mannagement/edit-assetdetails/${editId}`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-    );
+        //  existing files that should remain
+        if (existingFileUrls.length > 0) {
+            formData.append("existingFiles", JSON.stringify(existingFileUrls));
+        }
+        //  files to delete 
+        if (filesToDelete.length > 0) {
+            formData.append("filesToDelete", JSON.stringify(filesToDelete));
+        }
 
-    toast.success("Asset Updated Successfully");
-    closeEditModal();
-    fetchAssetManagement();
-    } catch (err) {
-    console.log(err);
-    toast.error("Failed to update asset");
-    }
-};
+
+
+        try {
+            const response = await axios.put(
+                `${API_URL}/api/asset-mannagement/edit-assetdetails/${editId}`,
+                formData,
+                { headers: { "Content-Type": "multipart/form-data" } }
+            );
+            console.log("response:", response);
+
+
+            //     const updatedAsset = response?.data?.data;
+
+            // // Update main list
+            // setAssetManageDetails(prev =>
+            //     prev.map(asset => (asset._id === editId ? updatedAsset : asset))
+            // );
+
+            // // Update selected asset if view modal is open
+            // if (isInvoiceViewModalOpen && selectedInvoice?._id === editId) {
+            //     setSelectedInvoice(updatedAsset);
+            // }
+
+            // //  Reset temporary states
+            // setAttachments([]);
+            // setFilesToDelete([]);
+
+
+            toast.success("Asset Updated Successfully");
+            closeEditModal();
+            fetchAssetManagement();
+        } catch (err) {
+            console.log(err);
+            toast.error("Failed to update asset");
+        }
+    };
 
     const deleteRoles = (editId) => {
         Swal.fire({
@@ -567,9 +736,9 @@ const handleSubmitEdit = async (e) => {
 
         {
 
-//             title: "Disposed Date",
-//             data: "disposedDate",
-//             render: (data) => data ? formatDateTime(data) : "-",
+            //             title: "Disposed Date",
+            //             data: "disposedDate",
+            //             render: (data) => data ? formatDateTime(data) : "-",
 
             title: "Invoice Value",
             data: "invoiceValue",
@@ -585,12 +754,15 @@ const handleSubmitEdit = async (e) => {
 
         {
             title: "Invoice Details",
-            data: "invoiceDetails",
+            data: "null",
             render: (data, type, row) => {
                 const id = `invoice-${row._id}`;
+
                 setTimeout(() => {
                     const container = document.getElementById(id);
                     if (container && !container.hasChildNodes()) {
+                        //  const fullData = assetManageDetails.find(item => item._id === row._id);
+
                         ReactDOM.render(
                             <div className="flex items-center gap-2 justify-center">
 
@@ -602,7 +774,7 @@ const handleSubmitEdit = async (e) => {
                             container
                         );
                     }
-                }, 0);
+                });
                 return `<div id="${id}"></div>`;
 
                 // return `
@@ -740,20 +912,20 @@ const handleSubmitEdit = async (e) => {
             ) : (
                 <>
                     <div>
-                        
+
 
                         <div className="flex justify-between gap-2 text-sm items-center">
                             <Mobile_Sidebar />
                             <div className="flex gap-1 items-center">
-                            <p
-                                className="text-sm text-gray-500 cursor-pointer"
-                                onClick={() => navigate("/dashboard")}
-                            >
-                                Dashboard
-                            </p>
-                            <p>{">"}</p>
+                                <p
+                                    className="text-sm text-gray-500 cursor-pointer"
+                                    onClick={() => navigate("/dashboard")}
+                                >
+                                    Dashboard
+                                </p>
+                                <p>{">"}</p>
 
-                            <p className="text-sm text-blue-500">Assets</p>
+                                <p className="text-sm text-blue-500">Assets</p>
                             </div>
                         </div>
 
@@ -806,79 +978,100 @@ const handleSubmitEdit = async (e) => {
                             </div>
                         </div>
 
-                       
-                     {/* View Invoice Modal */}
-{isInvoiceViewModalOpen && selectedInvoice && (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-        <div className="bg-white p-6 rounded-xl w-[450px] shadow-lg">
 
-            {/* Header */}
-            <div className="flex justify-between items-center mb-4">
-                <div className="flex gap-2">
-                    <h3 className="text-xl font-semibold text-gray-800">
-                        {selectedInvoice.title || selectedInvoice.ledger}
-                    </h3>
-                </div>
-                <button
-                    onClick={closeInvoiceViewModal}
-                    className="text-gray-500 hover:text-red-500 transition"
-                >
-                    ✕
-                </button>
-            </div>
+                        {/* View Invoice Modal */}
+                        {isInvoiceViewModalOpen && selectedInvoice && (
+                            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                                <div className="bg-white p-6 rounded-xl w-[450px] shadow-lg">
 
-            {/* Convert fileUpload to array */}
-            {(() => {
-                var viewFiles = Array.isArray(selectedInvoice.fileUpload)
-                    ? selectedInvoice.fileUpload
-                    : selectedInvoice.fileUpload
-                    ? [selectedInvoice.fileUpload]
-                    : [];
-                
-                return (
-                    <div className="grid grid-cols-2 gap-y-3 text-sm">
-                        <p><b>Asset Category : </b><br />{selectedInvoice.assetCategory?.name || "-"}</p>
-                        <p><b>Asset Subcategory : </b><br />{selectedInvoice.assetSubCategory?.name || "-"}</p>
-                        <p><b>Ledger : </b><br />{selectedInvoice.ledger}</p>
-                        <p><b>Asset Invoice Number : </b><br />{selectedInvoice.invoiceNumber}</p>
-                        <p><b>Purchased Date : </b><br />{selectedInvoice.purchasedDate ? formDateTime(selectedInvoice.purchasedDate) : "-"}</p>
-                        <p><b>Quantity :</b><br />{selectedInvoice.quantity}</p>
-                        <p><b>Rate(₹) :</b><br />₹{selectedInvoice.rate}</p>
-                        <p><b>Depreciation Percentage(%) : </b><br />{selectedInvoice.depreciationPercentage ? `${selectedInvoice.depreciationPercentage}%` : "-"}</p>
-                        <p><b>GST Rate(%) :</b><br />{selectedInvoice.gstRate}%</p>
-                        <p><b>Taxable Amount :</b><br />₹{selectedInvoice.taxable}</p>
-                        <p><b>CGST Amount :</b><br />₹{selectedInvoice.cgst}</p>
-                        <p><b>SGST Amount :</b><br />₹{selectedInvoice.sgst}</p>
-                        <p><b>IGST Amount :</b><br />₹{selectedInvoice.igst}</p>
-                        <p><b>Total Amount :</b><br />₹{selectedInvoice.invoiceValue}</p>
-                        <p><b>Warranty Years :</b><br />{selectedInvoice.warrantyYear}</p>
-                        <p><b>Disposed Date :</b><br />{selectedInvoice.disposedDate ? formDateTime(selectedInvoice.disposedDate) : "-"}</p>
+                                    {/* Header */}
+                                    <div className="flex justify-between items-center mb-4">
+                                        <div className="flex gap-2">
+                                            <h3 className="text-xl font-semibold text-gray-800">
+                                                {selectedInvoice.title || selectedInvoice.ledger}
+                                            </h3>
+                                        </div>
+                                        <button
+                                            onClick={closeInvoiceViewModal}
+                                            className="text-gray-500 hover:text-red-500 transition"
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
 
-                        <h3 className="font-medium col-span-2 mt-2">Files</h3>
+                                    {/* Convert fileUpload to array */}
+                                    {/* {(() => {
+                                        var viewFiles = Array.isArray(selectedInvoice.fileUpload)
+                                            ? selectedInvoice.fileUpload
+                                            : selectedInvoice.fileUpload
+                                                ? [selectedInvoice.fileUpload]
+                                                : []; */}
 
-                        {viewFiles.length > 0 ? (
-                            viewFiles.map((file, idx) => (
-                                <p key={idx} className="col-span-2">
-                                    <a 
-                                        href={`${API_URL}/uploads/uploads/${file}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-blue-600 underline"
-                                    >
-                                        {file}
-                                    </a>
-                                </p>
-                            ))
-                        ) : (
-                            <p className="col-span-2 text-gray-500">No files uploaded</p>
+
+                                    <div className="grid grid-cols-2 gap-y-3 text-sm">
+                                        <p><b>Asset Category : </b><br />{selectedInvoice.assetCategory?.name || "-"}</p>
+                                        <p><b>Asset Subcategory : </b><br />{selectedInvoice.assetSubCategory?.name || "-"}</p>
+                                        <p><b>Ledger : </b><br />{selectedInvoice.ledger}</p>
+                                        <p><b>Asset Invoice Number : </b><br />{selectedInvoice.invoiceNumber}</p>
+                                        <p><b>Purchased Date : </b><br />{selectedInvoice.purchasedDate ? formDateTime(selectedInvoice.purchasedDate) : "-"}</p>
+                                        <p><b>Quantity :</b><br />{selectedInvoice.quantity}</p>
+                                        <p><b>Rate(₹) :</b><br />₹{selectedInvoice.rate}</p>
+                                        <p><b>Depreciation Percentage(%) : </b><br />{selectedInvoice.depreciationPercentage ? `${selectedInvoice.depreciationPercentage}%` : "-"}</p>
+                                        <p><b>GST Rate(%) :</b><br />{selectedInvoice.gstRate}%</p>
+                                        <p><b>Taxable Amount :</b><br />₹{selectedInvoice.taxable}</p>
+                                        <p><b>CGST Amount :</b><br />₹{selectedInvoice.cgst}</p>
+                                        <p><b>SGST Amount :</b><br />₹{selectedInvoice.sgst}</p>
+                                        <p><b>IGST Amount :</b><br />₹{selectedInvoice.igst}</p>
+                                        <p><b>Total Amount :</b><br />₹{selectedInvoice.invoiceValue}</p>
+                                        <p><b>Warranty Years :</b><br />{selectedInvoice.warrantyYear}</p>
+                                        <p><b>Disposed Date :</b><br />{selectedInvoice.disposedDate ? formDateTime(selectedInvoice.disposedDate) : "-"}</p>
+
+
+                                        {/* Files Section */}
+
+                                        <div className="col-span-2 mt-4">
+                                            <h4 className="font-semibold mb-2">Files:</h4>
+
+                                            {(() => {
+                                                const files = Array.isArray(selectedInvoice.fileUpload)
+                                                    ? selectedInvoice.fileUpload
+                                                    : selectedInvoice.fileUpload
+                                                        ? [selectedInvoice.fileUpload]
+                                                        : [];
+
+                                                return files.length > 0 ? (
+                                                    <div className="space-y-2">
+                                                        {files.map((file, idx) => {
+                                                            const fileName = file.split('/').pop().split('\\').pop();
+                                                            const fileUrl = `${API_URL}/uploads/assets/${fileName}`;
+
+
+                                                            return (
+                                                                <div key={idx} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                                                    <span className="text-sm truncate flex-1 mr-2">{fileName}</span>
+                                                                    <a
+                                                                        href={fileUrl}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                                                                    >
+                                                                        View
+                                                                    </a>
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                ) : (
+                                                    <p className="text-gray-500">No files uploaded</p>
+                                                );
+                                            })()}
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
                         )}
-                    </div>
-                );
-            })()}
-
-        </div>
-    </div>
-)}
 
 
                         {/* Add Modal */}
@@ -1304,27 +1497,39 @@ const handleSubmitEdit = async (e) => {
                                             </label>
                                             <input
                                                 type="file"
-                                                 multiple
+                                                multiple
                                                 name="fileUpload"
                                                 ref={fileInputRef}
                                                 onChange={handleFileChange}
+                                                accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" // Specify accepted file types
                                                 className="w-[60%] md:w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                             />
                                         </div>
-                                       <div className="mt-3">
-    {attachments.map((file, index) => (
-        <div key={index} className="flex items-center gap-2 mb-1">
-            <span className="text-sm">{file.name}</span>
-            <button
-                type="button"
-                onClick={() => handleDeleteFile(index)}
-                className="text-red-600 text-lg"
-            >
-                <AiFillDelete />
-            </button>
-        </div>
-    ))}
-</div>
+                                        <div className="mt-3">
+                                            {attachments.length === 0 ? (
+                                                <p className="text-sm text-gray-500">No files selected</p>
+                                            ) : (
+                                                <>
+                                                    <p className="text-sm mb-2">
+                                                        Selected files ({attachments.length}/10):
+                                                    </p>
+                                                    {attachments.map((file, index) => (
+                                                        <div key={index} className="flex items-center gap-2 mb-1 p-2 bg-gray-50 rounded">
+                                                            <span className="text-sm">{file.name}</span>
+
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleDeleteFile(index)}
+                                                                className="text-red-600 text-lg"
+                                                            >
+                                                                <AiFillDelete />
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </>
+                                            )}
+
+                                        </div>
 
 
 
@@ -1761,35 +1966,58 @@ const handleSubmitEdit = async (e) => {
                                             </div>
                                         </div>
 
-                                 {/* file upload */}
+                                        {/* file upload */}
                                         <div className="mt-2 md:mt-3 flex justify-between">
                                             <label className="block text-md font-medium mb-2">
                                                 File Upload
                                             </label>
                                             <input
                                                 type="file"
-                                                 multiple
+                                                multiple
                                                 name="fileUpload"
                                                 ref={fileInputRef}
                                                 onChange={handleFileChangeEdit}
+                                                accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
                                                 className="w-[60%] md:w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                             />
                                         </div>
-                                       <div className="mt-3">
-    {attachments.map((file, index) => (
-        <div key={index} className="flex items-center gap-2 mb-1">
-            <span className="text-sm">{file.name}</span>
-            <button
-                type="button"
-                onClick={() => handleDeleteFile(index)}
-                className="text-red-600 text-lg"
-            >
-                <AiFillDelete />
-            </button>
-        </div>
-    ))}
-</div>
+                                        <div className="mt-3">
+                                            {attachments.length === 0 ? (
+                                                <p className="text-sm text-gray-500">No files selected</p>
+                                            ) : (
+                                                <>
+                                                    <p className="text-sm mb-2">Selected files:</p>
+                                                    {attachments.map((file, index) => {
+                                                        // Handle both File objects and URL strings
+                                                        const fileName = file.name || (typeof file === 'string' ? file.split('/').pop() : 'File');
+                                                        const isExistingFile = file.isExisting || typeof file === 'string';
 
+                                                        return (
+                                                            <div key={index} className="flex items-center justify-between gap-2 mb-1 p-2 bg-gray-50 rounded">
+                                                                <div className="flex items-center gap-2 flex-1">
+                                                                    <span className="text-sm truncate">
+                                                                        {fileName}
+                                                                    </span>
+                                                                    {isExistingFile && (
+                                                                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                                                                            Existing
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => handleDeleteFile(index)}
+                                                                    className="text-red-600 text-lg hover:text-red-800"
+                                                                    title="Remove file"
+                                                                >
+                                                                    <AiFillDelete />
+                                                                </button>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </>
+                                            )}
+                                        </div>
 
 
 
