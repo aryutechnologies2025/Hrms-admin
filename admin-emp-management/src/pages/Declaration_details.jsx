@@ -511,7 +511,7 @@ const handledownloadDocument = (documents) => {
   
 
   // Construct file URL
-  const url = `${API_URL}/uploads/others/${doc.filepath}`;
+  const url = `${API_URL}/api/uploads/others/${doc.filepath}`;
 
   // Create temporary link to trigger download
   const link = document.createElement("a");
@@ -565,59 +565,49 @@ const handledownloadDocument = (documents) => {
     },
 
 
-    {
-      title: "Documents",
-      data: null,
-      render: (data, type, row) => {
-        const id = `Documents-${row.sno || Math.random()}`;
-        setTimeout(() => {
-          const container = document.getElementById(id);
-          if (container && !container.hasChildNodes()) {
-            ReactDOM.render(
+  {
+  title: "Documents",
+  data: null,
+  render: (data, type, row) => {
+    const id = `Documents-${row.sno || Math.random()}`;
+
+    setTimeout(() => {
+      const container = document.getElementById(id);
+      if (container && !container.hasChildNodes()) {
+        ReactDOM.render(
+          <div
+            className="action-container"
+            style={{
+              display: "flex",
+              gap: "15px",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {row.documents && row.documents.length > 0 ? (
               <div
-                className="action-container"
-                style={{
-                  display: "flex",
-                  gap: "15px",
-                  alignItems: "flex-end",
-                  justifyContent: "center",
-                }}
+                className="modula-icon-edit flex gap-2"
+                style={{ color: "#000" }}
               >
-                {/* <div className="cursor-pointer">
-                  <FaEye
+                <BsDownload
+                  className="cursor-pointer"
+                  title="Download"
+                  onClick={() => handledownloadDocument(row.documents)}
+                />
+              </div>
+            ) : (
+              <span>-</span>
+            )}
+          </div>,
+          container
+        );
+      }
+    }, 0);
 
-                  />
-                </div> */}
-                <div
-                  className="modula-icon-edit  flex gap-2"
-                  style={{
-                    color: "#000",
-                  }}
-                >
-                
-                  <BsDownload
-                    className="cursor-pointer"
-                    title="Download"
-                    onClick={() => handledownloadDocument(row.documents)}
-                  />
-                  
-                </div>
+    return `<div id="${id}"></div>`;
+  },
+},
 
-                {/* <div className="modula-icon-del" style={{
-                  color: "red"
-                }}>
-                  <RiDeleteBin6Line
-                    onClick={() => handleDelete(row.id)}
-                  />
-                </div> */}
-              </div>,
-              container
-            );
-          }
-        }, 0);
-        return `<div id="${id}"></div>`;
-      },
-    },
 
     {
       title: "Action",
@@ -857,12 +847,14 @@ const handledownloadDocument = (documents) => {
                         {uploadedFiles.length > 0 && (
                           <div className="mt-4 space-y-2">
                             {uploadedFiles.map((file, index) => (
+
+                            console.log("uploadedFiles",uploadedFiles),
                               <div
                                 key={index}
                                 className="flex justify-between items-center rounded-full border p-2 w-[80%] px-3"
                               >
                                 <span className="truncate text-sm text-gray-800">
-                                  📄 {file.originalName}
+                                  📄 {file.name}
                                 </span>
                                 <button
                                   type="button"
@@ -1010,7 +1002,7 @@ const handledownloadDocument = (documents) => {
                         {existingAttachment && !attachment && (
                           <div className="flex justify-between items-center rounded-full border p-2 w-full px-3 mb-3">
                             <a
-                              href={`${API_URL}/uploads/others/${existingAttachment.filepath}`}
+                              href={`${API_URL}/api/uploads/others/${existingAttachment.filepath}`}
                               target="_blank"
                               className="text-blue-600 underline truncate"
                             >
