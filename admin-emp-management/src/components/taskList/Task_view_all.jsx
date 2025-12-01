@@ -38,6 +38,8 @@ import { PiFlagPennantFill } from "react-icons/pi";
 import { AiFillDelete, AiTwotoneDelete } from "react-icons/ai";
 import { Dropdown } from "primereact/dropdown";
 import { useDateUtils } from "../../hooks/useDateUtils";
+import { FiCopy } from "react-icons/fi";
+
 
 function Task_view_all() {
   const employeeDetails = JSON.parse(localStorage.getItem("hrmsuser"));
@@ -585,8 +587,7 @@ function Task_view_all() {
         console.log("Status updated:", response.data);
 
         toast.success(
-          `Project ${
-            pauseProject === "hold" ? "held" : "restarted"
+          `Project ${pauseProject === "hold" ? "held" : "restarted"
           } successfully.`
         );
 
@@ -933,15 +934,14 @@ function Task_view_all() {
       body: (rowData) => (
         <div className="flex items-center justify-center gap-1">
           <div
-            className={`flex gap-1 px-2 rounded-sm justify-center items-center font-semibold capitalize ${
-              rowData.priority === "high"
-                ? "text-red-500 bg-red-100"
-                : rowData.priority === "medium"
+            className={`flex gap-1 px-2 rounded-sm justify-center items-center font-semibold capitalize ${rowData.priority === "high"
+              ? "text-red-500 bg-red-100"
+              : rowData.priority === "medium"
                 ? "text-orange-400 bg-orange-100"
                 : rowData.priority === "low"
-                ? "text-yellow-300 bg-yellow-100"
-                : "text-gray-500"
-            }`}
+                  ? "text-yellow-300 bg-yellow-100"
+                  : "text-gray-500"
+              }`}
           >
             <span className="font-normal">{rowData.priority}</span>
             <PiFlagPennantFill />
@@ -1005,6 +1005,12 @@ function Task_view_all() {
       ),
     },
   ];
+
+  const handleCopy = () => {
+    const fullUrl = `https://employee.aryutechnologies.com/tasklist-details/${alldata?.taskId}`;
+    navigator.clipboard.writeText(fullUrl);
+    toast.success("Task URL copied!");
+  };
   return (
     <>
       {" "}
@@ -1133,12 +1139,12 @@ function Task_view_all() {
                           style={
                             index === 0
                               ? {
-                                  minWidth: "200px",
-                                  maxWidth: "300px",
-                                  wordWrap: "break-word",
-                                  whiteSpace: "normal",
-                                  overflow: "visible",
-                                }
+                                minWidth: "200px",
+                                maxWidth: "300px",
+                                wordWrap: "break-word",
+                                whiteSpace: "normal",
+                                overflow: "visible",
+                              }
                               : {}
                           }
                         />
@@ -1407,8 +1413,26 @@ function Task_view_all() {
             <div className="w-full md:w-[36%] pt-4 px-4 md:px-8 pb-10 bg-gray-100/20">
               {/* status */}
               <div className="max-w-md mx-auto space-y-5">
-                <div className="flex justify-start md:justify-end text-gray-500 text-lg">
-                  #{alldata?.taskId}
+                <div className="flex justify-start md:justify-end gap-4">
+                  <div
+                    onClick={handleCopy} className="
+        flex items-center gap-2 
+        text-gray-600 
+        cursor-pointer 
+        hover:text-blue-600 
+        transition 
+        duration-200 
+        md:justify-end 
+        justify-start
+      "
+                    title="Click to copy task link"
+                  >
+                    <span className="font-medium">Copied Link</span>
+                    <FiCopy className="text-xl" />
+                  </div>
+                  <div className="flex justify-start md:justify-end text-gray-500 text-lg">
+                    #{alldata?.taskId}
+                  </div>
                 </div>
                 <div className="flex justify-between md:justify-end">
                   <TbLogs
@@ -1484,13 +1508,13 @@ function Task_view_all() {
                     value={
                       startTime
                         ? new Date(startTime).toLocaleString("en-GB", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: true,
-                          })
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                        })
                         : ""
                     }
                     readOnly
@@ -1508,13 +1532,13 @@ function Task_view_all() {
                     value={
                       stopTime
                         ? new Date(stopTime).toLocaleString("en-GB", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: true,
-                          })
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                        })
                         : ""
                     }
                     readOnly
@@ -1590,7 +1614,7 @@ function Task_view_all() {
                   </div>
                   <div
                     className="w-full py-2 text-gray-700 text-[14px] cursor-pointer hover:text-blue-500"
-                    // onClick={() => onClickCard(alldata?.assignedTo?._id)}
+                  // onClick={() => onClickCard(alldata?.assignedTo?._id)}
                   >
                     {/* {alldata?.assignedTo?.employeeName} */}
                     <Dropdown
@@ -1632,15 +1656,14 @@ function Task_view_all() {
                   <div className="w-full py-2 text-gray-700">
                     <div
                       className={`font-semibold px-2  rounded-md inline-block capitalize
-                          ${
-                            alldata.priority === "high"
-                              ? "text-[#c8212f] bg-[#ffebee] "
-                              : alldata.priority === "medium"
-                              ? "text-[#e65200] bg-[#ffa60142]"
-                              : alldata.priority === "low"
+                          ${alldata.priority === "high"
+                          ? "text-[#c8212f] bg-[#ffebee] "
+                          : alldata.priority === "medium"
+                            ? "text-[#e65200] bg-[#ffa60142]"
+                            : alldata.priority === "low"
                               ? "text-[#7d6a14] bg-[#ffea0059]"
                               : "text-gray-700 bg-gray-100"
-                          }`}
+                        }`}
                     >
                       {alldata.priority}
                     </div>
@@ -1736,13 +1759,12 @@ function Task_view_all() {
                           </td>
                           <td className="p-2 border text-center">
                             <span
-                              className={`px-2 py-1 rounded font-semibold ${
-                                item.pauseCondition === "hold"
-                                  ? "text-red-600"
-                                  : item.pauseCondition === "restart"
+                              className={`px-2 py-1 rounded font-semibold ${item.pauseCondition === "hold"
+                                ? "text-red-600"
+                                : item.pauseCondition === "restart"
                                   ? "text-green-600"
                                   : "text-gray-600"
-                              }`}
+                                }`}
                             >
                               {capitalizeFirstLetter(item.pauseCondition)}
                             </span>
@@ -1818,13 +1840,12 @@ function Task_view_all() {
                           </td>
                           <td className="p-2 border text-center">
                             <span
-                              className={`px-2 py-1 rounded font-semibold ${
-                                item.status === "hold"
-                                  ? "text-red-600"
-                                  : item.status === "restart"
+                              className={`px-2 py-1 rounded font-semibold ${item.status === "hold"
+                                ? "text-red-600"
+                                : item.status === "restart"
                                   ? "text-green-600"
                                   : "text-gray-600"
-                              }`}
+                                }`}
                             >
                               {/* {capitalizeFirstLetter(
                                 item.status.replace(/[^a-zA-Z0-9 ]/g, " ")
@@ -1832,8 +1853,8 @@ function Task_view_all() {
                               {item.status === "start"
                                 ? "Tester Started"
                                 : capitalizeFirstLetter(
-                                    item.status.replace(/[^a-zA-Z0-9 ]/g, " ")
-                                  )}
+                                  item.status.replace(/[^a-zA-Z0-9 ]/g, " ")
+                                )}
                             </span>
                           </td>
                           <td className="p-2 border text-center">
