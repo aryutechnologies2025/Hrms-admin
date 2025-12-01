@@ -97,9 +97,11 @@ const Expense_History_Mainbar = () => {
       ) : (
         <>
       <div>
-        <Mobile_Sidebar/>
+        
         {/* Breadcrumbs */}
-        <div className="flex gap-2  text-sm items-center">
+        <div className="flex justify-between gap-2  text-sm items-center">
+          <Mobile_Sidebar/>
+          <div className="flex gap-1 items-center">
           <p
             onClick={() => navigate("/finance")}
             className=" text-gray-500 cursor-pointer "
@@ -109,9 +111,10 @@ const Expense_History_Mainbar = () => {
           <p>{">"}</p>
           <p className=" text-blue-500 ">Expense History</p>
           <p>{">"}</p>
+          </div>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-5 justify-between mt-8">
+        <div className="flex flex-col md:flex-row gap-5 justify-between mt-2 md:mt-4">
           <p className="font-semibold text-xl md:text-2xl">Transaction</p>
           <button
             onClick={openAddTransactionModal}

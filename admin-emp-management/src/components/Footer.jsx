@@ -4,7 +4,7 @@ import aryu_logo from "../assets/aryu_logo.svg";
 
 const Footer = () => {
   return (
-     <footer className='w-full mt-2 md:mt-7'>
+     <footer className='w-full mt-7'>
       <div className="flex  items-center mb-1 md:mb-3 text-center justify-center sm:gap-4 text-sm text-gray-500 w-full ">
        <p className="text-xs sm:text-sm">Copyrights &copy;  {new Date().getFullYear()} </p>
         <div className="flex items-center justify-center gap-2">

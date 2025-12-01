@@ -2229,14 +2229,29 @@ function Task_view_All_client() {
                           <div className="flex justify-between text-xs text-gray-500 pt-1 border-t border-gray-300">
                             <span></span>
                             <span>
-                              {new Date(msg.createdAt).toLocaleString("en-GB", {
+                              {/* {new Date(msg.createdAt).toLocaleString("en-GB", {
                                 day: "2-digit",
                                 month: "short",
                                 year: "numeric",
                                 hour: "2-digit",
                                 minute: "2-digit",
                                 hour12: true,
-                              })}
+                              })} */}
+                               {msg.createdAt ? (
+  <>
+    {formatDateTime(msg.createdAt)} <br />
+
+    {new Date(msg.createdAt).toLocaleTimeString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    })}
+  </>
+) : (
+  ""
+)}
                             </span>
                           </div>
                         </div>
@@ -2749,7 +2764,7 @@ function Task_view_All_client() {
                             </span>
                           </td>
                           <td className="p-2 border text-center">
-                            {item.updatedAt
+                            {/* {item.updatedAt
                               ? new Date(item.updatedAt).toLocaleString(
                                 "en-GB",
                                 {
@@ -2761,7 +2776,22 @@ function Task_view_All_client() {
                                   hour12: true,
                                 }
                               )
-                              : ""}
+                              : ""} */}
+                               {item.updatedAt ? (
+  <>
+    {formatDateTime(item.updatedAt)} <br />
+
+    {new Date(item.updatedAt).toLocaleTimeString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    })}
+  </>
+) : (
+  ""
+)}
                           </td>
                           <td className="p-2 border">
                             {capitalizeFirstLetter(item.note || "-")}

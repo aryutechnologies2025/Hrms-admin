@@ -27,6 +27,7 @@ import { FaLinkSlash } from "react-icons/fa6";
 import { IoSettings } from "react-icons/io5";
 import Button_Loader from "./Button_Loader";
 import { MdManageAccounts } from "react-icons/md";
+import { GrAnnounce } from "react-icons/gr";
 
 const Mobile_Sidebar = () => {
   let navigate = useNavigate();
@@ -116,7 +117,7 @@ const Mobile_Sidebar = () => {
 
   return (
     <div>
-      <div className="flex my-3 justify-start items-center w-full md:hidden">
+      <div className="flex md:my-3 justify-start items-center w-full md:hidden">
         <GiHamburgerMenu className="text-xl" onClick={onClickHamburgerIcon} />
       </div>
 
@@ -187,7 +188,7 @@ const Mobile_Sidebar = () => {
                         <div
                           className={`transition-all duration-700 ease-in-out ${
                             openSection === "onboarding"
-                              ? "max-h-60 opacity-100"
+                              ? "max-h-70 opacity-100"
                               : "max-h-0 opacity-0"
                           }`}
                         >
@@ -208,7 +209,13 @@ const Mobile_Sidebar = () => {
                               onClick={() => onClickSidebarMenu("employees")}
                               className="hover:bg-blue-100 px-2 py-1 rounded-full"
                             >
-                              Add Employee
+                              Employees
+                            </button>
+                            <button
+                              onClick={() => onClickSidebarMenu("inter")}
+                              className="hover:bg-blue-100 px-2 py-1 rounded-full"
+                            >
+                              Internship
                             </button>
                             <button
                               onClick={() =>
@@ -667,6 +674,16 @@ const Mobile_Sidebar = () => {
                           </div>
                         </div>
                       )}
+                      {/* announcement */}
+                      <div
+                        onClick={() => onClickSidebarMenu("Announcement")}
+                        className="flex items-center w-full hover:bg-blue-100 hover:text-[#4F46E5] px-3 py-2 rounded-lg gap-2 text-gray-500 text-sm font-medium cursor-pointer"
+                      >
+                        <div className="flex items-center justify-center h-5 w-5">
+                          <GrAnnounce />
+                        </div>
+                        <p>Announcement</p>
+                      </div>
                       {/* payroll */}
                       <div
                         onClick={() => onClickSidebarMenu("Payroll")}

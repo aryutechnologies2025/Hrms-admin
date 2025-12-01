@@ -525,15 +525,17 @@ const Candidate_Details = () => {
   let navigate = useNavigate();
 
   return (
-    <div className="flex flex-col justify-between bg-gray-100 w-full min-h-screen px-3 md:px-5 pt-2 md:pt-10">
+    <div className="flex flex-col justify-between bg-gray-100 w-full min-h-screen px-3 md:px-5 pt-2 md:pt-10 overflow-x-auto">
       {loading ? (
         <Loading />
       ) : (
         <>
           <div>
-            <Mobile_Sidebar />
+            
 
-            <div className="flex gap-2 text-sm items-center">
+            <div className="flex justify-between gap-2 text-sm items-center">
+              <Mobile_Sidebar />
+              <div className="flex gap-1 items-center">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard-Recruitment")}
@@ -543,12 +545,13 @@ const Candidate_Details = () => {
               <p>{">"}</p>
 
               <p className="text-sm text-blue-500">Candidate</p>
+              </div>
             </div>
 
             {/* Add Button */}
-            <div className="flex justify-between mt-4 md:mt-8">
+            <div className="flex justify-between mt-2 md:mt-4">
               <div className="">
-                <h1 className="text-3xl  font-semibold">Candidate</h1>
+                <h1 className="text-xl md:text-3xl  font-semibold">Candidate</h1>
               </div>
 
               <button

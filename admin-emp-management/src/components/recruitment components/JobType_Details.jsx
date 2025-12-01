@@ -293,15 +293,17 @@ const JobType_Details = () => {
 
 
   return (
-    <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
+    <div className="flex flex-col justify-between bg-gray-100 w-full min-h-screen px-3 md:px-5 pt-2 md:pt-10 overflow-x-auto">
       {loading ? (
               <Loader />
             ) : (
               <>
       <div>
-        <Mobile_Sidebar />
+        
 
-        <div className="flex gap-2 text-sm items-center">
+        <div className="flex justify-between gap-2 text-sm items-center">
+          <Mobile_Sidebar />
+          <div className="flex gap-1 items-center">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard-Recruitment")}
@@ -311,10 +313,11 @@ const JobType_Details = () => {
           <p>{">"}</p>
 
           <p className="text-sm text-blue-500">Job Type</p>
+          </div>
         </div>
 
         {/* Add Button */}
-        <div className="flex justify-between mt-8">
+        <div className="flex justify-between mt-1 md:mt-4">
           <div className="">
             <h1 className="text-2xl md:text-3xl font-semibold">Job Type</h1>
           </div>

@@ -94,7 +94,16 @@ const Connect_details = () => {
 
   const [accountoption, setAccountOption] = useState(null);
 
-  const [date, setDate] = useState("");
+  // const [date, setDate] = useState("");
+   const getToday = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0"); // Months start at 0
+    const dd = String(today.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  const [date, setDate] = useState(getToday());
   const [accountname, setAccountname] = useState(null);
   const [connects, setConnects] = useState("");
   const [amount, setAmount] = useState("");
@@ -418,9 +427,11 @@ const Connect_details = () => {
       ) : (
         <>
           <div>
-            <Mobile_Sidebar />
+            
 
-            <div className="flex gap-2 items-center cursor-pointer">
+            <div className="flex justify-between gap-2 items-center cursor-pointer">
+              <Mobile_Sidebar />
+              <div className="flex gap-1 items-center">
               <p
                 className=" text-gray-500 cursor-pointer"
                 onClick={() => navigate("/")}
@@ -430,10 +441,11 @@ const Connect_details = () => {
               <p>{">"}</p>
               <p className=" text-blue-500">Connects</p>
               <p>{">"}</p>
+              </div>
             </div>
 
             {/* Add Button */}
-            <div className="flex justify-between mt-8 mb-3">
+            <div className="flex justify-between mt-1 md:mt-4 mb-2 md:mb-3">
               <h1 className="text-2xl md:text-3xl font-semibold">Connects</h1>
               <button
                 onClick={openAddModal}

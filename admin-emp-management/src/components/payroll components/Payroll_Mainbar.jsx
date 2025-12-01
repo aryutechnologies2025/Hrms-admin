@@ -576,21 +576,24 @@ const Payroll_Mainbar = () => {
       ) : (
         <>
           <div>
-            <Mobile_Sidebar />
-            <div className="flex gap-2 mt-5 text-sm items-center">
+            
+            <div className="flex justify-between gap-2 items-center">
+              <Mobile_Sidebar />
+              <div className="flex gap-1 items-center">
               <p className='text-gray-500 text-sm'
                 onClick={() => navigate("/dashboard")}
               >Dashboard</p>
               <p>{">"}</p>
               <p className=" text-blue-500 ">Payroll</p>
+              </div>
             </div>
 
-            <p className="text-2xl md:text-3xl mt-5 md:mt-8 font-semibold">
+            <p className="text-2xl md:text-3xl mt-2 md:mt-4 font-semibold">
               Payroll
             </p>
 
             {/* data table */}
-            <div className="bg-white mt-4 md:mt-8 px-5 py-5 rounded-2xl">
+            <div className="bg-white mt-2 md:mt-4 md:px-2 px-5 py-2 md:py-5 rounded-2xl">
               <div
                 className="overflow-x-hidden"
                 style={{ width: "auto", margin: "0 auto" }}

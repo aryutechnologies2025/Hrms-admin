@@ -121,14 +121,14 @@ const inactiveClass = "hover:underline";
   <div className="flex justify-center md:justify-end gap-3 md:gap-6 px-1 md:px-5 md:pt-2 text-sm md:text-lg font-semibold text-[#0050AA]">
     {/* <Link to="/" className="hover:underline">Admin Login</Link>
     <Link to="/client" className="hover:underline">Client Login</Link> */}
-     <nav className="flex text-center gap-2 md:gap-4 p-2">
+     <nav className="flex text-center gap-4 p-2">
           <NavLink
             to="/"
             className={({ isActive }) =>
               isActive ? activeClass : inactiveClass
             }
           >
-            Admin Login
+            Admin 
           </NavLink>
 
           <NavLink
@@ -137,7 +137,7 @@ const inactiveClass = "hover:underline";
               isActive ? activeClass : inactiveClass
             }
           >
-            Client Login
+            Client 
           </NavLink>
 
           <NavLink
@@ -146,7 +146,7 @@ const inactiveClass = "hover:underline";
              isActive ? activeClass : inactiveClass
             }
           >
-            Client User Login
+            Client User 
           </NavLink>
         </nav>
   </div>
@@ -155,7 +155,7 @@ const inactiveClass = "hover:underline";
   <div className="flex justify-center p-2">
     <img src={aryu_logo} alt="Logo" className="w-20" />
   </div>
-  <p className='text-center text-lg md:text-xl font-semibold text-[#0050AA]'>ARYU PORTAL</p>
+  <p className='text-center text-lg md:text-xl p-2 font-semibold text-[#0050AA]'>ARYU PORTAL</p>
 
   {/* Main Content */}
   <div className="flex md:flex-1 items-center justify-center px-4">
@@ -164,7 +164,7 @@ const inactiveClass = "hover:underline";
       {/* Left Section (Form) */}
       <div className="flex-1 flex flex-col items-center justify-center p-5 md:p-10">
         <h1 className="text-[#0050aa] font-bold text-xl md:text-4xl mb-2 md:mb-6">
-          ARYU CLIENT USER 
+           CLIENT USER 
         </h1>
 
         {/* Username Field */}
@@ -217,7 +217,7 @@ const inactiveClass = "hover:underline";
           onClick={onCLickLogin}
           className="mt-3 bg-gradient-to-r from-[#004faac3] to-[#0050aa] px-10 py-3 rounded-full text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
         >
-          Login Now
+          Login
         </button>
       </div>
 

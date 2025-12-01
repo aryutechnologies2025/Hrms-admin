@@ -211,10 +211,12 @@ const Holidays_Mainbar = () => {
       ) : (
         <>
       <div>
-        <Mobile_Sidebar />
+       
 
         {/* breadcrumb */}
-        <div className="flex gap-2 md:mt-5 text-sm items-center cursor-pointer">
+        <div className="flex justify-between gap-2 items-center cursor-pointer">
+           <Mobile_Sidebar />
+           <div className="flex gap-1 items-center">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
@@ -223,13 +225,14 @@ const Holidays_Mainbar = () => {
           </p>
           <p>{">"}</p>
 
-          <p className=" text-blue-500 ">Holidays</p>
+          <p className="text-sm text-blue-500 ">Holidays</p>
           <p>{">"}</p>
+          </div>
         </div>
 
         {/* Heading */}
         <section className="flex flex-wrap md:flex-row justify-between ">
-          <p className="text-2xl md:text-3xl font-semibold  mt-2 md:mt-8">
+          <p className="text-2xl md:text-3xl font-semibold  mt-2 md:mt-4">
             Holidays
           </p>
           <button

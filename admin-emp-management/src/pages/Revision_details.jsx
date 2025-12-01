@@ -90,11 +90,11 @@ const Revision_details = () => {
   const [revisedSalary, setRevisedSalary] = useState("");
   const [nextRevisionDate, setNextRevisionDate] = useState("");
   const [revisionNotes, setRevisionNotes] = useState("");
-    const [inputMode, setInputMode] = useState("percentage"); // or "revised"
+  const [inputMode, setInputMode] = useState("percentage"); // or "revised"
 
 
   // Auto-calculate revised salary
- useEffect(() => {
+  useEffect(() => {
     if (
       inputMode === "percentage" &&
       currentSalary &&
@@ -184,7 +184,7 @@ const Revision_details = () => {
   const [revisedSalaryedit, setRevisedSalaryedit] = useState("");
   const [nextRevisionDateedit, setNextRevisionDateedit] = useState("");
   const [revisionNotesedit, setRevisionNotesedit] = useState("");
-  const [editInputMode, setEditInputMode] = useState("percentage"); 
+  const [editInputMode, setEditInputMode] = useState("percentage");
 
   const [editid, setEditid] = useState([]);
 
@@ -209,38 +209,38 @@ const Revision_details = () => {
     setErrors("");
   };
 
-// CTC + Percentage → Revised Salary
-useEffect(() => {
-  if (
-    editInputMode === "percentage" &&
-    currentSalaryedit &&
-    percentageedit &&
-    !isNaN(currentSalaryedit) &&
-    !isNaN(percentageedit)
-  ) {
-    const calculated =
-      parseFloat(currentSalaryedit) +
-      (parseFloat(currentSalaryedit) * parseFloat(percentageedit)) / 100;
-    setRevisedSalaryedit(calculated.toFixed(2));
-  }
-}, [currentSalaryedit, percentageedit]);
+  // CTC + Percentage → Revised Salary
+  useEffect(() => {
+    if (
+      editInputMode === "percentage" &&
+      currentSalaryedit &&
+      percentageedit &&
+      !isNaN(currentSalaryedit) &&
+      !isNaN(percentageedit)
+    ) {
+      const calculated =
+        parseFloat(currentSalaryedit) +
+        (parseFloat(currentSalaryedit) * parseFloat(percentageedit)) / 100;
+      setRevisedSalaryedit(calculated.toFixed(2));
+    }
+  }, [currentSalaryedit, percentageedit]);
 
-// CTC + Revised Salary → Percentage
-useEffect(() => {
-  if (
-    editInputMode === "revised" &&
-    currentSalaryedit &&
-    revisedSalaryedit &&
-    !isNaN(currentSalaryedit) &&
-    !isNaN(revisedSalaryedit)
-  ) {
-    const calculated =
-      ((parseFloat(revisedSalaryedit) - parseFloat(currentSalaryedit)) /
-        parseFloat(currentSalaryedit)) *
-      100;
-    setPercentageedit(calculated.toFixed(2));
-  }
-}, [currentSalaryedit, revisedSalaryedit]);
+  // CTC + Revised Salary → Percentage
+  useEffect(() => {
+    if (
+      editInputMode === "revised" &&
+      currentSalaryedit &&
+      revisedSalaryedit &&
+      !isNaN(currentSalaryedit) &&
+      !isNaN(revisedSalaryedit)
+    ) {
+      const calculated =
+        ((parseFloat(revisedSalaryedit) - parseFloat(currentSalaryedit)) /
+          parseFloat(currentSalaryedit)) *
+        100;
+      setPercentageedit(calculated.toFixed(2));
+    }
+  }, [currentSalaryedit, revisedSalaryedit]);
 
 
   const handlesubmitedit = async (e) => {
@@ -345,12 +345,12 @@ useEffect(() => {
       data: "current_salary",
     },
     {
-  title: "Percentage",
-  data: "percentage",
-  render: function (data, type, row) {
-    return data != null ? `${data}%` : "";
-  }
-},
+      title: "Percentage",
+      data: "percentage",
+      render: function (data, type, row) {
+        return data != null ? `${data}%` : "";
+      }
+    },
 
     {
       title: "Revised Salary",
@@ -444,11 +444,13 @@ useEffect(() => {
   ];
 
   return (
-    <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
+    <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-5">
       <div>
-        <Mobile_Sidebar />
+       
 
-        <div className="flex gap-2 items-center cursor-pointer">
+        <div className="flex justify-between gap-2 items-center cursor-pointer">
+           <Mobile_Sidebar />
+           <div className="flex gap-1 items-center">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
@@ -456,12 +458,20 @@ useEffect(() => {
             Dashboard
           </p>
           <p>{">"}</p>
+          <p
+            onClick={() => navigate("/employees")}
+            className="text-sm text-gray-500 cursor-pointer "
+          >
+            Employees
+          </p>
+          <p>{">"}</p>
 
           <p className="text-sm text-blue-500">Revision</p>
+          </div>
         </div>
 
         {/* Add Button */}
-        <div className="flex justify-between mt-8 mb-3">
+        <div className="flex justify-between mt-2 md:mt-5 mb-1 md:mb-3">
           <h1 className="text-2xl md:text-3xl font-semibold">Revision</h1>
           <button
             onClick={openAddModal}
@@ -520,7 +530,23 @@ useEffect(() => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-
+              
+               {/* Revised Salary (Auto-calculated) */}
+              <div className="mb-3">
+                <label className="block text-sm font-medium mb-2">
+                  Revised Salary
+                </label>
+                <input
+                  type="number"
+                  value={revisedSalary}
+                  onChange={(e) => {
+                    setInputMode("revised");
+                    setRevisedSalary(e.target.value);
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg "
+                />
+              </div>
+              
               {/* Percentage */}
               <div className="mb-3">
                 <label className="block text-sm font-medium mb-2">
@@ -529,27 +555,11 @@ useEffect(() => {
                 <input
                   type="number"
                   value={percentage}
-            onChange={(e) => {
-            setInputMode("percentage");
-            setPercentage(e.target.value);
-          }}
+                  onChange={(e) => {
+                    setInputMode("percentage");
+                    setPercentage(e.target.value);
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 "
-                />
-              </div>
-
-              {/* Revised Salary (Auto-calculated) */}
-              <div className="mb-3">
-                <label className="block text-sm font-medium mb-2">
-                  Revised Salary
-                </label>
-                <input
-                  type="number"
-                  value={revisedSalary}
-                   onChange={(e) => {
-            setInputMode("revised");
-            setRevisedSalary(e.target.value);
-          }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg "
                 />
               </div>
 
@@ -641,9 +651,9 @@ useEffect(() => {
                   type="number"
                   value={percentageedit}
                   onChange={(e) => {
-      setEditInputMode("percentage");
-      setPercentageedit(e.target.value);
-    }}
+                    setEditInputMode("percentage");
+                    setPercentageedit(e.target.value);
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 "
                 />
               </div>
@@ -655,10 +665,10 @@ useEffect(() => {
                 <input
                   type="number"
                   value={revisedSalaryedit}
-                   onChange={(e) => {
-      setEditInputMode("revised");
-      setRevisedSalaryedit(e.target.value);
-    }}
+                  onChange={(e) => {
+                    setEditInputMode("revised");
+                    setRevisedSalaryedit(e.target.value);
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg "
                 />
               </div>
@@ -673,8 +683,8 @@ useEffect(() => {
                   value={
                     nextRevisionDateedit
                       ? new Date(nextRevisionDateedit)
-                          .toISOString()
-                          .split("T")[0]
+                        .toISOString()
+                        .split("T")[0]
                       : ""
                   }
                   onChange={(e) => setNextRevisionDateedit(e.target.value)}

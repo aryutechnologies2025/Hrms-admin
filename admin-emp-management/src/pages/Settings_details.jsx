@@ -141,8 +141,10 @@ const Settings_details = () => {
       ) : (
         <>
           <div>
-            <Mobile_Sidebar />
-            <div className="flex gap-2 items-center cursor-pointer">
+           
+            <div className="flex justify-between gap-2 items-center cursor-pointer">
+               <Mobile_Sidebar />
+               <div className="flex gap-1 items-center ">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
@@ -152,14 +154,15 @@ const Settings_details = () => {
               <p>{">"}</p>
 
               <p className="text-sm text-blue-500">Settings</p>
+              </div>
             </div>
 
-            <h1 className="text-2xl md:text-3xl font-semibold mt-4">
+            <h1 className="text-2xl md:text-3xl font-semibold mt-2 md:mt-4">
               Settings
             </h1>
 
-            <div className="py-4">
-              <div className="bg-white rounded-2xl shadow-md p-6 w-full ">
+            <div className="py-2 md:py-4">
+              <div className="bg-white rounded-2xl shadow-md p-3 md:p-6 w-full ">
                 <div className="flex flex-col gap-4">
                   {/* GST field */}
                   <div className="flex flex-col gap-2 w-full md:w-[40%]">

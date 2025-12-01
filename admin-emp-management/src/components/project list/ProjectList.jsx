@@ -87,6 +87,7 @@ const ProjectList = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/client/view-clientdetails`,
+        {params:{dropDown:true}},
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -806,9 +807,11 @@ const ProjectList = () => {
       ) : (
         <>
           <div>
-            <Mobile_Sidebar />
+            
 
-            <div className="flex gap-2 items-center cursor-pointer">
+            <div className="flex justify-between gap-2 items-center cursor-pointer">
+              <Mobile_Sidebar />
+              <div className="flex gap-1 items-center">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
@@ -819,10 +822,11 @@ const ProjectList = () => {
               <p>{">"}</p>
 
               <p className="text-sm text-blue-500">Project List</p>
+              </div>
             </div>
 
             {/* Add Button */}
-            <div className="flex justify-between mt-8 mb-3">
+            <div className="flex justify-between mt-2 md:mt-4 mb-1 md:mb-3">
               <h1 className="text-2xl md:text-3xl font-semibold">
                 Project List
               </h1>
@@ -872,7 +876,7 @@ const ProjectList = () => {
                   >
                     <IoIosArrowForward className="w-3 h-3" />
                   </div>
-                  <div className="px-5 lg:px-14 py-10">
+                  <div className="px-5 lg:px-14 py-3 md:py-10">
                     <div className="flex justify-between items-center gap-2 ">
                       <h2 className="text-xl font-semibold mb-4">
                         Add Project
@@ -1695,12 +1699,12 @@ const ProjectList = () => {
                   </div>
 
 
-                  <div className="px-5 lg:px-14 py-10">
+                  <div className="px-5 lg:px-14 py-2 md:py-5">
                     <p className="text-2xl md:text-3xl font-medium">
                       Edit Project
                     </p>
 
-                    <div className="mt-10  rounded-lg ">
+                    <div className="mt-2 md:mt-4 rounded-lg ">
                       <div className="">
                         <div className="flex justify-between items-center "></div>
                         <label className="block text-sm font-medium mb-2">
