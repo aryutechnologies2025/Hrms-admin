@@ -247,6 +247,9 @@ const AssetManagement_details = () => {
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
+
+        // Clear file input error
+  setErrors(prev => ({ ...prev, fileUpload: "" }));
     };
 
     // For Edit Mode - handles both new and existing files
@@ -271,6 +274,9 @@ const AssetManagement_details = () => {
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
+
+        // Clear file input error
+  setErrors(prev => ({ ...prev, fileUpload: "" }));
     };
 
     const openInvoiceViewModal = (row) => {
@@ -360,7 +366,35 @@ const AssetManagement_details = () => {
         e.preventDefault();
         console.log("attachments", attachments);
 
-        // Create FormData object
+
+          //form validation
+
+    const newErrors = {};
+    if (!assetCategory?.trim()) newErrors.assetCategory = ("Asset Category is required");
+    if (!assetSubCategory?.trim()) newErrors.assetSubCategory = ("Asset SubCategory is required");
+    if (!invoiceNumber?.trim()) newErrors.invoiceNumber = ("Invoice Number is required");
+    if (ledger==="") newErrors.ledger = ("Please select a Ledger");
+    if (!purchasedDate) newErrors.purchasedDate = ("Please select purchased date");
+    if (!title?.trim()) newErrors.title = ("Title is required");
+    if (!depreciationPercentage) newErrors.depreciationPercentage = ("Depreciation Percentage is required");
+    if (!quantity) newErrors.quantity = ("Quantity is required");
+    if (!rate) newErrors.rate = ("Rate is required");
+    if (!gst) newErrors.gstRate = ("GST Rate is required");
+    if (!taxable) newErrors.taxable = ("Taxable is required");
+    if (!cgst) newErrors.cgst = ("CGST is required");
+    if (!sgst) newErrors.sgst = ("SGST is required");
+    if (!igst) newErrors.igst = ("IGST is required");
+    if (!invoiceValue) newErrors.invoiceValue = ("Invoice Value is required");
+    if (!warrantyYear) newErrors.warrantyYear = ("Warranty Year is required");
+    if (!disposedDate) newErrors.disposedDate = ("Please select disposed date");
+    if (!attachments || attachments.length === 0)
+    newErrors.fileUpload = "Please select a file";
+
+    setErrors(newErrors);
+
+        if (Object.keys(newErrors).length > 0) return;
+        
+         // Create FormData object
         const formData = new FormData();
 
         // Add all text fields
@@ -558,6 +592,33 @@ const AssetManagement_details = () => {
     const handleSubmitEdit = async (e) => {
         e.preventDefault();
 
+        //form validation
+
+    const newErrors = {};
+    if (!assetCategoryEdit?.trim()) newErrors.assetCategoryEdit = ("Asset Category is required");
+    if (!assetSubCategoryEdit?.trim()) newErrors.assetSubCategoryEdit = ("Asset SubCategory is required");
+    if (!invoiceNumberEdit?.trim()) newErrors.invoiceNumberEdit = ("Invoice Number is required");
+    if (ledgerEdit==="") newErrors.ledgerEdit = ("Please select a Ledger");
+    if (!purchasedDateEdit) newErrors.purchasedDateEdit = ("Please select purchased date");
+    if (!titleEdit?.trim()) newErrors.titleEdit = ("Title is required");
+    if (!depreciationPercentageEdit) newErrors.depreciationPercentageEdit = ("Depreciation Percentage is required");
+    if (!quantityEdit) newErrors.quantityEdit = ("Quantity is required");
+    if (!rateEdit) newErrors.rateEdit = ("Rate is required");
+    if (!gstEdit) newErrors.gstRate = ("GST Rate is required");
+    if (!taxableEdit) newErrors.taxableEdit = ("Taxable is required");
+    if (!cgstEdit) newErrors.cgstEdit = ("CGST is required");
+    if (!sgstEdit) newErrors.sgstEdit = ("SGST is required");
+    if (!igstEdit) newErrors.igstEdit = ("IGST is required");
+    if (!invoiceValueEdit) newErrors.invoiceValueEdit = ("Invoice Value is required");
+    if (!warrantyYearEdit) newErrors.warrantyYearEdit = ("Warranty Year is required");
+    if (!disposedDateEdit) newErrors.disposedDateEdit = ("Please select disposed date");
+    if (!attachments || attachments.length === 0)
+    newErrors.fileUploadEdit = "Please select a file";
+
+    setErrors(newErrors);
+
+        if (Object.keys(newErrors).length > 0) return;
+
         const formData = new FormData();
 
         formData.append("assetCategory", assetCategoryEdit);
@@ -606,23 +667,6 @@ const AssetManagement_details = () => {
                 { headers: { "Content-Type": "multipart/form-data" } }
             );
             console.log("response:", response);
-
-
-            //     const updatedAsset = response?.data?.data;
-
-            // // Update main list
-            // setAssetManageDetails(prev =>
-            //     prev.map(asset => (asset._id === editId ? updatedAsset : asset))
-            // );
-
-            // // Update selected asset if view modal is open
-            // if (isInvoiceViewModalOpen && selectedInvoice?._id === editId) {
-            //     setSelectedInvoice(updatedAsset);
-            // }
-
-            // //  Reset temporary states
-            // setAttachments([]);
-            // setFilesToDelete([]);
 
 
             toast.success("Asset Updated Successfully");
@@ -982,7 +1026,10 @@ const AssetManagement_details = () => {
                         {/* View Invoice Modal */}
                         {isInvoiceViewModalOpen && selectedInvoice && (
                             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                                <div className="bg-white p-6 rounded-xl w-[450px] shadow-lg">
+                             {/* Overlay */}
+                                <div className="absolute inset-0 z-40" onClick={closeInvoiceViewModal}></div>
+
+                                <div className="relative z-50 bg-white p-6 rounded-xl w-[450px] shadow-lg">
 
                                     {/* Header */}
                                     <div className="flex justify-between items-center mb-4">
@@ -1113,12 +1160,13 @@ const AssetManagement_details = () => {
                                                     filter
                                                     placeholder="Select Category"
                                                     maxSelectedLabels={3}
-                                                    className="w-full px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.assetCategory ? "border-red-500" : "border-gray-300"}`}
                                                     display="chip"
                                                 />
-                                                {errors.assetCategory && (
+                                                {errors?.assetCategory && (
                                                     <p className="text-red-500 text-sm mb-4">
-                                                        {errors.assetCategory}
+                                                        {errors?.assetCategory}
                                                     </p>
                                                 )}
                                             </div>
@@ -1140,12 +1188,13 @@ const AssetManagement_details = () => {
                                                     filter
                                                     placeholder="Select subCategory"
                                                     maxSelectedLabels={3}
-                                                    className="w-full px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.assetSubCategory ? "border-red-500" : "border-gray-300"}`}
                                                     display="chip"
                                                 />
-                                                {errors.assetSubCategory && (
+                                                {errors?.assetSubCategory && (
                                                     <p className="text-red-500 text-sm mb-4">
-                                                        {errors.assetSubCategory}
+                                                        {errors?.assetSubCategory}
                                                     </p>
                                                 )}
                                             </div>
@@ -1163,14 +1212,15 @@ const AssetManagement_details = () => {
                                                     value={ledger}
                                                     onChange={(e) => setLedger(e.target.value)}
                                                     // placeholder="Enter Asset Name "
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                >
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.ledger ? "border-red-500" : "border-gray-300"}`}
+                                                    >
                                                     <option value="">Select Asset Type</option>
                                                     <option value="fixedAsset">Fixed Asset</option>
                                                     <option value="currentAsset">Current Asset</option>
                                                 </select>
-                                                {errors.ledger && (
-                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">{errors.ledger}</p>
+                                                {errors?.ledger && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">{errors?.ledger}</p>
                                                 )}
                                             </div>
                                         </div>
@@ -1187,11 +1237,12 @@ const AssetManagement_details = () => {
                                                     value={title}
                                                     onChange={(e) => setTitle(e.target.value)}
                                                     placeholder="Enter Title "
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.title ? "border-red-500" : "border-gray-300"}`}
                                                 />
 
-                                                {errors.title && (
-                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">{errors.title}</p>
+                                                {errors?.title && (
+                                                    <p className="text-red-500 text-sm mb-2 md:mb-4">{errors?.title}</p>
                                                 )}
                                             </div>
                                         </div>
@@ -1208,11 +1259,12 @@ const AssetManagement_details = () => {
                                                     value={invoiceNumber}
                                                     onChange={(e) => setInvoiceNumber(e.target.value)}
                                                     placeholder="Enter Invoice Number "
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                   className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.invoiceNumber ? "border-red-500" : "border-gray-300"}`}
                                                 />
-                                                {errors.invoiceNumber && (
+                                                {errors?.invoiceNumber && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
-                                                        {errors.invoiceNumber}
+                                                        {errors?.invoiceNumber}
                                                     </p>
                                                 )}
                                             </div>
@@ -1226,7 +1278,8 @@ const AssetManagement_details = () => {
                                             <div className="w-[60%] md:w-[50%]">
                                                 <input
                                                     type="date"
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.purchasedDate ? "border-red-500" : "border-gray-300"}`}
 
                                                     value={purchasedDate}
                                                     onChange={(e) => setPurchasedDate(e.target.value)}
@@ -1236,9 +1289,9 @@ const AssetManagement_details = () => {
                                                 //       : "border-gray-300 focus:ring-blue-500"
                                                 //   }`}
                                                 />
-                                                {errors.purchasedDate && (
+                                                {errors?.purchasedDate && (
                                                     <p className="text-red-500 text-sm mt-1">
-                                                        {errors.purchasedDate}
+                                                        {errors?.purchasedDate}
                                                     </p>
                                                 )}
                                             </div>
@@ -1257,12 +1310,13 @@ const AssetManagement_details = () => {
                                                     value={depreciationPercentage}
                                                     onChange={(e) => setDepreciationPercentage(e.target.value)}
                                                     placeholder="Enter depreciation Percentage "
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.depreciationPercentage ? "border-red-500" : "border-gray-300"}`}
                                                 />
 
-                                                {errors.depreciationPercentage && (
+                                                {errors?.depreciationPercentage && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
-                                                        {errors.depreciationPercentage}
+                                                        {errors?.depreciationPercentage}
                                                     </p>
                                                 )}
                                             </div>
@@ -1280,11 +1334,12 @@ const AssetManagement_details = () => {
                                                     value={quantity}
                                                     onChange={(e) => setQuantity(e.target.value)}
                                                     placeholder="Enter Quantity "
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.quantity ? "border-red-500" : "border-gray-300"}`}
                                                 />
-                                                {errors.quantity && (
+                                                {errors?.quantity && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
-                                                        {errors.quantity}
+                                                        {errors?.quantity}
                                                     </p>
                                                 )}
                                             </div>
@@ -1302,11 +1357,12 @@ const AssetManagement_details = () => {
                                                     value={rate}
                                                     onChange={(e) => setRate(e.target.value)}
                                                     placeholder="Enter Rate "
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                />
-                                                {errors.rate && (
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.rate ? "border-red-500" : "border-gray-300"}`}
+                                                />  
+                                                {errors?.rate && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
-                                                        {errors.rate}
+                                                        {errors?.rate}
                                                     </p>
                                                 )}
                                             </div>
@@ -1324,11 +1380,12 @@ const AssetManagement_details = () => {
                                                     value={gst}
                                                     onChange={(e) => setGst(e.target.value)}
                                                     placeholder="Enter GST Rate "
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.gst ? "border-red-500" : "border-gray-300"}`}
                                                 />
-                                                {errors.gst && (
+                                                {errors?.gst && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
-                                                        {errors.gst}
+                                                        {errors?.gst}
                                                     </p>
                                                 )}
                                             </div>
@@ -1346,11 +1403,12 @@ const AssetManagement_details = () => {
                                                     value={taxable}
                                                     onChange={(e) => setTaxable(e.target.value)}
                                                     placeholder="Enter Taxable Amount "
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.taxable ? "border-red-500" : "border-gray-300"}`}
                                                 />
-                                                {errors.taxable && (
+                                                {errors?.taxable && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
-                                                        {errors.taxable}
+                                                        {errors?.taxable}
                                                     </p>
                                                 )}
                                             </div>
@@ -1369,11 +1427,12 @@ const AssetManagement_details = () => {
                                                     value={cgst}
                                                     onChange={(e) => setCgst(e.target.value)}
                                                     placeholder="Enter CGST Rate "
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.cgst ? "border-red-500" : "border-gray-300"}`}
                                                 />
-                                                {errors.cgst && (
+                                                {errors?.cgst && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
-                                                        {errors.cgst}
+                                                        {errors?.cgst}
                                                     </p>
                                                 )}
                                             </div>
@@ -1391,11 +1450,12 @@ const AssetManagement_details = () => {
                                                     value={sgst}
                                                     onChange={(e) => setSgst(e.target.value)}
                                                     placeholder="Enter SGST Rate "
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.sgst ? "border-red-500" : "border-gray-300"}`}
                                                 />
-                                                {errors.sgst && (
+                                                {errors?.sgst && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
-                                                        {errors.sgst}
+                                                        {errors?.sgst}
                                                     </p>
                                                 )}
                                             </div>
@@ -1413,7 +1473,8 @@ const AssetManagement_details = () => {
                                                     value={igst}
                                                     onChange={(e) => setIgst(e.target.value)}
                                                     placeholder="Enter IGST Rate "
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                   className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.igst ? "border-red-500" : "border-gray-300"}`}
                                                 />
                                                 {errors.igst && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
@@ -1435,11 +1496,12 @@ const AssetManagement_details = () => {
                                                     value={invoiceValue}
                                                     onChange={(e) => setInvoiceValue(e.target.value)}
                                                     placeholder="Enter Invoice Amount "
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.invoiceValue ? "border-red-500" : "border-gray-300"}`}
                                                 />
-                                                {errors.invoiceValue && (
+                                                {errors?.invoiceValue && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
-                                                        {errors.invoiceValue}
+                                                        {errors?.invoiceValue}
                                                     </p>
                                                 )}
                                             </div>
@@ -1457,11 +1519,12 @@ const AssetManagement_details = () => {
                                                     value={warrantyYear}
                                                     onChange={(e) => setWarrantyYear(e.target.value)}
                                                     placeholder="Enter Warrantly Years"
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.warrantyYear ? "border-red-500" : "border-gray-300"}`}
                                                 />
-                                                {errors.warrantyYear && (
+                                                {errors?.warrantyYear && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
-                                                        {errors.warrantyYear}
+                                                        {errors?.warrantyYear}
                                                     </p>
                                                 )}
                                             </div>
@@ -1480,11 +1543,12 @@ const AssetManagement_details = () => {
                                                     value={disposedDate}
                                                     onChange={(e) => setDisposedDate(e.target.value)}
                                                     placeholder="Enter Disposed Date "
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.disposedDate ? "border-red-500" : "border-gray-300"}`}
                                                 />
-                                                {errors.disposedDate && (
+                                                {errors?.disposedDate && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
-                                                        {errors.disposedDate}
+                                                        {errors?.disposedDate}
                                                     </p>
                                                 )}
                                             </div>
@@ -1502,7 +1566,7 @@ const AssetManagement_details = () => {
                                                 ref={fileInputRef}
                                                 onChange={handleFileChange}
                                                 accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" // Specify accepted file types
-                                                className="w-[60%] md:w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className={`w-[60%] md:w-[50%] px-3 py-2 border ${errors.fileUpload ? "border-red-500" : "border-gray-300"}  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
                                             />
                                         </div>
                                         <div className="mt-3">
@@ -1589,7 +1653,8 @@ const AssetManagement_details = () => {
                                                     filter
                                                     placeholder="Select Category"
                                                     maxSelectedLabels={3}
-                                                    className="w-full px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.assetCategory ? "border-red-500" : "border-gray-300"}`}
                                                     display="chip"
                                                 />
                                                 {errors.assetCategoryEdit && (
@@ -1616,7 +1681,8 @@ const AssetManagement_details = () => {
                                                     filter
                                                     placeholder="Select subCategory"
                                                     maxSelectedLabels={3}
-                                                    className="w-full px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    border ${errors.assetCategory ? "border-red-500" : "border-gray-300"}`}
                                                     display="chip"
                                                 />
                                                 {errors.assetSubCategoryEdit && (
