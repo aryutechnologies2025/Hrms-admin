@@ -43,10 +43,9 @@ const AssetCategory_details = () => {
   const fetchAssetType = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/asset-mannagement-category/assetCatagory`
+        `${API_URL}/api/asset-mannagement-category/assetCategory`
       );
       console.log("response get check",response);
-
 
       setAssetDetails(response?.data?.data)
               setLoading(false);

@@ -129,8 +129,6 @@ const AssetManagement_details = () => {
             const response = await axios.get(`${API_URL}/api/asset-mannagement/view-asset/${id}`);
             const asset = response.data;
 
-            // Set other fields...
-
             // Handle existing files
             if (asset.fileUpload && asset.fileUpload.length > 0) {
                 // Store existing files as objects with type indicator
@@ -249,7 +247,7 @@ const AssetManagement_details = () => {
         }
 
         // Clear file input error
-  setErrors(prev => ({ ...prev, fileUpload: "" }));
+        setErrors(prev => ({ ...prev, fileUpload: "" }));
     };
 
     // For Edit Mode - handles both new and existing files
@@ -266,7 +264,7 @@ const AssetManagement_details = () => {
             })
         );
 
-        // Add new files to attachments
+        //  new files to attachments
         const updatedFiles = [...attachments, ...newFiles];
         setAttachments(updatedFiles);
 
@@ -276,7 +274,7 @@ const AssetManagement_details = () => {
         }
 
         // Clear file input error
-  setErrors(prev => ({ ...prev, fileUpload: "" }));
+        setErrors(prev => ({ ...prev, fileUpload: "" }));
     };
 
     const openInvoiceViewModal = (row) => {
@@ -367,34 +365,34 @@ const AssetManagement_details = () => {
         console.log("attachments", attachments);
 
 
-          //form validation
+        //form validation
 
-    const newErrors = {};
-    if (!assetCategory?.trim()) newErrors.assetCategory = ("Asset Category is required");
-    if (!assetSubCategory?.trim()) newErrors.assetSubCategory = ("Asset SubCategory is required");
-    if (!invoiceNumber?.trim()) newErrors.invoiceNumber = ("Invoice Number is required");
-    if (ledger==="") newErrors.ledger = ("Please select a Ledger");
-    if (!purchasedDate) newErrors.purchasedDate = ("Please select purchased date");
-    if (!title?.trim()) newErrors.title = ("Title is required");
-    if (!depreciationPercentage) newErrors.depreciationPercentage = ("Depreciation Percentage is required");
-    if (!quantity) newErrors.quantity = ("Quantity is required");
-    if (!rate) newErrors.rate = ("Rate is required");
-    if (!gst) newErrors.gstRate = ("GST Rate is required");
-    if (!taxable) newErrors.taxable = ("Taxable is required");
-    if (!cgst) newErrors.cgst = ("CGST is required");
-    if (!sgst) newErrors.sgst = ("SGST is required");
-    if (!igst) newErrors.igst = ("IGST is required");
-    if (!invoiceValue) newErrors.invoiceValue = ("Invoice Value is required");
-    if (!warrantyYear) newErrors.warrantyYear = ("Warranty Year is required");
-    if (!disposedDate) newErrors.disposedDate = ("Please select disposed date");
-    if (!attachments || attachments.length === 0)
-    newErrors.fileUpload = "Please select a file";
+        const newErrors = {};
+        if (!assetCategory?.trim()) newErrors.assetCategory = ("Asset Category is required");
+        if (!assetSubCategory?.trim()) newErrors.assetSubCategory = ("Asset SubCategory is required");
+        if (!invoiceNumber?.trim()) newErrors.invoiceNumber = ("Invoice Number is required");
+        if (ledger === "") newErrors.ledger = ("Please select a Ledger");
+        if (!purchasedDate) newErrors.purchasedDate = ("Please select purchased date");
+        if (!title?.trim()) newErrors.title = ("Title is required");
+        if (!depreciationPercentage) newErrors.depreciationPercentage = ("Depreciation Percentage is required");
+        if (!quantity) newErrors.quantity = ("Quantity is required");
+        if (!rate) newErrors.rate = ("Rate is required");
+        if (!gst) newErrors.gstRate = ("GST Rate is required");
+        if (!taxable) newErrors.taxable = ("Taxable is required");
+        if (!cgst) newErrors.cgst = ("CGST is required");
+        if (!sgst) newErrors.sgst = ("SGST is required");
+        if (!igst) newErrors.igst = ("IGST is required");
+        if (!invoiceValue) newErrors.invoiceValue = ("Invoice Value is required");
+        if (!warrantyYear) newErrors.warrantyYear = ("Warranty Year is required");
+        if (!disposedDate) newErrors.disposedDate = ("Please select disposed date");
+        if (!attachments || attachments.length === 0)
+            newErrors.fileUpload = "Please select a file";
 
-    setErrors(newErrors);
+        setErrors(newErrors);
 
         if (Object.keys(newErrors).length > 0) return;
-        
-         // Create FormData object
+
+        // Create FormData object
         const formData = new FormData();
 
         // Add all text fields
@@ -420,7 +418,7 @@ const AssetManagement_details = () => {
             formData.append("disposedDate", disposedDate);
         }
 
-        //  files (assuming attachments is a File or FileList)
+
         // If attachments is an array of files
         if (attachments && attachments.length > 0) {
             if (Array.isArray(attachments)) {
@@ -530,7 +528,7 @@ const AssetManagement_details = () => {
                 isExisting: true,
                 type: 'url'
             }));
-
+console.log("existingFileObjects",existingFileObjects);
             setAttachments(existingFileObjects);
             setExistingFiles(row.fileUpload); // Store as separate array too
         } else {
@@ -594,28 +592,28 @@ const AssetManagement_details = () => {
 
         //form validation
 
-    const newErrors = {};
-    if (!assetCategoryEdit?.trim()) newErrors.assetCategoryEdit = ("Asset Category is required");
-    if (!assetSubCategoryEdit?.trim()) newErrors.assetSubCategoryEdit = ("Asset SubCategory is required");
-    if (!invoiceNumberEdit?.trim()) newErrors.invoiceNumberEdit = ("Invoice Number is required");
-    if (ledgerEdit==="") newErrors.ledgerEdit = ("Please select a Ledger");
-    if (!purchasedDateEdit) newErrors.purchasedDateEdit = ("Please select purchased date");
-    if (!titleEdit?.trim()) newErrors.titleEdit = ("Title is required");
-    if (!depreciationPercentageEdit) newErrors.depreciationPercentageEdit = ("Depreciation Percentage is required");
-    if (!quantityEdit) newErrors.quantityEdit = ("Quantity is required");
-    if (!rateEdit) newErrors.rateEdit = ("Rate is required");
-    if (!gstEdit) newErrors.gstRate = ("GST Rate is required");
-    if (!taxableEdit) newErrors.taxableEdit = ("Taxable is required");
-    if (!cgstEdit) newErrors.cgstEdit = ("CGST is required");
-    if (!sgstEdit) newErrors.sgstEdit = ("SGST is required");
-    if (!igstEdit) newErrors.igstEdit = ("IGST is required");
-    if (!invoiceValueEdit) newErrors.invoiceValueEdit = ("Invoice Value is required");
-    if (!warrantyYearEdit) newErrors.warrantyYearEdit = ("Warranty Year is required");
-    if (!disposedDateEdit) newErrors.disposedDateEdit = ("Please select disposed date");
-    if (!attachments || attachments.length === 0)
-    newErrors.fileUploadEdit = "Please select a file";
+        const newErrors = {};
+        if (!assetCategoryEdit?.trim()) newErrors.assetCategoryEdit = ("Asset Category is required");
+        if (!assetSubCategoryEdit?.trim()) newErrors.assetSubCategoryEdit = ("Asset SubCategory is required");
+        if (!invoiceNumberEdit?.trim()) newErrors.invoiceNumberEdit = ("Invoice Number is required");
+        if (ledgerEdit === "") newErrors.ledgerEdit = ("Please select a Ledger");
+        if (!purchasedDateEdit) newErrors.purchasedDateEdit = ("Please select purchased date");
+        if (!titleEdit?.trim()) newErrors.titleEdit = ("Title is required");
+        if (!depreciationPercentageEdit) newErrors.depreciationPercentageEdit = ("Depreciation Percentage is required");
+        if (!quantityEdit) newErrors.quantityEdit = ("Quantity is required");
+        if (!rateEdit) newErrors.rateEdit = ("Rate is required");
+        if (!gstEdit) newErrors.gstRate = ("GST Rate is required");
+        if (!taxableEdit) newErrors.taxableEdit = ("Taxable is required");
+        if (!cgstEdit) newErrors.cgstEdit = ("CGST is required");
+        if (!sgstEdit) newErrors.sgstEdit = ("SGST is required");
+        if (!igstEdit) newErrors.igstEdit = ("IGST is required");
+        if (!invoiceValueEdit) newErrors.invoiceValueEdit = ("Invoice Value is required");
+        if (!warrantyYearEdit) newErrors.warrantyYearEdit = ("Warranty Year is required");
+        if (!disposedDateEdit) newErrors.disposedDateEdit = ("Please select disposed date");
+        if (!attachments || attachments.length === 0)
+            newErrors.fileUploadEdit = "Please select a file";
 
-    setErrors(newErrors);
+        setErrors(newErrors);
 
         if (Object.keys(newErrors).length > 0) return;
 
@@ -1026,7 +1024,7 @@ const AssetManagement_details = () => {
                         {/* View Invoice Modal */}
                         {isInvoiceViewModalOpen && selectedInvoice && (
                             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                             {/* Overlay */}
+                                {/* Overlay */}
                                 <div className="absolute inset-0 z-40" onClick={closeInvoiceViewModal}></div>
 
                                 <div className="relative z-50 bg-white p-6 rounded-xl w-[450px] shadow-lg">
@@ -1214,7 +1212,7 @@ const AssetManagement_details = () => {
                                                     // placeholder="Enter Asset Name "
                                                     className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
                                                     border ${errors.ledger ? "border-red-500" : "border-gray-300"}`}
-                                                    >
+                                                >
                                                     <option value="">Select Asset Type</option>
                                                     <option value="fixedAsset">Fixed Asset</option>
                                                     <option value="currentAsset">Current Asset</option>
@@ -1259,7 +1257,7 @@ const AssetManagement_details = () => {
                                                     value={invoiceNumber}
                                                     onChange={(e) => setInvoiceNumber(e.target.value)}
                                                     placeholder="Enter Invoice Number "
-                                                   className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
                                                     border ${errors.invoiceNumber ? "border-red-500" : "border-gray-300"}`}
                                                 />
                                                 {errors?.invoiceNumber && (
@@ -1359,7 +1357,7 @@ const AssetManagement_details = () => {
                                                     placeholder="Enter Rate "
                                                     className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
                                                     border ${errors.rate ? "border-red-500" : "border-gray-300"}`}
-                                                />  
+                                                />
                                                 {errors?.rate && (
                                                     <p className="text-red-500 text-sm mb-2 md:mb-4">
                                                         {errors?.rate}
@@ -1473,7 +1471,7 @@ const AssetManagement_details = () => {
                                                     value={igst}
                                                     onChange={(e) => setIgst(e.target.value)}
                                                     placeholder="Enter IGST Rate "
-                                                   className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                                    className={`w-full   rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-blue-500
                                                     border ${errors.igst ? "border-red-500" : "border-gray-300"}`}
                                                 />
                                                 {errors.igst && (
