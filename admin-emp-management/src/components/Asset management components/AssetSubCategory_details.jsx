@@ -25,30 +25,31 @@ const AssetSubCategory_details = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const storedDetatis = localStorage.getItem("hrmsuser");
-  const parsedDetails = JSON.parse(null);
+  // const parsedDetails = JSON.parse(null);
+  const parsedDetails = storedDetatis ? JSON.parse(storedDetatis) : null;
   const userid = parsedDetails ? parsedDetails.id : null;
   const [errors, setErrors] = useState({});
   console.log("errors:", errors);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [assetDetails, setAssetDetails] = useState([])
-  console.log("assetDetails", assetDetails)
+  const [assetSubCategoryDetails, setAssetSubCategoryDetails] = useState([])
+  console.log("assetSubCategoryDetails", assetSubCategoryDetails)
   const [loading, setLoading] = useState(true); // State to manage loading
   let navigate = useNavigate();
 
 
   //  view
   useEffect(() => {
-    fetchAssetType();
+    fetchAssetSubCategory();
   }, []);
-  const fetchAssetType = async () => {
+  const fetchAssetSubCategory = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/asset-mannagement-category/assetCatagory`
+        `${API_URL}/api/sub-asset-category/subCategory`
       );
       console.log("response get check",response);
 
 
-      setAssetDetails(response?.data?.data)
+      setAssetSubCategoryDetails(response?.data?.data)
               setLoading(false);
 
 
@@ -93,7 +94,7 @@ const AssetSubCategory_details = () => {
       };
 
       const response = await axios.post(
-        `${API_URL}/api/asset-mannagement-category/create-assetCategory`,
+        `${API_URL}/api/sub-asset-category/create-subCategory`,
         formdata
       );
 
@@ -102,7 +103,7 @@ const AssetSubCategory_details = () => {
       setName("");
       setStatus("");
       setErrors("");
-      fetchAssetType();
+      fetchAssetSubCategory();
 
       toast.success(" Asset Category created successfully.");
     } catch (err) {
@@ -121,6 +122,7 @@ const AssetSubCategory_details = () => {
   const [editId, setEditid] = useState("");
 
   const openEditModal = (row) => {
+   
     console.log("rowData", row);
 
     setEditid(row._id);
@@ -157,16 +159,16 @@ const AssetSubCategory_details = () => {
       };
 
       const response = await axios.put(
-        `${API_URL}/api/asset-mannagement-category/edit-assetCategorydetails/${editId}`,
+        `${API_URL}/api/sub-asset-category/edit-subCategory/${editId}`,
         formData
       );
       console.log("response:", response);
       
 
       setIsEditModalOpen(false);
-      fetchAssetType();
+      fetchAssetSubCategory();
       setErrors({});
-      toast.success("Asset Category updated successfully.");
+      toast.success("Asset SubCategory updated successfully.");
     } catch (err) {
       if (err.response?.data?.errors) {
         setErrors(err.response.data.errors);
@@ -186,7 +188,7 @@ const AssetSubCategory_details = () => {
   const deleteRoles = (editId) => {
     Swal.fire({
       title: "Are you sure?",
-      text: "Do you want to delete this Asset Category?",
+      text: "Do you want to delete this Asset SubCategory?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Yes, delete it!",
@@ -194,13 +196,13 @@ const AssetSubCategory_details = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/asset-mannagement-category/delete-assetCategoryDelete/${editId}`)
+          .delete(`${API_URL}/api/sub-asset-category/delete-subCategory/${editId}`)
           .then((response) => {
             if (response.data) {
-              toast.success("Asset Category has been deleted.");
-              fetchAssetType(); // Refresh 
+              toast.success("Asset subCategory has been deleted.");
+              fetchAssetSubCategory(); // Refresh 
             } else {
-              Swal.fire("Error!", "Failed to delete Asset Category.", "error");
+              Swal.fire("Error!", "Failed to delete Asset subCategory.", "error");
             }
           })
           .catch((error) => {
@@ -229,11 +231,11 @@ const AssetSubCategory_details = () => {
       data: "status",
       render: (data, type, row) => {
         const textColor =
-          data === "1"
+          data === "1" || data === 1 || data === "active" 
             ? "text-green-600 border rounded-full border-green-600"
             : "text-red-600 border rounded-full border-red-600";
         return `<div class="${textColor}" style="display: inline-block; border: 1px solid ${textColor}; text-align: center; width:100px; font-size: 12px; font-weight: 500">
-                  ${data === "1" ? "ACTIVE" : "INACTIVE"}
+                  ${data === "1" || data === 1  ? "Active" : "Inactive"}
                 </div>`;
       },
     },
@@ -340,7 +342,7 @@ const AssetSubCategory_details = () => {
           {/* Responsive wrapper for the table */}
           <div className="table-scroll-container" id="datatable">
             <DataTable
-              data={assetDetails}
+              data={assetSubCategoryDetails}
               columns={columns}
               options={{
                 paging: true,
