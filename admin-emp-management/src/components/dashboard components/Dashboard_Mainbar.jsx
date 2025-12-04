@@ -23,8 +23,10 @@ import { DataTable } from "primereact/datatable";
 import { API_URL } from "../../config";
 import { Column } from "primereact/column";
 import Loader from "../Loader";
+import { useDateUtils } from "../../hooks/useDateUtils";
 
 const Dashboard_Mainbar = () => {
+  const formatDateTime = useDateUtils();
   const [value, onChange] = useState(new Date());
   const [currentTime1, setCurrentTime1] = useState(new Date());
   const [upcomingHolidays, setUpcomingHolidays] = useState("");
@@ -184,7 +186,7 @@ const Dashboard_Mainbar = () => {
           "-"
         ),
     },
-    { field: "employeeId", header: "Employee ID" },
+    // { field: "employeeId", header: "Employee ID" },
   ];
 
   return (
@@ -194,13 +196,15 @@ const Dashboard_Mainbar = () => {
       ) : (
         <>
           <div>
-            <div className="flex justify-between gap-2 items-center">
+            <div className=" ">
               <Mobile_Sidebar />
-              <p className="text-sm md:text-md text-blue-500">Dashboard</p>
-            </div>
-            
 
-           
+            </div>
+
+            <p className="text-sm md:text-md mt-3  text-end text-blue-500">Dashboard</p>
+
+
+
             <div className="bg-white rounded-2xl px-2 py-2 md:px-5 md:py-5 flex justify-between mt-1 ">
               <p className="font-semibold">Dashboard</p>
 
@@ -221,10 +225,10 @@ const Dashboard_Mainbar = () => {
                 <div className="flex flex-col w-full mt-1 md:mt-5 h-auto md:h-[210px] rounded-2xl bg-[url('././assets/zigzaglines_large.svg')] bg-cover shadow-lg px-3 py-3 md:px-6 md:py-6">
                   <div className="flex justify-between items-center mb-1 md:mb-4">
                     <div>
-                      <h2 className="text-xl font-semibold md:font-bold text-gray-800">
+                      <h2 className="text-md font-normal md:font-bold text-gray-800">
                         Request
                       </h2>
-                      <p className="text-xs text-gray-500">Recent requests</p>
+                      {/* <p className="text-xs text-gray-500">Recent requests</p> */}
                     </div>
                     <button
                       onClick={() => navigate("/requestdetails")}
@@ -255,18 +259,17 @@ const Dashboard_Mainbar = () => {
                                 </p>
                                 {/* <p className="text-gray-600">{req.subject}</p> */}
                                 <p className="text-xs text-gray-400">
-                                  {formattedDate}
+                                  {formatDateTime(formattedDate)}
                                 </p>
                               </div>
                               <span
                                 className={`px-2 py-0.5 rounded-full text-xs font-semibold
-                ${
-                  req.status === "approved"
-                    ? "bg-green-100 text-green-700"
-                    : req.status === "pending"
-                    ? "bg-yellow-100 text-yellow-700"
-                    : "bg-red-100 text-red-700"
-                }`}
+                ${req.status === "approved"
+                                    ? "bg-green-100 text-green-700"
+                                    : req.status === "pending"
+                                      ? "bg-yellow-100 text-yellow-700"
+                                      : "bg-red-100 text-red-700"
+                                  }`}
                               >
                                 {req.status.charAt(0).toUpperCase() +
                                   req.status.slice(1)}
@@ -287,10 +290,10 @@ const Dashboard_Mainbar = () => {
                 <div className="flex flex-col w-full mt-1 md:mt-5 h-auto md:h-[210px] rounded-2xl bg-[url('././assets/zigzaglines_large.svg')] bg-cover shadow-lg px-3 py-3 md:px-6 md:py-6">
                   <div className="flex justify-between items-center mb-1 md:mb-2">
                     <div>
-                      <h2 className="text-xl font-semibold md:font-bold text-gray-800">
+                      <h2 className="text-md font-normal md:font-bold text-gray-800">
                         Attendance
                       </h2>
-                      <p className="text-xs text-gray-500">Today Attendance</p>
+                      {/* <p className="text-xs text-gray-500">Today Attendance</p> */}
                     </div>
                     <button
                       onClick={() => navigate("/attendance")}
@@ -375,7 +378,7 @@ const Dashboard_Mainbar = () => {
                             alt="Profile"
                             className="h-30 w-[260px] object-cover"
                           />
-                          
+
                           <div className="flex flex-col bg-white justify-center gap-1 px-6 py-2 ">
                             <p className=" text-[14px] capitalize">
                               {item.employeeName}
@@ -383,9 +386,9 @@ const Dashboard_Mainbar = () => {
                             <p className="text-[12px]  text-gray-500 capitalize">
                               {item.role?.name}
                             </p>
-                           
+
                           </div>
-                         </div>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -404,7 +407,7 @@ const Dashboard_Mainbar = () => {
                 >
                   {/* Heading */}
                   <div className="flex items-center justify-between mb-1 md:mb-4">
-                    <h3 className="text-xl font-semibold md:font-bold text-gray-800">
+                    <h3 className="text-md font-normal md:font-bold text-gray-800">
                       Upcoming Relieving
                     </h3>
                     <span className="text-sm text-gray-500">
@@ -482,7 +485,7 @@ const Dashboard_Mainbar = () => {
                 >
                   {/* Heading */}
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-semibold md:font-bold text-gray-800">
+                    <h3 className="text-md font-normal md:font-bold text-gray-800">
                       Intern List
                     </h3>
                     <span className="text-sm text-gray-500">
@@ -568,34 +571,43 @@ const Dashboard_Mainbar = () => {
               {/*uPCOMING holiday */}
               <div className="flex mt-5 gap-4 w-full md:w-[32%]">
                 {upcomingHolidays?.length > 0 && (
-                  <div className="bg-[url('././assets/zigzaglines_large.svg')] rounded-2xl w-full px-3 py-3 md:px-5 md:py-5 bg-cover bg-no-repeat ">
-                    {/* <p className="font-medium text-sm"></p> */}
-                    <h2 className="text-lg font-semibold text-gray-800">
-                      Upcoming Holidays
+                  <div className="bg-white rounded-2xl w-full px-5 py-5 shadow-md border border-gray-100">
+
+                    <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                      📅 Upcoming Holidays
                     </h2>
-                    <div className="flex flex-col gap-7 mt-3">
-                      {upcomingHolidays?.map((item, index) => (
-                        <div
-                          key={index}
-                          className="flex  items-center flex-wrap  gap-3"
-                        >
-                          {/* <p className="rounded-full max-sm:hidden px-3 py-2 bg-black text-white">
-                                    Thu
-                                  </p>
-                                  <p className="border-b-2 border-dashed max-sm:hidden flex-grow border-gray-700 "></p> */}
-                          <p>
-                            {new Date(item.date).toISOString().slice(0, 10)}
-                          </p>
-                          <p className="border-b-2 flex-grow  border-dashed  border-gray-700 "></p>
-                          <p className="rounded-full px-3 w-[40%] h-auto  text-center py-2 bg-black text-white">
+
+                    <div className="flex flex-col gap-6 mt-4">
+                      {upcomingHolidays.map((item, index) => (
+                        <div key={index} className="flex items-center gap-3 w-full">
+
+                          {/* DATE */}
+                          <div className="flex flex-col items-center">
+                            <p className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                              {formatDateTime(item.date, "MMM")}   {/* MONTH */}
+                            </p>
+                            <p className="text-gray-800 font-bold text-xl -mt-1">
+                              {formatDateTime(item.date, "DD")}    {/* DAY */}
+                            </p>
+                          </div>
+
+                          <div className="flex-grow border-b border-dashed border-gray-400"></div>
+
+                          {/* REASON */}
+                          <div className="bg-gray-900 text-white px-4 py-2 rounded-full text-sm font-medium text-center">
                             {item.reason}
-                          </p>
+                          </div>
+
                         </div>
                       ))}
                     </div>
+
                   </div>
                 )}
               </div>
+
+
+
             </section>
           </div>
 
@@ -609,12 +621,32 @@ const Dashboard_Mainbar = () => {
                   className="bg-white p-6 rounded-lg shadow-lg w-[600px] h-[600px] overflow-y-auto"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <h2 className="text-xl font-semibold mb-2">
+
+                  <button
+                    onClick={() => setAbsentlistIsOpen(false)}
+                    className="absolute right-4 top-4 text-gray-600 hover:text-black"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2}
+                      stroke="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                  {/* <h2 className="text-md font-normal mb-2">
                     Absent List{" "}
                     <span className="text-gray-500 text-[16px]">
                       ({selectedDate})
                     </span>
-                  </h2>
+                  </h2> */}
 
                   <DataTable
                     className="mt-8"
@@ -656,12 +688,31 @@ const Dashboard_Mainbar = () => {
                   className="bg-white p-6 rounded-lg shadow-lg w-[600px] h-[600px] overflow-y-auto"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <h2 className="text-xl font-semibold mb-2">
+                  <button
+                    onClick={() => setWfhlistIsOpen(false)}
+                    className="absolute right-4 top-4 text-gray-600 hover:text-black"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2}
+                      stroke="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                  {/* <h2 className="text-md font-normal mb-2">
                     WFH List{" "}
                     <span className="text-gray-500 text-[16px]">
                       ({selectedDate})
                     </span>
-                  </h2>
+                  </h2> */}
 
                   <DataTable
                     className="mt-8"
@@ -703,12 +754,32 @@ const Dashboard_Mainbar = () => {
                   className="bg-white p-6 rounded-lg shadow-lg w-[600px] h-[600px] overflow-y-auto"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <h2 className="text-xl font-semibold mb-2">
+
+                  <button
+                    onClick={() => setpresentlistIsOpen(false)}
+                    className="absolute right-4 top-4 text-gray-600 hover:text-black"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2}
+                      stroke="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                  {/* <h2 className="text-md font-normal mb-2">
                     Present List{" "}
                     <span className="text-gray-500 text-[16px]">
                       ({selectedDate})
                     </span>
-                  </h2>
+                  </h2> */}
 
                   <DataTable
                     className="mt-8"
