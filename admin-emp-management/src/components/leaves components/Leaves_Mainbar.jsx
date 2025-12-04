@@ -806,7 +806,7 @@ const Leaves_Mainbar = () => {
                   value={approvedRejectedList}
                   paginator
                   rows={10}
-                  rowsPerPageOptions={[5, 10, 20]}
+                  rowsPerPageOptions={[5, 10, 20, 30, 40, 50]}
                   globalFilter={globalFilter}
                   globalFilterFields={[
                     "employeeId.employeeId",

@@ -235,7 +235,7 @@ const Employees_Card = () => {
     },
 
     {
-      title: "Employee Name",
+      title: "Name",
       data: null,
       render: function (data, type, row) {
         const name = row.employee_Name || "-";
@@ -251,7 +251,7 @@ const Employees_Card = () => {
     },
 
     {
-      title: "Employee Role",
+      title: "Role",
       data: "employee_role",
       render: function (data) {
         return data || "-";
@@ -280,7 +280,7 @@ const Employees_Card = () => {
 },
 
     {
-      title: "Employee Email",
+      title: "Email",
       data: "employee_mailId",
       render: function (data) {
         return data || "-";
