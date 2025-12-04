@@ -236,7 +236,23 @@ const Sidebar = () => {
                   {!arrowClicked && <p className="text-sm">Dashboard</p>}
                 </div>
               )}
-
+              
+              {/* links */}
+              {hasPermission("Links") && (
+                    <div
+                      onClick={() => onClickSidebarMenu("links")}
+                      className={`flex w-full items-center flex-grow ${
+                        arrowClicked ? "justify-center  " : "justify-normal"
+                      } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
+                        currentPath === "/links"
+                          ? "bg-blue-100 text-[#4F46E5]"
+                          : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
+                      }`}
+                    >
+                      <FaLinkSlash />
+                      {!arrowClicked && <p className="text-sm">Links</p>}
+                    </div>
+                  )}
               {/* client dashboard */}
 
               {client && (
@@ -1445,21 +1461,7 @@ const Sidebar = () => {
                     </>
                   )}
 
-                  {hasPermission("Links") && (
-                    <div
-                      onClick={() => onClickSidebarMenu("links")}
-                      className={`flex w-full items-center flex-grow ${
-                        arrowClicked ? "justify-center  " : "justify-normal"
-                      } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                        currentPath === "/links"
-                          ? "bg-blue-100 text-[#4F46E5]"
-                          : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                      }`}
-                    >
-                      <FaLinkSlash />
-                      {!arrowClicked && <p className="text-sm">Links</p>}
-                    </div>
-                  )}
+                  
 
                   {hasPermission("Holidays") && (
                     <div

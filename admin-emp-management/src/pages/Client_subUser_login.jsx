@@ -115,7 +115,7 @@ const inactiveClass = "hover:underline";
 
 
   return (
-   <div className="min-h-screen bg-[#F3F4F6] flex flex-col">
+   <div className="min-h-screen bg-[#F3F4F6] flex flex-col justify-between">
 
   {/* Top Navigation */}
   <div className="flex justify-center md:justify-end gap-3 md:gap-6 px-1 md:px-5 md:pt-2 text-sm md:text-lg font-semibold text-[#0050AA]">
@@ -152,6 +152,7 @@ const inactiveClass = "hover:underline";
   </div>
 
   {/* Logo */}
+  <div>
   <div className="flex justify-center p-2">
     <img src={aryu_logo} alt="Logo" className="w-20" />
   </div>
@@ -163,7 +164,7 @@ const inactiveClass = "hover:underline";
 
       {/* Left Section (Form) */}
       <div className="flex-1 flex flex-col items-center justify-center p-5 md:p-10">
-        <h1 className="text-[#0050aa] font-bold text-xl md:text-4xl mb-2 md:mb-6">
+        <h1 className="text-[#0050aa] font-semibold text-xl md:text-4xl mb-2 md:mb-6">
            CLIENT USER 
         </h1>
 
@@ -227,8 +228,10 @@ const inactiveClass = "hover:underline";
       </div>
     </div>
   </div>
+  </div>
 
-  <Footer />
+  <div><Footer /></div>
+  
 </div>
   );
 };

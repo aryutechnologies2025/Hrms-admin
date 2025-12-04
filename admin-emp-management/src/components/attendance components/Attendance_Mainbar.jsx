@@ -127,7 +127,7 @@ const Attendance_Mainbar = () => {
 
     {
       field: "employee_name",
-      header: "Employee Name",
+      header: "Name",
       body: (rowData) =>
         rowData.employeeId ? (
           <>
@@ -349,7 +349,7 @@ const Attendance_Mainbar = () => {
     },
     {
       field: "employee_name",
-      header: "Employee Name",
+      header: "Name",
       body: (rowData) =>
         rowData ? (
           <>
@@ -368,7 +368,7 @@ const Attendance_Mainbar = () => {
           "-"
         ),
     },
-    { field: "employeeId", header: "Employee ID" },
+    { field: "employeeId", header: "ID" },
   ];
 
   // const wfhDatacolumns = [
@@ -599,10 +599,13 @@ const Attendance_Mainbar = () => {
             
             
            
-              <div className="flex justify-between gap-2 items-center cursor-pointer ">
+              <div className=" cursor-pointer ">
                 <Mobile_Sidebar />
+                
+                
+              </div>
+              <div className="flex justify-end gap-1 items-center">
                 <ToastContainer />
-                <div className="flex gap-1 items-center">
                 <p
                   className="text-sm text-gray-500"
                   onClick={() => navigate("/dashboard")}
@@ -613,7 +616,6 @@ const Attendance_Mainbar = () => {
 
                 <p className="text-sm text-blue-500">Attendance</p>
                 </div>
-              </div>
 
               {/* <div className="font-medium text-md  lg:text-left mt-2 md:mt-5 w-full md:w-fit text-right bg-white px-3 py-1 md:px-4 md:py-2 rounded-full">
                 
@@ -639,6 +641,7 @@ const Attendance_Mainbar = () => {
                   onChange={(e) => {
                     getAttendanceData(e.target.value);
                     setSelectedDate(e.target.value);
+                    
                   }}
                 />
               </div>
@@ -741,9 +744,9 @@ const Attendance_Mainbar = () => {
             {/* Cards */}
             <div className="flex flex-col sm:flex-row mt-5 flex-grow gap-3">
               <div
-                className="hidden md:flex flex-grow gap-2 w-full sm:w-1/4  transition-all duration-100 flex-col bg-white px-5 py-5 rounded-xl"
+                className="hidden md:flex flex-grow gap-2 w-full sm:w-1/4  transition-all duration-100 flex-col justify-between bg-white px-5 py-5 rounded-xl"
               >
-                <div className="flex items-center justify-between text-4xl">
+                <div className="flex items-center justify-between gap-3 text-4xl">
                   <img src={WFH} alt="" className="h-12 w-12" />
                   {attendanceCount?.present}
                 </div>
@@ -764,9 +767,9 @@ const Attendance_Mainbar = () => {
 
               <div
                 onClick={() => setAbsentlistIsOpen(true)}
-                className="flex flex-grow gap-2 w-full transition-all duration-100 cursor-pointer sm:w-1/4 md:flex-col bg-white px-5 py-5 rounded-xl"
+                className="flex flex-grow gap-2 w-full transition-all duration-100 cursor-pointer sm:w-1/4 md:flex-col justify-between bg-white px-5 py-5 rounded-xl"
               >
-                <div className="flex items-center justify-between text-4xl">
+                <div className="flex items-center justify-between gap-3 text-4xl">
                   <img src={not_present} alt="" className="h-12 w-12" />
                   {/* <MdArrowForwardIos /> */}
                   {attendanceCount?.absent}
@@ -785,9 +788,9 @@ const Attendance_Mainbar = () => {
 
               <div
                 onClick={() => setWfhlistIsOpen(true)}
-                className="flex flex-grow w-full gap-2 cursor-pointer sm:w-1/4 md:flex-col bg-white px-5 py-5 transition-all duration-100 rounded-xl"
+                className="flex flex-grow w-full gap-2 cursor-pointer sm:w-1/4 md:flex-col justify-between bg-white px-5 py-5 transition-all duration-100 rounded-xl"
               >
-                <div className="flex items-center justify-between text-4xl">
+                <div className="flex items-center gap-3 justify-between text-4xl">
                   <img src={WFH} alt="" className="h-12 w-12" />
                   {/* <MdArrowForwardIos /> */}
                   {attendanceCount?.wfh}

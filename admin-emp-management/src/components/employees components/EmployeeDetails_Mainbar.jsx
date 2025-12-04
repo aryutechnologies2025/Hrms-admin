@@ -173,7 +173,7 @@ const EmployeeDetails_Mainbar = () => {
         </div>
       </div>
       <ToastContainer />
-      <div className="flex flex-wrap md:flex-nowrap w-full sm:justify-between md:justify-end gap-3">
+      <div className="flex flex-wrap md:flex-nowrap w-full sm:justify-between md:justify-end gap-3 md:mt-3 ">
         <button
           className="text-sm bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 mt-2 md:mt-0 rounded-3xl"
           onClick={() => {
@@ -223,13 +223,9 @@ const EmployeeDetails_Mainbar = () => {
         </button>
         <button
           onClick={() =>
-            navigate("/employees", {
-              state: {
-                employee_id: employee._id, // Pass the employee ID here
-              },
-            })
+            navigate(-1)
           }
-          className="text-sm bg-gray-600 hover:bg-gray-300 text-white px-5 py-2 mt-2 md:mt-0 rounded-3xl"
+          className="text-sm bg-gray-600 hover:bg-gray-500 text-white px-5 py-2 mt-2 md:mt-0 rounded-3xl"
         >
           Back
         </button>
@@ -324,15 +320,14 @@ const EmployeeDetails_Mainbar = () => {
                     <span className="ml-10 ">
                       {employee?.dutyStatus === "1"
                         ? ""
-                        : employee?.relivingDate?.split("T")[0]}
+                        : formatDateTime(employee?.relivingDate)}
                     </span>
                   </p>
-                  {employee.employee_details?.status === "0" &&
-                    employee.employee_details?.reliving_date && (
-                      <p className="mt-1 text-sm text-gray-500">
-                        Reliving Date: {employee?.reliving_date}
-                      </p>
-                    )}
+                  
+                      
+                       
+                    
+
                 </div>
                 <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl shadow-sm mt-3">
                   <p className="text-[14px] font-medium text-gray-700">LinkedIn</p>
@@ -436,9 +431,9 @@ const EmployeeDetails_Mainbar = () => {
                   <div className="flex justify-between mt-3">
                     <p className="text-sm ">Birthday</p>
                     <p className=" text-sm">
-                      {employee?.dateOfBirth ?
+                      {
                         formatDateTime(employee?.dateOfBirth)
-                        : ""}
+                        }
                     </p>
                   </div>
                   <hr />
@@ -693,7 +688,7 @@ const EmployeeDetails_Mainbar = () => {
               <div className="flex flex-col gap-3">
                 <div className="flex justify-between gap-2 mt-3">
                   <p className="text-sm inline-block w-1/3">
-                    Address 1{" "}
+                    Permanent Address{" "}
                   </p>
                   <p className=" text-sm w-full text-end">
                     {employee?.address1 ?? "N/A"}
@@ -704,7 +699,7 @@ const EmployeeDetails_Mainbar = () => {
               </div>
               <div className="flex flex-col gap-3">
                 <div className="flex justify-between gap-2 mt-3">
-                  <p className="text-sm inline-block w-1/3">Address 2</p>
+                  <p className="text-sm inline-block w-1/3">Current Address </p>
                   <p className=" text-sm w-full text-end">{employee?.address2 ?? "N/A"}</p>
                 </div>
                 <hr />

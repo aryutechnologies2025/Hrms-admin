@@ -417,7 +417,7 @@ const Request_details = () => {
   let navigate = useNavigate();
 
   return (
-    <div className="flex flex-col justify-between overflow-x-hidden bg-gray-100 px-5 pt-2 md:pt-5 min-h-screen  w-screen">
+    <div className="flex flex-col justify-between  bg-gray-100 px-5 pt-2 md:pt-5 min-h-screen w-full overflow-x-auto">
       {loading ? (
         <Loader />
       ) : (
@@ -426,9 +426,11 @@ const Request_details = () => {
             
 
             {/* breadcrumb */}
-            <div className="flex justify-between gap-2 items-center cursor-pointer">
+            <div className="cursor-pointer">
               <Mobile_Sidebar />
-              <div className="flex gap-1 items-center">
+              
+            </div>
+            <div className="flex justify-end gap-1 items-center">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
@@ -439,7 +441,6 @@ const Request_details = () => {
 
               <p className="text-sm text-blue-500">Request</p>
               </div>
-            </div>
 
             <div>
               <div className="flex flex-wrap md:flex-row justify-between">
@@ -483,7 +484,7 @@ const Request_details = () => {
                   value={approvedRejectedList}
                   paginator
                   rows={10}
-                  rowsPerPageOptions={[5, 10, 20]}
+                  rowsPerPageOptions={[5, 10, 20, 30, 50]}
                   globalFilter={globalFilter}
                   globalFilterFields={[
                     "employeeId.employeeId",
@@ -544,7 +545,7 @@ const Request_details = () => {
                 ></div>
 
                 <div
-                  className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[70vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                  className={`fixed top-0 right-0 h-screen overflow-scroll w-full sm:w-[90vw] md:w-[70vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
                     }`}
                 >
                   <div
@@ -745,15 +746,6 @@ const Request_details = () => {
                               >
                                 Approve
                               </button>
-                              {/* <button
-                            onClick={() =>
-                              onCLickApprovedOrRejectButton("rejected", item.id)
-                            }
-                            className="px-8 py-2 text-sm rounded-full bg-red-500 font-bold text-white"
-                          >
-                            Reject
-                          </button> */}
-
                               <button
                                 onClick={() =>
                                   handleReject("rejected", item._id)
@@ -782,11 +774,11 @@ const Request_details = () => {
             {showModal && (
               <div
                 onClick={() => setShowModal(false)}
-                className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/20 z-50"
+                className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/20 z-50 "
               >
                 <div
                   onClick={(e) => e.stopPropagation()}
-                  className="bg-white rounded-lg shadow-lg px-8 p-6 w-[600px] overflow-y-auto h-[580px]"
+                  className="bg-white rounded-lg shadow-lg px-8 p-6 w-full h-[90%] overflow-scroll  "
                 >
                   <h2 className="text-xl font-semibold mb-4">Edit Request</h2>
 
