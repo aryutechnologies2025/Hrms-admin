@@ -23,9 +23,14 @@ import { FaTrash } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
 import { Dropdown } from "primereact/dropdown";
 import { useNavigate } from "react-router-dom";
+import { useDateUtils } from "../hooks/useDateUtils";
+
 
 const Revision_details = () => {
   const navigate = useNavigate();
+
+    const formatDateTime = useDateUtils();
+  
 
   // const location = useLocation();
 
@@ -332,14 +337,18 @@ const Revision_details = () => {
       title: "Employee Name",
       data: "employeeName",
     },
+
+    
+
     {
-      title: "Revision Date",
-      data: "revision_date",
-      render: (data) => {
-        if (!data) return "";
-        return new Date(data).toLocaleDateString("en-GB");
-      },
-    },
+  title: "Revision Date",
+  data: "revision_date",
+  render: (data) => {
+    if (!data) return "-";
+    return formatDateTime(data);
+  },
+},
+
     {
       title: "Current Salary",
       data: "current_salary",
@@ -355,18 +364,24 @@ const Revision_details = () => {
     {
       title: "Revised Salary",
       data: "revised_salary",
+       render: (data) => {
+    return data ? data : "-";
+  }
     },
     {
       title: "Next Revision Date",
       data: "next_revision_date",
-      render: (data) => {
-        if (!data) return "";
-        return new Date(data).toLocaleDateString("en-GB");
-      },
+       render: (data) => {
+    if (!data) return "-";
+    return formatDateTime(data);
+  },
     },
     {
       title: "Revision Notes",
       data: "revision_notes",
+       render: (data) => {
+    return data ? data : "-";
+  }
     },
 
     {
@@ -448,9 +463,12 @@ const Revision_details = () => {
       <div>
        
 
-        <div className="flex justify-between gap-2 items-center cursor-pointer">
+        <div className=" cursor-pointer">
            <Mobile_Sidebar />
-           <div className="flex gap-1 items-center">
+           
+        </div>
+
+        <div className="flex justify-end mt-3 md:mt-0 gap-1 items-center">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
@@ -468,17 +486,25 @@ const Revision_details = () => {
 
           <p className="text-sm text-blue-500">Revision</p>
           </div>
-        </div>
 
         {/* Add Button */}
         <div className="flex justify-between mt-2 md:mt-5 mb-1 md:mb-3">
           <h1 className="text-2xl md:text-3xl font-semibold">Revision</h1>
+
+          <div className="flex gap-3"><button
+          onClick={() =>
+            navigate(-1)
+          }
+          className="text-sm bg-gray-600 hover:bg-gray-500 text-white px-5 py-2 mt-2 md:mt-0 rounded-3xl"
+        >
+          Back
+        </button>
           <button
             onClick={openAddModal}
             className="bg-blue-600 px-3 py-2 text-white w-20 rounded-2xl"
           >
             Add
-          </button>
+          </button></div>
         </div>
 
         <div className="datatable-container">
