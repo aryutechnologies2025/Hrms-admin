@@ -754,7 +754,7 @@ const Sidebar = () => {
                                     "/invoice-details",
                                     "/mom-details",
                                     "/document-details",
-                                    "/assect-document",
+                                    "/asset-document",
                                   ].includes(currentPath) ? (
                                     <IoIosArrowUp />
                                   ) : (
@@ -826,15 +826,15 @@ const Sidebar = () => {
                                 Document
                               </button>
                                <button
-                                onClick={() => navigate("/assect-document")}
+                                onClick={() => navigate("/asset-document")}
                                 className={`px-2 py-1 rounded-full 
                                     ${
-                                      currentPath === "/assect-document"
+                                      currentPath === "/asset-document"
                                         ? " text-[#4F46E5]"
                                         : "hover:bg-blue-100 text-gray-500"
                                     }`}
                               >
-                                Assect Doc
+                                Asset Doc
                               </button>
 
                               {/* <div
