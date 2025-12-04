@@ -18,7 +18,7 @@ import Mobile_Sidebar from "../Mobile_Sidebar";
 import Footer from "../Footer";
 import { use } from "react";
 import { useDateUtils } from "../../hooks/useDateUtils";
-  
+
 
 const AssectDocument = () => {
   const navigate = useNavigate();
@@ -181,7 +181,7 @@ const AssectDocument = () => {
       //     authHeaders
       //   );
       // } else {
-        resp = await axios.get(`${API_URL}/api/mom/get-document/`, authHeaders);
+      resp = await axios.get(`${API_URL}/api/mom/get-document/`, authHeaders);
       // }
       setMomList(resp.data?.data || []);
     } catch (err) {
@@ -237,74 +237,74 @@ const AssectDocument = () => {
   //      {project:formProject,client:formClient,date:formDate,title:formTitle,description:formDescription,status:formStatus,createdBy:user?._id},
   //     );
   //     console.log("create res", resp);
-  //     toast.success("Assect Document Created Successfully!");
+  //     toast.success("Asset Document Created Successfully!");
   //     setIsAddModalOpen(false);
   //     // clear form
   //     resetForm();
   //     fetchMoms();
   //   } catch (err) {
-  //     console.error("Create Assect Document error", err);
+  //     console.error("Create Asset Document error", err);
   //     // if backend validations return err.response.data.errors
   //     if (err.response?.data?.errors) setErrors(err.response.data.errors);
-  //     else toast.error("Failed to create Assect Document");
+  //     else toast.error("Failed to create Asset Document");
   //   } finally {
   //     setLoading(false);
   //   }
   // };
   const handleCreate = async (e) => {
-  e?.preventDefault?.();
-  setErrors({});
+    e?.preventDefault?.();
+    setErrors({});
 
-  const newErrors = {};
+    const newErrors = {};
 
-  if (!formDate) newErrors.date = "Date is required.";
-  if (!formClient) newErrors.client = "Client is required.";
-  if (!formProject) newErrors.project = "Project is required.";
-  if (!formStatus) newErrors.status = "Status is required.";
-  if (!formDescription) newErrors.description = "Description is required.";
-  if (formTitle.trim() === "") newErrors.title = "Title is required.";
+    if (!formDate) newErrors.date = "Date is required.";
+    if (!formClient) newErrors.client = "Client is required.";
+    if (!formProject) newErrors.project = "Project is required.";
+    if (!formStatus) newErrors.status = "Status is required.";
+    if (!formDescription) newErrors.description = "Description is required.";
+    if (formTitle.trim() === "") newErrors.title = "Title is required.";
 
-  if (Object.keys(newErrors).length > 0) {
-    setErrors(newErrors);
-    return;
-  }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const formData = new FormData();
-    formData.append("date", formDate);
-    formData.append("title", formTitle);
-    formData.append("client", formClient);
-    formData.append("project", formProject);
-    formData.append("description", formDescription);
-    formData.append("status", formStatus);
-    formData.append("createdBy", user?._id);
+      const formData = new FormData();
+      formData.append("date", formDate);
+      formData.append("title", formTitle);
+      formData.append("client", formClient);
+      formData.append("project", formProject);
+      formData.append("description", formDescription);
+      formData.append("status", formStatus);
+      formData.append("createdBy", user?._id);
 
-    uploadedFiles.forEach((file) => {
-      formData.append("document[]", file);
-    });
+      uploadedFiles.forEach((file) => {
+        formData.append("document[]", file);
+      });
 
-    const resp = await axios.post(
-      `${API_URL}/api/mom/create-document`,
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    );
+      const resp = await axios.post(
+        `${API_URL}/api/mom/create-document`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
 
-    toast.success("Asset Document Created Successfully!");
-    setIsAddModalOpen(false);
-    resetForm();
-    fetchMoms();
-  } catch (err) {
-    console.error("Create Asset Document error", err);
-    if (err.response?.data?.errors) setErrors(err.response.data.errors);
-    else toast.error("Failed to create Asset Document");
-  } finally {
-    setLoading(false);
-  }
-};
+      toast.success("Asset Document Created Successfully!");
+      setIsAddModalOpen(false);
+      resetForm();
+      fetchMoms();
+    } catch (err) {
+      console.error("Create Asset Document error", err);
+      if (err.response?.data?.errors) setErrors(err.response.data.errors);
+      else toast.error("Failed to create Asset Document");
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   // -------------------------
@@ -364,10 +364,10 @@ const AssectDocument = () => {
     if (!formClient) newErrors.client = "Client is required.";
     if (!formProject) newErrors.project = "Project is required.";
     if (!formStatus) newErrors.status = "Status is required.";
-  if (!formDescription) newErrors.description = "Description is required.";
-  if (formTitle.trim() === "") newErrors.title = "Title is required.";
+    if (!formDescription) newErrors.description = "Description is required.";
+    if (formTitle.trim() === "") newErrors.title = "Title is required.";
 
-   
+
 
     if (Object.keys(newErrors).length) {
       setErrors(newErrors);
@@ -386,6 +386,8 @@ const AssectDocument = () => {
       formData.append("description", formDescription);
       formData.append("status", formStatus);
       formData.append("title", formTitle);
+      formData.append("updatedBy", user?._id);
+      // formData.append("createdBy", );
 
       // formAttendees.forEach((file) => {
       //   formData.append("attendees[]", file);
@@ -504,62 +506,62 @@ const AssectDocument = () => {
       setFormProject(null);
     }
   }, [formClient]);
-//   const columns = [
-//   { field: "sno", header: "S.NO" },
+  //   const columns = [
+  //   { field: "sno", header: "S.NO" },
 
-//   {
-//     field: "date",
-//     header: "Date",
-//     body: (row) => formatDateTime(row?.date || row?.createdAt || ""),
-//   },
+  //   {
+  //     field: "date",
+  //     header: "Date",
+  //     body: (row) => formatDateTime(row?.date || row?.createdAt || ""),
+  //   },
 
-//   {
-//     field: "title",
-//     header: "Title",
-//     body: (row) => row?.title || "-",
-//   },
+  //   {
+  //     field: "title",
+  //     header: "Title",
+  //     body: (row) => row?.title || "-",
+  //   },
 
-//   {
-//     field: "project",
-//     header: "Project Name",
-//     body: (row) => row?.project?.name || "-",
-//   },
+  //   {
+  //     field: "project",
+  //     header: "Project Name",
+  //     body: (row) => row?.project?.name || "-",
+  //   },
 
-//   {
-//     field: "client",
-//     header: "Client",
-//     body: (row) => row?.client?.client_name || "-",
-//   },
+  //   {
+  //     field: "client",
+  //     header: "Client",
+  //     body: (row) => row?.client?.client_name || "-",
+  //   },
 
-//   {
-//     field: "status",
-//     header: "Status",
-//     body: (row) => statusMap[row?.status] || row?.status || "-",
-//   },
+  //   {
+  //     field: "status",
+  //     header: "Status",
+  //     body: (row) => statusMap[row?.status] || row?.status || "-",
+  //   },
 
-//   {
-//     field: "actions",
-//     header: "Action",
-//     body: (row) => (
-//       <div className="action-container flex gap-4 justify-center">
-//         <FaEye onClick={() => showMomDetails(row)} className="text-xl cursor-pointer mt-1" />
+  //   {
+  //     field: "actions",
+  //     header: "Action",
+  //     body: (row) => (
+  //       <div className="action-container flex gap-4 justify-center">
+  //         <FaEye onClick={() => showMomDetails(row)} className="text-xl cursor-pointer mt-1" />
 
-//         {user?.type !== "client" && user?.type !== "subuser" && (
-//           <>
-//             <FaEdit
-//               onClick={() => openEditModalWith(row)}
-//               className="text-xl cursor-pointer mt-1"
-//             />
-//             <MdOutlineDeleteOutline
-//               onClick={() => deleteMom(row._id)}
-//               className="text-red-600 text-xl cursor-pointer mt-1"
-//             />
-//           </>
-//         )}
-//       </div>
-//     ),
-//   },
-// ];
+  //         {user?.type !== "client" && user?.type !== "subuser" && (
+  //           <>
+  //             <FaEdit
+  //               onClick={() => openEditModalWith(row)}
+  //               className="text-xl cursor-pointer mt-1"
+  //             />
+  //             <MdOutlineDeleteOutline
+  //               onClick={() => deleteMom(row._id)}
+  //               className="text-red-600 text-xl cursor-pointer mt-1"
+  //             />
+  //           </>
+  //         )}
+  //       </div>
+  //     ),
+  //   },
+  // ];
   const columns = [
     { field: "sno", header: "S.NO" },
     {
@@ -577,16 +579,16 @@ const AssectDocument = () => {
       body: (row) => row?.project?.name || "-",
     },
     {
-    field: "client",
-    header: "Client",
-    body: (row) => row?.createdBy?.name || "-",
-  },
+      field: "client",
+      header: "Client",
+      body: (row) => row?.createdBy?.name || "-",
+    },
 
-  {
-    field: "status",
-    header: "Status",
-    body: (row) =>  row?.status=="1"?"Active" :"Inactive" || "-",
-  },
+    {
+      field: "status",
+      header: "Status",
+      body: (row) => row?.status == "1" ? "Active" : "Inactive" || "-",
+    },
     // {
     //   field: "document",
     //   header: "Veiw Documnet",
@@ -651,13 +653,13 @@ const AssectDocument = () => {
             Dashboard
           </p>
           <p>{">"}</p>
-          <p className="text-sm text-blue-500">Assect Document</p>
+          <p className="text-sm text-blue-500">Asset Document</p>
         </div>
 
         <div className="flex justify-between mt-8">
           <div className="">
             <h1 className="text-2xl md:text-3xl font-semibold">
-              Assect Document
+              Asset Document
             </h1>
           </div>
 
@@ -724,9 +726,8 @@ const AssectDocument = () => {
             <div className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
               <div className="absolute inset-0 " onClick={closeAddModal} />
               <div
-                className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg transform transition-transform duration-500 ease-in-out ${
-                  isAnimating ? "translate-x-0" : "translate-x-full"
-                }`}
+                className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                  }`}
               >
                 <div
                   className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
@@ -756,7 +757,7 @@ const AssectDocument = () => {
                       )}
                     </div>
                   </div>
-                    <div className="mt-5 flex justify-between items-center">
+                  <div className="mt-5 flex justify-between items-center">
                     <label className="block text-md font-medium mb-2">
                       Title <span className="text-red-500">*</span>
                     </label>
@@ -766,7 +767,7 @@ const AssectDocument = () => {
                         value={formTitle}
                         onChange={(e) => setFormTitle(e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      
+
                       />
                       {errors.title && (
                         <p className="text-red-500 text-sm">{errors.title}</p>
@@ -881,12 +882,12 @@ const AssectDocument = () => {
                     </div>
                   </div>
                   <div className="mt-5 flex flex-wrap md:flex-wrap justify-between items-center">
-                    
-                      <label className="block text-md font-medium mb-2 mt-3">
-                       Status <span className="text-red-500">*</span>
-                      </label>
-                   
-                    <div  className="w-[60%] md:w-[70%] rounded-lg">
+
+                    <label className="block text-md font-medium mb-2 mt-3">
+                      Status <span className="text-red-500">*</span>
+                    </label>
+
+                    <div className="w-[60%] md:w-[70%] rounded-lg">
                       <select
                         className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 p-2"
                         value={formStatus}
@@ -902,9 +903,9 @@ const AssectDocument = () => {
                         </p>
                       )}
                     </div>
-                    
+
                   </div>
-                   
+
 
                   <div className="mt-8 flex justify-between">
                     <div>
@@ -914,7 +915,7 @@ const AssectDocument = () => {
                     </div>
                     <div className="w-[60%] md:w-[70%] rounded-lg">
                       <input type="file" multiple onChange={handleFileChange} />
-                     
+
                       {uploadedFiles.length > 0 && (
                         <div className="mt-4 space-y-2">
                           {uploadedFiles.map((file, index) => (
@@ -969,9 +970,8 @@ const AssectDocument = () => {
                 }}
               />
               <div
-                className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[53vw] bg-white shadow-lg transform transition-transform duration-500 ease-in-out ${
-                  isAnimating ? "translate-x-0" : "translate-x-full"
-                }`}
+                className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[53vw] bg-white shadow-lg transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                  }`}
               >
                 <div
                   className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
@@ -985,7 +985,7 @@ const AssectDocument = () => {
                 </div>
 
                 <div className="p-5 px-10">
-                  <p className="text-2xl md:text-3xl font-medium">Assect Document - Edit</p>
+                  <p className="text-2xl md:text-3xl font-medium">Asset Document - Edit</p>
 
                   <div className="mt-5 flex justify-between items-center">
                     <label className="block text-md font-medium mb-2">
@@ -1003,7 +1003,7 @@ const AssectDocument = () => {
                       )}
                     </div>
                   </div>
-                   <div className="mt-5 flex justify-between items-center">
+                  <div className="mt-5 flex justify-between items-center">
                     <label className="block text-md font-medium mb-2">
                       Title <span className="text-red-500">*</span>
                     </label>
@@ -1013,7 +1013,7 @@ const AssectDocument = () => {
                         value={formTitle}
                         onChange={(e) => setFormTitle(e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      
+
                       />
                       {errors.title && (
                         <p className="text-red-500 text-sm">{errors.title}</p>
@@ -1111,12 +1111,12 @@ const AssectDocument = () => {
                     </div>
                   </div>
                   <div className="mt-5 flex flex-wrap md:flex-wrap justify-between items-center">
-                    
-                      <label className="block text-md font-medium mb-2 mt-3">
-                       Status <span className="text-red-500">*</span>
-                      </label>
-                   
-                    <div  className="w-[60%] md:w-[70%] rounded-lg">
+
+                    <label className="block text-md font-medium mb-2 mt-3">
+                      Status <span className="text-red-500">*</span>
+                    </label>
+
+                    <div className="w-[60%] md:w-[70%] rounded-lg">
                       <select
                         className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 p-2"
                         value={formStatus}
@@ -1132,7 +1132,7 @@ const AssectDocument = () => {
                         </p>
                       )}
                     </div>
-                    
+
                   </div>
 
                   <div className="mt-8 flex justify-between">
@@ -1202,9 +1202,8 @@ const AssectDocument = () => {
                 }}
               />
               <div
-                className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg transform transition-transform duration-500 ease-in-out ${
-                  isAnimating ? "translate-x-0" : "translate-x-full"
-                }`}
+                className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                  }`}
               >
                 <div
                   className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
@@ -1218,9 +1217,12 @@ const AssectDocument = () => {
                 </div>
 
                 <div className="p-6 md:p-8 bg-white px-10 ">
-                  <h2 className="text-2xl md:text-3xl font-semibold text-gray-800  pb-3 mb-6">
-                    Document - View
+                  <h2 className="flex justify-between text-2xl md:text-3xl font-semibold text-gray-800 pb-3 mb-6">
+                    Document Overview
+                    <span className="text-sm font-medium flex flex-col">Created by: {viewData?.createdBy?.name || "N/A"} {viewData?.updatedBy?.name != "Unknown" && <span> Last Updated by: {viewData?.updatedBy?.name || "N/A"}</span>}</span>
+                    
                   </h2>
+
 
                   <div className="space-y-4 text-gray-700">
                     <div className="grid grid-cols-1 gap-y-5">
@@ -1228,9 +1230,9 @@ const AssectDocument = () => {
                         <span className="font-medium w-32 text-gray-900">
                           Date:
                         </span>
-                        <span>{formatDateTime(viewData?.date  || "") || "-"}</span>
+                        <span>{formatDateTime(viewData?.date || "") || "-"}</span>
                       </div>
-                      
+
                       <div className="flex justify-between">
                         <span className="font-medium w-32 text-gray-900">
                           Title:
@@ -1252,7 +1254,7 @@ const AssectDocument = () => {
                         <span>{viewData?.project?.name || "-"}</span>
                       </div>
 
-                     
+
 
                       <div className="flex justify-between">
                         <span className="font-medium w-32 text-gray-900">
@@ -1290,6 +1292,8 @@ const AssectDocument = () => {
                         }}
                       />
                     </div>
+
+
                   </div>
 
                   {/* Footer Button */}

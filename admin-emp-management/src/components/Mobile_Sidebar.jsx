@@ -7,7 +7,7 @@ import {
 import medics_logo from "/Aryu.svg";
 import { IoPeopleOutline } from "react-icons/io5";
 import { MdLogout } from "react-icons/md";
-import { useState, useEffect } from "react";
+import { useState, useEffect ,useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoClose } from "react-icons/io5";
@@ -115,10 +115,90 @@ const Mobile_Sidebar = () => {
 
   const [openSection, setOpenSection] = useState(null);
 
+  const [openMenu, setOpenMenu] = useState(false);
+
+ const menuRef = useRef(null);
+
+  // CLOSE MENU ON OUTSIDE CLICK
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setOpenMenu(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <div>
-      <div className="flex md:my-3 justify-start items-center w-full md:hidden">
-        <GiHamburgerMenu className="text-xl" onClick={onClickHamburgerIcon} />
+      <div className="flex md:my-3 justify-start items-center w-full md:hidden ">
+ <div className="flex justify-between items-center w-full bg-white px-4 py-2 shadow-md">
+
+  {/* LEFT - Hamburger */}
+  <GiHamburgerMenu
+    className="text-gray-700 text-2xl cursor-pointer"
+    onClick={onClickHamburgerIcon}
+  />
+
+  {/* CENTER - LOGO */}
+  <img
+    src={medics_logo}
+    alt="Medics"
+    className="h-10 object-contain md:h-12"
+    onClick={() => onClickSidebarMenu("Dashboard")}
+  />
+
+  {/* RIGHT - Profile Circle */}
+  <div className="relative" ref={menuRef}>
+   <img
+  src="https://i.pravatar.cc/150?img=12"
+  alt="profile"
+  className="w-10 h-10 rounded-full border border-gray-300 cursor-pointer object-cover"
+  onClick={() => setOpenMenu(!openMenu)}
+/>
+
+
+    {/* Dropdown Menu */}
+    {openMenu && (
+  <div className="absolute right-1 mt-3 w-44 bg-white shadow-lg rounded-xl py-3 z-50 animate-fadeIn border border-gray-100">
+
+    {/* Settings */}
+    <div
+      onClick={() => onClickSidebarMenu("settings")}
+      className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-blue-600 cursor-pointer rounded-lg transition"
+    >
+      <IoSettings className="text-lg" />
+      <span className="text-sm font-medium">Settings</span>
+    </div>
+
+    {/* Divider */}
+    <div className="border-t my-2"></div>
+
+    {/* Logout Button */}
+    <div
+      onClick={() => onClickSidebarMenu("/")}
+      className="flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer 
+                 bg-red-50 text-red-600 hover:bg-red-100 transition"
+    >
+      {buttonLoading ? (
+        <Button_Loader />
+      ) : (
+        <>
+          <MdLogout className="text-lg" />
+          <span className="text-sm font-medium">Logout</span>
+        </>
+      )}
+    </div>
+
+  </div>
+)}
+
+  </div>
+
+</div>
+
       </div>
 
       {hamburgerIconClicked && (
@@ -166,6 +246,16 @@ const Mobile_Sidebar = () => {
                         <p>Dashboard</p>
                       </div>
                       {/* onboarding */}
+
+                        <div
+                        onClick={() => onClickSidebarMenu("links")}
+                        className="flex items-center w-full hover:bg-blue-100 hover:text-[#4F46E5] px-3 py-2 rounded-lg gap-2 text-gray-500 text-sm font-medium cursor-pointer"
+                      >
+                        <div className="flex items-center justify-center h-5 w-5">
+                          <FaLinkSlash />
+                        </div>
+                        <p>Links</p>
+                      </div>
                       <div
                         onClick={() =>
                           setOpenSection(
@@ -715,15 +805,7 @@ const Mobile_Sidebar = () => {
                         <p>Asset Management</p>
                       </div>
                       {/* links */}
-                      <div
-                        onClick={() => onClickSidebarMenu("links")}
-                        className="flex items-center w-full hover:bg-blue-100 hover:text-[#4F46E5] px-3 py-2 rounded-lg gap-2 text-gray-500 text-sm font-medium cursor-pointer"
-                      >
-                        <div className="flex items-center justify-center h-5 w-5">
-                          <FaLinkSlash />
-                        </div>
-                        <p>Links</p>
-                      </div>
+                    
                       {/* holiday */}
                       <div
                         onClick={() => onClickSidebarMenu("Holidays")}
