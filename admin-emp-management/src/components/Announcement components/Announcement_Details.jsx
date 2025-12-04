@@ -20,9 +20,13 @@ import {
   IoIosArrowUp,
 } from "react-icons/io";
 import Loader from "../Loader";
+import { useDateUtils } from "../../hooks/useDateUtils";
+import { Editor } from "primereact/editor";
 
 
 const Announcement_Details = () => {
+      const formDateTime = useDateUtils();
+  
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const storedDetatis = localStorage.getItem("hrmsuser");
@@ -63,6 +67,10 @@ const Announcement_Details = () => {
     }
   };
 
+     const getTodayDate = () => {
+        return new Date().toISOString().split("T")[0];   // "2025-11-27"
+    };
+
   const openAddModal = () => {
     setIsAddModalOpen(true);
     setTimeout(() => setIsAnimating(true), 10);
@@ -81,11 +89,11 @@ const Announcement_Details = () => {
   };
 
   const [display, setDisplay] = useState("");
-  const [date, setDate] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
+  const [date, setDate] = useState(getTodayDate());
+  const [expiryDate, setExpiryDate] = useState(getTodayDate());
   const [message, setMessage] = useState("");
   const [visible, setVisible] = useState("");
-  const [status, setStatus] = useState("");
+  const [displayStatus, setDisplayStatus] = useState("");
 
   // const canAccessAdminAdd = visible === "Both" || visible === "Admin";
   // const canAccessEmployeeAdd = visible === "Both" || visible === "Employee";
@@ -101,7 +109,7 @@ const Announcement_Details = () => {
         expiryDate: expiryDate,
         message: message,
         visible: visible,
-        status: status,
+        displayStatus: displayStatus,
 
       };
 
@@ -117,7 +125,7 @@ const Announcement_Details = () => {
       setExpiryDate("");
       setMessage("");
       setVisible("");
-      setStatus("");
+      setDisplayStatus("");
       setErrors("");
       fetchAnnounce();
 
@@ -138,7 +146,7 @@ const Announcement_Details = () => {
   const [expiryDateEdit, setExpiryDateEdit] = useState("");
   const [messageEdit, setMessageEdit] = useState("");
   const [visibleEdit, setVisibleEdit] = useState("employee");
-  const [statusEdit, setStatusEdit] = useState("");
+  const [displayStatusEdit, setDisplayStatusEdit] = useState("");
   const [editId, setEditid] = useState("");
 
 
@@ -150,11 +158,11 @@ const Announcement_Details = () => {
 
     setEditid(row._id);
     setDisplayEdit(row._display);
-    setDateEdit(row._date);
-    setExpiryDateEdit(row._expiryDate);
-    setMessageEdit(row._message);
-    setVisibleEdit(row._visible)
-    setStatusEdit(row.status);
+    setDateEdit(row.date);
+    setExpiryDateEdit(row.expiryDate);
+    setMessageEdit(row.message);
+    setVisibleEdit(row.visible)
+    setDisplayStatusEdit(row.displayStatus);
     setIsEditModalOpen(true);
     setTimeout(() => setIsAnimating(true), 10);
   };
@@ -181,7 +189,7 @@ const Announcement_Details = () => {
     if (!visibleEdit.trim()) {
       newErrors.visible = "Visible is required.";
     }
-    if (!statusEdit) {
+    if (!displayStatusEdit) {
       newErrors.status = "Status is required.";
     }
 
@@ -196,7 +204,7 @@ const Announcement_Details = () => {
         expiryDate: expiryDateEdit,
         message: messageEdit,
         visible: visibleEdit,
-        status: statusEdit,
+        displayStatus: displayStatusEdit,
       };
 
       const response = await axios.put(
@@ -265,12 +273,13 @@ const Announcement_Details = () => {
     {
       title: "Date",
       data: "date",
+      render:(data)=> data?formDateTime(data):"-"
     },
 
     {
       title: "Expiry Date",
       data: "expiryDate",
-      defaultContent: "-",
+      render:(data)=> data?formDateTime(data):"-",
     },
 
     {
@@ -281,14 +290,14 @@ const Announcement_Details = () => {
 
     {
       title: "Status",
-      data: "status",
+      data: "displayStatus",
       render: (data, type, row) => {
         const textColor =
-          data === "1"
+          data === "1" || data === 1
             ? "text-green-600 border rounded-full border-green-600"
             : "text-red-600 border rounded-full border-red-600";
         return `<div class="${textColor}" style="display: inline-block; border: 1px solid ${textColor}; text-align: center; width:100px; font-size: 12px; font-weight: 500">
-                  ${data === "1" ? "ACTIVE" : "INACTIVE"}
+                  ${data === "1" || data === 1 ? "Active" : "InActive"}
                 </div>`;
       },
     },
@@ -424,14 +433,17 @@ const Announcement_Details = () => {
 
                   <div className="p-2 md:p-5">
                     <p className="text-2xl md:text-3xl font-medium">Announcement</p>
-                    <div className="mt-5 flex justify-between items-center">
+                    {/* <div className="mt-5 flex justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         Display <span className="text-red-500">*</span>
                       </label>
                       <div className="w-[60%] md:w-[50%]">
-                        <input
+                        <textarea
                           type="text"
-                          value={display}
+                          value={message}
+                          name="display"
+                          id="display"
+                          rows="4"
                           onChange={(e) => setDisplay(e.target.value)}
                           placeholder="Enter Your Name "
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -440,22 +452,22 @@ const Announcement_Details = () => {
                           <p className="text-red-500 text-sm mb-4">{errors.display}</p>
                         )}
                       </div>
-                    </div>
+                    </div> */}
 
                     <div className="mt-5 flex justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         Date <span className="text-red-500">*</span>
                       </label>
-                      <div className="w-[60%] md:w-[50%]">
+                      <div className="w-[60%] md:w-[70%] rounded-lg">
                         <input
                           type="date"
                           value={date}
                           onChange={(e) => setDate(e.target.value)}
-                          placeholder="Enter Your Name "
+                          
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        {errors.date && (
-                          <p className="text-red-500 text-sm mb-4">{errors.date}</p>
+                        {errors?.date && (
+                          <p className="text-red-500 text-sm mb-4">{errors?.date}</p>
                         )}
                       </div>
                     </div>
@@ -464,7 +476,7 @@ const Announcement_Details = () => {
                       <label className="block text-md font-medium mb-2">
                         Expiry Date <span className="text-red-500">*</span>
                       </label>
-                      <div className="w-[60%] md:w-[50%]">
+                      <div className="w-[60%] md:w-[70%] rounded-lg">
                         <input
                           type="date"
                           value={expiryDate}
@@ -478,12 +490,57 @@ const Announcement_Details = () => {
                       </div>
                     </div>
 
+                    {/* <div className="mt-5 flex justify-between items-center">
+                      <label className="block text-md font-medium mb-2">
+                        Message <span className="text-red-500">*</span>
+                      </label>
+                      <div className="w-[60%] md:w-[50%]">
+                        <textarea
+                          type="text"
+                          value={message}
+                          name="display"
+                          id="display"
+                          rows="4"
+                          onChange={(e) => setMessage(e.target.value)}
+                          placeholder="Enter Your Name "
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        {errors.message && (
+                          <p className="text-red-500 text-sm mb-4">{errors.message}</p>
+                        )}
+                      </div>
+                    </div> */}
+
+                    <div className="mt-8 flex justify-between">
+                                        <div>
+                                          <label className="block text-md font-medium mb-2 mt-3">
+                                            Message <span className="text-red-500">*</span>
+                                          </label>
+                                        </div>
+                                        <div className="w-[60%] md:w-[70%] rounded-lg">
+                                          <Editor
+                                            onTextChange={(e) => setMessage(e.htmlValue)}
+                                            style={{ height: "220px" }}
+                                            id="message"
+                                            name="message"
+                                            text={message}
+                                            className="w-full border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                          />
+                                          {errors.message && (
+                                            <p className="text-red-500 text-sm">
+                                              {errors.message}
+                                            </p>
+                                          )}
+                                        </div>
+                                      </div>
+
+
                     <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         Visible{" "}
                         <span className="text-red-500">*</span>
                       </label>
-                      <div className="w-[60%] md:w-[50%]">
+                      <div className="w-[60%] md:w-[70%] rounded-lg">
                         <div className="flex flex-wrap md:flex-nowrap items-center w-[50%] gap-5 mb-2 md:mb-4">
                           <label className="flex items-center gap-2 cursor-pointer">
                             <input
@@ -555,12 +612,12 @@ const Announcement_Details = () => {
                         </label>
 
                       </div>
-                      <div className="w-[60%] md:w-[50%]">
+                      <div className="w-[60%] md:w-[70%] rounded-lg">
                         <select
                           name="status"
                           id="status"
                           onChange={(e) => {
-                            setStatus(e.target.value);
+                            setDisplayStatus(e.target.value);
                             validateStatus(e.target.value); // Validate status dynamically
                           }}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -615,29 +672,13 @@ const Announcement_Details = () => {
 
                   <div className="p-2 md:p-5">
                     <p className="text-2xl md:text-3xl font-medium">Announcement Edit</p>
-                    <div className="mt-5 flex justify-between items-center">
-                      <label className="block text-md font-medium mb-2">
-                        Display <span className="text-red-500">*</span>
-                      </label>
-                      <div className="w-[60%] md:w-[50%]">
-                        <input
-                          type="text"
-                          value={displayEdit}
-                          onChange={(e) => setDisplayEdit(e.target.value)}
-                          placeholder="Enter Your Name "
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        {errors.display && (
-                          <p className="text-red-500 text-sm mb-4">{errors.display}</p>
-                        )}
-                      </div>
-                    </div>
+                
 
                     <div className="mt-5 flex justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         Date <span className="text-red-500">*</span>
                       </label>
-                      <div className="w-[60%] md:w-[50%]">
+                      <div className="w-[60%] md:w-[70%] rounded-lg">
                         <input
                           type="date"
                           value={dateEdit}
@@ -655,7 +696,7 @@ const Announcement_Details = () => {
                       <label className="block text-md font-medium mb-2">
                         Expiry Date <span className="text-red-500">*</span>
                       </label>
-                      <div className="w-[60%] md:w-[50%]">
+                      <div className="w-[60%] md:w-[70%] rounded-lg">
                         <input
                           type="date"
                           value={expiryDateEdit}
@@ -668,13 +709,57 @@ const Announcement_Details = () => {
                         )}
                       </div>
                     </div>
+{/* 
+                        <div className="mt-5 flex justify-between items-center">
+                      <label className="block text-md font-medium mb-2">
+                        Message <span className="text-red-500">*</span>
+                      </label>
+                      <div className="w-[60%] md:w-[50%]">
+                        <textarea
+                          type="text"
+                          name="message"
+                          id="message"
+                          rows="4"
+                          value={messageEdit}
+                          onChange={(e) => setMessageEdit(e.target.value)}
+                          placeholder="Enter Your detais "
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        {errors.message && (
+                          <p className="text-red-500 text-sm mb-4">{errors.message}</p>
+                        )}
+                      </div>
+                    </div> */}
+
+                    <div className="mt-8 flex justify-between">
+                                        <div>
+                                          <label className="block text-md font-medium mb-2 mt-3">
+                                            Message <span className="text-red-500">*</span>
+                                          </label>
+                                        </div>
+                                        <div className="w-[60%] md:w-[70%] rounded-lg">
+                                          <Editor
+                                            onTextChange={(e) => setMessageEdit(e.htmlValue)}
+                                            style={{ height: "220px" }}
+                                            id="message"
+                                            name="message"
+                                            text={messageEdit}
+                                            className="w-full border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                          />
+                                          {errors.messageEdit && (
+                                            <p className="text-red-500 text-sm">
+                                              {errors.messageEdit}
+                                            </p>
+                                          )}
+                                        </div>
+                                      </div>
 
                     <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         Visible{" "}
                         <span className="text-red-500">*</span>
                       </label>
-                      <div className="w-[60%] md:w-[50%]">
+                      <div className="w-[60%] md:w-[70%] rounded-lg">
                         <div className="flex flex-wrap md:flex-nowrap items-center w-[50%] gap-5 mb-2 md:mb-4">
                           <label className="flex items-center gap-2 cursor-pointer">
                             <input
@@ -747,13 +832,13 @@ const Announcement_Details = () => {
                         </label>
 
                       </div>
-                      <div className="w-[60%] md:w-[50%]">
+                      <div className="w-[60%] md:w-[70%] rounded-lg">
                         <select
                           name="status"
                           id="status"
-                          value={statusEdit}
+                          value={displayStatusEdit}
                           onChange={(e) => {
-                            setStatusEdit(e.target.value);
+                            setDisplayStatusEdit(e.target.value);
                           }}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
