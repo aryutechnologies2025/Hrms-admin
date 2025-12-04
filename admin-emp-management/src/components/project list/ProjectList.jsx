@@ -25,6 +25,9 @@ import { Dropdown } from "primereact/dropdown";
 import { useNavigate } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
 
+import { FaFilePen } from "react-icons/fa6";
+
+
 const ProjectList = () => {
   const user = JSON.parse(localStorage.getItem("hrmsuser"));
 
@@ -594,6 +597,60 @@ const ProjectList = () => {
     //   data: "created_by",
     //   render: (data, type, row) => row.createdByAdmin.email,
     // },
+
+      {
+      title: "Notes",
+      data: null,
+      render: (data, type, row) => {
+        const id = `actions-${row.sno || Math.random()}`;
+        setTimeout(() => {
+          const container = document.getElementById(id);
+          if (container && !container.hasChildNodes()) {
+            ReactDOM.render(
+              <div
+                className="action-container"
+                style={{
+                  display: "flex",
+                  gap: "15px",
+                  alignItems: "flex-end",
+                  justifyContent: "center",
+                }}
+              >
+               
+                <div
+                  className="modula-icon-edit  flex gap-2"
+                  style={{
+                    color: "#000",
+                  }}
+                >
+                  <FaFilePen
+                    className="cursor-pointer"
+                          onClick={() => handleEditClick(row)}
+
+                  />
+                  {/* <MdOutlineDeleteOutline
+                    className="text-red-600 text-xl cursor-pointer"
+                    onClick={() => {
+                      deleteProject(row._id);
+                    }}
+                  /> */}
+                </div>
+
+                {/* <div className="modula-icon-del" style={{
+                  color: "red"
+                }}>
+                  <RiDeleteBin6Line
+                    onClick={() => handleDelete(row.id)}
+                  />
+                </div> */}
+              </div>,
+              container
+            );
+          }
+        }, 0);
+        return `<div id="${id}"></div>`;
+      },
+    },
     {
       title: "Status",
       data: "status",
@@ -800,6 +857,17 @@ const ProjectList = () => {
     { label: "INR (₹)", value: "INR" },
   ];
 
+
+
+  const handleEditClick = (row) => {
+    console.log("row",row)
+    // return
+    // navigate(`/project-note-details/${row._id}`);
+     navigate(`/project-note-details/${row._id}`, {
+    state: { row },   
+  });
+  };
+
   return (
     <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
       {loading ? (
@@ -809,9 +877,12 @@ const ProjectList = () => {
           <div>
             
 
-            <div className="flex justify-between gap-2 items-center cursor-pointer">
+            <div className=" cursor-pointer">
               <Mobile_Sidebar />
-              <div className="flex gap-1 items-center">
+             
+            </div>
+
+             <div className="flex justify-end gap-1 mt-3 md:mt-0 items-center">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
@@ -823,7 +894,6 @@ const ProjectList = () => {
 
               <p className="text-sm text-blue-500">Project List</p>
               </div>
-            </div>
 
             {/* Add Button */}
             <div className="flex justify-between mt-2 md:mt-4 mb-1 md:mb-3">

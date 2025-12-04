@@ -626,7 +626,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
 
 
     {
-      path: "/client-note-details",
+      path: "/project-note-details/:_id",
       permissionTitle: "Clients",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
