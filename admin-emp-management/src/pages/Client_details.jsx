@@ -104,10 +104,10 @@ const Client_details = () => {
     try {
       const formData = {
         client_name: clientName,
+        source: source,
         company_name: companyName,
         email: email,
         phone_number: phoneNumber,
-        source: source,
         address: address,
         contact_person: contactPerson,
         password: password,
@@ -131,10 +131,10 @@ const Client_details = () => {
         timer: 1500,
       });
       setClientName("");
+      setSource("");
       setCompanyName("");
       setEmail("");
       setPhoneNumber("");
-      setSource("");
       setAddress("");
       setNotes("");
       setContactPerson("");
@@ -162,10 +162,10 @@ const Client_details = () => {
 
   //
   const [clientNameedit, setClientNameedit] = useState("");
+  const [sourceEdit, setSourceEdit] = useState("");
   const [companyNameedit, setCompanyNameedit] = useState("");
   const [emailedit, setEmailedit] = useState("");
   const [phoneNumberedit, setPhoneNumberedit] = useState("");
-  const [sourceedit, setSourceedit] = useState("");
   const [addressedit, setAddressedit] = useState("");
   const [notesedit, setNotesedit] = useState("");
   const [contactPersonedit, setContactPersonedit] = useState("");
@@ -187,7 +187,7 @@ const Client_details = () => {
     setCompanyNameedit(row.company_name || "");
     setEmailedit(row.email || "");
     setPhoneNumberedit(row.phone_number || "");
-    setSourceedit(row.source || "");
+    setSourceEdit(row.source || "");
     setAddressedit(row.address || "");
     setNotesedit(row.notes || "");
     setContactPersonedit(row.contact_person || "");
@@ -223,15 +223,15 @@ const Client_details = () => {
     setErrors("");
   };
 
-  const handlesubmitedit = async (e) => {
+  const handlesubmitEdit = async (e) => {
     e.preventDefault();
     try {
       const formData = {
         client_name: clientNameedit,
+        source: sourceEdit,
         company_name: companyNameedit,
         email: emailedit,
         phone_number: phoneNumberedit,
-        source: sourceedit,
         address: addressedit,
         contact_person: contactPersonedit,
         contact_person_role: contactPersonRoleedit,
@@ -294,10 +294,12 @@ const Client_details = () => {
 
     if (result.isConfirmed) {
       try {
-        const res = await axios.post(
+        const res = await axios.delete(
           `${API_URL}/api/client/delete-clientdetails/${id}`
         );
+
         Swal.fire("Deleted!", "The role has been deleted.", "success");
+        fetchProject();
         console.log("res", res);
         setClientdetails((prev) => prev.filter((item) => item._id !== id));
       } catch (err) {
@@ -507,6 +509,8 @@ const Client_details = () => {
         {/* Add Modal */}
         {isAddModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            {/* Overlay */}
+                <div className="absolute inset-0 " onClick={closeAddModal}></div>
             <div className="bg-white p-5 rounded-xl w-[500px] h-[380px] md:w-[700px] md:h-[580px] overflow-y-auto px-8 py-6">
               <div className="flex flex-wrap md:flex-nowrap justify-between items-center gap-2 ">
                 <h2 className="text-xl font-semibold mb-4">Add Client</h2>
@@ -526,7 +530,7 @@ const Client_details = () => {
                 </div>
               </div>
 
-              {/* name and company */}
+              {/* name and source */}
               <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-2 md:mt-0">
                 <div className="w-full">
                   <label
@@ -547,6 +551,33 @@ const Client_details = () => {
                     </p>
                   )}
                 </div>
+
+                {/* source */}
+              
+              <div className="w-full">
+                  <label
+                    htmlFor="roleName"
+                    className="block text-sm font-medium mb-2"
+                  >
+                    Source<span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={source}
+                    onChange={(e) => setSource(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  {errors.source && (
+                    <p className="text-red-500 text-sm mb-4">
+                      {errors.source}
+                    </p>
+                  )}
+                </div>
+</div>
+
+              {/* company name and gst number */}
+              <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-2 md:mt-3">
+
                 <div className="w-full">
                   <label
                     htmlFor="roleName"
@@ -566,7 +597,28 @@ const Client_details = () => {
                     </p>
                   )} */}
                 </div>
+
+                 <div className="w-full">
+                  <label
+                    htmlFor="roleName"
+                    className="block text-sm font-medium mb-2"
+                  >
+                    GST Number
+                  </label>
+                  <input
+                    type="text"
+                    value={gst}
+                    onChange={(e) => setgst(e.target.value)}
+                    className="w-full px-3 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  {/* {errors.phone_number && (
+                    <p className="text-red-500 text-sm mb-4">
+                      {errors.phone_number}
+                    </p>
+                  )} */}
+                </div>
               </div>
+              
               
               {/* email phonenumber */}
 
@@ -608,6 +660,7 @@ const Client_details = () => {
                   )}
                 </div>
               </div>
+              {/* password */}
               <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3">
                 <div className="flex flex-col gap-2 w-full relative ">
                   <label
@@ -645,25 +698,7 @@ const Client_details = () => {
                     </p>
                   )}
                 </div>
-                <div className="w-full">
-                  <label
-                    htmlFor="roleName"
-                    className="block text-sm font-medium mb-2"
-                  >
-                    GST Number
-                  </label>
-                  <input
-                    type="text"
-                    value={gst}
-                    onChange={(e) => setgst(e.target.value)}
-                    className="w-full px-3 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {/* {errors.phone_number && (
-                    <p className="text-red-500 text-sm mb-4">
-                      {errors.phone_number}
-                    </p>
-                  )} */}
-                </div>
+               
               </div>
 
               {/* contact person and coantact person */}
@@ -784,27 +819,7 @@ const Client_details = () => {
               )} */}
               
               <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3">
-                {/* source */}
-              
-              <div className="w-full">
-                  <label
-                    htmlFor="roleName"
-                    className="block text-sm font-medium mb-2"
-                  >
-                    Source<span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={source}
-                    onChange={(e) => setSource(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {errors.source && (
-                    <p className="text-red-500 text-sm mb-4">
-                      {errors.source}
-                    </p>
-                  )}
-                </div>
+                
                 {/* status */}
                 <div className="w-full">
                   <p className="block text-sm font-medium mb-2 ">
@@ -849,14 +864,14 @@ const Client_details = () => {
                   </button>
                   <button
                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 md:px-5 py-2 font-semibold rounded-full"
-                    onClick={handlesubmitedit}
+                    onClick={handlesubmitEdit}
                   >
                     Save
                   </button>
                 </div>
               </div>
 
-              {/* name and company */}
+              {/* name and source */}
               <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-2 md:mt-0">
                 <div className="w-full">
                   <label
@@ -879,6 +894,30 @@ const Client_details = () => {
                 </div>
                 <div className="w-full">
                   <label
+                    htmlFor="source"
+                    className="block text-sm font-medium mb-2"
+                  >
+                    Source <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={sourceEdit}
+                    onChange={(e) => setSourceEdit(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  {errors.source && (
+                    <p className="text-red-500 text-sm mb-4">
+                      {errors.source}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* company name and gst number */}
+              <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3">
+
+                <div className="w-full">
+                  <label
                     htmlFor="roleName"
                     className="block text-sm font-medium mb-2"
                   >
@@ -893,6 +932,25 @@ const Client_details = () => {
                   {/* {errors.contact_person && (
                     <p className="text-red-500 text-sm mb-4">
                       {errors.contact_person}
+                    </p>
+                  )} */}
+                </div>
+                                <div className="w-full">
+                  <label
+                    htmlFor="roleName"
+                    className="block text-sm font-medium mb-2"
+                  >
+                    GST Number
+                  </label>
+                  <input
+                    type="text"
+                    value={gstedit}
+                    onChange={(e) => setgstedit(e.target.value)}
+                    className="w-full px-3 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  {/* {errors.phone_number && (
+                    <p className="text-red-500 text-sm mb-4">
+                      {errors.phone_number}
                     </p>
                   )} */}
                 </div>
@@ -1074,25 +1132,7 @@ const Client_details = () => {
                   )}
                 </div>
 
-                <div className="w-full">
-                  <label
-                    htmlFor="roleName"
-                    className="block text-sm font-medium mb-2"
-                  >
-                    GST Number
-                  </label>
-                  <input
-                    type="text"
-                    value={gstedit}
-                    onChange={(e) => setgstedit(e.target.value)}
-                    className="w-full px-3 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {/* {errors.phone_number && (
-                    <p className="text-red-500 text-sm mb-4">
-                      {errors.phone_number}
-                    </p>
-                  )} */}
-                </div>
+
                 {/* {error.status && <p className="error">{error.status}</p>} */}
               </div>
               <div className="flex justify-between gap-5 mt-3">
