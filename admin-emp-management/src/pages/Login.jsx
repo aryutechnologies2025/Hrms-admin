@@ -114,14 +114,13 @@ const activeClass = "underline font-bold text-blue-600";
 const inactiveClass = "hover:underline";
 
   return (
-   <div className="min-h-screen bg-[#F3F4F6] flex flex-col justify-between">
+  <div className="min-h-screen bg-[#F3F4F6] flex flex-col justify-between">
 
-  {/* Top Navigation */}
+    <div className="px-3">
 
-  <div className="flex justify-center md:justify-end gap-3 md:gap-6 px-1 md:px-5 md:pt-2 text-sm md:text-lg font-semibold text-[#0050AA]"> 
-    {/* <Link to="/client" className="hover:underline">Client Login</Link> */}
-    {/* <Link to="/client-user" className="hover:underline">Client User Login</Link> */}
-     <nav className="flex text-center gap-4 p-2">
+      {/* Top Navigation */}
+      <div className="flex justify-center md:justify-end gap-4 py-3 text-sm md:text-lg font-semibold text-[#0050AA]">
+        <nav className="flex gap-4">
           <NavLink
             to="/"
             className={({ isActive }) =>
@@ -143,103 +142,91 @@ const inactiveClass = "hover:underline";
           <NavLink
             to="/client-user"
             className={({ isActive }) =>
-             isActive ? activeClass : inactiveClass
+              isActive ? activeClass : inactiveClass
             }
           >
-            Client User 
+            Client User
           </NavLink>
         </nav>
-  </div>
-
-  {/* Logo */}
-  <div>
-  <div className="flex justify-center p-2">
-    <img src={aryu_logo} alt="Logo" className="w-20" />
-  </div>
-  <p className='text-center text-lg md:text-xl p-2 font-semibold text-[#0050AA]'>ARYU PORTAL</p>
-  {/* <div className="flex justify-end gap-6 px-5 md:pt-2 text-sm md:text-md font-semibold text-[#0050AA]">
-    <Link to="/client" className="underline">Client Login</Link>
-  </div> */}
-
-
-  {/* Main Content */}
-  <div className="flex md:flex-1 items-center justify-center px-4">
-    <div className="flex w-full max-w-6xl bg-white shadow-xl rounded-3xl overflow-hidden">
-
-      {/* Left Section (Form) */}
-      <div className="flex-1 flex flex-col items-center justify-center p-5 md:p-10">
-        <h1 className="text-[#0050aa] font-semibold text-xl md:text-4xl mb-2 md:mb-6">
-           ADMIN LOGIN
-        </h1>
-
-        {/* Username Field */}
-        <div className="w-full max-w-sm flex items-center gap-3 bg-[#F8F9FB] px-3 md:px-5 py-2 md:py-4 rounded-xl shadow-sm border border-gray-200">
-          <LuUser className="text-2xl text-gray-500" size={20} />
-          <input
-            type="text"
-            placeholder="Username"
-            name="email"
-            id="email"
-            onChange={handleInputChange}
-            className="bg-transparent w-full outline-none text-black placeholder-gray-500"
-            onKeyUp={handleKeyUp}
-          />
-        </div>
-        {error?.email && (
-          <p className="text-red-500 text-sm mt-1">{error.email}</p>
-        )}
-
-        {/* Password Field */}
-        <div className="relative w-full max-w-sm flex items-center gap-3 bg-[#F8F9FB] px-3 md:px-5 py-2 md:py-4 mt-3 rounded-xl shadow-sm border border-gray-200">
-          <SlLock className="text-2xl text-gray-500" size={20} />
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            name="password"
-            id="password"
-            onChange={handleInputChange}
-            className="bg-transparent w-full outline-none text-black placeholder-gray-500"
-            onKeyUp={handleKeyUp}
-          />
-          <span
-            onClick={togglePasswordVisibility}
-            className="absolute right-4 cursor-pointer text-gray-600"
-          >
-            {showPassword ? (
-              <FaEye className="text-xl" />
-            ) : (
-              <FaEyeSlash className="text-xl" />
-            )}
-          </span>
-        </div>
-
-        {error && (
-          <p className="text-red-500 text-sm mt-1">{error.message}</p>
-        )}
-
-        {/* Login Button */}
-        <button
-          onClick={onCLickLogin}
-          className="mt-3 bg-gradient-to-r from-[#004faac3] to-[#0050aa] px-10 py-3 rounded-full text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
-        >
-          Login
-        </button>
       </div>
+      </div>
+      {/* Logo Section */}
+      <div className="items-center ">
+      
+      <div className="flex flex-col items-center mb-10 md:mb-0">
+        <img src={aryu_logo} alt="aryu logo" className="w-20 mb-1" />
+        <p className="text-lg md:text-xl font-semibold text-[#0050AA]">
+          ARYU PORTAL
+        </p>
+      </div>
+      
 
-      {/* Right Section (Image) */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[#EEF3FF] items-center justify-center">
-        <img src={login_image} alt="Login Illustration" className="w-[480px] drop-shadow-lg" />
+      {/* Login Box */}
+     
+      <div className="flex justify-between ">
+        <div className="w-full max-w-lg bg-white shadow-xl text-center rounded-3xl p-4 md:p-10">
+          <h1 className="text-[#0050aa] text-xl md:text-3xl text-center font-semibold mb-6">
+            ADMIN LOGIN
+          </h1>
+
+          {/* Username */}
+          <div className="w-full flex items-center gap-3 bg-[#F8F9FB] px-4 py-3 rounded-xl shadow-sm border">
+            <LuUser className="text-xl text-gray-500" />
+            <input
+              type="text"
+              placeholder="Username"
+              name="email"
+              onChange={handleInputChange}
+              onKeyUp={handleKeyUp}
+              className="bg-transparent w-full outline-none"
+            />
+          </div>
+          {error?.email && (
+            <p className="text-red-500 text-sm mt-1">{error.email}</p>
+          )}
+
+          {/* Password */}
+          <div className="relative w-full flex items-center gap-3 bg-[#F8F9FB] px-4 py-3 rounded-xl shadow-sm border mt-4">
+            <SlLock className="text-xl text-gray-500" />
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              name="password"
+              onChange={handleInputChange}
+              onKeyUp={handleKeyUp}
+              className="bg-transparent w-full outline-none"
+            />
+
+            <span
+              className="absolute right-4 cursor-pointer text-gray-600"
+              onClick={togglePasswordVisibility}
+            >
+              {showPassword ? <FaEye /> : <FaEyeSlash />}
+            </span>
+          </div>
+
+          {error?.message && (
+            <p className="text-red-500 text-sm mt-1">{error.message}</p>
+          )}
+
+          {/* Login Button */}
+          <button
+            onClick={onCLickLogin}
+            className="mt-3 bg-gradient-to-r from-[#004faac3] to-[#0050aa] px-10 py-3 rounded-full text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+          >
+            Login
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-  </div>
 
-  
-  <div><Footer /></div>
-  
-</div>
+    <div className="mt-3">
+      <Footer />
+    </div>
 
-  );
+  </div>
+);
+
 };
 
 export default Login;
