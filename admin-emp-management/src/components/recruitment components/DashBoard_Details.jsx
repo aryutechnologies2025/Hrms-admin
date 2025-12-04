@@ -37,10 +37,12 @@ const DashBoard_Details = () => {
       ) : (
         <>
           <div>
-            <Mobile_Sidebar />
+            
 
             {/* Breadcrumb */}
-            <div className="flex items-center gap-2 text-sm mb-3">
+            <div className="flex justify-between items-center gap-2 text-sm mb-2 ">
+              <Mobile_Sidebar />
+              <div className="flex items-center gap-1 ">
               <p
                 className="text-gray-500 cursor-pointer hover:text-gray-700"
                 onClick={() => navigate("/dashboard-Recruitment")}
@@ -49,6 +51,7 @@ const DashBoard_Details = () => {
               </p>
               <span className="text-gray-400">›</span>
               <p className="text-gray-700 font-medium">Details</p>
+              </div>
             </div>
 
             {/* Header */}

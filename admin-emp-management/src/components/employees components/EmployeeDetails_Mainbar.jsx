@@ -154,11 +154,13 @@ const EmployeeDetails_Mainbar = () => {
     : `https://${employee?.linkedIn}`;
 
   return (
-    <div className="w-screen min-h-screen bg-gray-100 px-3 md:px-5 py-2 md:py-10">
-      <Mobile_Sidebar />
+    <div className="w-screen min-h-screen bg-gray-100 px-3 md:px-5 py-2 md:py-5">
+      
 
       {/* breadcrumb */}
-      <div className="flex gap-2  text-sm items-center">
+      <div className="flex justify-between gap-2 text-sm items-center">
+        <Mobile_Sidebar />
+        <div className="flex gap-2 items-center">
         <p
           onClick={() => navigate("/employees")}
           className=" text-gray-500 cursor-pointer "
@@ -167,7 +169,8 @@ const EmployeeDetails_Mainbar = () => {
         </p>
         <p>{">"}</p>
         <p className=" text-blue-500 ">Employee Details</p>
-        <p>{">"}</p>
+        {/* <p>{">"}</p> */}
+        </div>
       </div>
       <ToastContainer />
       <div className="flex flex-wrap md:flex-nowrap w-full sm:justify-between md:justify-end gap-3">
@@ -226,7 +229,7 @@ const EmployeeDetails_Mainbar = () => {
               },
             })
           }
-          className="text-sm bg-gray-200 hover:bg-gray-300 px-5 py-2 mt-2 md:mt-0 rounded-3xl"
+          className="text-sm bg-gray-600 hover:bg-gray-300 text-white px-5 py-2 mt-2 md:mt-0 rounded-3xl"
         >
           Back
         </button>

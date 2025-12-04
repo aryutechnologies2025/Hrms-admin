@@ -23,9 +23,11 @@ import Loader from "../Loader";
 import { Dropdown } from "primereact/dropdown";
 import { IoClose } from "react-icons/io5";
 import { AiFillDelete } from "react-icons/ai";
+import { useDateUtils } from "../../hooks/useDateUtils";
 
 
 const BankStatement_Detail = () => {
+    const formDateTime=useDateUtils();
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const storedDetatis = localStorage.getItem("hrmsuser");
@@ -67,8 +69,12 @@ const BankStatement_Detail = () => {
     // Set filters EMPTY by default
     const [filterType, setFilterType] = useState("");
     const [filterAccount, setFilterAccount] = useState("");
-    const [filterStartDate, setFilterStartDate] = useState("");
-    const [filterEndDate, setFilterEndDate] = useState("");
+    const [filterStartDate, setFilterStartDate] = useState(()=>{
+        return new Date().toISOString().split("T")[0];
+    });
+    const [filterEndDate, setFilterEndDate] = useState(()=>{
+        return new Date().toISOString().split("T")[0];
+    });
 
 
 
@@ -319,7 +325,7 @@ const BankStatement_Detail = () => {
         {
             title: "Date",
             data: "date",
-            render: (data) => new Date(data).toLocaleDateString(),
+            render: (data) => data ? formDateTime(data) : "-",
         },
         {
             title: "Account",
@@ -345,7 +351,7 @@ const BankStatement_Detail = () => {
                     const container = document.getElementById(id);
                     if (container && !container.hasChildNodes()) {
                         ReactDOM.render(
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center justify-center gap-2">
 
                                 <FaEye
                                     className="text-blue-500 cursor-pointer"
@@ -431,13 +437,12 @@ const BankStatement_Detail = () => {
             ) : (
                 <>
                     <div>
-                        <Mobile_Sidebar />
+                        
 
                         <div className="flex justify-between gap-1">
-                            <div className="">
-                                <h1 className="text-xl md:text-3xl font-semibold">Bank Statement</h1>
-                            </div>
-                            <div className="flex justify-end gap-1 md:gap-2 text-sm items-center">
+                            <Mobile_Sidebar />
+                           
+                            <div className="flex gap-1 items-center">
                             <p className="text-xs md:text-sm text-blue-500">Bank Statement</p>
                             <p>{">"}</p>
                             <p
@@ -451,6 +456,9 @@ const BankStatement_Detail = () => {
 
 
                         </div>
+                        <div className="">
+                                <h1 className="text-xl md:text-3xl font-semibold">Bank Statement</h1>
+                            </div>
 
                         {/* Add Button */}
                         <div className="flex flex-wrap justify-between mt-2 md:mt-8">
@@ -487,7 +495,7 @@ const BankStatement_Detail = () => {
                                     onChange={(e) => {
                                         setFilterStartDate(e.target.value);
                                     }}
-                                    className="w-[150px] md:w-[160px] border px-1 md:px-3 py-1 rounded"
+                                    className="w-[130px] md:w-[160px] border px-1 md:px-3 py-1 rounded"
                                 />
                                </div>
                                <div className="flex flex-col  ">
@@ -498,7 +506,7 @@ const BankStatement_Detail = () => {
                                     onChange={(e) => {
                                         setFilterEndDate(e.target.value);
                                     }}
-                                    className="w-[150px] md:w-[160px] border px-1 md:px-3 py-1 rounded"
+                                    className="w-[130px] md:w-[160px] border px-1 md:px-3 py-1 rounded"
                                 />
                                 </div>
                                 </div>

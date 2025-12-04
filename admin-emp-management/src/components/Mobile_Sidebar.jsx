@@ -188,7 +188,7 @@ const Mobile_Sidebar = () => {
                         <div
                           className={`transition-all duration-700 ease-in-out ${
                             openSection === "onboarding"
-                              ? "max-h-60 opacity-100"
+                              ? "max-h-70 opacity-100"
                               : "max-h-0 opacity-0"
                           }`}
                         >
@@ -209,7 +209,13 @@ const Mobile_Sidebar = () => {
                               onClick={() => onClickSidebarMenu("employees")}
                               className="hover:bg-blue-100 px-2 py-1 rounded-full"
                             >
-                              Add Employee
+                              Employees
+                            </button>
+                            <button
+                              onClick={() => onClickSidebarMenu("inter")}
+                              className="hover:bg-blue-100 px-2 py-1 rounded-full"
+                            >
+                              Internship
                             </button>
                             <button
                               onClick={() =>

@@ -154,7 +154,7 @@ const inactiveClass = "hover:underline";
   <div className="flex justify-center p-2">
     <img src={aryu_logo} alt="Logo" className="w-20" />
   </div>
-  <p className='text-center text-lg md:text-xl p-1 font-semibold text-[#0050AA]'>ARYU PORTAL</p>
+  <p className='text-center text-lg md:text-xl p-2 font-semibold text-[#0050AA]'>ARYU PORTAL</p>
   {/* <div className="flex justify-end gap-6 px-5 md:pt-2 text-sm md:text-md font-semibold text-[#0050AA]">
     <Link to="/client" className="underline">Client Login</Link>
   </div> */}
@@ -230,7 +230,7 @@ const inactiveClass = "hover:underline";
       </div>
     </div>
   </div>
-
+  <div className="w-5 h-14"></div>
   <Footer />
 </div>
 

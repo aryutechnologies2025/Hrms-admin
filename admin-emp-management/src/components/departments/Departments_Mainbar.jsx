@@ -320,16 +320,18 @@ const Departments_Mainbar = () => {
   let navigate = useNavigate();
 
   return (
-    <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
+    <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-4">
       
       {loading ? (
         <Loader />
       ) : (
         <>
         <div>
-        <Mobile_Sidebar />
+       
 
-        <div className="flex gap-2 items-center cursor-pointer md:mt-2">
+        <div className="flex justify-between gap-2 items-center cursor-pointer md:mt-2">
+            <Mobile_Sidebar />
+            <div className="flex gap-2 items-center">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
@@ -338,11 +340,12 @@ const Departments_Mainbar = () => {
           </p>
           <p>{">"}</p>
 
-          <p className="text-sm text-blue-500">Department</p>
+          <p className="text-sm md:text-md text-blue-500">Department</p>
+          </div>
         </div>
 
         {/* Add Button */}
-        <div className="flex justify-between mt-1 md:mt-6 md:mb-4">
+        <div className="flex justify-between mt-1 md:mt-3 md:mb-4">
           <div className="">
             <h1 className="text-2xl md:text-3xl font-semibold">Departments</h1>
           </div>

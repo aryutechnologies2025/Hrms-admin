@@ -30,7 +30,7 @@ const Finance_Mainbar = () => {
 
 
 
-  
+
 
   return (
     <div className="flex flex-col justify-between min-h-screen bg-gray-100 px-3 pt-2 md:pt-5 w-screen">
@@ -38,128 +38,130 @@ const Finance_Mainbar = () => {
         <Loader />
       ) : (
         <>
-      <div>
-        
-        <Mobile_Sidebar/>
+          <div>
 
-        <div className="flex gap-2 mt-5 text-sm items-center">
-          <p className=" text-blue-500 ">Finance</p>
-          <p>{">"}</p>
-        </div>
 
-        {/* mainflex */}
-        <div className="flex gap-3 flex-col lg:flex-row  mt-5">
-          {/* leftside div */}
-          <div className="flex flex-grow flex-col gap-3 basis-[55%]">
-            {/* All Expenses Cards */}
-            <section className="bg-white rounded-xl px-5 py-5">
-              
-              <div className="flex items-center flex-wrap gap-8 justify-between">
-                <p className="text-xl md:text-2xl font-semibold">All Expenses</p>
-                <select
-                  name=""
-                  id=""
-                  className="border-2 border-gray-200 rounded-xl px-3   py-2 "
-                >
-                  <option value="">Monthly</option>
-                  <option value="">1</option>
-                  <option value="">1</option>
-                </select>
+            <div className="flex justify-between gap-2 text-sm items-center">
+              <Mobile_Sidebar />
+              <div className="flex gap-1 items-center">
+                <p className=" text-blue-500 ">Finance</p>
+                <p>{">"}</p>
               </div>
+            </div>
 
-              <div className="flex mt-8 flex-col md:flex-row  flex-grow gap-3">
-                <div className="flex flex-grow w-full md:w-1/3 flex-col bg-blue-600 px-5 py-5 rounded-xl">
-                  <div className="flex items-center justify-between">
-                    <img src={present} alt="" className="h-12 w-12" />
-                    <MdArrowForwardIos className="text-white text-2xl" />
+            {/* mainflex */}
+            <div className="flex gap-3 flex-col lg:flex-row  mt-5">
+              {/* leftside div */}
+              <div className="flex flex-grow flex-col gap-3 basis-[55%]">
+                {/* All Expenses Cards */}
+                <section className="bg-white rounded-xl px-5 py-5">
+
+                  <div className="flex items-center flex-wrap gap-8 justify-between">
+                    <p className="text-xl md:text-2xl font-semibold">All Expenses</p>
+                    <select
+                      name=""
+                      id=""
+                      className="border-2 border-gray-200 rounded-xl px-3   py-2 "
+                    >
+                      <option value="">Monthly</option>
+                      <option value="">1</option>
+                      <option value="">1</option>
+                    </select>
                   </div>
 
-                  <p className="text-lg md:text-xl font-semibold text-white mt-8">
-                    Balance
-                  </p>
-                  <p className="text-white mt-2">April 2024</p>
-                  <p className="text-xl md:text-2xl font-semibold text-white mt-3">
-                    $20,129
-                  </p>
-                </div>
+                  <div className="flex mt-8 flex-col md:flex-row  flex-grow gap-3">
+                    <div className="flex flex-grow w-full md:w-1/3 flex-col bg-blue-600 px-5 py-5 rounded-xl">
+                      <div className="flex items-center justify-between">
+                        <img src={present} alt="" className="h-12 w-12" />
+                        <MdArrowForwardIos className="text-white text-2xl" />
+                      </div>
 
-                <div className="flex flex-grow w-full md:w-1/3 flex-col border bg-white px-5 py-5 rounded-xl">
-                  <div className="flex items-center justify-between">
-                    <img src={not_present} alt="" className="h-12 w-12" />
-                    <MdArrowForwardIos className="text-2xl" />
+                      <p className="text-lg md:text-xl font-semibold text-white mt-8">
+                        Balance
+                      </p>
+                      <p className="text-white mt-2">April 2024</p>
+                      <p className="text-xl md:text-2xl font-semibold text-white mt-3">
+                        $20,129
+                      </p>
+                    </div>
+
+                    <div className="flex flex-grow w-full md:w-1/3 flex-col border bg-white px-5 py-5 rounded-xl">
+                      <div className="flex items-center justify-between">
+                        <img src={not_present} alt="" className="h-12 w-12" />
+                        <MdArrowForwardIos className="text-2xl" />
+                      </div>
+
+                      <p className="text-lg md:text-xl font-semibold  mt-8">Income</p>
+                      <p className="text-gray-500 mt-2">April 2024</p>
+                      <p className=" md:text-2xl font-semibold text-blue-500 mt-3">
+                        $20,129
+                      </p>
+                    </div>
+
+                    <div className="flex flex-grow w-full md:w-1/3 border flex-col bg-white px-5 py-5 rounded-xl">
+                      <div className="flex items-center justify-between">
+                        <img src={WFH} alt="" className="h-12 w-12" />
+                        <MdArrowForwardIos className="text-2xl" />
+                      </div>
+
+                      <p className="text-lg md:text-xl font-semibold  mt-8">Expenses</p>
+                      <p className="text-gray-500 mt-2">April 2024</p>
+                      <p className="text-xl md:text-2xl font-semibold text-blue-500 mt-3">
+                        $20,129
+                      </p>
+                    </div>
                   </div>
-
-                  <p className="text-lg md:text-xl font-semibold  mt-8">Income</p>
-                  <p className="text-gray-500 mt-2">April 2024</p>
-                  <p className=" md:text-2xl font-semibold text-blue-500 mt-3">
-                    $20,129
-                  </p>
-                </div>
-
-                <div className="flex flex-grow w-full md:w-1/3 border flex-col bg-white px-5 py-5 rounded-xl">
-                  <div className="flex items-center justify-between">
-                    <img src={WFH} alt="" className="h-12 w-12" />
-                    <MdArrowForwardIos className="text-2xl" />
+                </section>
+                <section className="bg-white rounded-xl px-5 py-5">
+                  <div className="flex flex-row gap-8 flex-wrap items-center justify-between  ">
+                    <p className="text-xl md:text-2xl font-semibold">All Expenses</p>
+                    <select
+                      name=""
+                      id=""
+                      className="border-2 border-gray-200 rounded-xl w-fit ml-auto  px-3 py-2 mt-3 "
+                    >
+                      <option value="">Monthly</option>
+                      <option value="">1</option>
+                      <option value="">1</option>
+                    </select>
                   </div>
+                  <div className="flex gap-5 md:gap-14 flex-col sm:flex-row px-0 md:px-12 mt-7">
+                    <section className="relative flex items-center justify-center">
+                      <PieChart
+                        className="w-44 h-44 "
+                        startAngle={230}
+                        data={[
+                          { title: "One", value: 50, color: "#E5F33C" },
+                          { title: "Two", value: 35, color: "#E2DECD" },
+                          { title: "Three", value: 20, color: "#111111" },
+                          { title: "Four", value: 30, color: "#00565B" },
+                        ]}
+                      />
+                      <div className="absolute w-32 h-32 bg-white rounded-full"></div>
+                    </section>
 
-                  <p className="text-lg md:text-xl font-semibold  mt-8">Expenses</p>
-                  <p className="text-gray-500 mt-2">April 2024</p>
-                  <p className="text-xl md:text-2xl font-semibold text-blue-500 mt-3">
-                    $20,129
-                  </p>
-                </div>
-              </div>
-            </section>
-            <section className="bg-white rounded-xl px-5 py-5">
-              <div className="flex flex-row gap-8 flex-wrap items-center justify-between  ">
-                <p className="text-xl md:text-2xl font-semibold">All Expenses</p>
-                <select
-                  name=""
-                  id=""
-                  className="border-2 border-gray-200 rounded-xl w-fit ml-auto  px-3 py-2 mt-3 "
-                >
-                  <option value="">Monthly</option>
-                  <option value="">1</option>
-                  <option value="">1</option>
-                </select>
-              </div>
-              <div className="flex gap-5 md:gap-14 flex-col sm:flex-row px-0 md:px-12 mt-7">
-                <section className="relative flex items-center justify-center">
-                  <PieChart
-                    className="w-44 h-44 "
-                    startAngle={230}
-                    data={[
-                      { title: "One", value: 50, color: "#E5F33C" },
-                      { title: "Two", value: 35, color: "#E2DECD" },
-                      { title: "Three", value: 20, color: "#111111" },
-                      { title: "Four", value: 30, color: "#00565B" },
-                    ]}
-                  />
-                  <div className="absolute w-32 h-32 bg-white rounded-full"></div>
+                    <div className="flex flex-row flex-wrap sm:flex-col gap-5 justify-normal sm:justify-center ">
+                      <div className="flex gap-3 items-center">
+                        <div className="h-5 w-5 rounded-full bg-[#E5F33C]"></div>
+                        <p>Tech</p>
+                      </div>
+                      <div className="flex gap-3 items-center">
+                        <div className="h-5 w-5 rounded-full bg-green-900"></div>
+                        <p>Non Tech</p>
+                      </div>
+                      <div className="flex gap-3 items-center">
+                        <div className="h-5 w-5 rounded-full bg-black"></div>
+                        <p>Salary</p>
+                      </div>
+                      <div className="flex gap-3 items-center">
+                        <div className="h-5 w-5 rounded-full bg-gray-200"></div>
+                        <p>Investment</p>
+                      </div>
+                    </div>
+                  </div>
                 </section>
 
-                <div className="flex flex-row flex-wrap sm:flex-col gap-5 justify-normal sm:justify-center ">
-                  <div className="flex gap-3 items-center">
-                    <div className="h-5 w-5 rounded-full bg-[#E5F33C]"></div>
-                    <p>Tech</p>
-                  </div>
-                  <div className="flex gap-3 items-center">
-                    <div className="h-5 w-5 rounded-full bg-green-900"></div>
-                    <p>Non Tech</p>
-                  </div>
-                  <div className="flex gap-3 items-center">
-                    <div className="h-5 w-5 rounded-full bg-black"></div>
-                    <p>Salary</p>
-                  </div>
-                  <div className="flex gap-3 items-center">
-                    <div className="h-5 w-5 rounded-full bg-gray-200"></div>
-                    <p>Investment</p>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* <section className="relative flex items-center justify-center">
+                {/* <section className="relative flex items-center justify-center">
           <PieChart
           className="w-44 h-44 absolute"
           startAngle={230}
@@ -175,11 +177,11 @@ const Finance_Mainbar = () => {
           </div>
 
           </section> */}
-          </div>
+              </div>
 
-          {/* rightside div */}
-          <div className="bg-white flex-grow px-5 py-5 rounded-xl overflow-hidden">
-            {/* <p className="text-2xl font-semibold">All Expenses</p>
+              {/* rightside div */}
+              <div className="bg-white flex-grow px-5 py-5 rounded-xl overflow-hidden">
+                {/* <p className="text-2xl font-semibold">All Expenses</p>
 
             <Swiper
               effect="cards"
@@ -200,94 +202,94 @@ const Finance_Mainbar = () => {
               </SwiperSlide>
             </Swiper> */}
 
-            {/* income history */}
-            <section>
-              <div className="flex flex-wrap justify-between items-center ">
-                <p className="text-xl md:text-2xl font-semibold mt-5">Income History</p>
-                <p
-                  onClick={() => navigate("/finance/incomehistory")}
-                  className="bg-blue-500 cursor-pointer mt-5 rounded-full px-5 py-1 md:py-2 text-white"
-                >
-                  See all
-                </p>
-              </div>
-
-              <hr className="my-5" />
-              <p className="text-gray-500 text-base md:text-xl font-medium">13 April 2024</p>
-
-              <div className="flex flex-col mt-3 gap-3">
-                <div className="bg-gray-100 rounded-xl px-5 py-5">
-                  <div className="flex justify-between items-center">
-                    <div className="flex flex-col gap-1">
-                      <p className="font-semibold">Deposit</p>
-                      <p className="text-gray-500">13 Apr, 2024 at 3:30 PM</p>
-                    </div>
-
-                    <p className="text-lg md:text-xl font-semibold text-green-600">
-                      $20,129
+                {/* income history */}
+                <section>
+                  <div className="flex flex-wrap justify-between items-center ">
+                    <p className="text-xl md:text-2xl font-semibold mt-5">Income History</p>
+                    <p
+                      onClick={() => navigate("/finance/incomehistory")}
+                      className="bg-blue-500 cursor-pointer mt-5 rounded-full px-5 py-1 md:py-2 text-white"
+                    >
+                      See all
                     </p>
                   </div>
-                </div>
 
-                <div className="bg-gray-100 rounded-xl px-5 py-5">
-                  <div className="flex justify-between items-center">
-                    <div className="flex flex-col gap-1">
-                      <p className="font-semibold">Deposit</p>
-                      <p className="text-gray-500">13 Apr, 2024 at 3:30 PM</p>
+                  <hr className="my-5" />
+                  <p className="text-gray-500 text-base md:text-xl font-medium">13 April 2024</p>
+
+                  <div className="flex flex-col mt-3 gap-3">
+                    <div className="bg-gray-100 rounded-xl px-5 py-5">
+                      <div className="flex justify-between items-center">
+                        <div className="flex flex-col gap-1">
+                          <p className="font-semibold">Deposit</p>
+                          <p className="text-gray-500">13 Apr, 2024 at 3:30 PM</p>
+                        </div>
+
+                        <p className="text-lg md:text-xl font-semibold text-green-600">
+                          $20,129
+                        </p>
+                      </div>
                     </div>
 
-                    <p className="text-lg md:text-xl font-semibold text-green-600">
-                      $20,129
+                    <div className="bg-gray-100 rounded-xl px-5 py-5">
+                      <div className="flex justify-between items-center">
+                        <div className="flex flex-col gap-1">
+                          <p className="font-semibold">Deposit</p>
+                          <p className="text-gray-500">13 Apr, 2024 at 3:30 PM</p>
+                        </div>
+
+                        <p className="text-lg md:text-xl font-semibold text-green-600">
+                          $20,129
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* expense history */}
+                <section>
+                  <div className="flex flex-wrap justify-between items-center ">
+                    <p className="text-xl md:text-2xl font-semibold mt-5">Expense History</p>
+                    <p onClick={() => navigate('/finance/expensehistory')} className="bg-blue-500 cursor-pointer mt-5 rounded-full px-5 py-1 md:py-2 text-white">
+                      See all
                     </p>
                   </div>
-                </div>
-              </div>
-            </section>
 
-            {/* expense history */}
-            <section>
-              <div className="flex flex-wrap justify-between items-center ">
-                <p className="text-xl md:text-2xl font-semibold mt-5">Expense History</p>
-                <p onClick={()=>navigate('/finance/expensehistory')} className="bg-blue-500 cursor-pointer mt-5 rounded-full px-5 py-1 md:py-2 text-white">
-                  See all
-                </p>
-              </div>
+                  <hr className="my-5" />
+                  <p className="text-gray-500 text-base md:text-xl font-medium">13 April 2024</p>
 
-              <hr className="my-5" />
-              <p className="text-gray-500 text-base md:text-xl font-medium">13 April 2024</p>
+                  <div className="flex flex-col mt-3 gap-3">
+                    <div className="bg-gray-100 rounded-xl px-5 py-5">
+                      <div className="flex justify-between items-center">
+                        <div className="flex flex-col gap-1">
+                          <p className="font-semibold">Cash Withdrawal</p>
+                          <p className="text-gray-500">13 Apr, 2024 at 3:30 PM</p>
+                        </div>
 
-              <div className="flex flex-col mt-3 gap-3">
-                <div className="bg-gray-100 rounded-xl px-5 py-5">
-                  <div className="flex justify-between items-center">
-                    <div className="flex flex-col gap-1">
-                      <p className="font-semibold">Cash Withdrawal</p>
-                      <p className="text-gray-500">13 Apr, 2024 at 3:30 PM</p>
+                        <p className="text-lg md:text-xl font-semibold text-orange-500">
+                          $20,129
+                        </p>
+                      </div>
                     </div>
 
-                    <p className="text-lg md:text-xl font-semibold text-orange-500">
-                      $20,129
-                    </p>
-                  </div>
-                </div>
+                    <div className="bg-gray-100 rounded-xl px-5 py-5">
+                      <div className="flex justify-between items-center">
+                        <div className="flex flex-col gap-1">
+                          <p className="font-semibold">Cash Withdrawal</p>
+                          <p className="text-gray-500">13 Apr, 2024 at 3:30 PM</p>
+                        </div>
 
-                <div className="bg-gray-100 rounded-xl px-5 py-5">
-                  <div className="flex justify-between items-center">
-                    <div className="flex flex-col gap-1">
-                      <p className="font-semibold">Cash Withdrawal</p>
-                      <p className="text-gray-500">13 Apr, 2024 at 3:30 PM</p>
+                        <p className="text-xl font-semibold text-orange-500">
+                          $20,129
+                        </p>
+                      </div>
                     </div>
-
-                    <p className="text-xl font-semibold text-orange-500">
-                      $20,129
-                    </p>
                   </div>
-                </div>
+                </section>
               </div>
-            </section>
-          </div>
-        </div>
+            </div>
 
-        {/* {seeAllTransactionHistoryModalOpen && (
+            {/* {seeAllTransactionHistoryModalOpen && (
           <div className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
             <div className="absolute inset-0 " onClick={closeModal}></div>
 
@@ -505,7 +507,7 @@ const Finance_Mainbar = () => {
             </div>
           </div>
         )} */}
-      </div>
+          </div>
         </>
       )}
       <Footer />

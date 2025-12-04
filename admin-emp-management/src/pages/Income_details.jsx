@@ -774,9 +774,11 @@ useEffect(() => {
   return (
     <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
       <div>
-        <Mobile_Sidebar />
+        
 
-        <div className="flex gap-2 items-center cursor-pointer">
+        <div className="flex justify-between gap-2 items-center cursor-pointer">
+          <Mobile_Sidebar />
+          <div className="flex gap-1 items-center ">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
@@ -786,9 +788,10 @@ useEffect(() => {
           <p>{">"}</p>
 
           <p className="text-sm text-blue-500">Income</p>
+          </div>
         </div>
         {/* Add Button */}
-        <div className="flex justify-between mt-1 md:mt-8 mb-2 md:mb-3">
+        <div className="flex justify-between mt-1 md:mt-4 mb-2 md:mb-3">
           <h1 className="text-2xl md:text-3xl font-semibold">Income List </h1>
           <button
             onClick={openAddModal}

@@ -43,10 +43,9 @@ const AssetCategory_details = () => {
   const fetchAssetType = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/asset-mannagement-category/assetCatagory`
+        `${API_URL}/api/asset-mannagement-category/assetCategory`
       );
       console.log("response get check",response);
-
 
       setAssetDetails(response?.data?.data)
               setLoading(false);
@@ -298,25 +297,28 @@ const AssetCategory_details = () => {
             ) : (
               <>
       <div>
-        <Mobile_Sidebar />
+      
 
-        <div className="flex gap-2 text-sm items-center">
+        <div className="flex justify-between gap-2 text-sm items-center">
+            <Mobile_Sidebar />
+            <div className="flex gap-1 items-center">
               <p
-                className="text-sm text-gray-500"
+                className="text-xs md:text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
               >
                 Dashboard
               </p>
           <p>{">"}</p>
               <p
-                className="text-sm text-gray-500"
+                className="text-xs md:text-sm text-gray-500"
                 onClick={() => navigate("/assetmanagement")}
               >
                 Asset Management
               </p>
           <p>{">"}</p>
 
-          <p className="text-sm text-blue-500">Asset Category</p>
+          <p className="text-xs md:text-sm text-blue-500">Asset Category</p>
+          </div>
         </div>
 
         {/* Add Button */}

@@ -412,7 +412,7 @@ const Sidebar = () => {
                             : "hover:bg-blue-100 text-gray-500"
                         }`}
                           >
-                            Intership
+                            Internship
                           </button>
 
                           <button
@@ -755,6 +755,9 @@ const Sidebar = () => {
                                     "/mom-details",
                                     "/document-details",
                                     "/asset-document",
+
+                                    "/client-note-details"
+ 
                                   ].includes(currentPath) ? (
                                     <IoIosArrowUp />
                                   ) : (
@@ -773,6 +776,7 @@ const Sidebar = () => {
                                 "/invoice-details",
                                 "/mom-details",
                                 "/document-details",
+                                "/client-note-details",
                               ].includes(currentPath)
                                 ? "max-h-50 opacity-100"
                                 : "max-h-0 opacity-0"
@@ -835,6 +839,19 @@ const Sidebar = () => {
                                     }`}
                               >
                                 Asset Doc
+                              </button>
+
+
+                              <button
+                                onClick={() => navigate("/client-note-details")}
+                                className={`px-2 py-1 rounded-full 
+                                    ${
+                                      currentPath === "/client-note-details"
+                                        ? " text-[#4F46E5]"
+                                        : "hover:bg-blue-100 text-gray-500"
+                                    }`}
+                              >
+                                Client Notes
                               </button>
 
                               {/* <div

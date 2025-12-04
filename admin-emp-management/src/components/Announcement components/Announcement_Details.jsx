@@ -354,17 +354,17 @@ const Announcement_Details = () => {
       ) : (
         <>
           <div>
-            <Mobile_Sidebar />
+           
 
             <div className="flex justify-between gap-1">
-              <div className="">
-                <h1 className="text-md md:text-3xl font-semibold">Announcement</h1>
-              </div>
-              <div className="flex justify-end gap-1 md:gap-2 text-sm items-center">
-                <p className="text-xs md:text-sm text-blue-500">Announcement</p>
+              
+                 <Mobile_Sidebar />
+             
+              <div className="flex  gap-1  items-center">
+                <p className="text-sm text-blue-500">Announcement</p>
                 <p>{">"}</p>
                 <p
-                  className="text-xs md:text-sm text-gray-500"
+                  className="text-sm text-gray-500"
                   onClick={() => navigate("/dashboard-Recruitment")}
                 >
                   Dashboard
@@ -372,12 +372,11 @@ const Announcement_Details = () => {
               </div>
 
             </div>
-
-
+     
 
             {/* Add Button */}
-            <div className="flex justify-end mt-1 md:mt-8">
-
+            <div className="flex justify-between mt-1 md:mt-4">
+              <h1 className="text-xl md:text-3xl font-semibold">Announcement</h1>
               <button
                 onClick={openAddModal}
                 className=" px-1 md:px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
