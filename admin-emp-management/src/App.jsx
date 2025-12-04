@@ -964,7 +964,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       ),
     },
      {
-      path: "/assect-document",
+      path: "/asset-document",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole={["client", "subuser","admin"]}>
           <AssentDocumentPage />
