@@ -24,6 +24,8 @@ const MonthlyAttendanceDetails_Mainbar = () => {
   const formatDateTime = useDateUtils();
   
   const [selectedMonth, setSelectedMonth] = useState(new Date());
+  // console.log("selectedMonth", selectedMonth);
+
   const [globalFilter, setGlobalFilter] = useState("");
   const [monthlyReportList, setMonthlyReportList] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -32,6 +34,13 @@ const MonthlyAttendanceDetails_Mainbar = () => {
   const [loading, setLoading] = useState(true);
 
   const columns = [
+
+     {
+    field: "sno",
+    header: "S.No",
+    body: (rowData, { rowIndex }) => rowIndex + 1,
+},
+
     {
       field: "date",
       header: "Date",
@@ -51,24 +60,24 @@ const MonthlyAttendanceDetails_Mainbar = () => {
           <p className="text-red-600 bg-red-50 ">{rowData?.status}</p>
         ),
     },
-    {
-      field: "employeeId",
-      header: "Employee Name/Id",
-      body: (rowData) =>
-        rowData.employeeId ? (
-          <>
-            <div className="cursor-pointer">
-              {rowData?.employeeId?.employeeName}
-              <br />
-              <span className="text-blue-600 text-sm">
-                {rowData?.employeeId?.employeeId}
-              </span>
-            </div>
-          </>
-        ) : (
-          "-"
-        ),
-    },
+    // {
+    //   field: "employeeId",
+    //   header: "Employee Name/Id",
+    //   body: (rowData) =>
+    //     rowData.employeeId ? (
+    //       <>
+    //         <div className="cursor-pointer">
+    //           {rowData?.employeeId?.employeeName}
+    //           <br />
+    //           <span className="text-blue-600 text-sm">
+    //             {rowData?.employeeId?.employeeId}
+    //           </span>
+    //         </div>
+    //       </>
+    //     ) : (
+    //       "-"
+    //     ),
+    // },
     {
       field: "worktype",
       header: "Work Type",
@@ -282,6 +291,8 @@ const MonthlyAttendanceDetails_Mainbar = () => {
         }
       );
 
+      // console.log("response", response.data.data);
+
       const employeeemail = response.data.data.map((emp) => ({
         label: emp.employeeName,
         value: emp._id,
@@ -306,6 +317,13 @@ const MonthlyAttendanceDetails_Mainbar = () => {
   const [selectedEmployeeDeatils, setSelectedEmployeeDetails] = useState(null);
   const [employeeData, setEmployeeData] = useState([]);
 
+  const[summary , setSummary] = useState([]);
+
+  // console.log("summary", summary);
+
+
+  // console.log("employeeData", employeeData);
+
   const handleSubmit = async () => {
     const monthDate = new Date(selectedMonth);
     const payload = {
@@ -320,7 +338,10 @@ const MonthlyAttendanceDetails_Mainbar = () => {
         { params: payload }
       );
 
+      console.log("response",response)
+
       setEmployeeData(response.data.data);
+      setSummary(response.data.summary)
      
       console.log(response.data.data);
     } catch (error) {
@@ -392,9 +413,12 @@ const MonthlyAttendanceDetails_Mainbar = () => {
         <>
       <div>
         
-        <div className="flex justify-between gap-2 mt-5 text-sm items-center">
+        <div className=" items-center">
           <Mobile_Sidebar />
-          <div className="flex gap-1 items-center">
+          
+        </div>
+
+        <div className="flex justify-end mt-3 md:mt-0 gap-1 items-center">
           <p
             className=" text-gray-500 cursor-pointer"
             onClick={() => navigate("/attendance")}
@@ -404,12 +428,24 @@ const MonthlyAttendanceDetails_Mainbar = () => {
           <p>{">"}</p>
           <p className=" text-blue-500">Monthly Attendance</p>
           <p>{">"}</p>
-          </div>
         </div>
-
-        <p className="text-2xl md:text-3xl mt-2 md:mt-4 font-semibold">
+<div className="flex justify-between mt-2 md:mt-4">
+  
+        <p className="text-2xl md:text-3xl  font-semibold">
           Monthly Report
         </p>
+        
+     <div>
+        <button
+          onClick={() =>
+            navigate(-1)
+          }
+          className="text-sm bg-gray-600 hover:bg-gray-500 text-white px-5 py-2 mt-2 md:mt-0 rounded-3xl"
+        >
+          Back
+        </button>
+     </div>
+</div>
 
         <div className="bg-white mt-2 md:mt-4 px-5 py-5 rounded-2xl">
           {/* <p className="text-2xl font-bold text-gray-500">Attendance List</p> */}
@@ -458,6 +494,8 @@ const MonthlyAttendanceDetails_Mainbar = () => {
                   placeholder="Search"
                   className="px-2 py-2 bg-gray-200 rounded-md"
                 /> */}
+
+                
                 <button
                   onClick={exportToCSV}
                   className="flex flex-wrap mb-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold px-3 py-1 md:py-2 md:px-4 rounded-mditems-center gap-2"
@@ -467,6 +505,46 @@ const MonthlyAttendanceDetails_Mainbar = () => {
                 </button>
               </div>
             </div>
+            {/* <div>{employeeData?.employee?.
+name}</div> */}
+{summary && Object.keys(summary).length > 0 && (
+  <div className="bg-white p-4 rounded-md shadow-md w-full max-w-md  mt-4">
+    <h2 className="text-lg font-semibold mb-3 text-gray-800 border-b pb-2">Summary</h2>
+
+    <div className="space-y-2 text-sm">
+      <div className="flex justify-between px-2 py-1 bg-blue-50 rounded">
+        <span className="text-blue-700 font-medium">Total Days:</span>
+        <span className="font-semibold text-blue-900">{summary.totalDays ?? 0}</span>
+      </div>
+
+      <div className="flex justify-between px-2 py-1 bg-green-50 rounded">
+        <span className="text-green-700 font-medium">Present Days:</span>
+        <span className="font-semibold text-green-900">{summary.presentDaysCount ?? 0}</span>
+      </div>
+
+      <div className="flex justify-between px-2 py-1 bg-red-50 rounded">
+        <span className="text-red-700 font-medium">Absent Days:</span>
+        <span className="font-semibold text-red-900">{summary.absentDaysCount ?? 0}</span>
+      </div>
+
+      <div className="flex justify-between px-2 py-1 bg-yellow-50 rounded">
+        <span className="text-yellow-700 font-medium">Late Login:</span>
+        <span className="font-semibold text-yellow-900">{summary.after1030LoginCount ?? 0}</span>
+      </div>
+
+      <div className="flex justify-between px-2 py-1 bg-purple-50 rounded">
+        <span className="text-purple-700 font-medium">Less Than 8 Hours:</span>
+        <span className="font-semibold text-purple-900">{summary.lessThan8HoursCount ?? 0}</span>
+      </div>
+
+      <div className="flex justify-between px-2 py-1 bg-indigo-50 rounded">
+        <span className="text-indigo-700 font-medium">Holidays:</span>
+        <span className="font-semibold text-indigo-900">{summary.totalHolidaysCount ?? 0}</span>
+      </div>
+    </div>
+  </div>
+)}
+
 
             <DataTable
               className="mt-8"
@@ -521,6 +599,8 @@ const MonthlyAttendanceDetails_Mainbar = () => {
           </div>
         </div>
       )} */}
+
+      
 
       {tooltipData?.data?.length > 0 && (
             <div
