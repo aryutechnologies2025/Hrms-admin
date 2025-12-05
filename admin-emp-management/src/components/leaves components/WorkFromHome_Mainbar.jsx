@@ -645,7 +645,7 @@ const WorkFromHome_Mainbar = () => {
                   value={filteredList}
                   paginator
                   rows={10}
-                  rowsPerPageOptions={[5, 10, 20, 50]}
+rowsPerPageOptions={[5, 10, 20, 50, filteredList?.length]}
                   globalFilter={globalFilter}
                   globalFilterFields={[
                     "employee.employeeId",
@@ -653,6 +653,9 @@ const WorkFromHome_Mainbar = () => {
                   ]}
                   showGridlines
                   resizableColumns
+
+                   paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 >
                   {columns.map((col, index) => (
                     <Column

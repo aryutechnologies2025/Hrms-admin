@@ -92,6 +92,7 @@ function Task_view_all() {
       "JPG",
       "SVG",
       "MP4",
+      "zip"
     ];
     const excelFormats = ["xlsx", "xls", "csv"];
     const wordFormats = ["docx", "doc", "word"];
@@ -148,7 +149,7 @@ function Task_view_all() {
       const response = await axios.get(
         `${API_URL}/api/task/particular-task/${taskId}`
       );
-      console.log(response);
+      console.log("response", response);
       if (response.data.success) {
         setAlldata(response?.data?.data);
         setStatus(response?.data?.data?.status);
@@ -165,6 +166,7 @@ function Task_view_all() {
         setTester(response?.data?.data?.testerStatus || "-");
         setSubTasks(response?.data?.data?.subtasks || []);
         setAssignToChange(response?.data?.data?.assignedTo?._id || "");
+        setMessage(response?.data?.data?.comments || "");
       } else {
         console.log("Failed to fetch roles.");
       }
@@ -392,6 +394,7 @@ function Task_view_all() {
       setUploadedFiles([]);
       fileUploadRef.current?.clear();
       fetchProject();
+      fetchProjectall();
     } catch (error) {
       setErrors(error.response.data.errors.error);
       console.error("Upload error:", error.errors);
@@ -489,7 +492,7 @@ function Task_view_all() {
   const filteredEmployees = (() => {
     console.log("project", project);
     const selectedRole = project.find((proj) => {
-      console.log("hhhhh", proj.value);
+      // console.log("hhhhh", proj.value);
       return proj.value === alldata?.projectIdFilter;
     });
 
