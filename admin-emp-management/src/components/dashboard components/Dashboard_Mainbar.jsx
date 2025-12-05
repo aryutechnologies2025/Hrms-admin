@@ -36,6 +36,8 @@ const Dashboard_Mainbar = () => {
   const [wfhlistIsOpen, setWfhlistIsOpen] = useState(false);
   const [presentlistIsOpen, setpresentlistIsOpen] = useState(false);
   const [absentlistData, setAbsentlistData] = useState("");
+
+  
   const [wfhlistData, setWfhlistData] = useState("");
   const [presentlistData, setpresentlistData] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
