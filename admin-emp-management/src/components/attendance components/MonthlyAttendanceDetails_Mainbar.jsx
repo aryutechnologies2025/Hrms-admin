@@ -317,6 +317,10 @@ const MonthlyAttendanceDetails_Mainbar = () => {
 
   const [summary, setSummary] = useState([]);
 
+  const [employeeName, setEmployeeName] = useState([]);
+
+  console.log("employeeName", employeeName);
+
   // console.log("summary", summary);
 
 
@@ -339,7 +343,8 @@ const MonthlyAttendanceDetails_Mainbar = () => {
       console.log("response", response)
 
       setEmployeeData(response.data.data);
-      setSummary(response.data.summary)
+      setSummary(response.data.summary);
+      setEmployeeName(response.data.employee)
 
       console.log(response.data.data);
     } catch (error) {
@@ -434,7 +439,14 @@ const MonthlyAttendanceDetails_Mainbar = () => {
               </p>
 
               <div>
-
+                <button
+                  onClick={() =>
+                    navigate(-1)
+                  }
+                  className="text-sm bg-gray-600 hover:bg-gray-500 text-white px-5 py-2 mt-2 md:mt-0 rounded-3xl"
+                >
+                  Back
+                </button>
               </div>
             </div>
 
@@ -476,14 +488,6 @@ const MonthlyAttendanceDetails_Mainbar = () => {
                     >
                       Search
                     </button>
-                    <button
-                      onClick={() =>
-                        navigate(-1)
-                      }
-                      className="bg-gray-500 text-white px-4 py-2 rounded-md hover:scale-105 duration-300"
-                    >
-                      Back
-                    </button>
                   </div>
 
                   <div className="flex items-center justify-center gap-2">
@@ -504,10 +508,12 @@ const MonthlyAttendanceDetails_Mainbar = () => {
                     </button>
                   </div>
                 </div>
-                {/* <div>{employeeData?.employee?.
-name}</div> */}
+                {/* <div>{employeeName?.name}</div> */}
                 {summary && Object.keys(summary).length > 0 && (
                   <div className="bg-white p-4 rounded-md shadow-md w-full max-w-md  mt-4">
+                    <h2 className="text-xl font-bold mb-2 text-gray-900">
+                      {employeeName?.name || "Employee"}
+                    </h2>
                     <h2 className="text-lg font-semibold mb-3 text-gray-800 border-b pb-2">Summary</h2>
 
                     <div className="space-y-2 text-sm">
@@ -550,11 +556,13 @@ name}</div> */}
                   value={employeeData}
                   paginator
                   rows={10}
-                  rowsPerPageOptions={[5, 10, 20, 30, 50]}
+                  rowsPerPageOptions={[5, 10, 20, 50]}
                   globalFilter={globalFilter} // Global search filter
                   showGridlines
                   resizableColumns
                   emptyMessage="No Data Found"
+                  paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+                  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 >
                   {columns.map((col, index) => (
                     <Column
