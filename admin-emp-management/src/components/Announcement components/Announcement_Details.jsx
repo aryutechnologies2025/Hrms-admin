@@ -93,7 +93,7 @@ const Announcement_Details = () => {
   const [expiryDate, setExpiryDate] = useState(getTodayDate());
   const [message, setMessage] = useState("");
   const [visible, setVisible] = useState("");
-  const [displayStatus, setDisplayStatus] = useState("");
+  const [status, setStatus] = useState("");
 
   // const canAccessAdminAdd = visible === "Both" || visible === "Admin";
   // const canAccessEmployeeAdd = visible === "Both" || visible === "Employee";
@@ -109,7 +109,7 @@ const Announcement_Details = () => {
         expiryDate: expiryDate,
         message: message,
         visible: visible,
-        displayStatus: displayStatus,
+        status: status,
 
       };
 
@@ -125,7 +125,7 @@ const Announcement_Details = () => {
       setExpiryDate("");
       setMessage("");
       setVisible("");
-      setDisplayStatus("");
+      setStatus("");
       setErrors("");
       fetchAnnounce();
 
@@ -146,7 +146,7 @@ const Announcement_Details = () => {
   const [expiryDateEdit, setExpiryDateEdit] = useState("");
   const [messageEdit, setMessageEdit] = useState("");
   const [visibleEdit, setVisibleEdit] = useState("employee");
-  const [displayStatusEdit, setDisplayStatusEdit] = useState("");
+  const [statusEdit, setStatusEdit] = useState("");
   const [editId, setEditid] = useState("");
 
 
@@ -158,11 +158,16 @@ const Announcement_Details = () => {
 
     setEditid(row._id);
     setDisplayEdit(row._display);
-    setDateEdit(row.date);
-    setExpiryDateEdit(row.expiryDate);
+
+    // convert ISO date to yyyy-mm-dd
+  setDateEdit(row.date ? row.date.substring(0, 10) : "");
+
+  setExpiryDateEdit(row.expiryDate ? row.expiryDate.substring(0, 10) : "");
+    // setDateEdit(row.date);
+    // setExpiryDateEdit(row.expiryDate);
     setMessageEdit(row.message);
     setVisibleEdit(row.visible)
-    setDisplayStatusEdit(row.displayStatus);
+    setStatusEdit(row.status);
     setIsEditModalOpen(true);
     setTimeout(() => setIsAnimating(true), 10);
   };
@@ -189,7 +194,7 @@ const Announcement_Details = () => {
     if (!visibleEdit.trim()) {
       newErrors.visible = "Visible is required.";
     }
-    if (!displayStatusEdit) {
+    if (!statusEdit) {
       newErrors.status = "Status is required.";
     }
 
@@ -204,7 +209,7 @@ const Announcement_Details = () => {
         expiryDate: expiryDateEdit,
         message: messageEdit,
         visible: visibleEdit,
-        displayStatus: displayStatusEdit,
+        status: statusEdit,
       };
 
       const response = await axios.put(
@@ -290,7 +295,7 @@ const Announcement_Details = () => {
 
     {
       title: "Status",
-      data: "displayStatus",
+      data: "status",
       render: (data, type, row) => {
         const textColor =
           data === "1" || data === 1
@@ -365,11 +370,13 @@ const Announcement_Details = () => {
           <div>
            
 
-            <div className="flex justify-between gap-1">
+            <div className="">
               
                  <Mobile_Sidebar />
-             
-              <div className="flex  gap-1  items-center">
+
+            </div>
+
+            <div className="flex justify-end gap-1 mt-2 md:mt-0 items-center">
                 <p className="text-sm text-blue-500">Announcement</p>
                 <p>{">"}</p>
                 <p
@@ -379,8 +386,6 @@ const Announcement_Details = () => {
                   Dashboard
                 </p>
               </div>
-
-            </div>
      
 
             {/* Add Button */}
@@ -617,7 +622,7 @@ const Announcement_Details = () => {
                           name="status"
                           id="status"
                           onChange={(e) => {
-                            setDisplayStatus(e.target.value);
+                            setStatus(e.target.value);
                             validateStatus(e.target.value); // Validate status dynamically
                           }}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -743,7 +748,7 @@ const Announcement_Details = () => {
                                             style={{ height: "220px" }}
                                             id="message"
                                             name="message"
-                                            text={messageEdit}
+                                            value={messageEdit}
                                             className="w-full border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                           />
                                           {errors.messageEdit && (
@@ -836,9 +841,9 @@ const Announcement_Details = () => {
                         <select
                           name="status"
                           id="status"
-                          value={displayStatusEdit}
+                          value={statusEdit}
                           onChange={(e) => {
-                            setDisplayStatusEdit(e.target.value);
+                            setStatusEdit(e.target.value);
                           }}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
@@ -881,4 +886,3 @@ const Announcement_Details = () => {
   );
 };
 export default Announcement_Details;
-
