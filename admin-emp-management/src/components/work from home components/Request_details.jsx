@@ -159,10 +159,19 @@ const Request_details = () => {
       },
       // body: (rowData) => rowData.employeeId?.employeeName || "-",
     },
+
     {
       field: "employeeName",
       header: "Name",
-      body: (rowData) => rowData.employeeId?.employeeName || "-",
+      body: (rowData) => {
+        const name = rowData.employeeId?.employeeName || "-";
+
+        return name
+          .toLowerCase()
+          .split(" ")
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+      },
     },
 
     { field: "subject", header: "Subject" },
@@ -433,6 +442,12 @@ const Request_details = () => {
     { label: 'All', value: "null" }
   ];
 
+  const capitalizeFirst = (text = "") => {
+  if (!text) return "";
+  return text.charAt(0).toUpperCase() + text.slice(1);
+};
+
+
   return (
     <div className="flex flex-col justify-between  bg-gray-100 px-5 pt-2 md:pt-5 min-h-screen w-full overflow-x-auto">
       {loading ? (
@@ -489,8 +504,8 @@ const Request_details = () => {
 
             <div className="w-full mx-auto relative">
               {/* Global Search Input */}
-              <div className="flex justify-between  flex-wrap md:flex-nowrap w-full mt-3 md:mt-8">
-                <div className="w-60 ">
+              <div className="flex justify-between flexwrap md:flex-nowrap w-full mt-3 md:mt-8">
+                <div className=" ">
                   <Dropdown
                     value={subjectFilter}
                     onChange={(e) => setSubjectFilter(e.value)}
@@ -609,11 +624,10 @@ const Request_details = () => {
                         >
                           <div className="flex flex-col sm:flex-row gap-2">
                             <span className="font-normal md:font-medium">
-                              {item?.employeeId?.employeeName}
+                              {capitalizeFirst(item?.employeeId?.employeeName)}
                             </span>
-
                             <span className="font-normal md:font-medium">
-                              {item?.subject}
+                              {capitalizeFirst(item?.subject)}
                             </span>
                           </div>
                           <div className="flex gap-3">
@@ -673,7 +687,7 @@ const Request_details = () => {
                               {/* <p className="text-sm">Employee name</p> */}
                               {/* </div> */}
                               <input
-                                value={item?.employeeId?.employeeName}
+                                value={capitalizeFirst(item?.employeeId?.employeeName)}
                                 type="text"
                                 readOnly
                                 id="jobTitle"
@@ -729,7 +743,7 @@ const Request_details = () => {
                                 type="text"
                                 id="previousSalary"
                                 readOnly
-                                value={item?.subject}
+                                value={capitalizeFirst(item?.subject)}
                                 className="border-2 rounded-xl px-4 text-sm border-gray-300 outline-none h-10 w-full md:w-96"
                               />
                             </div>
@@ -750,7 +764,7 @@ const Request_details = () => {
                                 cols="2"
                                 readOnly
                                 className="border-2 rounded-xl py-2 px-4 h-[150px] text-sm border-gray-300 outline-none  w-full md:w-96"
-                                value={item.message}
+                                value={capitalizeFirst(item.message)}
                               />
                               {/* </div> */}
                             </div>
