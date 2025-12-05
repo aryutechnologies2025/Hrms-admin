@@ -26,6 +26,8 @@ import { FaEye } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import Loader from "../Loader";
 import { useDateUtils } from "../../hooks/useDateUtils";
+import { Dropdown } from "primereact/dropdown";
+
 
 const WorkFromHome_Mainbar = () => {
   const formatDateTime = useDateUtils();
@@ -146,6 +148,35 @@ const WorkFromHome_Mainbar = () => {
     }
   };
 
+  const [statusFilter, setStatusFilter] = useState(null);
+
+  //  Extract unique statuses dynamically
+  const uniqueStatuses = [
+    ...new Set(
+      approvedRejectedList?.map((item) =>
+        item.status ? item.status.toLowerCase() : ""
+      )
+    ),
+  ].filter((x) => x !== "");
+
+  //  Dropdown options (Auto generated)
+  const statusOptions = [
+    { label: "", value: null },
+    ...uniqueStatuses.map((s) => ({
+      label: s.charAt(0).toUpperCase() + s.slice(1),
+      value: s,
+    })),
+  ];
+
+  //  FILTER LOGIC (This updates the table)
+  const filteredList = statusFilter
+    ? approvedRejectedList.filter(
+      (item) => item.status?.toLowerCase() === statusFilter
+    )
+    : approvedRejectedList;
+
+
+
   const columns = [
     //  { field: "profile",
     //   header: "Profile",
@@ -171,7 +202,14 @@ const WorkFromHome_Mainbar = () => {
     //   header: "Role",
     // },
     // { field: "department", header: "Department" },
-    { field: "leaveType", header: "Leave Type" },
+    {
+      field: "leaveType",
+      header: "Type",
+      body: (rowData) => {
+        const value = rowData.leaveType || "";
+        return value.charAt(0).toUpperCase() + value.slice(1);
+      },
+    },
     {
       field: "period",
       header: "Period",
@@ -252,23 +290,23 @@ const WorkFromHome_Mainbar = () => {
       },
     },
     {
-          field: "note",
-          header: "Notes",
-          body: (rowData) => {
-            return (
-              <button
-                className="p-button-text p-button-sm"
-                onClick={() => {
-                  setNoteContent(rowData || "");
-                  setNoteVisible(true);
-                }}
-              // disabled={!rowData.note} // optional: disable if no note
-              >
-                <FaEye />
-              </button>
-            );
-          },
-        },
+      field: "note",
+      header: "Notes",
+      body: (rowData) => {
+        return (
+          <button
+            className="p-button-text p-button-sm"
+            onClick={() => {
+              setNoteContent(rowData || "");
+              setNoteVisible(true);
+            }}
+          // disabled={!rowData.note} // optional: disable if no note
+          >
+            <FaEye />
+          </button>
+        );
+      },
+    },
     {
       field: "",
       header: "Action",
@@ -288,6 +326,7 @@ const WorkFromHome_Mainbar = () => {
     },
   ];
 
+
   const [addLeaveRequestModalOpen, setAddLeaveRequestModalOpen] =
     useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -297,6 +336,7 @@ const WorkFromHome_Mainbar = () => {
       setTimeout(() => setIsAnimating(true), 10); // Delay to trigger animation
     }
   };
+
   const closeAddLeaveRequestModal = () => {
     setExpandedIndex(null);
     setIsAnimating(false);
@@ -307,6 +347,7 @@ const WorkFromHome_Mainbar = () => {
   const toggleAccordion = (index) => {
     setExpandedIndex(expandedIndex === index ? null : index);
   };
+
 
   const fetchApproveRejectList = async () => {
     try {
@@ -430,12 +471,15 @@ const WorkFromHome_Mainbar = () => {
       ) : (
         <>
           <div>
-            
+
 
             {/* breadcrumb */}
-            <div className="flex justify-between gap-2 items-center cursor-pointer">
+            <div className=" cursor-pointer">
               <Mobile_Sidebar />
-              <div className="flex gap-1 items-center">
+
+            </div>
+
+            <div className="flex justify-end mt-3 md:mt-0 gap-1 items-center">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
@@ -445,7 +489,6 @@ const WorkFromHome_Mainbar = () => {
               <p>{">"}</p>
 
               <p className="text-sm text-blue-500">Work From Home</p>
-              </div>
             </div>
             {/* <div className="flex gap-2 mt-5 text-sm items-center">
           <p className=" text-blue-500 ">Work From Home</p>
@@ -458,7 +501,17 @@ const WorkFromHome_Mainbar = () => {
                   WFH
                 </p>
 
+
                 <div className="flex items-center gap-5 mt-2 md:mt-4 ">
+                  
+                <button
+          onClick={() =>
+            navigate(-1)
+          }
+          className="text-sm bg-gray-600 hover:bg-gray-500 text-white px-5 py-2 mt-2 md:mt-0 rounded-3xl"
+        >
+          Back
+        </button>
                   <button
                     onClick={openAddLeaveRequestModal}
                     className="ml-auto md:ml-0 w-fit cursor-pointer px-5 md:px-7 py-0.5 md:py-2 rounded-full  text-white bg-blue-500 hover:bg-blue-600 font-medium"
@@ -471,6 +524,7 @@ const WorkFromHome_Mainbar = () => {
                 </div>
               </div>
             </div>
+
 
             {showModal && (
               <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/20 z-50">
@@ -551,15 +605,33 @@ const WorkFromHome_Mainbar = () => {
               </div>
             )}
 
-            <div className="w-full mx-auto relative">
-              {/* Global Search Input */}
-              <div className="mt-3 md:mt-8 flex md:justify-end ">
-                <InputText
-                  value={globalFilter}
-                  onChange={(e) => setGlobalFilter(e.target.value)}
-                  placeholder="Search"
-                  className="w-full md:w-[20%] px-2 py-2 rounded-md border border-gray-300 focus:outline-none  focus:border-blue-500"
-                />
+
+
+
+            <div className="w-full mx-auto relative  ">
+              <div className="flex justify-between  flex-wrap md:flex-nowrap w-full mt-3 md:mt-8">
+
+                <div className="w-60 mb-4">
+                  <Dropdown
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.value)}
+                    options={statusOptions}
+                    placeholder="Filter by Status"
+                    className="w-full"
+                  />
+                </div>
+
+
+                {/* Global Search Input */}
+                <div className="full ">
+
+                  <InputText
+                    value={globalFilter}
+                    onChange={(e) => setGlobalFilter(e.target.value)}
+                    placeholder="Search"
+                    className="w-full  px-2 py-2 rounded-md border border-gray-300 focus:outline-none  focus:border-blue-500"
+                  />
+                </div>
               </div>
 
               {/* Table Container with Relative Position */}
@@ -570,7 +642,7 @@ const WorkFromHome_Mainbar = () => {
                 {/* DataTable */}
                 <DataTable
                   className="mt-8"
-                  value={approvedRejectedList}
+                  value={filteredList}
                   paginator
                   rows={10}
                   rowsPerPageOptions={[5, 10, 20, 50]}
@@ -974,29 +1046,29 @@ const WorkFromHome_Mainbar = () => {
             )}
 
             {noteVisible && (
-                              <div
-                                onClick={() => setNoteVisible(false)}
-                                className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/20 z-50"
-                              >
-                                <div
-                                  onClick={(e) => e.stopPropagation()}
-                                  className="bg-white rounded-lg shadow-lg py-6 px-8 w-[800px] max-h-[500px] overflow-y-auto"
-                                >
-                                  <div className="flex items-center justify-between text-wrap">
-                                    <h2 className="text-xl font-semibold">Note </h2>
-                                    <span
-                                      onClick={() => setNoteVisible(false)}
-                                      className="bg-gray-100 w-7 text-lg cursor-pointer h-7 flex justify-center items-center rounded-full"
-                                    >
-                                      <IoClose />
-                                    </span>
-                                  </div>
-                                  <p className="mt-4 text-[16px] break-words">
-                                    {noteContent.note || "-"}
-                                  </p>
-                                </div>
-                              </div>
-                            )}
+              <div
+                onClick={() => setNoteVisible(false)}
+                className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/20 z-50"
+              >
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="bg-white rounded-lg shadow-lg py-6 px-8 w-[800px] max-h-[500px] overflow-y-auto"
+                >
+                  <div className="flex items-center justify-between text-wrap">
+                    <h2 className="text-xl font-semibold">Note </h2>
+                    <span
+                      onClick={() => setNoteVisible(false)}
+                      className="bg-gray-100 w-7 text-lg cursor-pointer h-7 flex justify-center items-center rounded-full"
+                    >
+                      <IoClose />
+                    </span>
+                  </div>
+                  <p className="mt-4 text-[16px] break-words">
+                    {noteContent.note || "-"}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </>
       )}

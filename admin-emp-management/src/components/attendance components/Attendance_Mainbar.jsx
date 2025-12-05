@@ -176,25 +176,51 @@ const Attendance_Mainbar = () => {
     //   header: "Date",
     //   body: (rowData) => rowData.entry_date_time.split("-").reverse().join("-"),
     // },
-    {
-      field: "login_time",
-      header: "Login Time",
-      body: (rowData) =>
-        (
-          <p
-            className={`${rowData?.login.split(":")[0] > 10
-              ? "text-red-500"
-              : (rowData?.login.split(":")[0] == 10 &&
-                rowData?.login.split(":")[1] >= 30) ||
-                rowData?.login.split(" ")[1] == "pm"
-                ? "text-red-500"
-                : ""
-              }`}
-          >
-            {rowData.login}
-          </p>
-        ) || "-",
-    },
+    // {
+    //   field: "login_time",
+    //   header: "Login Time",
+    //   body: (rowData) =>
+    //     (
+    //       <p
+    //         className={`${rowData?.login.split(":")[0] > 10
+    //           ? "text-red-500"
+    //           : (rowData?.login.split(":")[0] == 10 &&
+    //             rowData?.login.split(":")[1] >= 30) ||
+    //             rowData?.login.split(" ")[1] == "pm"
+    //             ? "text-red-500"
+    //             : ""
+    //           }`}
+    //       >
+    //         {rowData.login}
+    //       </p>
+    //     ) || "-",
+    // },
+
+ {
+  field: "login_time",
+  header: "Login Time",
+  body: (rowData) => {
+    const [time, meridian] = rowData?.login?.split(" ") || [];
+    const [hoursStr, minutesStr] = time?.split(":") || [];
+    const hours = parseInt(hoursStr, 10);
+    const minutes = parseInt(minutesStr, 10);
+
+    let colorClass = "";
+
+    // Orange for 10:05 to 10:29
+    if (hours === 10 && minutes >= 5 && minutes < 30) {
+      colorClass = "text-yellow-500 font-bold";
+    }
+    // Red for 10:30 and onwards
+    else if (hours > 10 || (hours === 10 && minutes >= 30) || meridian === "pm") {
+      colorClass = "text-red-500";
+    }
+
+    return <p className={colorClass}>{rowData.login}</p> || "-";
+  },
+},
+
+
     { field: "logout", header: "Logout Time" },
     {
       field: "total_break_time",

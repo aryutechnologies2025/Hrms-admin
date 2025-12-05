@@ -618,7 +618,7 @@ const Dashboard_Mainbar = () => {
                 onClick={() => setAbsentlistIsOpen(false)}
               >
                 <div
-                  className="bg-white p-6 rounded-lg shadow-lg w-[600px] h-[600px] overflow-y-auto"
+                  className="bg-white p-6 rounded-lg shadow-lg w-[600px] h-[600px] overflow-y-auto relative"
                   onClick={(e) => e.stopPropagation()}
                 >
 
@@ -685,7 +685,7 @@ const Dashboard_Mainbar = () => {
                 onClick={() => setWfhlistIsOpen(false)}
               >
                 <div
-                  className="bg-white p-6 rounded-lg shadow-lg w-[600px] h-[600px] overflow-y-auto"
+                  className="bg-white p-6 rounded-lg shadow-lg w-[600px] h-[600px] overflow-y-auto relative"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <button
@@ -751,7 +751,7 @@ const Dashboard_Mainbar = () => {
                 onClick={() => setpresentlistIsOpen(false)}
               >
                 <div
-                  className="bg-white p-6 rounded-lg shadow-lg w-[600px] h-[600px] overflow-y-auto"
+                  className="bg-white p-6 rounded-lg shadow-lg w-[600px] h-[600px] overflow-y-auto relative"
                   onClick={(e) => e.stopPropagation()}
                 >
 
