@@ -43,18 +43,20 @@ function Link_details() {
   }, []);
 
   return (
-    <div className="flex  flex-col justify-between w-screen min-h-screen bg-gray-100 px-3 md:px-5 pt-2 md:pt-10 ">
+    <div className="flex  flex-col justify-between w-screen min-h-screen bg-gray-100 px-3 md:px-5 pt-2 md:pt-5 ">
       {loading ? (
         <Loader />
       ) : (
         <>
-      <div className="p-3 ">
+      <div>
        
 
         {/* breadcrumb */}
-        <div className="flex justify-between gap-2  text-sm items-center">
+        <div className="">
            <Mobile_Sidebar />
-           <div className="flex gap-1  items-center">
+           
+        </div>
+        <div className="flex justify-end gap-1 mt-2 md:mt-0 items-center">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
@@ -64,7 +66,6 @@ function Link_details() {
           <p>{">"}</p>
           <p className="text-sm text-blue-500 ">Links</p>
           </div>
-        </div>
 
         <div className="flex flex-wrap justify-between mt-2 md:mt-4 mb-1 md:mb-3">
           <h1 className="text-2xl md:text-3xl font-semibold">Links</h1>

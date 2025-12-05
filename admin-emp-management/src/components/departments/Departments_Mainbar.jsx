@@ -329,9 +329,11 @@ const Departments_Mainbar = () => {
           <div>
 
 
-            <div className="flex justify-between gap-2 items-center cursor-pointer md:mt-2">
+            <div className=" cursor-pointer">
               <Mobile_Sidebar />
-              <div className="flex gap-2 items-center">
+              
+            </div>
+            <div className="flex justify-end gap-2 mt-2 md:mt-0 items-center">
                 <p
                   className="text-sm text-gray-500"
                   onClick={() => navigate("/dashboard")}
@@ -342,7 +344,6 @@ const Departments_Mainbar = () => {
 
                 <p className="text-sm md:text-md text-blue-500">Department</p>
               </div>
-            </div>
 
             {/* Add Button */}
             <div className="flex justify-between mt-1 md:mt-3 md:mb-4">

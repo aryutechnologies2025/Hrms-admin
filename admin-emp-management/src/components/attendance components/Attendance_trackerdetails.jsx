@@ -353,6 +353,19 @@ const Attendance_trackerdetails = () => {
   }
   const [dataTable, setDataTable] = useState(false);
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkScreen = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+    return () => window.removeEventListener("resize", checkScreen);
+  }, []);
+
+
   return (
     <div className="flex flex-col justify-between overflow-x-hidden bg-gray-100 min-h-screen px-5 pt-2 md:pt-5 w-screen ">
       {loading ? (
@@ -360,21 +373,29 @@ const Attendance_trackerdetails = () => {
       ) : (
         <>
           <div>
-           
 
-            <div className="flex justify-between gap-2 text-sm items-center">
-               <Mobile_Sidebar />
-               <div className="flex gap-1 items-center">
+
+            <div className="">
+              <Mobile_Sidebar />
+
+            </div>
+            <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
               <p
-                className=" text-gray-500 cursor-pointer"
+                className="text-xs md:text-sm text-gray-500"
+                onClick={() => navigate("/dashboard")}
+              >
+                Dashboard
+              </p>
+              <p>{">"}</p>
+              <p
+                className="text-xs md:text-sm text-gray-500 cursor-pointer"
                 onClick={() => navigate("/attendance")}
               >
                 Attendance
               </p>
               <p>{">"}</p>
-              <p className=" text-blue-500">Attendance Tracker</p>
-              <p>{">"}</p>
-              </div>
+              <p className="text-xs md:text-sm text-blue-500">Attendance Tracker</p>
+
             </div>
 
             <p className="text-2xl md:text-3xl mt-2 md:mt-4 font-semibold">
@@ -395,7 +416,7 @@ const Attendance_trackerdetails = () => {
                       placeholderText="Start work"
                       selected={selectedMonth}
                       onChange={(date) => setSelectedMonth(date)}
-                      className="border-2 rounded-xl w-28 md:w-44 h-10 px-4 border-gray-300 outline-none "
+                      className="border-2 rounded-xl w-32 md:w-44 h-10 px-4 border-gray-300 outline-none "
                       showMonthDropdown
                       showMonthYearPicker
                       popperClassName="!z-[9999]"
@@ -409,6 +430,14 @@ const Attendance_trackerdetails = () => {
                       className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-2 py-1 md:py-2 md:px-4 rounded-md hover:scale-105 duration-300"
                     >
                       Search{" "}
+                    </button>
+                    <button
+                      onClick={() =>
+                        navigate(-1)
+                      }
+                      className="bg-gray-500 hover:bg-gray-600 text-white font-semibold px-2 py-1 md:py-2 md:px-4 rounded-md hover:scale-105 duration-300"
+                    >
+                      Back
                     </button>
                   </div>
 
@@ -459,10 +488,11 @@ const Attendance_trackerdetails = () => {
                           className="mt-4 sticky-header-table"
                           emptyMessage="No Data Found"
                         >
+                          {/* Employee Name Column */}
                           <Column
                             field="employeeName"
                             header="Employee Name"
-                            frozen
+                            frozen={!isMobile}   
                             style={{ minWidth: "200px" }}
                             body={(row) => (
                               <a
@@ -474,13 +504,17 @@ const Attendance_trackerdetails = () => {
                               </a>
                             )}
                           />
+
+                          {/* No of Present */}
                           <Column
                             field="noOfPresent"
                             header="No of Present"
-                            frozen
-                            alignFrozen="left"
+                            frozen={!isMobile}          
+                            alignFrozen={!isMobile ? "left" : undefined} 
                             style={{ minWidth: "150px" }}
                           />
+
+                          {/* Dynamic Date Columns */}
                           {dateColumns.map((col, index) => (
                             <Column
                               key={index}
@@ -492,6 +526,7 @@ const Attendance_trackerdetails = () => {
                           ))}
                         </DataTable>
                       </div>
+
                     </div>
                   </div>
                 )}

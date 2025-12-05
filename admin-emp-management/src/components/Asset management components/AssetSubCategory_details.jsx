@@ -316,7 +316,7 @@ const AssetSubCategory_details = () => {
                 className="text-xs md:text-sm text-gray-500"
                 onClick={() => navigate("/assetmanagement")}
               >
-                Asset Management
+                Asset
               </p>
           <p>{">"}</p>
 
