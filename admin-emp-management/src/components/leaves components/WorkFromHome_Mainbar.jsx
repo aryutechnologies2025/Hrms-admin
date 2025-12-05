@@ -190,12 +190,12 @@ const WorkFromHome_Mainbar = () => {
     {
       field: "employeeId",
       header: "Employee Id",
-      body: (rowData) => rowData.employee?.employeeId || "-",
+      body: (rowData) => rowData.employee?.employeeId || "-".toUpperCase(),
     },
     {
       field: "employeeName",
       header: "Name",
-      body: (rowData) => rowData.employee?.employeeName || "-",
+      body: (rowData) => rowData.employee?.employeeName || "-".toUpperCase(),
     },
     // {
     //   field: "role_name",
@@ -245,7 +245,7 @@ const WorkFromHome_Mainbar = () => {
           <button
             className="p-button-text p-button-sm"
             onClick={() => {
-              setReason(rowData || "");
+              setReason(rowData.leaveReason?.toUpperCase() || "");
               setReasonVisible(true);
             }}
 
@@ -503,15 +503,15 @@ const WorkFromHome_Mainbar = () => {
 
 
                 <div className="flex items-center gap-5 mt-2 md:mt-4 ">
-                  
-                <button
-          onClick={() =>
-            navigate(-1)
-          }
-          className="text-sm bg-gray-600 hover:bg-gray-500 text-white px-5 py-2 mt-2 md:mt-0 rounded-3xl"
-        >
-          Back
-        </button>
+
+                  <button
+                    onClick={() =>
+                      navigate(-1)
+                    }
+                    className="bg-gray-600 hover:bg-gray-500 ml-auto md:ml-0 w-fit cursor-pointer px-5 md:px-7 py-0.5 md:py-2 rounded-full  text-white font-medium"
+                  >
+                    Back
+                  </button>
                   <button
                     onClick={openAddLeaveRequestModal}
                     className="ml-auto md:ml-0 w-fit cursor-pointer px-5 md:px-7 py-0.5 md:py-2 rounded-full  text-white bg-blue-500 hover:bg-blue-600 font-medium"
@@ -645,7 +645,7 @@ const WorkFromHome_Mainbar = () => {
                   value={filteredList}
                   paginator
                   rows={10}
-rowsPerPageOptions={[5, 10, 20, 50, filteredList?.length]}
+                  rowsPerPageOptions={[5, 10, 20, 50, filteredList?.length]}
                   globalFilter={globalFilter}
                   globalFilterFields={[
                     "employee.employeeId",
@@ -654,8 +654,8 @@ rowsPerPageOptions={[5, 10, 20, 50, filteredList?.length]}
                   showGridlines
                   resizableColumns
 
-                   paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
-  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                  paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+                  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 >
                   {columns.map((col, index) => (
                     <Column
