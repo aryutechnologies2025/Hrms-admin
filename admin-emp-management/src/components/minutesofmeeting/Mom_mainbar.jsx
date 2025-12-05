@@ -501,7 +501,7 @@ const Mom_mainbar = () => {
 
         <ToastContainer />
 
-        <div className="flex gap-2 text-sm items-center mt-3">
+        <div className="flex justify-end mt-2 md:mt-0 gap-2 text-sm items-center ">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}

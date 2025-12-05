@@ -16,13 +16,13 @@ import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { FaFileExport } from "react-icons/fa6";
 import Loader from "../Loader";
-import { useDateUtils  } from "../../hooks/useDateUtils";
+import { useDateUtils } from "../../hooks/useDateUtils";
 
 
 const MonthlyAttendanceDetails_Mainbar = () => {
   let navigate = useNavigate();
   const formatDateTime = useDateUtils();
-  
+
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   // console.log("selectedMonth", selectedMonth);
 
@@ -35,11 +35,11 @@ const MonthlyAttendanceDetails_Mainbar = () => {
 
   const columns = [
 
-     {
-    field: "sno",
-    header: "S.No",
-    body: (rowData, { rowIndex }) => rowIndex + 1,
-},
+    {
+      field: "sno",
+      header: "S.No",
+      body: (rowData, { rowIndex }) => rowIndex + 1,
+    },
 
     {
       field: "date",
@@ -114,15 +114,14 @@ const MonthlyAttendanceDetails_Mainbar = () => {
       body: (rowData) =>
         rowData?.loginTime ? (
           <p
-            className={`${
-              rowData?.loginTime.split(":")[0] > 10
+            className={`${rowData?.loginTime.split(":")[0] > 10
                 ? "text-red-500"
                 : (rowData?.loginTime.split(":")[0] == 10 &&
-                    rowData?.loginTime.split(":")[1] >= 30) ||
+                  rowData?.loginTime.split(":")[1] >= 30) ||
                   rowData?.loginTime.split(" ")[1] == "pm"
-                ? "text-red-500"
-                : ""
-            }`}
+                  ? "text-red-500"
+                  : ""
+              }`}
           >
             {rowData.loginTime}
           </p>
@@ -142,7 +141,7 @@ const MonthlyAttendanceDetails_Mainbar = () => {
       // return logoutEntry?.time?.slice(12, 19) || "-";
       // }
     },
-  {
+    {
       field: "total_break_time",
       header: "Break",
       body: (rowData) =>
@@ -170,9 +169,9 @@ const MonthlyAttendanceDetails_Mainbar = () => {
           >
             <p
               className={`${rowData?.result?.breakTime?.hours >= 1 &&
-                  rowData?.result?.breakTime?.seconds >= 0
-                  ? "text-red-500"
-                  : ""
+                rowData?.result?.breakTime?.seconds >= 0
+                ? "text-red-500"
+                : ""
                 }`}
             >
               {`${rowData?.result?.breakTime?.hours ?? 0}:${rowData?.result?.breakTime?.minutes ?? 0
@@ -229,11 +228,10 @@ const MonthlyAttendanceDetails_Mainbar = () => {
       body: (rowData) =>
         rowData?.result ? (
           <p
-            className={`${
-              rowData?.result?.payableTime?.hours >= 8
+            className={`${rowData?.result?.payableTime?.hours >= 8
                 ? "text-green-600"
                 : "text-red-600"
-            }`}
+              }`}
           >
             {`${String(rowData?.result?.payableTime?.hours).padStart(
               2,
@@ -279,8 +277,8 @@ const MonthlyAttendanceDetails_Mainbar = () => {
 
   const fetchEmployeeList = async () => {
     try {
-       const monthDate = new Date(selectedMonth);
-  
+      const monthDate = new Date(selectedMonth);
+
       const month = `${monthDate.getDate()}-${monthDate.getMonth() + 1}-${monthDate.getFullYear()}`
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees-filterdate/${month}`,
@@ -297,7 +295,7 @@ const MonthlyAttendanceDetails_Mainbar = () => {
         label: emp.employeeName,
         value: emp._id,
       }));
-      
+
       const employeeName = response.data.data.map((emp) => emp.employeeName);
 
       setSelectedEmployee(employeeemail);
@@ -317,7 +315,7 @@ const MonthlyAttendanceDetails_Mainbar = () => {
   const [selectedEmployeeDeatils, setSelectedEmployeeDetails] = useState(null);
   const [employeeData, setEmployeeData] = useState([]);
 
-  const[summary , setSummary] = useState([]);
+  const [summary, setSummary] = useState([]);
 
   // console.log("summary", summary);
 
@@ -338,11 +336,11 @@ const MonthlyAttendanceDetails_Mainbar = () => {
         { params: payload }
       );
 
-      console.log("response",response)
+      console.log("response", response)
 
       setEmployeeData(response.data.data);
       setSummary(response.data.summary)
-     
+
       console.log(response.data.data);
     } catch (error) {
       console.log(error);
@@ -411,171 +409,172 @@ const MonthlyAttendanceDetails_Mainbar = () => {
         <Loader />
       ) : (
         <>
-      <div>
-        
-        <div className=" items-center">
-          <Mobile_Sidebar />
-          
-        </div>
+          <div>
 
-        <div className="flex justify-end mt-3 md:mt-0 gap-1 items-center">
-          <p
-            className=" text-gray-500 cursor-pointer"
-            onClick={() => navigate("/attendance")}
-          >
-            Attendance
-          </p>
-          <p>{">"}</p>
-          <p className=" text-blue-500">Monthly Attendance</p>
-          <p>{">"}</p>
-        </div>
-<div className="flex justify-between mt-2 md:mt-4">
-  
-        <p className="text-2xl md:text-3xl  font-semibold">
-          Monthly Report
-        </p>
-        
-     <div>
-        <button
-          onClick={() =>
-            navigate(-1)
-          }
-          className="text-sm bg-gray-600 hover:bg-gray-500 text-white px-5 py-2 mt-2 md:mt-0 rounded-3xl"
-        >
-          Back
-        </button>
-     </div>
-</div>
+            <div className=" items-center">
+              <Mobile_Sidebar />
 
-        <div className="bg-white mt-2 md:mt-4 px-5 py-5 rounded-2xl">
-          {/* <p className="text-2xl font-bold text-gray-500">Attendance List</p> */}
-          <div
-            style={{ width: "auto", margin: "0 auto" }}
-            className="overflow-x-hidden"
-          >
-            <div className="flex flex-wrap gap-8 justify-between items-center md:mt-5 ">
-              {/* Global Search Input */}
-              <div className="card flex flex-wrap md:flex-nowrap gap-4">
-                <DatePicker
-                  id="DATE OF JOINING"
-                  placeholderText="Start work"
-                  selected={selectedMonth}
-                  onChange={(date) => setSelectedMonth(date)}
-                  className="border-2 rounded-xl w-full md:w-44 h-10 px-4 border-gray-300 outline-none"
-                  showMonthDropdown
-                  showMonthYearPicker
-                  dateFormat="MMM-YYYY"
-                  dropdownMode="select" // This shows a select-style dropdown
-                />
-                {/* Global Search Input */}
+            </div>
 
-                <Dropdown
-                  value={selectedEmployeeDeatils}
-                  onChange={(e) => setSelectedEmployeeDetails(e.value)}
-                  options={selectedEmployee}
-                  optionLabel="label"
-                  placeholder="Select a Employee"
-                  filter
-                  className="w-full md:w-16rem border-2 rounded-md border-gray-300"
-                />
+            <div className="flex justify-end mt-3 md:mt-0 gap-1 items-center">
+              <p
+                className=" text-gray-500 cursor-pointer"
+                onClick={() => navigate("/attendance")}
+              >
+                Attendance
+              </p>
+              <p>{">"}</p>
+              <p className=" text-blue-500">Monthly Attendance</p>
+              <p>{">"}</p>
+            </div>
+            <div className="flex justify-between mt-2 md:mt-4">
 
-                <button
-                  onClick={handleSubmit}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-md hover:scale-105 duration-300"
-                >
-                  Search
-                </button>
+              <p className="text-2xl md:text-3xl  font-semibold">
+                Monthly Report
+              </p>
+
+              <div>
+
               </div>
+            </div>
 
-              <div className="flex items-center justify-center gap-2">
-                {/* <InputText
+            <div className="bg-white mt-2 md:mt-4 px-5 py-5 rounded-2xl">
+              {/* <p className="text-2xl font-bold text-gray-500">Attendance List</p> */}
+              <div
+                style={{ width: "auto", margin: "0 auto" }}
+                className="overflow-x-hidden"
+              >
+                <div className="flex flex-wrap gap-8 justify-between items-center md:mt-5 ">
+                  {/* Global Search Input */}
+                  <div className="card flex flex-wrap md:flex-nowrap gap-4">
+                    <DatePicker
+                      id="DATE OF JOINING"
+                      placeholderText="Start work"
+                      selected={selectedMonth}
+                      onChange={(date) => setSelectedMonth(date)}
+                      className="border-2 rounded-xl w-full md:w-44 h-10 px-4 border-gray-300 outline-none"
+                      showMonthDropdown
+                      showMonthYearPicker
+                      dateFormat="MMM-YYYY"
+                      dropdownMode="select" // This shows a select-style dropdown
+                    />
+                    {/* Global Search Input */}
+
+                    <Dropdown
+                      value={selectedEmployeeDeatils}
+                      onChange={(e) => setSelectedEmployeeDetails(e.value)}
+                      options={selectedEmployee}
+                      optionLabel="label"
+                      placeholder="Select a Employee"
+                      filter
+                      className="w-full md:w-16rem border-2 rounded-md border-gray-300"
+                    />
+
+                    <button
+                      onClick={handleSubmit}
+                      className="bg-blue-500 text-white px-4 py-2 rounded-md hover:scale-105 duration-300"
+                    >
+                      Search
+                    </button>
+                    <button
+                      onClick={() =>
+                        navigate(-1)
+                      }
+                      className="bg-gray-500 text-white px-4 py-2 rounded-md hover:scale-105 duration-300"
+                    >
+                      Back
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-center gap-2">
+                    {/* <InputText
                   value={globalFilter}
                   onChange={(e) => setGlobalFilter(e.target.value)}
                   placeholder="Search"
                   className="px-2 py-2 bg-gray-200 rounded-md"
                 /> */}
 
-                
-                <button
-                  onClick={exportToCSV}
-                  className="flex flex-wrap mb-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold px-3 py-1 md:py-2 md:px-4 rounded-mditems-center gap-2"
+
+                    <button
+                      onClick={exportToCSV}
+                      className="flex flex-wrap mb-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold px-3 py-1 md:py-2 md:px-4 rounded-mditems-center gap-2"
+                    >
+                      Export CSV
+                      <FaFileExport />
+                    </button>
+                  </div>
+                </div>
+                {/* <div>{employeeData?.employee?.
+name}</div> */}
+                {summary && Object.keys(summary).length > 0 && (
+                  <div className="bg-white p-4 rounded-md shadow-md w-full max-w-md  mt-4">
+                    <h2 className="text-lg font-semibold mb-3 text-gray-800 border-b pb-2">Summary</h2>
+
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between px-2 py-1 bg-blue-50 rounded">
+                        <span className="text-blue-700 font-medium">Total Days:</span>
+                        <span className="font-semibold text-blue-900">{summary.totalDays ?? 0}</span>
+                      </div>
+
+                      <div className="flex justify-between px-2 py-1 bg-green-50 rounded">
+                        <span className="text-green-700 font-medium">Present Days:</span>
+                        <span className="font-semibold text-green-900">{summary.presentDaysCount ?? 0}</span>
+                      </div>
+
+                      <div className="flex justify-between px-2 py-1 bg-red-50 rounded">
+                        <span className="text-red-700 font-medium">Absent Days:</span>
+                        <span className="font-semibold text-red-900">{summary.absentDaysCount ?? 0}</span>
+                      </div>
+
+                      <div className="flex justify-between px-2 py-1 bg-yellow-50 rounded">
+                        <span className="text-yellow-700 font-medium">Late Login:</span>
+                        <span className="font-semibold text-yellow-900">{summary.after1030LoginCount ?? 0}</span>
+                      </div>
+
+                      <div className="flex justify-between px-2 py-1 bg-purple-50 rounded">
+                        <span className="text-purple-700 font-medium">Less Than 8 Hours:</span>
+                        <span className="font-semibold text-purple-900">{summary.lessThan8HoursCount ?? 0}</span>
+                      </div>
+
+                      <div className="flex justify-between px-2 py-1 bg-indigo-50 rounded">
+                        <span className="text-indigo-700 font-medium">Holidays:</span>
+                        <span className="font-semibold text-indigo-900">{summary.totalHolidaysCount ?? 0}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+
+                <DataTable
+                  className="mt-8"
+                  value={employeeData}
+                  paginator
+                  rows={10}
+                  rowsPerPageOptions={[5, 10, 20, 30, 50]}
+                  globalFilter={globalFilter} // Global search filter
+                  showGridlines
+                  resizableColumns
+                  emptyMessage="No Data Found"
                 >
-                  Export CSV
-                  <FaFileExport />
-                </button>
+                  {columns.map((col, index) => (
+                    <Column
+                      key={index}
+                      field={col.field}
+                      header={col.header}
+                      body={col.body}
+                    // style={{
+                    //   minWidth: "150px",
+                    //   wordWrap: "break-word", // Allow text to wrap
+                    //   overflow: "hidden", // Prevent text overflow
+                    //   whiteSpace: "normal", // Ensure that text wraps within the available space
+                    // }}
+                    />
+                  ))}
+                </DataTable>
               </div>
             </div>
-            {/* <div>{employeeData?.employee?.
-name}</div> */}
-{summary && Object.keys(summary).length > 0 && (
-  <div className="bg-white p-4 rounded-md shadow-md w-full max-w-md  mt-4">
-    <h2 className="text-lg font-semibold mb-3 text-gray-800 border-b pb-2">Summary</h2>
-
-    <div className="space-y-2 text-sm">
-      <div className="flex justify-between px-2 py-1 bg-blue-50 rounded">
-        <span className="text-blue-700 font-medium">Total Days:</span>
-        <span className="font-semibold text-blue-900">{summary.totalDays ?? 0}</span>
-      </div>
-
-      <div className="flex justify-between px-2 py-1 bg-green-50 rounded">
-        <span className="text-green-700 font-medium">Present Days:</span>
-        <span className="font-semibold text-green-900">{summary.presentDaysCount ?? 0}</span>
-      </div>
-
-      <div className="flex justify-between px-2 py-1 bg-red-50 rounded">
-        <span className="text-red-700 font-medium">Absent Days:</span>
-        <span className="font-semibold text-red-900">{summary.absentDaysCount ?? 0}</span>
-      </div>
-
-      <div className="flex justify-between px-2 py-1 bg-yellow-50 rounded">
-        <span className="text-yellow-700 font-medium">Late Login:</span>
-        <span className="font-semibold text-yellow-900">{summary.after1030LoginCount ?? 0}</span>
-      </div>
-
-      <div className="flex justify-between px-2 py-1 bg-purple-50 rounded">
-        <span className="text-purple-700 font-medium">Less Than 8 Hours:</span>
-        <span className="font-semibold text-purple-900">{summary.lessThan8HoursCount ?? 0}</span>
-      </div>
-
-      <div className="flex justify-between px-2 py-1 bg-indigo-50 rounded">
-        <span className="text-indigo-700 font-medium">Holidays:</span>
-        <span className="font-semibold text-indigo-900">{summary.totalHolidaysCount ?? 0}</span>
-      </div>
-    </div>
-  </div>
-)}
-
-
-            <DataTable
-              className="mt-8"
-              value={employeeData}
-              paginator
-              rows={10}
-              rowsPerPageOptions={[5, 10, 20]}
-              globalFilter={globalFilter} // Global search filter
-              showGridlines
-              resizableColumns
-              emptyMessage="No Data Found"
-            >
-              {columns.map((col, index) => (
-                <Column
-                  key={index}
-                  field={col.field}
-                  header={col.header}
-                  body={col.body}
-                  // style={{
-                  //   minWidth: "150px",
-                  //   wordWrap: "break-word", // Allow text to wrap
-                  //   overflow: "hidden", // Prevent text overflow
-                  //   whiteSpace: "normal", // Ensure that text wraps within the available space
-                  // }}
-                />
-              ))}
-            </DataTable>
           </div>
-        </div>
-      </div>
-      {/* {tooltipData && (
+          {/* {tooltipData && (
         <div
           className="absolute bg-[#fafafa] border border-gray-300 shadow-lg px-5 py-5 rounded text-xs z-50"
           style={{
@@ -600,9 +599,9 @@ name}</div> */}
         </div>
       )} */}
 
-      
 
-      {tooltipData?.data?.length > 0 && (
+
+          {tooltipData?.data?.length > 0 && (
             <div
               className="absolute bg-[#FAFAFA] border border-gray-300 shadow-lg px-5 py-5 rounded text-xs z-50 max-w-[250px] max-h-[200px] overflow-y-auto transition-opacity duration-200"
               style={{

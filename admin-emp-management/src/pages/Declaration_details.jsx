@@ -543,20 +543,20 @@ const handledownloadDocument = (documents) => {
     //   },
     // },
     {
-      title: "employee Id",
+      title: "Id",
       data: "employeeId",
     },
     {
-      title: "Employee Name",
+      title: "Name",
       data: "employeeName",
     },
 
     {
-      title: "designation",
+      title: "Designation",
       data: "designation",
     },
     {
-      title: "certificate Name",
+      title: "Certificate Name",
       data: "certificateName",
     },
     {
@@ -691,9 +691,9 @@ const handledownloadDocument = (documents) => {
           <div>
             <Mobile_Sidebar />
 
-            <div className="flex gap-2 items-center cursor-pointer">
+            <div className="flex justify-end mt-2 md:mt-0 gap-2 items-center cursor-pointer">
               <p
-                className="text-sm text-gray-500"
+                className="text-xs md:text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
               >
                 Dashboard
@@ -701,13 +701,13 @@ const handledownloadDocument = (documents) => {
               <p>{">"}</p>
               <p
                 onClick={() => navigate("/employees")}
-                className="text-sm text-gray-500 cursor-pointer "
+                className="text-xs md:text-sm text-gray-500 cursor-pointer "
               >
                 Employees
               </p>
               <p>{">"}</p>
 
-              <p className="text-sm text-blue-500">Declaration</p>
+              <p className="text-xs md:text-sm text-blue-500">Declaration</p>
             </div>
 
             {/* Add Button */}

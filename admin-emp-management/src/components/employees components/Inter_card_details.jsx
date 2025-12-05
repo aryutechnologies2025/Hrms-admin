@@ -239,7 +239,7 @@ const Inter_card_details = () => {
         },
 
         {
-            title: "Employee Name",
+            title: "Name",
             data: null,
             render: function (data, type, row) {
                 const name = row.employee_Name || "-";
@@ -255,7 +255,7 @@ const Inter_card_details = () => {
         },
 
         {
-            title: "Employee Role",
+            title: "Role",
             data: "employee_role",
             render: function (data) {
                 return data || "-";
@@ -284,7 +284,7 @@ const Inter_card_details = () => {
         },
 
         {
-            title: "Employee Email",
+            title: "Email",
             data: "employee_mailId",
             render: function (data) {
                 return data || "-";
@@ -391,9 +391,11 @@ const Inter_card_details = () => {
 
                         {/* breadcrumbs */}
 
-                        <div className="flex justify-between gap-1 md:gap-2 items-center cursor-pointer">
+                        <div className="cursor-pointer">
                           <Mobile_Sidebar />
-                          <div className="flex gap-1 items-center">
+                          
+                        </div>
+                        <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
                             <p
                                 className="text-sm text-gray-500"
                                 onClick={() => navigate("/dashboard")}
@@ -404,7 +406,6 @@ const Inter_card_details = () => {
 
                             <p className="text-sm text-blue-500">Internship</p>
                             </div>
-                        </div>
 
                         <div className="flex flex-wrap  md:flex-row  justify-between ">
                             <p className="text-xl md:text-3xl  font-semibold ">

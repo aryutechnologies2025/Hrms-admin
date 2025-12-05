@@ -462,9 +462,11 @@ const Client_details = () => {
       <div>
         
 
-        <div className="flex justify-between gap-2 items-center cursor-pointer">
+        <div className="cursor-pointer">
           <Mobile_Sidebar />
-          <div className="flex gap-1 items-center r">
+          
+        </div>
+        <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center r">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
@@ -475,7 +477,6 @@ const Client_details = () => {
 
           <p className="text-sm text-blue-500">Client List</p>
           </div>
-        </div>
 
         {/* Add Button */}
         <div className="flex justify-between mt-1 md:mt-4 mb-2 md:mb-3">

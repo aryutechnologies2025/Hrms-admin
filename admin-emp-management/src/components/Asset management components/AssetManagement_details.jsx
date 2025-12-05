@@ -956,9 +956,11 @@ console.log("existingFileObjects",existingFileObjects);
                     <div>
 
 
-                        <div className="flex justify-between gap-2 text-sm items-center">
+                        <div className="">
                             <Mobile_Sidebar />
-                            <div className="flex gap-1 items-center">
+                            
+                        </div>
+                        <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
                                 <p
                                     className="text-sm text-gray-500 cursor-pointer"
                                     onClick={() => navigate("/dashboard")}
@@ -969,7 +971,6 @@ console.log("existingFileObjects",existingFileObjects);
 
                                 <p className="text-sm text-blue-500">Assets</p>
                             </div>
-                        </div>
 
                         {/* Add Button */}
                         <div className="flex justify-between mt-2 md:mt-4">

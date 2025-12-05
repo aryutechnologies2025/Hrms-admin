@@ -317,16 +317,21 @@ table.dataTable {
   flex-wrap: wrap !important;
 
 }
- .dt-length,.dt-search {
-    display: none !important;
+.dt-length {
+    order: 1;
+    width: 100%;
+  }
+
+  .dt-search {
+    order: 2;
+    width: 100%;
   }
 
 
 }
 
 #datatable .dataTables_info,
-#datatable .dt-info
-#datatable .dataTables_length {
+#datatable .dt-info {
   display: none !important;
 }
 

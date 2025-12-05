@@ -189,20 +189,21 @@ const Bidding_reports_details = () => {
           <div>
             
 
-            <div className="flex justify-betwwen gap-2 items-center cursor-pointer">
+            <div className="cursor-pointer">
               <Mobile_Sidebar />
-              <div className="flex gap-1 items-center">
+              
+            </div>
+            <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
               <p
-                className=" text-gray-500 cursor-pointer"
+                className="text-sm text-gray-500 cursor-pointer"
                 onClick={() => navigate("/")}
               >
                 Dashboard
               </p>
               <p>{">"}</p>
-              <p className=" text-blue-500">Bidding Reports</p>
+              <p className="text-sm text-blue-500">Bidding Reports</p>
               <p>{">"}</p>
               </div>
-            </div>
 
             <div className="p-2 md:p-5">
               {/* Filters */}

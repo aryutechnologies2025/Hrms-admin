@@ -85,6 +85,23 @@ const Payroll_Mainbar = () => {
   }, [payrollList]);
 
   const columns = [
+    {
+      field: "sno",
+      header: "S NO",
+      body: (rowData, { rowIndex }) => rowIndex + 1,
+    },
+    {
+      field: "netSalary",
+      header: "Net Salary",
+      body: (rowData) => "₹" + Number(rowData.data.netSalary).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }),
+      footer: "₹" + Number(salaryTotals.netSalary).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }),
+    },
     // {
     //   field: "name",
     //   header: "Employee Name",
@@ -92,7 +109,7 @@ const Payroll_Mainbar = () => {
     // },
     {
       field: "working_days",
-      header: "No. of Days Working",
+      header: "Total Days",
       body: (rowData) => rowData.data.totalDays,
     },
     {
@@ -313,18 +330,7 @@ const Payroll_Mainbar = () => {
         maximumFractionDigits: 2,
       }),
     },
-    {
-      field: "netSalary",
-      header: "Net Salary",
-      body: (rowData) => "₹" + Number(rowData.data.netSalary).toLocaleString("en-IN", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }),
-      footer: "₹" + Number(salaryTotals.netSalary).toLocaleString("en-IN", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }),
-    },
+
     // { field: "esi", header: "ESI" },
     // { field: "pt", header: "PT" },
     // { field: "tds", header: "TDS" },
@@ -576,16 +582,17 @@ const Payroll_Mainbar = () => {
       ) : (
         <>
           <div>
-            
-            <div className="flex justify-between gap-2 items-center">
+
+            <div className="">
               <Mobile_Sidebar />
-              <div className="flex gap-1 items-center">
+
+            </div>
+            <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
               <p className='text-gray-500 text-sm'
                 onClick={() => navigate("/dashboard")}
               >Dashboard</p>
               <p>{">"}</p>
-              <p className=" text-blue-500 ">Payroll</p>
-              </div>
+              <p className="text-sm text-blue-500 ">Payroll</p>
             </div>
 
             <p className="text-2xl md:text-3xl mt-2 md:mt-4 font-semibold">
