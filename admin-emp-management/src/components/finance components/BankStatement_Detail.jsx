@@ -439,10 +439,11 @@ const BankStatement_Detail = () => {
                     <div>
                         
 
-                        <div className="flex justify-between gap-1">
+                        <div className="">
                             <Mobile_Sidebar />
-                           
-                            <div className="flex gap-1 items-center">
+                         
+                        </div>
+                        <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
                             <p className="text-xs md:text-sm text-blue-500">Bank Statement</p>
                             <p>{">"}</p>
                             <p
@@ -452,10 +453,6 @@ const BankStatement_Detail = () => {
                                 Dashboard
                             </p>
                             </div>
-
-
-
-                        </div>
                         <div className="">
                                 <h1 className="text-xl md:text-3xl font-semibold">Bank Statement</h1>
                             </div>

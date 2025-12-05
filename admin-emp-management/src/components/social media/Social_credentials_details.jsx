@@ -534,9 +534,11 @@ const Social_credentials_details = () => {
               <div>
                 
 
-                <div className="flex justify-between gap-2 items-center cursor-pointer text-sm">
+                <div className="cursor-pointer">
                   <Mobile_Sidebar />
-                  <div className="flex gap-1 items-center">
+                  
+                </div>
+                <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
                   <p
                     className=" text-gray-500 cursor-pointer"
                     onClick={() => navigate("/")}
@@ -547,7 +549,6 @@ const Social_credentials_details = () => {
                   <p className=" text-blue-500"> Social Credentials</p>
                   <p>{">"}</p>
                   </div>
-                </div>
 
                 {/* Add Button */}
                 <div className="flex justify-between mt-2 md:mt-4 mb-1 md:mb-3">

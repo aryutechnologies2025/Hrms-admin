@@ -175,15 +175,15 @@ const Reliving_list_details = () => {
     setTimeout(() => setIsAnimating(true), 10);
   };
 
-const handleAddOptionEdit = () => {
-  if (dropdownTitleEdit.trim() === "") {
-    setOptionErrorEdit("Option cannot be empty");
-    return;
-  }
-  setOptionsEdit((prev) => [...prev, { option: dropdownTitleEdit }]);
-  setDropdownTitleEdit("");
-  setOptionErrorEdit("");
-};
+  const handleAddOptionEdit = () => {
+    if (dropdownTitleEdit.trim() === "") {
+      setOptionErrorEdit("Option cannot be empty");
+      return;
+    }
+    setOptionsEdit((prev) => [...prev, { option: dropdownTitleEdit }]);
+    setDropdownTitleEdit("");
+    setOptionErrorEdit("");
+  };
 
 
   // const closeEditModal = () => {
@@ -198,14 +198,14 @@ const handleAddOptionEdit = () => {
         name: leaveTypeEdit,
         type: selectedInputTypeEdit,
         // options: optionsEdit.map((opt) => ({ option: opt.option })),
-          options: optionsEdit
-    .map((opt) => {
-      if (!opt) return null;                    
-      if (typeof opt === "string") return { option: opt }; 
-      if (opt.option !== undefined) return { option: opt.option }; 
-      return null;                             
-    })
-    .filter(Boolean),
+        options: optionsEdit
+          .map((opt) => {
+            if (!opt) return null;
+            if (typeof opt === "string") return { option: opt };
+            if (opt.option !== undefined) return { option: opt.option };
+            return null;
+          })
+          .filter(Boolean),
       };
 
       const response = await axios.put(
@@ -296,15 +296,15 @@ const handleAddOptionEdit = () => {
     //   },
     // },
     {
-  title: "Label",
-  data: "options",
-  render: (data) => {
-    if (Array.isArray(data)) {
-      return data.join(", ") || "-"; // join strings directly
-    }
-    return "-";
-  },
-},
+      title: "Label",
+      data: "options",
+      render: (data) => {
+        if (Array.isArray(data)) {
+          return data.join(", ") || "-"; // join strings directly
+        }
+        return "-";
+      },
+    },
 
 
     {
@@ -368,10 +368,12 @@ const handleAddOptionEdit = () => {
   return (
     <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-2 md:px-5 pt-2 md:pt-5">
       <div>
-        
-        <div className="flex justify-between gap-2 items-center cursor-pointer">
+
+        <div className="cursor-pointer">
           <Mobile_Sidebar />
-          <div className="flex gap-1 items-center">
+
+        </div>
+        <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
@@ -379,7 +381,7 @@ const handleAddOptionEdit = () => {
             Dashboard
           </p>
           <p>{">"}</p>
-           <p
+          <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/releiving-letter")}
           >
@@ -388,17 +390,28 @@ const handleAddOptionEdit = () => {
           <p>{">"}</p>
 
           <p className="text-sm text-blue-500">Relieving Details</p>
-          </div>
         </div>
         {/* Add Button */}
         <div className="flex justify-between mt-2 md:mt-4 mb-3">
-          <h1 className="text-2xl md:text-3xl font-semibold">Relieving Details</h1>
-          <button
-            onClick={openAddModal}
-            className="bg-blue-500 hover:bg-blue-600 px-3 py-2 text-white w-20 rounded-2xl"
-          >
-            Add
-          </button>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-semibold">Relieving Details</h1>
+          </div>
+          <div className="flex justify-between gap-2">
+            <button
+              onClick={() =>
+                navigate(-1)
+              }
+              className="bg-gray-500 hover:bg-gray-600 px-3 py-2 text-white w-20 rounded-2xl"
+            >
+              Back
+            </button>
+            <button
+              onClick={openAddModal}
+              className="bg-blue-500 hover:bg-blue-600 px-3 py-2 text-white w-20 rounded-2xl"
+            >
+              Add
+            </button>
+          </div>
         </div>
         <div className="datatable-container">
           {/* Responsive wrapper for the table */}
@@ -427,9 +440,8 @@ const handleAddOptionEdit = () => {
             <div className="absolute inset-0 " onClick={closeAddModal}></div>
 
             <div
-              className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${
-                isAnimating ? "translate-x-0" : "translate-x-full"
-              }`}
+              className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                }`}
             >
               <div
                 className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
@@ -488,66 +500,65 @@ const handleAddOptionEdit = () => {
                 {(selectedInputType === "dropdown" ||
                   selectedInputType === "radio" ||
                   selectedInputType === "checkbox") && (
-                  <div className="mb-3 flex justify-between">
-                    <label className="block text-sm font-medium mb-2">
-                      {selectedInputType} Values{" "}
-                      <span className="text-red-500">*</span>
-                    </label>
-                    <div className="w-[50%]">
-                      <div className="flex gap-2 mb-2 ">
-                        <input
-                          type="text"
-                          value={dropdownTitle}
-                          onChange={(e) => {
-                            setDropdownTitle(e.target.value);
-                            // setTitleType(e.target.value);
-                            if (optionError) setOptionError("");
-                          }}
-                          placeholder={`Enter ${selectedInputType} option`}
-                          className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 
-      ${
-        optionError ? "border-red-500" : "border-gray-300 focus:ring-blue-500"
-      }`}
-                        />
-                        <button
-                          type="button"
-                          onClick={handleAddOption}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                        >
-                          Add
-                        </button>
-                      </div>
-
-                      {/* Show added values as chips */}
-                      <div className="flex flex-wrap gap-2">
-                        {options.map((opt, idx) => (
-                          <span
-                            key={idx}
-                            className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full flex items-center"
+                    <div className="mb-3 flex justify-between">
+                      <label className="block text-sm font-medium mb-2">
+                        {selectedInputType} Values{" "}
+                        <span className="text-red-500">*</span>
+                      </label>
+                      <div className="w-[50%]">
+                        <div className="flex gap-2 mb-2 ">
+                          <input
+                            type="text"
+                            value={dropdownTitle}
+                            onChange={(e) => {
+                              setDropdownTitle(e.target.value);
+                              // setTitleType(e.target.value);
+                              if (optionError) setOptionError("");
+                            }}
+                            placeholder={`Enter ${selectedInputType} option`}
+                            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 
+      ${optionError ? "border-red-500" : "border-gray-300 focus:ring-blue-500"
+                              }`}
+                          />
+                          <button
+                            type="button"
+                            onClick={handleAddOption}
+                            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                           >
-                            {opt.option}
-                            <button
-                              type="button"
-                              className="ml-2 text-red-500 hover:text-red-700"
-                              onClick={() =>
-                                setOptions((prev) =>
-                                  prev.filter((_, i) => i !== idx)
-                                )
-                              }
+                            Add
+                          </button>
+                        </div>
+
+                        {/* Show added values as chips */}
+                        <div className="flex flex-wrap gap-2">
+                          {options.map((opt, idx) => (
+                            <span
+                              key={idx}
+                              className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full flex items-center"
                             >
-                              &times;
-                            </button>
-                          </span>
-                        ))}
+                              {opt.option}
+                              <button
+                                type="button"
+                                className="ml-2 text-red-500 hover:text-red-700"
+                                onClick={() =>
+                                  setOptions((prev) =>
+                                    prev.filter((_, i) => i !== idx)
+                                  )
+                                }
+                              >
+                                &times;
+                              </button>
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                    {/* {errors.dropdown && (
+                      {/* {errors.dropdown && (
                     <p className="text-red-500 text-sm mb-4">
                       {errors.dropdown}
                     </p>
                   )} */}
-                  </div>
-                )}
+                    </div>
+                  )}
 
                 {/* Buttons */}
                 <div className="flex justify-end gap-2 mt-4 w-[100%] md:w-[80%]">
@@ -575,9 +586,8 @@ const handleAddOptionEdit = () => {
             <div className="absolute inset-0 " onClick={closeEditModal}></div>
 
             <div
-              className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${
-                isAnimating ? "translate-x-0" : "translate-x-full"
-              }`}
+              className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                }`}
             >
               <div
                 className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
@@ -635,69 +645,68 @@ const handleAddOptionEdit = () => {
                 {(selectedInputTypeEdit === "dropdown" ||
                   selectedInputTypeEdit === "radio" ||
                   selectedInputTypeEdit === "checkbox") && (
-                  <div className="mb-3  flex justify-between">
-                    <label className="block text-sm font-medium mb-2">
-                      {selectedInputTypeEdit} Values{" "}
-                      <span className="text-red-500">*</span>
-                    </label>
-                    <div className="w-[60%] md:w-[50%]">
-                      {" "}
-                      <div className="flex gap-2 mb-2">
-                        <input
-                          type="text"
-                          value={dropdownTitleEdit}
-                          onChange={(e) => {
-                            setDropdownTitleEdit(e.target.value);
-                            if (optionErrorEdit) setOptionErrorEdit("");
-                          }}
-                          placeholder={`Enter ${selectedInputTypeEdit} option`}
-                          className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 
-                      ${
-                        optionErrorEdit
-                          ? "border-red-500 focus:ring-red-500"
-                          : "border-gray-300 focus:ring-blue-500"
-                      }`}
-                        />
-                        <button
-                          type="button"
-                          onClick={handleAddOptionEdit}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                        >
-                          Add
-                        </button>
-                      </div>
-                      {optionErrorEdit && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {optionErrorEdit}
-                        </p>
-                      )}
-                      {/* Show added options */}
-                     <div className="flex flex-wrap gap-2">
-  {optionsEdit.map((opt, idx) => {
-    const value = typeof opt === "string" ? opt : opt.option || ""; 
-    return (
-      <span
-        key={idx}
-        className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full flex items-center"
-      >
-        {value}
-        <button
-          type="button"
-          className="ml-2 text-red-500 hover:text-red-700"
-          onClick={() =>
-            setOptionsEdit((prev) => prev.filter((_, i) => i !== idx))
-          }
-        >
-          &times;
-        </button>
-      </span>
-    );
-  })}
-</div>
+                    <div className="mb-3  flex justify-between">
+                      <label className="block text-sm font-medium mb-2">
+                        {selectedInputTypeEdit} Values{" "}
+                        <span className="text-red-500">*</span>
+                      </label>
+                      <div className="w-[60%] md:w-[50%]">
+                        {" "}
+                        <div className="flex gap-2 mb-2">
+                          <input
+                            type="text"
+                            value={dropdownTitleEdit}
+                            onChange={(e) => {
+                              setDropdownTitleEdit(e.target.value);
+                              if (optionErrorEdit) setOptionErrorEdit("");
+                            }}
+                            placeholder={`Enter ${selectedInputTypeEdit} option`}
+                            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 
+                      ${optionErrorEdit
+                                ? "border-red-500 focus:ring-red-500"
+                                : "border-gray-300 focus:ring-blue-500"
+                              }`}
+                          />
+                          <button
+                            type="button"
+                            onClick={handleAddOptionEdit}
+                            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                          >
+                            Add
+                          </button>
+                        </div>
+                        {optionErrorEdit && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {optionErrorEdit}
+                          </p>
+                        )}
+                        {/* Show added options */}
+                        <div className="flex flex-wrap gap-2">
+                          {optionsEdit.map((opt, idx) => {
+                            const value = typeof opt === "string" ? opt : opt.option || "";
+                            return (
+                              <span
+                                key={idx}
+                                className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full flex items-center"
+                              >
+                                {value}
+                                <button
+                                  type="button"
+                                  className="ml-2 text-red-500 hover:text-red-700"
+                                  onClick={() =>
+                                    setOptionsEdit((prev) => prev.filter((_, i) => i !== idx))
+                                  }
+                                >
+                                  &times;
+                                </button>
+                              </span>
+                            );
+                          })}
+                        </div>
 
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
                 {/* Buttons */}
                 <div className="flex justify-end gap-2 mt-4 w-[90%] md:w-[80%] ">

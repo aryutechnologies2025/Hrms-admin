@@ -257,10 +257,12 @@ const Leave_Report = () => {
           <Sidebar />
           <div className="flex flex-col justify-between overflow-x-hidden bg-gray-100 min-h-screen px-5 pt-2 md:pt-5 w-screen ">
             <div>
-              
-              <div className="flex justify-between gap-2 text-sm items-center">
+
+              <div className="">
                 <Mobile_Sidebar />
-                <div className="flex gap-1 items-center">
+
+              </div>
+              <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
                 <p
                   className=" text-gray-500 cursor-pointer"
                   onClick={() => navigate("/leaves")}
@@ -270,12 +272,13 @@ const Leave_Report = () => {
                 <p>{">"}</p>
                 <p className=" text-blue-500">Leave Reports</p>
                 <p>{">"}</p>
-                </div>
               </div>
+              <div className="flex justify-between items-center">
+                <p className="text-2xl md:text-3xl mt-2 md:mt-4 font-semibold">
+                  Leave Reports
+                </p>
 
-              <p className="text-2xl md:text-3xl mt-2 md:mt-4 font-semibold">
-                Leave Reports
-              </p>
+              </div>
 
               <div className="bg-white mt-2 md:mt-4 px-5 py-5 rounded-2xl">
                 {/* <p className="text-2xl font-bold text-gray-500">Attendance List</p> */}
@@ -315,6 +318,14 @@ const Leave_Report = () => {
                       >
                         Search
                       </button>
+                      <button
+                        onClick={() =>
+                          navigate(-1)
+                        }
+                        className="bg-gray-500 hover:bg-gray-600 text-white font-semibold px-2 py-1 md:py-2 md:px-4 rounded-md hover:scale-105 duration-300"
+                      >
+                        Back
+                      </button>
                     </div>
 
                     <div className="flex flex-wrap md:flex-nowrap items-center justify-center gap-4">
@@ -352,12 +363,12 @@ const Leave_Report = () => {
                         field={col.field}
                         header={col.header}
                         body={col.body}
-                        // style={{
-                        //   minWidth: "150px",
-                        //   wordWrap: "break-word", // Allow text to wrap
-                        //   overflow: "hidden", // Prevent text overflow
-                        //   whiteSpace: "normal", // Ensure that text wraps within the available space
-                        // }}
+                      // style={{
+                      //   minWidth: "150px",
+                      //   wordWrap: "break-word", // Allow text to wrap
+                      //   overflow: "hidden", // Prevent text overflow
+                      //   whiteSpace: "normal", // Ensure that text wraps within the available space
+                      // }}
                       />
                     ))}
                   </DataTable>

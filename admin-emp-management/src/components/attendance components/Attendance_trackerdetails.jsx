@@ -365,6 +365,17 @@ const Attendance_trackerdetails = () => {
     return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    const updated = employeeData.map((item, index) => ({
+      ...item,
+      sno: index + 1
+    }));
+    setTableData(updated);
+  }, [employeeData]);
+
+
 
   return (
     <div className="flex flex-col justify-between overflow-x-hidden bg-gray-100 min-h-screen px-5 pt-2 md:pt-5 w-screen ">
@@ -481,18 +492,34 @@ const Attendance_trackerdetails = () => {
                     <div className="overflow-x-scroll overflow-y-hidden w-full">
                       <div className="min-w-[800px]">
                         <DataTable
-                          value={employeeData}
+                           value={tableData}
                           scrollable
                           scrollDirection="both"
                           scrollHeight="80vh"
                           className="mt-4 sticky-header-table"
                           emptyMessage="No Data Found"
                         >
+                          {/* SNO */}
+                          {/* <Column
+                            header="S NO"
+                            frozen={!isMobile}
+                            style={{ minWidth: "100px" }}
+                            body={(row, meta) => meta.row + 1}
+                          /> */}
+                          <Column
+                            field="sno"
+                            header="S NO"
+                            frozen={!isMobile}
+                            style={{ minWidth: "80px" }}
+                          />
+
+
+
                           {/* Employee Name Column */}
                           <Column
                             field="employeeName"
                             header="Employee Name"
-                            frozen={!isMobile}   
+                            frozen={!isMobile}
                             style={{ minWidth: "200px" }}
                             body={(row) => (
                               <a
@@ -509,8 +536,8 @@ const Attendance_trackerdetails = () => {
                           <Column
                             field="noOfPresent"
                             header="No of Present"
-                            frozen={!isMobile}          
-                            alignFrozen={!isMobile ? "left" : undefined} 
+                            frozen={!isMobile}
+                            alignFrozen={!isMobile ? "left" : undefined}
                             style={{ minWidth: "150px" }}
                           />
 

@@ -330,345 +330,356 @@ const Leave_type_details = () => {
         <Loader />
       ) : (
         <>
-      <div>
-        
+          <div>
 
-        <div className="flex justify-between gap-2 items-center cursor-pointer">
-          <Mobile_Sidebar />
-          <div className="flex gap-1 items-center">
-          <p
-            className="text-sm text-gray-500"
-            onClick={() => navigate("/dashboard")}
-          >
-            Dashboard
-          </p>
-          <p>{">"}</p>
-          <p
-            className="text-sm text-gray-500 cursor-pointer"
-            onClick={() => navigate("/leaves")}
-          >
-            Leaves
-          </p>
-          <p>{">"}</p>
-          <p className="text-sm text-blue-500">Leave Type</p>
-          <p>{">"}</p>
-          </div>
-        </div>
 
-        {/* Add Button */}
-        <div className="flex justify-between mt-2 md:mt-4 mb-1 md:mb-3">
-          <h1 className="text-2xl md:text-3xl font-semibold">Leave Type</h1>
-          <button
-            onClick={openAddModal}
-            className=" px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
-          >
-            Add
-          </button>
-        </div>
+            <div className="cursor-pointer">
+              <Mobile_Sidebar />
 
-        <div className="datatable-container">
-          {/* Responsive wrapper for the table */}
-          <div className="table-scroll-container" id="datatable">
-            <DataTable
-              data={clientdetails}
-              columns={columns}
-              options={{
-                paging: true,
-                searching: true,
-                ordering: true,
-                scrollX: true,
-                responsive: true,
-                autoWidth: false,
-              }}
-              className="display nowrap bg-white"
-            />
-          </div>
-        </div>
-        {/* Add Modal */}
-        {isAddModalOpen && (
-          <div className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
-            {/* Overlay */}
-            <div className="absolute inset-0 " onClick={closeAddModal}></div>
-
-            <div
-              className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${
-                isAnimating ? "translate-x-0" : "translate-x-full"
-              }`}
-            >
-              <div
-                className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
-                title="Toggle Sidebar"
-                onClick={closeAddModal}
-              >
-                <IoIosArrowForward className="w-3 h-3" />
-              </div>
-              <div className="p-5">
-                <h2 className="text-xl font-semibold mb-4">Add Leave Type</h2>
-
-                {/* Leave Type */}
-                <div className="mb-3 flex justify-between">
-                  <label className="block text-sm font-medium mb-2">
-                    Leave Type<span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={leaveType}
-                    onChange={(e) => setLeaveType(e.target.value)}
-                    className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {errors.type && (
-                    <p className="text-red-500 text-sm mb-4">{errors.type}</p>
-                  )}
-                </div>
-
-                {/* Short Code */}
-                <div className="mb-3 flex justify-between">
-                  <label className="block text-sm font-medium mb-2">
-                    Short Code<span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={shortCode}
-                    onChange={(e) => setShortCode(e.target.value)}
-                    className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {errors.shotKey && (
-                    <p className="text-red-500 text-sm mb-4">
-                      {errors.shotKey}
-                    </p>
-                  )}
-                </div>
-
-                {/* Status Dropdown */}
-                <div className="mb-3 flex justify-between">
-                  <label className="block text-sm font-medium mb-2">
-                    Status
-                  </label>
-                  <select
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:ring-2"
-                  >
-                    <option value="">Select Status</option>
-                    <option value="1">Active</option>
-                    <option value="0">InActive</option>
-                  </select>
-                  {errors.status && (
-                    <p className="text-red-500 text-sm mb-4">{errors.status}</p>
-                  )}
-                </div>
-
-                {/* Buttons */}
-                <div className="flex justify-end gap-2 mt-4">
-                  <button
-                    onClick={closeAddModal}
-                    className="bg-red-100 hover:bg-red-200 text-sm text-red-600 px-5 py-2 font-semibold rounded-full"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handlesubmit}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 font-semibold rounded-full"
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
             </div>
-          </div>
-        )}
-
-        {/* Edit Modal */}
-        {isEditModalOpen && (
-          <div className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
-            {/* Overlay */}
-            <div className="absolute inset-0 " onClick={closeEditModal}></div>
-
-            <div
-              className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${
-                isAnimating ? "translate-x-0" : "translate-x-full"
-              }`}
-            >
-              <div
-                className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
-                title="Toggle Sidebar"
-                onClick={closeEditModal}
+            <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
+              <p
+                className="text-sm text-gray-500"
+                onClick={() => navigate("/dashboard")}
               >
-                <IoIosArrowForward className="w-3 h-3" />
-              </div>
-              <div className="p-5">
-                <h2 className="text-xl font-semibold mb-4">Edit Leave Type</h2>
-
-                {/* Leave Type */}
-                <div className="mb-3 flex justify-between">
-                  <label className="block text-sm font-medium mb-2">
-                    Leave Type
-                  </label>
-                  <input
-                    type="text"
-                    value={leaveTypeEdit}
-                    onChange={(e) => setLeaveTypeEdit(e.target.value)}
-                    className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {errors.type && (
-                    <p className="text-red-500 text-sm mb-4">{errors.type}</p>
-                  )}
-                </div>
-
-                {/* Short Code */}
-                <div className="mb-3 flex justify-between">
-                  <label className="block text-sm font-medium mb-2">
-                    Short Code
-                  </label>
-                  <input
-                    type="text"
-                    value={shortCodeEdit}
-                    onChange={(e) => setShortCodeEdit(e.target.value)}
-                    className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {errors.shotKey && (
-                    <p className="text-red-500 text-sm mb-4">
-                      {errors.shotKey}
-                    </p>
-                  )}
-                </div>
-
-                {/* Status Dropdown */}
-                <div className="mb-3 flex justify-between">
-                  <label className="block text-sm font-medium mb-2">
-                    Status
-                  </label>
-                  <select
-                    value={statusEdit}
-                    onChange={(e) => setStatusEdit(e.target.value)}
-                    className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Select Status</option>
-                    <option value="1">Active</option>
-                    <option value="0">InActive</option>
-                  </select>
-                  {errors.status && (
-                    <p className="text-red-500 text-sm mb-4">{errors.status}</p>
-                  )}
-                </div>
-
-                {/* Buttons */}
-                <div className="flex justify-end gap-2 mt-4">
-                  <button
-                    onClick={closeEditModal}
-                    className="bg-red-100 hover:bg-red-200 text-sm text-red-600 px-5 py-2 font-semibold rounded-full"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handlesubmitedit}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 font-semibold rounded-full"
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
+                Dashboard
+              </p>
+              <p>{">"}</p>
+              <p
+                className="text-sm text-gray-500 cursor-pointer"
+                onClick={() => navigate("/leaves")}
+              >
+                Leave
+              </p>
+              <p>{">"}</p>
+              <p className="text-sm text-blue-500">Leave Type</p>
+              <p>{">"}</p>
             </div>
-          </div>
-        )}
 
-        {/* View Modal */}
-        {isViewModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-5 px-8 rounded-xl w-[800px] h-[500px] overflow-y-auto relative">
-              <div className="flex justify-between items-center ">
-                <h2 className="text-lg font-semibold mb-4 flex gap-4">
-                  View Project
-                  {roleDetails.status == "1" ? (
-                    <span className="text-green-600 font-semibold">Active</span>
-                  ) : (
-                    <span className="text-red-600 font-semibold">InActive</span>
-                  )}
-                </h2>
-                <div
-                  className="flex mb-4 text-2xl text-red-600 cursor-pointer bg-gray-200 p-1 rounded-full absolute right-2 top-2"
-                  onClick={() => setIsViewModalOpen(false)}
+            {/* Add Button */}
+            <div className="flex justify-between mt-2 md:mt-4 mb-1 md:mb-3">
+              <div>
+                <h1 className="text-2xl md:text-3xl font-semibold">Leave Type</h1>
+              </div>
+              <div className="flex justify-between gap-2">
+                <button
+                  onClick={() =>
+                    navigate(-1)
+                  }
+                  className="bg-gray-500 hover:bg-gray-600 px-2 md:px-3 py-2  text-white font-medium w-20 rounded-2xl"
                 >
-                  <IoMdClose />
+                  Back
+                </button>
+                <button
+                  onClick={openAddModal}
+                  className=" px-2 md:px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+
+            <div className="datatable-container">
+              {/* Responsive wrapper for the table */}
+              <div className="table-scroll-container" id="datatable">
+                <DataTable
+                  data={clientdetails}
+                  columns={columns}
+                  options={{
+                    paging: true,
+                    searching: true,
+                    ordering: true,
+                    scrollX: true,
+                    responsive: true,
+                    autoWidth: false,
+                  }}
+                  className="display nowrap bg-white"
+                />
+              </div>
+            </div>
+            {/* Add Modal */}
+            {isAddModalOpen && (
+              <div className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
+                {/* Overlay */}
+                <div className="absolute inset-0 " onClick={closeAddModal}></div>
+
+                <div
+                  className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                    }`}
+                >
+                  <div
+                    className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
+                    title="Toggle Sidebar"
+                    onClick={closeAddModal}
+                  >
+                    <IoIosArrowForward className="w-3 h-3" />
+                  </div>
+                  <div className="p-5">
+                    <h2 className="text-xl font-semibold mb-4">Add Leave Type</h2>
+
+                    {/* Leave Type */}
+                    <div className="mb-3 flex justify-between">
+                      <label className="block text-sm font-medium mb-2">
+                        Leave Type<span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={leaveType}
+                        onChange={(e) => setLeaveType(e.target.value)}
+                        className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      {errors.type && (
+                        <p className="text-red-500 text-sm mb-4">{errors.type}</p>
+                      )}
+                    </div>
+
+                    {/* Short Code */}
+                    <div className="mb-3 flex justify-between">
+                      <label className="block text-sm font-medium mb-2">
+                        Short Code<span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={shortCode}
+                        onChange={(e) => setShortCode(e.target.value)}
+                        className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      {errors.shotKey && (
+                        <p className="text-red-500 text-sm mb-4">
+                          {errors.shotKey}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Status Dropdown */}
+                    <div className="mb-3 flex justify-between">
+                      <label className="block text-sm font-medium mb-2">
+                        Status
+                      </label>
+                      <select
+                        value={status}
+                        onChange={(e) => setStatus(e.target.value)}
+                        className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:ring-2"
+                      >
+                        <option value="">Select Status</option>
+                        <option value="1">Active</option>
+                        <option value="0">InActive</option>
+                      </select>
+                      {errors.status && (
+                        <p className="text-red-500 text-sm mb-4">{errors.status}</p>
+                      )}
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex justify-end gap-2 mt-4">
+                      <button
+                        onClick={closeAddModal}
+                        className="bg-red-100 hover:bg-red-200 text-sm text-red-600 px-5 py-2 font-semibold rounded-full"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handlesubmit}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 font-semibold rounded-full"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
+            )}
 
-              <div className="card flex justify-between gap-4">
-                <div className="w-[40%]">
-                  <label className="block text-md font-medium mb-2">
-                    Project Name :
-                  </label>
-                  <input
-                    disabled
-                    type="text"
-                    value={roleDetails.name}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <div className="my-2">
-                    <label
-                      htmlFor="employee_name"
-                      className="block text-md font-medium "
+            {/* Edit Modal */}
+            {isEditModalOpen && (
+              <div className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
+                {/* Overlay */}
+                <div className="absolute inset-0 " onClick={closeEditModal}></div>
+
+                <div
+                  className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                    }`}
+                >
+                  <div
+                    className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
+                    title="Toggle Sidebar"
+                    onClick={closeEditModal}
+                  >
+                    <IoIosArrowForward className="w-3 h-3" />
+                  </div>
+                  <div className="p-5">
+                    <h2 className="text-xl font-semibold mb-4">Edit Leave Type</h2>
+
+                    {/* Leave Type */}
+                    <div className="mb-3 flex justify-between">
+                      <label className="block text-sm font-medium mb-2">
+                        Leave Type
+                      </label>
+                      <input
+                        type="text"
+                        value={leaveTypeEdit}
+                        onChange={(e) => setLeaveTypeEdit(e.target.value)}
+                        className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      {errors.type && (
+                        <p className="text-red-500 text-sm mb-4">{errors.type}</p>
+                      )}
+                    </div>
+
+                    {/* Short Code */}
+                    <div className="mb-3 flex justify-between">
+                      <label className="block text-sm font-medium mb-2">
+                        Short Code
+                      </label>
+                      <input
+                        type="text"
+                        value={shortCodeEdit}
+                        onChange={(e) => setShortCodeEdit(e.target.value)}
+                        className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      {errors.shotKey && (
+                        <p className="text-red-500 text-sm mb-4">
+                          {errors.shotKey}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Status Dropdown */}
+                    <div className="mb-3 flex justify-between">
+                      <label className="block text-sm font-medium mb-2">
+                        Status
+                      </label>
+                      <select
+                        value={statusEdit}
+                        onChange={(e) => setStatusEdit(e.target.value)}
+                        className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="">Select Status</option>
+                        <option value="1">Active</option>
+                        <option value="0">InActive</option>
+                      </select>
+                      {errors.status && (
+                        <p className="text-red-500 text-sm mb-4">{errors.status}</p>
+                      )}
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex justify-end gap-2 mt-4">
+                      <button
+                        onClick={closeEditModal}
+                        className="bg-red-100 hover:bg-red-200 text-sm text-red-600 px-5 py-2 font-semibold rounded-full"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handlesubmitedit}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 font-semibold rounded-full"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* View Modal */}
+            {isViewModalOpen && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white p-5 px-8 rounded-xl w-[800px] h-[500px] overflow-y-auto relative">
+                  <div className="flex justify-between items-center ">
+                    <h2 className="text-lg font-semibold mb-4 flex gap-4">
+                      View Project
+                      {roleDetails.status == "1" ? (
+                        <span className="text-green-600 font-semibold">Active</span>
+                      ) : (
+                        <span className="text-red-600 font-semibold">InActive</span>
+                      )}
+                    </h2>
+                    <div
+                      className="flex mb-4 text-2xl text-red-600 cursor-pointer bg-gray-200 p-1 rounded-full absolute right-2 top-2"
+                      onClick={() => setIsViewModalOpen(false)}
                     >
-                      Add Employees to the project :
-                    </label>
+                      <IoMdClose />
+                    </div>
+                  </div>
 
-                    {roleDetails.teamMembers.map((email, index) => (
-                      <div className="text-sm mt-3 p-1 px-3 bg-gray-200 rounded-2xl inline-block ">
-                        {index + 1}. {email}
+                  <div className="card flex justify-between gap-4">
+                    <div className="w-[40%]">
+                      <label className="block text-md font-medium mb-2">
+                        Project Name :
+                      </label>
+                      <input
+                        disabled
+                        type="text"
+                        value={roleDetails.name}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <div className="my-2">
+                        <label
+                          htmlFor="employee_name"
+                          className="block text-md font-medium "
+                        >
+                          Add Employees to the project :
+                        </label>
+
+                        {roleDetails.teamMembers.map((email, index) => (
+                          <div className="text-sm mt-3 p-1 px-3 bg-gray-200 rounded-2xl inline-block ">
+                            {index + 1}. {email}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="w-[55%]">
+                      <label htmlFor="" className="text-md font-medium ">
+                        Project Description :
+                      </label>
+                      <Editor
+                        value={roleDetails.projectDescription}
+                        className="text-md font-medium w-full pb-2 mt-2 rounded-lg"
+                        style={{ height: "200px" }}
+                        headerTemplate={true}
+                        modules={{
+                          toolbar: false, // Hide toolbar
+                        }}
+                        readOnly={true} // Make editor read-only
+                      />
+                    </div>
+                  </div>
+                  <label
+                    htmlFor="demo"
+                    className="block text-md font-medium mb-2 mt-4 "
+                  >
+                    Uploaded Files :
+                  </label>
+
+                  <div className="flex flex-wrap mt-2 gap-2">
+                    {roleDetails?.document?.map((doc, index) => (
+                      <div
+                        key={index}
+                        className="relative w-28 h-24 border rounded overflow-hidden group"
+                      >
+                        <a
+                          href={`${API_URL}/api/uploads/others/${doc.filepath}`}
+                          target="_blank"
+                        >
+                          <img
+                            src={`${API_URL}/api/uploads/others/${doc.filepath}`}
+                            alt={doc.originalName}
+                            className="w-full h-full object-cover"
+                          />
+                        </a>
+                        <span className="text-[10px] absolute bottom-0 left-0 bg-black text-white px-1 truncate w-full">
+                          {doc.originalName}
+                        </span>
                       </div>
                     ))}
                   </div>
                 </div>
-                <div className="w-[55%]">
-                  <label htmlFor="" className="text-md font-medium ">
-                    Project Description :
-                  </label>
-                  <Editor
-                    value={roleDetails.projectDescription}
-                    className="text-md font-medium w-full pb-2 mt-2 rounded-lg"
-                    style={{ height: "200px" }}
-                    headerTemplate={true}
-                    modules={{
-                      toolbar: false, // Hide toolbar
-                    }}
-                    readOnly={true} // Make editor read-only
-                  />
-                </div>
               </div>
-              <label
-                htmlFor="demo"
-                className="block text-md font-medium mb-2 mt-4 "
-              >
-                Uploaded Files :
-              </label>
-
-              <div className="flex flex-wrap mt-2 gap-2">
-                {roleDetails?.document?.map((doc, index) => (
-                  <div
-                    key={index}
-                    className="relative w-28 h-24 border rounded overflow-hidden group"
-                  >
-                    <a
-                      href={`${API_URL}/api/uploads/others/${doc.filepath}`}
-                      target="_blank"
-                    >
-                      <img
-                        src={`${API_URL}/api/uploads/others/${doc.filepath}`}
-                        alt={doc.originalName}
-                        className="w-full h-full object-cover"
-                      />
-                    </a>
-                    <span className="text-[10px] absolute bottom-0 left-0 bg-black text-white px-1 truncate w-full">
-                      {doc.originalName}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            )}
           </div>
-        )}
-      </div>
-      </>
+        </>
       )}
       <Footer />
     </div>

@@ -45,15 +45,15 @@ const AssetCategory_details = () => {
       const response = await axios.get(
         `${API_URL}/api/asset-mannagement-category/assetCategory`
       );
-      console.log("response get check",response);
+      console.log("response get check", response);
 
       setAssetDetails(response?.data?.data)
-              setLoading(false);
+      setLoading(false);
 
 
     } catch (err) {
       setErrors("Failed to fetch Asset Category.");
-              setLoading(false);
+      setLoading(false);
 
     }
   };
@@ -81,7 +81,7 @@ const AssetCategory_details = () => {
   // console.log("chech:", nameEdit, statusEdit);
 
 
-// create
+  // create
   const handlesubmit = async (e) => {
     e.preventDefault();
     try {
@@ -134,21 +134,21 @@ const AssetCategory_details = () => {
 
   const handlesubmitedit = async (e) => {
     e.preventDefault();
-      setErrors({});
+    setErrors({});
 
-  // Client-side validation
-  const newErrors = {};
-  if (!nameEdit.trim()) {
-    newErrors.name = "Name is required.";
-  }
-  if (!statusEdit) {
-    newErrors.status = "Status is required.";
-  }
+    // Client-side validation
+    const newErrors = {};
+    if (!nameEdit.trim()) {
+      newErrors.name = "Name is required.";
+    }
+    if (!statusEdit) {
+      newErrors.status = "Status is required.";
+    }
 
-  if (Object.keys(newErrors).length > 0) {
-    setErrors(newErrors);
-    return;
-  }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
     try {
       const formData = {
         name: nameEdit,
@@ -160,7 +160,7 @@ const AssetCategory_details = () => {
         formData
       );
       console.log("response:", response);
-      
+
 
       setIsEditModalOpen(false);
       fetchAssetType();
@@ -180,7 +180,7 @@ const AssetCategory_details = () => {
 
 
 
-// delete
+  // delete
 
   const deleteRoles = (editId) => {
     Swal.fire({
@@ -203,7 +203,7 @@ const AssetCategory_details = () => {
             }
           })
           .catch((error) => {
-           
+
             Swal.fire("Error!", "Failed to delete Asset Category.", "error");
           });
       }
@@ -293,254 +293,264 @@ const AssetCategory_details = () => {
   return (
     <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
       {loading ? (
-              <Loader />
-            ) : (
-              <>
-      <div>
-      
+        <Loader />
+      ) : (
+        <>
+          <div>
 
-        <div className="flex justify-between gap-2 text-sm items-center">
-            <Mobile_Sidebar />
-            <div className="flex gap-1 items-center">
+
+            <div className="">
+              <Mobile_Sidebar />
+
+            </div>
+            <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
               <p
                 className="text-xs md:text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
               >
                 Dashboard
               </p>
-          <p>{">"}</p>
+              <p>{">"}</p>
               <p
                 className="text-xs md:text-sm text-gray-500"
                 onClick={() => navigate("/assetmanagement")}
               >
                 Asset
               </p>
-          <p>{">"}</p>
+              <p>{">"}</p>
 
-          <p className="text-xs md:text-sm text-blue-500">Asset Category</p>
-          </div>
-        </div>
+              <p className="text-xs md:text-sm text-blue-500">Asset Category</p>
+            </div>
 
-        {/* Add Button */}
-        <div className="flex justify-between mt-4 md:mt-8">
-          <div className="">
-            <h1 className="text-2xl md:text-3xl font-semibold">Asset Category</h1>
-          </div>
-
-          <button
-            onClick={openAddModal}
-            className=" px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
-          >
-            Add
-          </button>
-        </div>
-
-        <div className="datatable-container">
-          {/* Responsive wrapper for the table */}
-          <div className="table-scroll-container" id="datatable">
-            <DataTable
-              data={assetDetails}
-              columns={columns}
-              options={{
-                paging: true,
-                searching: true,
-                ordering: true,
-                scrollX: true,
-                responsive: true,
-                autoWidth: false,
-              }}
-              className="display nowrap bg-white"
-            />
-          </div>
-        </div>
-
-
-        {isAddModalOpen && (
-          <div className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
-            {/* Overlay */}
-            <div className="absolute inset-0 " onClick={closeAddModal}></div>
-
-            <div
-              className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
-                }`}
-            >
-              <div
-                className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
-                title="Toggle Sidebar"
-                onClick={closeAddModal}
-              >
-                <IoIosArrowForward className="w-3 h-3" />
+            {/* Add Button */}
+            <div className="flex justify-between mt-4 md:mt-8">
+              <div className="">
+                <h1 className="text-2xl md:text-3xl font-semibold">Asset Category</h1>
               </div>
+              <div className="flex justify-between gap-2">
+                <button
+                  onClick={() =>
+                    navigate(-1)
+                  }
+                  className="bg-gray-500 hover:bg-gray-600 px-2 md:px-3 py-2  text-white font-medium w-20 rounded-2xl"
+                >
+                  Back
+                </button>
+                <button
+                  onClick={openAddModal}
+                  className=" px-2 md:px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
 
-              <div className="p-5">
-                <p className="text-2xl md:text-3xl font-medium">Asset Category</p>
-                <div className="mt-5 flex justify-between items-center">
-                  <label className="block text-md font-medium mb-2">
-                    Name <span className="text-red-500">*</span>
-                  </label>
-                  <div className="w-[70%] md:w-[50%]">
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Enter Your Name "
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    {errors.name && (
-                      <p className="text-red-500 text-sm mb-4">{errors.name}</p>
-                    )}
-                  </div>
-                </div>
+            <div className="datatable-container">
+              {/* Responsive wrapper for the table */}
+              <div className="table-scroll-container" id="datatable">
+                <DataTable
+                  data={assetDetails}
+                  columns={columns}
+                  options={{
+                    paging: true,
+                    searching: true,
+                    ordering: true,
+                    scrollX: true,
+                    responsive: true,
+                    autoWidth: false,
+                  }}
+                  className="display nowrap bg-white"
+                />
+              </div>
+            </div>
 
 
-                {/* {error.rolename && <p className="error">{error.rolename}</p>} */}
+            {isAddModalOpen && (
+              <div className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
+                {/* Overlay */}
+                <div className="absolute inset-0 " onClick={closeAddModal}></div>
 
-                <div className="mt-5 flex justify-between items-center">
-                  <div className="">
-                    <label
-                      htmlFor="status"
-                      className="block text-md font-medium mb-2 mt-3"
-                    >
-                      Status <span className="text-red-500">*</span>
-                    </label>
-                    
-                  </div>
-                  <div className="w-[70%] md:w-[50%]">
-                    <select
-                      name="status"
-                      id="status"
-                      onChange={(e) => {
-                        setStatus(e.target.value);
-                        validateStatus(e.target.value); // Validate status dynamically
-                      }}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Select a status</option>
-                      <option value="1">Active</option>
-                      <option value="0">InActive</option>
-                    </select>
-                    {errors.status && (
-                      <p className="text-red-500 text-sm mb-4 mt-1">
-                        {errors.status}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                {/* {error.status && <p className="error">{error.status}</p>} */}
-
-                <div className="flex  justify-end gap-2 mt-6 md:mt-14">
-                  <button
+                <div
+                  className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                    }`}
+                >
+                  <div
+                    className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
+                    title="Toggle Sidebar"
                     onClick={closeAddModal}
-                    className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-5 py-1 md:py-2 font-semibold rounded-full"
                   >
-                    Cancel
-                  </button>
-                  <button
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 md:px-5 py-2 font-semibold rounded-full"
-                    onClick={handlesubmit}
-                  >
-                    Submit
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+                    <IoIosArrowForward className="w-3 h-3" />
+                  </div>
 
-        {isEditModalOpen && (
-          <div className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
-            {/* Overlay */}
-            <div className="absolute inset-0 " onClick={closeEditModal}></div>
+                  <div className="p-5">
+                    <p className="text-2xl md:text-3xl font-medium">Asset Category</p>
+                    <div className="mt-5 flex justify-between items-center">
+                      <label className="block text-md font-medium mb-2">
+                        Name <span className="text-red-500">*</span>
+                      </label>
+                      <div className="w-[70%] md:w-[50%]">
+                        <input
+                          type="text"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          placeholder="Enter Your Name "
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        {errors.name && (
+                          <p className="text-red-500 text-sm mb-4">{errors.name}</p>
+                        )}
+                      </div>
+                    </div>
 
-            <div
-              className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[53vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
-                }`}
-            >
-              <div
-                className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
-                title="Toggle Sidebar"
-                onClick={closeEditModal}
-              >
-                <IoIosArrowForward className="w-3 h-3" />
-              </div>
 
-              <div className="p-5">
-                <p className="text-2xl md:text-3xl font-medium">Asset Category Edit</p>
-                <div className="mt-5 flex justify-between items-center">
-                  <label className="block text-md font-medium mb-2">
-                    Name <span className="text-red-500">*</span>
-                  </label>
-                  <div className="w-[70%] md:w-[50%]">
-                    <input
-                      type="text"
-                      value={nameEdit}
-                      onChange={(e) => setNameEdit(e.target.value)}
-                      placeholder="Enter Your Name "
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    {errors.name && (
-                      <p className="text-red-500 text-sm mb-4">{errors.name}</p>
-                    )}
+                    {/* {error.rolename && <p className="error">{error.rolename}</p>} */}
+
+                    <div className="mt-5 flex justify-between items-center">
+                      <div className="">
+                        <label
+                          htmlFor="status"
+                          className="block text-md font-medium mb-2 mt-3"
+                        >
+                          Status <span className="text-red-500">*</span>
+                        </label>
+
+                      </div>
+                      <div className="w-[70%] md:w-[50%]">
+                        <select
+                          name="status"
+                          id="status"
+                          onChange={(e) => {
+                            setStatus(e.target.value);
+                            validateStatus(e.target.value); // Validate status dynamically
+                          }}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">Select a status</option>
+                          <option value="1">Active</option>
+                          <option value="0">InActive</option>
+                        </select>
+                        {errors.status && (
+                          <p className="text-red-500 text-sm mb-4 mt-1">
+                            {errors.status}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    {/* {error.status && <p className="error">{error.status}</p>} */}
+
+                    <div className="flex  justify-end gap-2 mt-6 md:mt-14">
+                      <button
+                        onClick={closeAddModal}
+                        className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-5 py-1 md:py-2 font-semibold rounded-full"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 md:px-5 py-2 font-semibold rounded-full"
+                        onClick={handlesubmit}
+                      >
+                        Submit
+                      </button>
+                    </div>
                   </div>
                 </div>
-
-
-                {/* {error.rolename && <p className="error">{error.rolename}</p>} */}
-
-                <div className="mt-5 flex justify-between items-center">
-                  <div className="">
-                    <label
-                      htmlFor="status"
-                      className="block text-md font-medium mb-2 mt-3"
-                    >
-                      Status <span className="text-red-500">*</span>
-                    </label>
-                    
-                  </div>
-                  <div className="w-[70%] md:w-[50%]">
-                    <select
-                      name="status"
-                      id="status"
-                      value={statusEdit}
-                      onChange={(e) => {
-                        setStatusEdit(e.target.value);
-                      }}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Select a status</option>
-                      <option value="1">Active</option>
-                      <option value="0">InActive</option>
-                    </select>
-                    {errors.status && (
-                      <p className="text-red-500 text-sm mb-4 mt-1">
-                        {errors.status}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                {/* {error.status && <p className="error">{error.status}</p>} */}
-
-                <div className="flex  justify-end gap-2 mt-7 md:mt-14">
-                  <button
-                    onClick={closeEditModal}
-                    className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-5 py-1 md:py-2 font-semibold rounded-full"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 md:px-5 py-2 font-semibold rounded-full"
-                    onClick={handlesubmitedit}
-                  >
-                    Submit
-                  </button>
-                </div>
               </div>
-            </div>
-          </div>
-        )}
-      </div>
-      </>
             )}
+
+            {isEditModalOpen && (
+              <div className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
+                {/* Overlay */}
+                <div className="absolute inset-0 " onClick={closeEditModal}></div>
+
+                <div
+                  className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[53vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                    }`}
+                >
+                  <div
+                    className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
+                    title="Toggle Sidebar"
+                    onClick={closeEditModal}
+                  >
+                    <IoIosArrowForward className="w-3 h-3" />
+                  </div>
+
+                  <div className="p-5">
+                    <p className="text-2xl md:text-3xl font-medium">Asset Category Edit</p>
+                    <div className="mt-5 flex justify-between items-center">
+                      <label className="block text-md font-medium mb-2">
+                        Name <span className="text-red-500">*</span>
+                      </label>
+                      <div className="w-[70%] md:w-[50%]">
+                        <input
+                          type="text"
+                          value={nameEdit}
+                          onChange={(e) => setNameEdit(e.target.value)}
+                          placeholder="Enter Your Name "
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        {errors.name && (
+                          <p className="text-red-500 text-sm mb-4">{errors.name}</p>
+                        )}
+                      </div>
+                    </div>
+
+
+                    {/* {error.rolename && <p className="error">{error.rolename}</p>} */}
+
+                    <div className="mt-5 flex justify-between items-center">
+                      <div className="">
+                        <label
+                          htmlFor="status"
+                          className="block text-md font-medium mb-2 mt-3"
+                        >
+                          Status <span className="text-red-500">*</span>
+                        </label>
+
+                      </div>
+                      <div className="w-[70%] md:w-[50%]">
+                        <select
+                          name="status"
+                          id="status"
+                          value={statusEdit}
+                          onChange={(e) => {
+                            setStatusEdit(e.target.value);
+                          }}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">Select a status</option>
+                          <option value="1">Active</option>
+                          <option value="0">InActive</option>
+                        </select>
+                        {errors.status && (
+                          <p className="text-red-500 text-sm mb-4 mt-1">
+                            {errors.status}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    {/* {error.status && <p className="error">{error.status}</p>} */}
+
+                    <div className="flex  justify-end gap-2 mt-7 md:mt-14">
+                      <button
+                        onClick={closeEditModal}
+                        className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-5 py-1 md:py-2 font-semibold rounded-full"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 md:px-5 py-2 font-semibold rounded-full"
+                        onClick={handlesubmitedit}
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </>
+      )}
 
       <Footer />
     </div>

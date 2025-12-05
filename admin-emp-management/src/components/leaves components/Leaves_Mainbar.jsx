@@ -510,9 +510,11 @@ const Leaves_Mainbar = () => {
             
 
             {/* breadcrumb */}
-            <div className="flex justify-between gap-2 items-center cursor-pointer">
+            <div className="cursor-pointer">
               <Mobile_Sidebar />
-              <div className="flex gap-1 items-center">
+              
+            </div>
+            <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
@@ -521,15 +523,14 @@ const Leaves_Mainbar = () => {
               </p>
               <p>{">"}</p>
 
-              <p className="text-sm text-blue-500">Leaves</p>
+              <p className="text-sm text-blue-500">Leave</p>
               </div>
-            </div>
             
 
             <div>
               <div className="flex flex-wrap md:flex-row justify-between">
                 <span className="text-2xl md:text-3xl font-semibold mt-2 md:mt-4">
-                  Leaves
+                  Leave
                 </span>
 
                 <div className="relative md:mt-4 flex ">

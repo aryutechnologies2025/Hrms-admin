@@ -1317,9 +1317,11 @@ const handleLastworkdate = (date) => {
     <div className="w-screen min-h-screen bg-gray-100 px-3 py-2 md:py-5">
       
 
-      <div className="flex justify-between gap-2 text-sm items-center">
+      <div className="">
         <Mobile_Sidebar />
-        <div className="flex gap-1 items-center">
+        
+      </div>
+      <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
         <p
           onClick={() => navigate("/employees")}
           className=" text-gray-500 cursor-pointer "
@@ -1330,7 +1332,6 @@ const handleLastworkdate = (date) => {
         <span className=" text-blue-500 ">Edit Employees Details</span>
         <p>{">"}</p>
         </div>
-      </div>
 
       {loading ? (
         <Loader />

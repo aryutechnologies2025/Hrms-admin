@@ -142,9 +142,11 @@ const Settings_details = () => {
         <>
           <div>
            
-            <div className="flex justify-between gap-2 items-center cursor-pointer">
+            <div className="cursor-pointer">
                <Mobile_Sidebar />
-               <div className="flex gap-1 items-center ">
+               
+            </div>
+            <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center ">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
@@ -155,7 +157,6 @@ const Settings_details = () => {
 
               <p className="text-sm text-blue-500">Settings</p>
               </div>
-            </div>
 
             <h1 className="text-2xl md:text-3xl font-semibold mt-2 md:mt-4">
               Settings

@@ -896,9 +896,11 @@ const Payment_type_details = () => {
       <div>
        
 
-        <div className="flex justify-between gap-2 items-center cursor-pointer">
+        <div className="cursor-pointer">
            <Mobile_Sidebar />
-           <div className="flex gap-1 items-center">
+           
+        </div>
+        <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
@@ -906,10 +908,9 @@ const Payment_type_details = () => {
             Dashboard
           </p>
           <p>{">"}</p>
-          <p className=" text-blue-500">Payment Type</p>
+          <p className="text-sm text-blue-500">Payment Type</p>
           <p>{">"}</p>
           </div>
-        </div>
 
         <div className="flex justify-between mt-1 md:mt-4 mb-2 md:mb-3">
           <h1 className="text-2xl md:text-3xl font-semibold">Payment Type</h1>

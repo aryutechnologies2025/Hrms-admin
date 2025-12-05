@@ -982,9 +982,11 @@ console.log("Current date format:", dynamicDateFormat);
         ) : (
           <div className="p-2 md:p-5 w-full  ">
            
-            <div className="flex justify-between gap-2 items-center cursor-pointer">
+            <div className="cursor-pointer">
                <Mobile_Sidebar />
-              <div className="flex gap-1 items-center">
+              
+            </div>
+            <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
@@ -995,7 +997,6 @@ console.log("Current date format:", dynamicDateFormat);
               <p>{">"}</p>
               <p className="text-sm text-blue-500">Task List</p>
               </div>
-            </div>
             <div className="flex flex-wrap md:flex-nowrap justify-around gap-3 md:gap-8 my-4 md:my-8 text-[#6b7280] ">
               <div className="flex justify-between bg-[#f3f4f610] border px-8 py-3 md:py-6 rounded-lg shadow-sm w-full">
                 <div className="">

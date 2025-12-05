@@ -513,499 +513,510 @@ const Leave_option_details = () => {
         <Loader />
       ) : (
         <>
-      <div>
-        
+          <div>
 
-        <div className="flex justify-between flex-wrap gap-2 items-center cursor-pointer">
-          <Mobile_Sidebar />
-          <div className="flex gap-1 items-center ">
-          <p
-            className="text-sm text-gray-500"
-            onClick={() => navigate("/dashboard")}
-          >
-            Dashboard
-          </p>
-          <p>{">"}</p>
-          
-          <p
-            onClick={() => navigate("/leaves")}
-            className="text-sm text-gray-500 cursor-pointer "
-          >
-            Leaves
-          </p>
-          <p>{">"}</p>
 
-          <p className="text-sm text-blue-500">Add Leave</p>
-          </div>
-        </div>
+            <div className="cursor-pointer">
+              <Mobile_Sidebar />
+              
+            </div>
+            <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center ">
+                <p
+                  className="text-sm text-gray-500"
+                  onClick={() => navigate("/dashboard")}
+                >
+                  Dashboard
+                </p>
+                <p>{">"}</p>
 
-        {/* Add Button */}
-        <div className="flex justify-between mt-2 md:mt-4 mb-1 md:mb-3">
-          <h1 className="text-2xl md:text-3xl font-semibold">Add Leave</h1>
-          <button
-            onClick={openAddModal}
-            className=" px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
-          >
-            Add
-          </button>
-        </div>
+                <p
+                  onClick={() => navigate("/leaves")}
+                  className="text-sm text-gray-500 cursor-pointer "
+                >
+                  Leave
+                </p>
+                <p>{">"}</p>
 
-        <div className="datatable-container">
-          {/* Responsive wrapper for the table */}
-          <div className="table-scroll-container" id="datatable">
-            <DataTable
-              data={notedetails}
-              columns={columns}
-              options={{
-                paging: true,
-                searching: true,
-                ordering: true,
-                scrollX: true,
-                responsive: true,
-                autoWidth: false,
-              }}
-              className="display nowrap bg-white"
-            />
-          </div>
-        </div>
-        {/* Add Modal */}
-        {isAddModalOpen && (
-          <div className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
-            {/* Overlay */}
-            <div className="absolute inset-0 " onClick={closeAddModal}></div>
+                <p className="text-sm text-blue-500">Add Leave</p>
+              </div>
 
-            <div
-              className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${
-                isAnimating ? "translate-x-0" : "translate-x-full"
-              }`}
-            >
-              <div
-                className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
-                title="Toggle Sidebar"
-                onClick={closeAddModal}
-              >
-                <IoIosArrowForward className="w-3 h-3" />
-              </div>{" "}
-              <div className="p-3 md:p-5">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold ">Add Leave Option</h2>
-                  {/* <button
+            {/* Add Button */}
+            <div className="flex justify-between mt-2 md:mt-4 mb-1 md:mb-3">
+              <div>
+                <h1 className="text-2xl md:text-3xl font-semibold">Add Leave</h1>
+              </div>
+              <div className="flex justify-between gap-2 ">
+                <button
+                  onClick={() =>
+                    navigate(-1)
+                  }
+                  className="bg-gray-500 hover:bg-gray-600  px-2 md:px-3 py-2  text-white font-medium w-20 rounded-2xl"
+                >
+                  Back
+                </button>
+                <button
+                  onClick={openAddModal}
+                  className=" px-2 md:px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
+                >
+                  Add
+                </button>
+                </div>
+              </div>
+
+              <div className="datatable-container">
+                {/* Responsive wrapper for the table */}
+                <div className="table-scroll-container" id="datatable">
+                  <DataTable
+                    data={notedetails}
+                    columns={columns}
+                    options={{
+                      paging: true,
+                      searching: true,
+                      ordering: true,
+                      scrollX: true,
+                      responsive: true,
+                      autoWidth: false,
+                    }}
+                    className="display nowrap bg-white"
+                  />
+                </div>
+              </div>
+              {/* Add Modal */}
+              {isAddModalOpen && (
+                <div className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
+                  {/* Overlay */}
+                  <div className="absolute inset-0 " onClick={closeAddModal}></div>
+
+                  <div
+                    className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                      }`}
+                  >
+                    <div
+                      className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
+                      title="Toggle Sidebar"
+                      onClick={closeAddModal}
+                    >
+                      <IoIosArrowForward className="w-3 h-3" />
+                    </div>{" "}
+                    <div className="p-3 md:p-5">
+                      <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-xl font-semibold ">Add Leave Option</h2>
+                        {/* <button
                     onClick={closeAddModal}
                     className="text-[22px] hover:bg-red-200 duration-300 bg-red-100 text-red-600 rounded-full p-1"
                   >
                     <IoClose />
                   </button> */}
-                </div>
+                      </div>
 
-                {/* add employee */}
+                      {/* add employee */}
 
-                <div className="mb-3 flex justify-between ">
-                  <label
-                    htmlFor="employee_name"
-                    className="block text-sm font-medium mb-2"
-                  >
-                    Employee Name
-                  </label>
+                      <div className="mb-3 flex justify-between ">
+                        <label
+                          htmlFor="employee_name"
+                          className="block text-sm font-medium mb-2"
+                        >
+                          Employee Name
+                        </label>
 
-                  <Dropdown
-                    value={selectedEmployeeDetails}
-                    onChange={(e) => setSelectedEmployeeDetails(e.target.value)}
-                    options={employeeOption}
-                    // optionLabel="email"
-                    filter
-                    placeholder="Select Employees"
-                    maxSelectedLabels={3}
-                    className="w-[50%]   border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    display="chip"
-                  />
-                </div>
-                <div className="mb-3 flex justify-between">
-                  <label className="font-medium text-sm  mb-1 block">
-                    Select Type
-                  </label>
-                  <select
-                    value={selectedLeaveType}
-                    onChange={(e) => setSelectedLeaveType(e.target.value)}
-                    className="border-2 rounded-xl px-4 text-sm border-gray-300 outline-none h-10 w-[50%]"
-                  >
-                    <option value="" disabled>
-                      Select Type
-                    </option>
-                    <option value="leave">Leave</option>
-                    <option value="Permission">Permission</option>
-                  </select>
-                </div>
+                        <Dropdown
+                          value={selectedEmployeeDetails}
+                          onChange={(e) => setSelectedEmployeeDetails(e.target.value)}
+                          options={employeeOption}
+                          // optionLabel="email"
+                          filter
+                          placeholder="Select Employees"
+                          maxSelectedLabels={3}
+                          className="w-[50%]   border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          display="chip"
+                        />
+                      </div>
+                      <div className="mb-3 flex justify-between">
+                        <label className="font-medium text-sm  mb-1 block">
+                          Select Type
+                        </label>
+                        <select
+                          value={selectedLeaveType}
+                          onChange={(e) => setSelectedLeaveType(e.target.value)}
+                          className="border-2 rounded-xl px-4 text-sm border-gray-300 outline-none h-10 w-[50%]"
+                        >
+                          <option value="" disabled>
+                            Select Type
+                          </option>
+                          <option value="leave">Leave</option>
+                          <option value="Permission">Permission</option>
+                        </select>
+                      </div>
 
-                <div className="gap-2">
-                  {" "}
-                  <div className="mb-3 flex justify-between w-full ">
-                    <label className="block text-sm font-medium mb-2">
-                      Start Date
-                    </label>
-                    <input
-                      type="date"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                      className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  {errors.date && (
-                    <p className="text-red-500 text-sm mb-4">{errors.date}</p>
-                  )}
-                  <div className="mb-3 flex justify-between w-full">
-                    <label className="block text-sm font-medium mb-2">
-                      End Date
-                    </label>
-                    <input
-                      type="date"
-                      value={enddate}
-                      onChange={(e) => setEnddate(e.target.value)}
-                      className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  {errors.date && (
-                    <p className="text-red-500 text-sm mb-4">{errors.date}</p>
-                  )}
-                </div>
+                      <div className="gap-2">
+                        {" "}
+                        <div className="mb-3 flex justify-between w-full ">
+                          <label className="block text-sm font-medium mb-2">
+                            Start Date
+                          </label>
+                          <input
+                            type="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                            className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                        {errors.date && (
+                          <p className="text-red-500 text-sm mb-4">{errors.date}</p>
+                        )}
+                        <div className="mb-3 flex justify-between w-full">
+                          <label className="block text-sm font-medium mb-2">
+                            End Date
+                          </label>
+                          <input
+                            type="date"
+                            value={enddate}
+                            onChange={(e) => setEnddate(e.target.value)}
+                            className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                        {errors.date && (
+                          <p className="text-red-500 text-sm mb-4">{errors.date}</p>
+                        )}
+                      </div>
 
-                {selectedLeaveType === "leave" && (
-                  <>
-                    <div className="flex justify-between">
-                      <label htmlFor="" className="text-sm font-medium mb-2">
-                        Leave Duration
-                      </label>
-                      <div className="flex flex-col">
-                        {dateRange.map((d) => (
-                          <div key={d} className="mb-4 flex gap-4 items-center">
-                            <label className="no-wr font-medium text-sm mb-1">
-                              {d}
+                      {selectedLeaveType === "leave" && (
+                        <>
+                          <div className="flex justify-between">
+                            <label htmlFor="" className="text-sm font-medium mb-2">
+                              Leave Duration
                             </label>
-                            <select
-                              value={selectedLeaveTypes[d] || ""}
-                              onChange={(e) =>
-                                handleLeaveTypeChange(d, e.target.value)
-                              }
-                              className="border-2 rounded-xl px-4 text-sm border-gray-300 outline-none h-10 w-[220px]"
-                            >
-                              <option value="">Select Leave Type</option>
-                              {leave.map((leaveType) => (
-                                <option
-                                  key={leaveType.shotKey}
-                                  value={leaveType.shotKey}
-                                >
-                                  {leaveType.type}
-                                </option>
+                            <div className="flex flex-col">
+                              {dateRange.map((d) => (
+                                <div key={d} className="mb-4 flex gap-4 items-center">
+                                  <label className="no-wr font-medium text-sm mb-1">
+                                    {d}
+                                  </label>
+                                  <select
+                                    value={selectedLeaveTypes[d] || ""}
+                                    onChange={(e) =>
+                                      handleLeaveTypeChange(d, e.target.value)
+                                    }
+                                    className="border-2 rounded-xl px-4 text-sm border-gray-300 outline-none h-10 w-[220px]"
+                                  >
+                                    <option value="">Select Leave Type</option>
+                                    {leave.map((leaveType) => (
+                                      <option
+                                        key={leaveType.shotKey}
+                                        value={leaveType.shotKey}
+                                      >
+                                        {leaveType.type}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
                               ))}
-                            </select>
+                            </div>
                           </div>
-                        ))}
+                        </>
+                      )}
+                      {/* timing */}
+                      {selectedLeaveType === "Permission" && (
+                        <div className=" gap-2 ">
+                          {" "}
+                          <div className="mb-3 flex justify-between w-full">
+                            <label className="block text-sm font-medium mb-2">
+                              From Time
+                            </label>
+                            <input
+                              type="time"
+                              value={startTime}
+                              onChange={(e) => setStartTime(e.target.value)}
+                              className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+                          {/* {errors.date && (
+                    <p className="text-red-500 text-sm mb-4">{errors.date}</p>
+                  )} */}
+                          <div className="mb-3 flex justify-between w-full">
+                            <label className="block text-sm font-medium mb-2">
+                              To Time
+                            </label>
+                            <input
+                              type="time"
+                              value={endTime}
+                              onChange={(e) => setEndtime(e.target.value)}
+                              className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+                          {/* {errors.date && (
+                    <p className="text-red-500 text-sm mb-4">{errors.date}</p>
+                  )} */}
+                        </div>
+                      )}
+                      <div className="mb-3 flex justify-between">
+                        <label className="block text-sm font-medium mb-2">
+                          Notes
+                        </label>
+                        <textarea
+                          value={notes}
+                          onChange={(e) => setNotes(e.target.value)}
+                          className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          rows={4}
+                        ></textarea>
+                      </div>
+                      {errors.notes && (
+                        <p className="text-red-500 text-sm mb-4">{errors.notes}</p>
+                      )}
+
+                      {/* Buttons */}
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={closeAddModal}
+                          className="bg-red-100 duration-300 hover:bg-red-200 text-sm text-red-600 px-5 py-2 font-semibold rounded-full"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handlesubmit}
+                          className="bg-blue-600 duration-300 hover:bg-blue-700 text-white px-5 py-2 font-semibold rounded-full"
+                        >
+                          Submit
+                        </button>
                       </div>
                     </div>
-                  </>
-                )}
-                {/* timing */}
-                {selectedLeaveType === "Permission" && (
-                  <div className=" gap-2 ">
-                    {" "}
-                    <div className="mb-3 flex justify-between w-full">
-                      <label className="block text-sm font-medium mb-2">
-                        From Time
-                      </label>
-                      <input
-                        type="time"
-                        value={startTime}
-                        onChange={(e) => setStartTime(e.target.value)}
-                        className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                    {/* {errors.date && (
-                    <p className="text-red-500 text-sm mb-4">{errors.date}</p>
-                  )} */}
-                    <div className="mb-3 flex justify-between w-full">
-                      <label className="block text-sm font-medium mb-2">
-                        To Time
-                      </label>
-                      <input
-                        type="time"
-                        value={endTime}
-                        onChange={(e) => setEndtime(e.target.value)}
-                        className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                    {/* {errors.date && (
-                    <p className="text-red-500 text-sm mb-4">{errors.date}</p>
-                  )} */}
                   </div>
-                )}
-                <div className="mb-3 flex justify-between">
-                  <label className="block text-sm font-medium mb-2">
-                    Notes
-                  </label>
-                  <textarea
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    rows={4}
-                  ></textarea>
                 </div>
-                {errors.notes && (
-                  <p className="text-red-500 text-sm mb-4">{errors.notes}</p>
-                )}
+              )}
 
-                {/* Buttons */}
-                <div className="flex justify-end gap-2">
-                  <button
-                    onClick={closeAddModal}
-                    className="bg-red-100 duration-300 hover:bg-red-200 text-sm text-red-600 px-5 py-2 font-semibold rounded-full"
+              {/* Edit Modal */}
+              {isEditModalOpen && (
+                <div className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
+                  {/* Overlay */}
+                  <div className="absolute inset-0 " onClick={closeEditModal}></div>
+
+                  <div
+                    className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                      }`}
                   >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handlesubmit}
-                    className="bg-blue-600 duration-300 hover:bg-blue-700 text-white px-5 py-2 font-semibold rounded-full"
-                  >
-                    Submit
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Edit Modal */}
-        {isEditModalOpen && (
-          <div className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
-            {/* Overlay */}
-            <div className="absolute inset-0 " onClick={closeEditModal}></div>
-
-            <div
-              className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${
-                isAnimating ? "translate-x-0" : "translate-x-full"
-              }`}
-            >
-              <div
-                className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
-                title="Toggle Sidebar"
-                onClick={closeEditModal}
-              >
-                <IoIosArrowForward className="w-3 h-3" />
-              </div>{" "}
-              <div className="p-5">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold ">Edit Leave</h2>
-                  {/* <button
+                    <div
+                      className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
+                      title="Toggle Sidebar"
+                      onClick={closeEditModal}
+                    >
+                      <IoIosArrowForward className="w-3 h-3" />
+                    </div>{" "}
+                    <div className="p-5">
+                      <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-xl font-semibold ">Edit Leave</h2>
+                        {/* <button
                     onClick={closeEditModal}
                     className="text-[22px] hover:bg-red-200 duration-300 bg-red-100 text-red-600 rounded-full p-1"
                   >
                     <IoClose />
                   </button> */}
-                </div>
-                <div className="mb-3 flex justify-between">
-                  <label
-                    htmlFor="employee_name"
-                    className="block text-sm font-medium mb-2"
-                  >
-                    Employee Name
-                  </label>
-
-                  <Dropdown
-                    value={selectedEmployeeDetailsedit}
-                    onChange={(e) =>
-                      setSelectedEmployeeDetailsedit(e.target.value)
-                    }
-                    options={employeeOption}
-                    // optionLabel="email"
-                    filter
-                    placeholder="Select Employees"
-                    maxSelectedLabels={3}
-                    className="w-[50%]   border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    display="chip"
-                    disabled
-                  />
-                </div>
-
-                <div className="mb-3 flex justify-between">
-                  <label className="font-medium text-sm  mb-1 block">
-                    Select Type
-                  </label>
-                  <select
-                    value={selectedLeaveTypeedit}
-                    onChange={(e) => setSelectedLeaveTypeedit(e.target.value)}
-                    className="border-2 rounded-xl px-2 md:px-4 text-sm border-gray-300 outline-none h-10 w-[50%]"
-                    disabled
-                  >
-                    <option value="" disabled>
-                      Select Type
-                    </option>
-                    <option value="leave">Leave</option>
-                    <option value="Permission">Permission</option>
-                  </select>
-                </div>
-                <div className=" gap-2">
-                  {" "}
-                  <div className="mb-3 w-full flex justify-between">
-                    <label className="block text-sm font-medium mb-2">
-                      Start Date
-                    </label>
-                    <input
-                      type="date"
-                      // value={dateedit}
-                      value={
-                        dateedit
-                          ? new Date(dateedit).toISOString().split("T")[0]
-                          : ""
-                      }
-                      onChange={(e) => setDateedit(e.target.value)}
-                      className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      disabled
-                    />
-                  </div>
-                  {errors.date && (
-                    <p className="text-red-500 text-sm mb-4">{errors.date}</p>
-                  )}
-                  <div className="mb-3 w-full flex justify-between">
-                    <label className="block text-sm font-medium mb-2">
-                      End Date
-                    </label>
-                    <input
-                      type="date"
-                      // value={enddateedit}
-                      value={
-                        enddateedit
-                          ? new Date(enddateedit).toISOString().split("T")[0]
-                          : ""
-                      }
-                      onChange={(e) => setEnddateedit(e.target.value)}
-                      className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      disabled
-                    />
-                  </div>
-                  {errors.date && (
-                    <p className="text-red-500 text-sm mb-4">{errors.date}</p>
-                  )}
-                </div>
-
-                {selectedLeaveTypeedit === "leave" && (
-                  <div className="flex flex-wrap justify-between">
-                    <label htmlFor="" className="text-sm font-medium mb-2">
-                      Leave Duration
-                    </label>
-                    <div className="flex flex-col">
-                      {leaveDurationTypeEdit.map((d, index) => (
-                        <div
-                          key={d.date || index}
-                          className="mb-4 md:ml-2 flex items-center"
+                      </div>
+                      <div className="mb-3 flex justify-between">
+                        <label
+                          htmlFor="employee_name"
+                          className="block text-sm font-medium mb-2"
                         >
-                          <label className="no-wr w-full font-medium text-sm mb-1">
-                            {d.date.split("T")[0]}
+                          Employee Name
+                        </label>
+
+                        <Dropdown
+                          value={selectedEmployeeDetailsedit}
+                          onChange={(e) =>
+                            setSelectedEmployeeDetailsedit(e.target.value)
+                          }
+                          options={employeeOption}
+                          // optionLabel="email"
+                          filter
+                          placeholder="Select Employees"
+                          maxSelectedLabels={3}
+                          className="w-[50%]   border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          display="chip"
+                          disabled
+                        />
+                      </div>
+
+                      <div className="mb-3 flex justify-between">
+                        <label className="font-medium text-sm  mb-1 block">
+                          Select Type
+                        </label>
+                        <select
+                          value={selectedLeaveTypeedit}
+                          onChange={(e) => setSelectedLeaveTypeedit(e.target.value)}
+                          className="border-2 rounded-xl px-2 md:px-4 text-sm border-gray-300 outline-none h-10 w-[50%]"
+                          disabled
+                        >
+                          <option value="" disabled>
+                            Select Type
+                          </option>
+                          <option value="leave">Leave</option>
+                          <option value="Permission">Permission</option>
+                        </select>
+                      </div>
+                      <div className=" gap-2">
+                        {" "}
+                        <div className="mb-3 w-full flex justify-between">
+                          <label className="block text-sm font-medium mb-2">
+                            Start Date
                           </label>
-                          <select
-                            value={d.subLeaveType || ""}
-                            onChange={(e) =>
-                              setLeaveDurationTypeEdit((prev) => {
-                                const updated = [...prev];
-                                updated[index].subLeaveType = e.target.value;
-                                return updated;
-                              })
+                          <input
+                            type="date"
+                            // value={dateedit}
+                            value={
+                              dateedit
+                                ? new Date(dateedit).toISOString().split("T")[0]
+                                : ""
                             }
-                            className="border-2 rounded-xl px-7 md:px-4 py-2 ml-9 md:ml-0 text-sm border-gray-300 outline-none h-10 w-full"
-                          >
-                            <option value="">Select Leave Type</option>
-                            {leave.map((leaveType) => (
-                              <option
-                                key={leaveType.shotKey}
-                                value={leaveType.shotKey}
-                              >
-                                {leaveType.type}
-                              </option>
-                            ))}
-                          </select>
+                            onChange={(e) => setDateedit(e.target.value)}
+                            className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            disabled
+                          />
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                        {errors.date && (
+                          <p className="text-red-500 text-sm mb-4">{errors.date}</p>
+                        )}
+                        <div className="mb-3 w-full flex justify-between">
+                          <label className="block text-sm font-medium mb-2">
+                            End Date
+                          </label>
+                          <input
+                            type="date"
+                            // value={enddateedit}
+                            value={
+                              enddateedit
+                                ? new Date(enddateedit).toISOString().split("T")[0]
+                                : ""
+                            }
+                            onChange={(e) => setEnddateedit(e.target.value)}
+                            className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            disabled
+                          />
+                        </div>
+                        {errors.date && (
+                          <p className="text-red-500 text-sm mb-4">{errors.date}</p>
+                        )}
+                      </div>
 
-                {/* timing */}
-                {selectedLeaveTypeedit === "Permission" && (
-                  <div className=" gap-2 ">
-                    {" "}
-                    <div className="mb-3 w-full flex justify-between">
-                      <label className="block text-sm font-medium mb-2">
-                        From Time
-                      </label>
-                      <input
-                        type="time"
-                        value={
-                          startTimeedit
-                            ? convertTo24Hour(startTimeedit) // "01:51:00 PM" → "13:51"
-                            : ""
-                        }
-                        onChange={(e) => setStartTimeedit(e.target.value)}
-                        className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                    {/* {errors.date && (
+                      {selectedLeaveTypeedit === "leave" && (
+                        <div className="flex flex-wrap justify-between">
+                          <label htmlFor="" className="text-sm font-medium mb-2">
+                            Leave Duration
+                          </label>
+                          <div className="flex flex-col">
+                            {leaveDurationTypeEdit.map((d, index) => (
+                              <div
+                                key={d.date || index}
+                                className="mb-4 md:ml-2 flex items-center"
+                              >
+                                <label className="no-wr w-full font-medium text-sm mb-1">
+                                  {d.date.split("T")[0]}
+                                </label>
+                                <select
+                                  value={d.subLeaveType || ""}
+                                  onChange={(e) =>
+                                    setLeaveDurationTypeEdit((prev) => {
+                                      const updated = [...prev];
+                                      updated[index].subLeaveType = e.target.value;
+                                      return updated;
+                                    })
+                                  }
+                                  className="border-2 rounded-xl px-7 md:px-4 py-2 ml-9 md:ml-0 text-sm border-gray-300 outline-none h-10 w-full"
+                                >
+                                  <option value="">Select Leave Type</option>
+                                  {leave.map((leaveType) => (
+                                    <option
+                                      key={leaveType.shotKey}
+                                      value={leaveType.shotKey}
+                                    >
+                                      {leaveType.type}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* timing */}
+                      {selectedLeaveTypeedit === "Permission" && (
+                        <div className=" gap-2 ">
+                          {" "}
+                          <div className="mb-3 w-full flex justify-between">
+                            <label className="block text-sm font-medium mb-2">
+                              From Time
+                            </label>
+                            <input
+                              type="time"
+                              value={
+                                startTimeedit
+                                  ? convertTo24Hour(startTimeedit) // "01:51:00 PM" → "13:51"
+                                  : ""
+                              }
+                              onChange={(e) => setStartTimeedit(e.target.value)}
+                              className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+                          {/* {errors.date && (
                     <p className="text-red-500 text-sm mb-4">{errors.date}</p>
                   )} */}
-                    <div className="mb-3 w-full flex justify-between">
-                      <label className="block text-sm font-medium mb-2">
-                        To Time
-                      </label>
-                      <input
-                        type="time"
-                        value={
-                          endTimeedit
-                            ? convertTo24Hour(endTimeedit) // "01:51:00 PM" → "13:51"
-                            : ""
-                        }
-                        onChange={(e) => setEndtimeedit(e.target.value)}
-                        className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                    {/* {errors.date && (
+                          <div className="mb-3 w-full flex justify-between">
+                            <label className="block text-sm font-medium mb-2">
+                              To Time
+                            </label>
+                            <input
+                              type="time"
+                              value={
+                                endTimeedit
+                                  ? convertTo24Hour(endTimeedit) // "01:51:00 PM" → "13:51"
+                                  : ""
+                              }
+                              onChange={(e) => setEndtimeedit(e.target.value)}
+                              className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+                          {/* {errors.date && (
                     <p className="text-red-500 text-sm mb-4">{errors.date}</p>
                   )} */}
-                  </div>
-                )}
-                <div className="mb-3 flex justify-between">
-                  <label className="block text-sm font-medium mb-2">
-                    Notes
-                  </label>
-                  <textarea
-                    value={notesedit}
-                    onChange={(e) => setNotesedit(e.target.value)}
-                    className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    rows={4}
-                  ></textarea>
-                </div>
-                {errors.notes && (
-                  <p className="text-red-500 text-sm mb-4">{errors.notes}</p>
-                )}
+                        </div>
+                      )}
+                      <div className="mb-3 flex justify-between">
+                        <label className="block text-sm font-medium mb-2">
+                          Notes
+                        </label>
+                        <textarea
+                          value={notesedit}
+                          onChange={(e) => setNotesedit(e.target.value)}
+                          className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          rows={4}
+                        ></textarea>
+                      </div>
+                      {errors.notes && (
+                        <p className="text-red-500 text-sm mb-4">{errors.notes}</p>
+                      )}
 
-                <div className="flex justify-end gap-2">
-                  <button
-                    onClick={closeEditModal}
-                    className="bg-red-100 hover:bg-red-200 text-sm text-red-600 px-5 py-2 font-semibold rounded-full"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handlesubmitedit}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 font-semibold rounded-full"
-                  >
-                    Update
-                  </button>
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={closeEditModal}
+                          className="bg-red-100 hover:bg-red-200 text-sm text-red-600 px-5 py-2 font-semibold rounded-full"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handlesubmitedit}
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 font-semibold rounded-full"
+                        >
+                          Update
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
-          </div>
-        )}
-      </div>
-      </>
+          </>
       )}
-      <Footer />
-    </div>
-  );
+          <Footer />
+        </div>
+      );
 };
-export default Leave_option_details;
+      export default Leave_option_details;

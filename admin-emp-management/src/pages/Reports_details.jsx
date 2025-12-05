@@ -225,9 +225,11 @@ function Reports_details() {
       <div className="p-3 ">
         
         {/* breadcrumb */}
-        <div className="flex justify-between gap-2 text-sm items-center">
+        <div className="">
           <Mobile_Sidebar />
-          <div className="flex gap-1 items-center">
+          
+        </div>
+        <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
@@ -237,7 +239,6 @@ function Reports_details() {
           <p>{">"}</p>
           <p className="text-sm text-blue-500 ">Reports</p>
           </div>
-        </div>
         <p className="text-2xl md:text-3xl mt-1 md:mt-4 font-semibold">
           Monthly Report
         </p>

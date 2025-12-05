@@ -747,9 +747,11 @@ const Releiving_Mainbar = () => {
       <div>
         
 
-        <div className="flex justify-between gap-2 items-center cursor-pointer">
+        <div className="cursor-pointer">
           <Mobile_Sidebar />
-          <div className="flex gap-1 items-center">
+          
+        </div>
+        <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
@@ -760,7 +762,6 @@ const Releiving_Mainbar = () => {
 
           <p className="text-sm text-blue-500">Relieving List</p>
           </div>
-        </div>
         {/* Add Button */}
         <div className="flex justify-between mt-2 md:mt-4 mb-3">
           <h1 className="text-2xl md:text-3xl font-semibold">Relieving List</h1>
