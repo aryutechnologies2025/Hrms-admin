@@ -25,6 +25,7 @@ import { FaEye } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useDateUtils } from "../../hooks/useDateUtils";
 import { IoClose } from "react-icons/io5";
+import { Dropdown } from "primereact/dropdown";
 
 const Request_details = () => {
   const formatDateTime = useDateUtils();
@@ -32,6 +33,7 @@ const Request_details = () => {
   const [approvedRejectedList, setApprovedRejectedList] = useState([]);
   const [noteContent, setNoteContent] = useState("");
   const [noteVisible, setNoteVisible] = useState(false);
+  const [subjectFilter, setSubjectFilter] = useState(null);
 
   // console.log("approvedRejectedList",approvedRejectedList)
 
@@ -416,6 +418,21 @@ const Request_details = () => {
 
   let navigate = useNavigate();
 
+  const filteredData = approvedRejectedList.filter((item) => {
+    console.log("test", subjectFilter);
+
+    if (!subjectFilter || subjectFilter == "null") return true;
+    return item.subject === subjectFilter;
+  });
+
+  const subjectOptions = [
+    { label: "Timing", value: "Timing" },
+    { label: "Technical", value: "Technical" },
+    { label: "Report", value: "Report" },
+    { label: "Other", value: "Other" },
+    { label: 'All', value: "null" }
+  ];
+
   return (
     <div className="flex flex-col justify-between  bg-gray-100 px-5 pt-2 md:pt-5 min-h-screen w-full overflow-x-auto">
       {loading ? (
@@ -423,12 +440,12 @@ const Request_details = () => {
       ) : (
         <>
           <div>
-            
+
 
             {/* breadcrumb */}
             <div className="cursor-pointer">
               <Mobile_Sidebar />
-              
+
             </div>
             <div className="flex justify-end gap-1 items-center">
               <p
@@ -440,7 +457,7 @@ const Request_details = () => {
               <p>{">"}</p>
 
               <p className="text-sm text-blue-500">Request</p>
-              </div>
+            </div>
 
             <div>
               <div className="flex flex-wrap md:flex-row justify-between">
@@ -449,6 +466,14 @@ const Request_details = () => {
                 </p>
 
                 <div className="flex items-center gap-5 justify-end mt-1 md:mt-4 ">
+                  <button
+                    onClick={() =>
+                      navigate(-1)
+                    }
+                    className="text-sm bg-gray-600 hover:bg-gray-500 text-white px-5 py-2 mt-2 md:mt-0 rounded-3xl"
+                  >
+                    Back
+                  </button>
                   <button
                     onClick={openAddLeaveRequestModal}
                     className="md:ml-0 w-fit cursor-pointer px-5 md:px-7 py-0.5 md:py-2 rounded-full text-white bg-blue-500 hover:bg-blue-600 font-medium"
@@ -464,13 +489,25 @@ const Request_details = () => {
 
             <div className="w-full mx-auto relative">
               {/* Global Search Input */}
-              <div className="mt-1 md:mt-8 flex md:justify-end">
-                <InputText
-                  value={globalFilter}
-                  onChange={(e) => setGlobalFilter(e.target.value)}
-                  placeholder="Search"
-                  className="px-2 py-2 w-full md:w-1/4 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500"
-                />
+              <div className="flex justify-between  flex-wrap md:flex-nowrap w-full mt-3 md:mt-8">
+                <div className="w-60 ">
+                  <Dropdown
+                    value={subjectFilter}
+                    onChange={(e) => setSubjectFilter(e.value)}
+                    options={subjectOptions}
+                    optionLabel="label"
+                    placeholder="Filter by Status"
+                    className="w-full"
+                  />
+                </div>
+                <div className="">
+                  <InputText
+                    value={globalFilter}
+                    onChange={(e) => setGlobalFilter(e.target.value)}
+                    placeholder="Search"
+                    className="w-full  px-2 py-2 rounded-md border border-gray-300 focus:outline-none  focus:border-blue-500"
+                  />
+                </div>
               </div>
 
               {/* Table Container with Relative Position */}
@@ -481,7 +518,7 @@ const Request_details = () => {
                 {/* DataTable */}
                 <DataTable
                   className="mt-1 md:mt-8"
-                  value={approvedRejectedList}
+                  value={filteredData}
                   paginator
                   rows={10}
                   rowsPerPageOptions={[5, 10, 20, 30, 50]}
@@ -492,6 +529,8 @@ const Request_details = () => {
                   ]}
                   showGridlines
                   resizableColumns
+                  paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+                  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 >
                   {columns.map((col, index) => (
                     <Column
