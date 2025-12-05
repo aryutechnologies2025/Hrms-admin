@@ -155,22 +155,30 @@ const EmployeeDetails_Mainbar = () => {
 
   return (
     <div className="w-screen min-h-screen bg-gray-100 px-3 md:px-5 py-2 md:py-5">
-      
+
 
       {/* breadcrumb */}
-      <div className="flex justify-between gap-2 text-sm items-center">
+      <div className="">
         <Mobile_Sidebar />
-        <div className="flex gap-2 items-center">
+
+      </div>
+      <div className="flex justify-end mt-2 md:mt-0 gap-2 items-center">
+        <p
+          className="text-xs md:text-sm text-gray-500"
+          onClick={() => navigate("/dashboard")}
+        >
+          Dashboard
+        </p>
+        <p>{">"}</p>
         <p
           onClick={() => navigate("/employees")}
-          className=" text-gray-500 cursor-pointer "
+          className="text-xs md:text-sm text-gray-500 cursor-pointer "
         >
           Employees
         </p>
         <p>{">"}</p>
-        <p className=" text-blue-500 ">Employee Details</p>
+        <p className="text-xs md:text-sm text-blue-500 ">Employee Details</p>
         {/* <p>{">"}</p> */}
-        </div>
       </div>
       <ToastContainer />
       <div className="flex flex-wrap md:flex-nowrap w-full sm:justify-between md:justify-end gap-3 md:mt-3 ">
@@ -323,10 +331,10 @@ const EmployeeDetails_Mainbar = () => {
                         : formatDateTime(employee?.relivingDate)}
                     </span>
                   </p>
-                  
-                      
-                       
-                    
+
+
+
+
 
                 </div>
                 <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl shadow-sm mt-3">
@@ -433,7 +441,7 @@ const EmployeeDetails_Mainbar = () => {
                     <p className=" text-sm">
                       {
                         formatDateTime(employee?.dateOfBirth)
-                        }
+                      }
                     </p>
                   </div>
                   <hr />

@@ -495,6 +495,14 @@ const Mobile_Sidebar = () => {
                             >
                               Invoice List
                             </button>
+                            <button
+                              onClick={() =>
+                                onClickSidebarMenu("mom-details")
+                              }
+                              className="hover:bg-blue-100 px-2 py-1 rounded-full"
+                            >
+                              MOM
+                            </button>
                           </div>
                         </div>
                       )}
@@ -802,7 +810,7 @@ const Mobile_Sidebar = () => {
                         <div className="flex items-center justify-center h-5 w-5">
                           <MdManageAccounts />
                         </div>
-                        <p>Asset Management</p>
+                        <p>Asset</p>
                       </div>
                       {/* links */}
                     

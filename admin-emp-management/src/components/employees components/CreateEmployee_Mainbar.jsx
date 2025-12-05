@@ -37,7 +37,7 @@ const CreateEmployee_Mainbar = () => {
   const [selectedDocs, setSelectedDocs] = useState([]);
   const [githubEmailId, setGithubEmailId] = useState("");
 
-  const [linkedIn ,setLinkedIn] = useState("");
+  const [linkedIn, setLinkedIn] = useState("");
 
 
   const handleCheckboxChangeVerification = (event) => {
@@ -953,7 +953,7 @@ const CreateEmployee_Mainbar = () => {
       passportExpDate: passportExpiryDate,
       panNo: pan_number,
       aadharNo: aadhar_no,
-      internDuration:internMonths,
+      internDuration: internMonths,
 
       dateOfBirth: employeeDob,
       maritalStatus: maritalStatus,
@@ -1525,133 +1525,140 @@ const CreateEmployee_Mainbar = () => {
         <Loader />
       ) : (
         <>
-        
-      
 
-      <div className="flex justify-between gap-2 text-sm items-center">
-        <Mobile_Sidebar />
-        <div className="flex gap-2 items-center">
-        <p
-          onClick={() => navigate("/employees")}
-          className=" text-gray-500 cursor-pointer "
-        >
-          Employees
-        </p>
-        <p>{">"}</p>
-        <p className=" text-blue-500 ">Create Employees</p>
-        {/* <p>{">"}</p> */}
-        </div>
-      </div>
 
-      <div>
-        <div className="flex flex-col sm:flex-row justify-between mt-2 md:mt-5">
-          <p className="text-xl md:text-3xl font-semibold ">Create Employee</p>
 
-          {/* Heading */}
-          <div className="flex justify-end gap-5 mt-3 md:mt-8">
-            <button
-              onClick={onClickCreateEmployeeCancelButton}
-              className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
-            >
-              Cancel
-            </button>
-
-            <button
-              onClick={handleSubmit}
-              disabled={buttonLoading}
-              className=" text-white bg-blue-500 hover:bg-blue-600 px-5 md:px-9 py-1 md:py-2 text-sm  md:text-base font-semibold rounded-full"
-            >
-              <div className="w-12 h-6 flex items-center justify-center">
-                {buttonLoading ? <Button_Loader /> : "Save"}
-              </div>
-            </button>
+          <div className="">
+            <Mobile_Sidebar />
+            
           </div>
-        </div>
+          <div className="flex justify-end mt-2 md:mt-0 gap-2 items-center">
+              <p
+                className="text-xs md:text-sm text-gray-500"
+                onClick={() => navigate("/dashboard")}
+              >
+                Dashboard
+              </p>
+              <p>{">"}</p>
+              <p
+                onClick={() => navigate("/employees")}
+                className="text-xs md:text-sm text-gray-500 cursor-pointer "
+              >
+                Employees
+              </p>
+              <p>{">"}</p>
+              <p className="text-xs md:text-sm text-blue-500 ">Create Employees</p>
+              {/* <p>{">"}</p> */}
+            </div>
 
-        <div className="flex flex-col items-end mt-2">
-          {/* <p className="text-red-500 text-sm mt-2">{errorMessage}</p> */}
-          <p className="text-red-500 text-sm mt-2">{error.error}</p>
-          <p className="text-green-500 text-sm mt-2">{successMessage}</p>
-        </div>
+          <div>
+            <div className="flex flex-col sm:flex-row justify-between mt-2 md:mt-5">
+              <p className="text-xl md:text-3xl font-semibold ">Create Employee</p>
 
-        {/*main flex */}
-        <div className="flex flex-col  lg:flex-row gap-3 md:my-5">
-          {/* leftside bar */}
-          <div className="basis-[50vw] flex-grow flex flex-col gap-3 ">
-            <div className="rounded-2xl border-2 border-gray-200 bg-white py-2 md:py-4 px-4 lg:px-6">
-              <div className="flex items-center justify-between flex-wrap">
-                <p className="text-xl font-semibold">Basic Information</p>
-                <label
-                  htmlFor="file"
-                  className="text-xs text-end  md:text-sm mt-3 font-medium cursor-pointer"
+              {/* Heading */}
+              <div className="flex justify-end gap-5 mt-3 md:mt-8">
+                <button
+                  onClick={onClickCreateEmployeeCancelButton}
+                  className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
                 >
-                  {`${selectedImage ? "Change Photo" : "Upload Photo"}`}{" "}
-                  <span className="text-red-500">*</span>
-                </label>
-              </div>
+                  Cancel
+                </button>
 
-              {/* Hidden File Input */}
-              <input
-                id="file"
-                type="file"
-                accept="image/*" // Allow only image files
-                onChange={handleImageChange}
-                style={{ display: "none" }}
-              />
-              {/* Display Selected Image */}
-              {selectedImage && (
-                <div className="mt-8 flex justify-center sm:justify-end">
-                  <img
-                    src={URL.createObjectURL(selectedImage)}
-                    alt="Selected"
-                    onClick={() => setOpenImageModal(true)} // Open modal on click
-                    className="w-36 h-32 object-cover cursor-pointer  rounded-md"
-                  />
-                </div>
-              )}
-              <div className="flex justify-end">
-                {" "}
-                {!touched.UploadPhoto && (
-                  <p className="text-red-400 text-sm">
-                    Please choose a Profile Image.
-                  </p>
-                )}
-              </div>
-
-              <div className="flex flex-col gap-4 mt-4">
-                {/* name */}
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="FULL NAME"
-                      id="employee_name"
-                      name="employee_name"
-                      // value={employee_name}
-                      // onChange={(e) => {
-                      //   setEmployeeName(e.target.value);
-                      // }}
-                    >
-                      FULL NAME <span className="text-red-500">*</span>
-                    </label>
-                    {/* <p className="text-sm">Add employee name</p> */}
+                <button
+                  onClick={handleSubmit}
+                  disabled={buttonLoading}
+                  className=" text-white bg-blue-500 hover:bg-blue-600 px-5 md:px-9 py-1 md:py-2 text-sm  md:text-base font-semibold rounded-full"
+                >
+                  <div className="w-12 h-6 flex items-center justify-center">
+                    {buttonLoading ? <Button_Loader /> : "Save"}
                   </div>
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-end mt-2">
+              {/* <p className="text-red-500 text-sm mt-2">{errorMessage}</p> */}
+              <p className="text-red-500 text-sm mt-2">{error.error}</p>
+              <p className="text-green-500 text-sm mt-2">{successMessage}</p>
+            </div>
+
+            {/*main flex */}
+            <div className="flex flex-col  lg:flex-row gap-3 md:my-5">
+              {/* leftside bar */}
+              <div className="basis-[50vw] flex-grow flex flex-col gap-3 ">
+                <div className="rounded-2xl border-2 border-gray-200 bg-white py-2 md:py-4 px-4 lg:px-6">
+                  <div className="flex items-center justify-between flex-wrap">
+                    <p className="text-xl font-semibold">Basic Information</p>
+                    <label
+                      htmlFor="file"
+                      className="text-xs text-end  md:text-sm mt-3 font-medium cursor-pointer"
+                    >
+                      {`${selectedImage ? "Change Photo" : "Upload Photo"}`}{" "}
+                      <span className="text-red-500">*</span>
+                    </label>
+                  </div>
+
+                  {/* Hidden File Input */}
                   <input
-                    id="FULL NAME"
-                    type="text"
-                    placeholder="Employee Name"
-                    value={employee_name}
-                    autocomplete="off"
-                    onChange={(e) => {
-                      setEmployeeName(e.target.value);
-                    }}
-                    className={`border-2 rounded-xl px-4 h-10  w-full  lg:w-72 ${
-                      !touched.fullName ? "border-red-400" : "border-gray-300"
-                    }`}
-                    onKeyUp={handleKeyUp}
+                    id="file"
+                    type="file"
+                    accept="image/*" // Allow only image files
+                    onChange={handleImageChange}
+                    style={{ display: "none" }}
                   />
-                </div>
-                {/* <div className="flex justify-end">
+                  {/* Display Selected Image */}
+                  {selectedImage && (
+                    <div className="mt-8 flex justify-center sm:justify-end">
+                      <img
+                        src={URL.createObjectURL(selectedImage)}
+                        alt="Selected"
+                        onClick={() => setOpenImageModal(true)} // Open modal on click
+                        className="w-36 h-32 object-cover cursor-pointer  rounded-md"
+                      />
+                    </div>
+                  )}
+                  <div className="flex justify-end">
+                    {" "}
+                    {!touched.UploadPhoto && (
+                      <p className="text-red-400 text-sm">
+                        Please choose a Profile Image.
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-4 mt-4">
+                    {/* name */}
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="FULL NAME"
+                          id="employee_name"
+                          name="employee_name"
+                        // value={employee_name}
+                        // onChange={(e) => {
+                        //   setEmployeeName(e.target.value);
+                        // }}
+                        >
+                          FULL NAME <span className="text-red-500">*</span>
+                        </label>
+                        {/* <p className="text-sm">Add employee name</p> */}
+                      </div>
+                      <input
+                        id="FULL NAME"
+                        type="text"
+                        placeholder="Employee Name"
+                        value={employee_name}
+                        autocomplete="off"
+                        onChange={(e) => {
+                          setEmployeeName(e.target.value);
+                        }}
+                        className={`border-2 rounded-xl px-4 h-10  w-full  lg:w-72 ${!touched.fullName ? "border-red-400" : "border-gray-300"
+                          }`}
+                        onKeyUp={handleKeyUp}
+                      />
+                    </div>
+                    {/* <div className="flex justify-end">
                 {" "}
                 {!touched.fullName && (
                   <p className="text-red-400 text-sm">
@@ -1660,47 +1667,46 @@ const CreateEmployee_Mainbar = () => {
                 )}
               </div> */}
 
-                {/* Phone  */}
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="PHONE NO & EMERGENCY"
-                    >
-                      PHONE NO <span className="text-red-500">*</span>
-                    </label>
-                    {/* <p className="text-sm">Contact number</p> */}
-                  </div>
+                    {/* Phone  */}
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="PHONE NO & EMERGENCY"
+                        >
+                          PHONE NO <span className="text-red-500">*</span>
+                        </label>
+                        {/* <p className="text-sm">Contact number</p> */}
+                      </div>
 
-                  <div className="flex gap-1 w-full flex-col  lg:w-72">
-                    <input
-                      id="PHONE NO & EMERGENCY"
-                      type="number"
-                      value={phone_number}
-                      onChange={(e) => {
-                        setPhoneNumber(e.target.value);
-                      }}
-                      placeholder="00000-00000"
-                      className={` [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 rounded-xl px-4 h-10 " w-full lg:w-72 ${
-                        !touched.phoneNum ? "border-red-400" : "border-gray-300"
-                      }`}
-                      onKeyUp={handleKeyUp}
-                    />
+                      <div className="flex gap-1 w-full flex-col  lg:w-72">
+                        <input
+                          id="PHONE NO & EMERGENCY"
+                          type="number"
+                          value={phone_number}
+                          onChange={(e) => {
+                            setPhoneNumber(e.target.value);
+                          }}
+                          placeholder="00000-00000"
+                          className={` [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 rounded-xl px-4 h-10 " w-full lg:w-72 ${!touched.phoneNum ? "border-red-400" : "border-gray-300"
+                            }`}
+                          onKeyUp={handleKeyUp}
+                        />
 
-                    {error.phone_number && (
-                      <p className="text-red-500 text-xs ">
-                        {error.phone_number[0]}
-                      </p>
-                    )}
-                    {/* <div className="flex justify-end"> */}
+                        {error.phone_number && (
+                          <p className="text-red-500 text-xs ">
+                            {error.phone_number[0]}
+                          </p>
+                        )}
+                        {/* <div className="flex justify-end"> */}
 
-                    {!touched.phoneNum && (
-                      <p className="text-red-400 text-sm">
-                        Phone Number must be 10 digits.
-                      </p>
-                    )}
-                    {/* </div> */}
-                    {/* <input
+                        {!touched.phoneNum && (
+                          <p className="text-red-400 text-sm">
+                            Phone Number must be 10 digits.
+                          </p>
+                        )}
+                        {/* </div> */}
+                        {/* <input
                       type="number"
                       placeholder="000-000-000"
                       value={emergency_number}
@@ -1709,141 +1715,138 @@ const CreateEmployee_Mainbar = () => {
                       }}
                       className="border-2 h-10 rounded-xl ps-4 border-gray-300 " w-1/2"
                     /> */}
-                  </div>
-                </div>
-
-                {/* Email Address */}
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="EMAIL ADDRESS"
-                    >
-                      EMAIL ADDRESS <span className="text-red-500">*</span>
-                    </label>
-                    {/* <p className="text-sm">Add employee email</p> */}
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <input
-                      id="EMAIL ADDRESS"
-                      type="email"
-                      placeholder="@example.com"
-                      value={emailaddress}
-                      onChange={(e) => {
-                        setEmailAddress(e.target.value);
-                      }}
-                      className={`border-2 rounded-xl px-4 h-10 " w-full lg:w-72 ${
-                        !touched.email ? "border-red-400" : "border-gray-300"
-                      }`}
-                      onKeyUp={handleKeyUp}
-                    />
-
-                    {!touched.email && (
-                      <p className="text-red-400 text-sm">
-                        Invalid Email Format.
-                      </p>
-                    )}
-                  </div>
-                </div>
-                {error.email && (
-                  <p className="text-red-500 text-sm ">{error.email}</p>
-                )}
-
-                {/* create password */}
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="CREATE PASSWORD"
-                    >
-                      CREATE PASSWORD <span className="text-red-500">*</span>
-                    </label>
-                    {/* <p className="text-sm">Add employee password</p> */}
-                  </div>
-                  <div className="relative w-full lg:w-72">
-                    <input
-                      id="CREATE PASSWORD"
-                      value={employeepassword}
-                      onChange={(e) => {
-                        setEmployeePassword(e.target.value);
-                      }}
-                      type={showPassword ? "text" : "password"}
-                      placeholder="#@ABCaba1214"
-                      className={`border-2 h-10 rounded-xl px-4 border-gray-300  w-full pr-10 
-                        ${
-                          !touched.password
-                            ? "border-red-400"
-                            : "border-gray-300"
-                        }`}
-                      onKeyUp={handleKeyUp}
-                    />
-                    <button
-                      type="button"
-                      onClick={togglePasswordVisibility}
-                      className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500"
-                    >
-                      {showPassword ? <FaEye /> : <FaEyeSlash />}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label className="font-medium text-sm">
-                      EMPLOYEE TYPE <span className="text-red-500">*</span>
-                    </label>
-                  </div>
-                  <div className="relative w-full lg:w-72">
-                    <select
-                      name=""
-                      id=""
-                      className={`w-full py-2 px-5 text-left border-2 border-gray-300 rounded-xl shadow-sm flex justify-between items-center cursor-pointer
-                         ${
-                           !touched.employeeType
-                             ? "border-red-400"
-                             : "border-gray-300"
-                         }`}
-                      value={employeeWorkType}
-                      onChange={(e) => setEmployeeWorkType(e.target.value)}
-                    >
-                      <option value="" selected disabled>
-                        Choose Type
-                      </option>
-                      <option value="Intern">Internship</option>
-                      <option value="Full Time">Employee</option>
-                      <option value="Part Time">Part Time</option>
-                      <option value="Freelancer">Freelancer</option>
-                    </select>
-                  </div>
-                </div>
-
-                {employeeWorkType === "Intern" && (
-                  <div className="flex flex-col xl:flex-row justify-between gap-1">
-                    <div className="flex flex-col w-full sm:w-auto">
-                      <label className="font-medium text-sm uppercase">
-                        Intership Duration
-                        <span className="text-red-500">*</span>
-                      </label>
+                      </div>
                     </div>
-                    <select
-                      className={`lg:w-72 py-2 px-5 text-left border-2 border-gray-300 rounded-xl shadow-sm flex justify-between items-center cursor-pointer
-                        `}
-                      value={internMonths}
-                      onChange={(e) => setInternMonths(e.target.value)}
-                    >
-                      <option value="" disabled>
-                        Choose Duration
-                      </option>
-                      {[...Array(7)].map((_, i) => (
-                        <option key={i + 1} value={`${i + 1} Month`}>
-                          {i + 1} Month{i + 1 > 1 ? "s" : ""}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
 
-                {/* <div className="flex flex-col xl:flex-row justify-between gap-1">
+                    {/* Email Address */}
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="EMAIL ADDRESS"
+                        >
+                          EMAIL ADDRESS <span className="text-red-500">*</span>
+                        </label>
+                        {/* <p className="text-sm">Add employee email</p> */}
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <input
+                          id="EMAIL ADDRESS"
+                          type="email"
+                          placeholder="@example.com"
+                          value={emailaddress}
+                          onChange={(e) => {
+                            setEmailAddress(e.target.value);
+                          }}
+                          className={`border-2 rounded-xl px-4 h-10 " w-full lg:w-72 ${!touched.email ? "border-red-400" : "border-gray-300"
+                            }`}
+                          onKeyUp={handleKeyUp}
+                        />
+
+                        {!touched.email && (
+                          <p className="text-red-400 text-sm">
+                            Invalid Email Format.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    {error.email && (
+                      <p className="text-red-500 text-sm ">{error.email}</p>
+                    )}
+
+                    {/* create password */}
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="CREATE PASSWORD"
+                        >
+                          CREATE PASSWORD <span className="text-red-500">*</span>
+                        </label>
+                        {/* <p className="text-sm">Add employee password</p> */}
+                      </div>
+                      <div className="relative w-full lg:w-72">
+                        <input
+                          id="CREATE PASSWORD"
+                          value={employeepassword}
+                          onChange={(e) => {
+                            setEmployeePassword(e.target.value);
+                          }}
+                          type={showPassword ? "text" : "password"}
+                          placeholder="#@ABCaba1214"
+                          className={`border-2 h-10 rounded-xl px-4 border-gray-300  w-full pr-10 
+                        ${!touched.password
+                              ? "border-red-400"
+                              : "border-gray-300"
+                            }`}
+                          onKeyUp={handleKeyUp}
+                        />
+                        <button
+                          type="button"
+                          onClick={togglePasswordVisibility}
+                          className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500"
+                        >
+                          {showPassword ? <FaEye /> : <FaEyeSlash />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label className="font-medium text-sm">
+                          EMPLOYEE TYPE <span className="text-red-500">*</span>
+                        </label>
+                      </div>
+                      <div className="relative w-full lg:w-72">
+                        <select
+                          name=""
+                          id=""
+                          className={`w-full py-2 px-5 text-left border-2 border-gray-300 rounded-xl shadow-sm flex justify-between items-center cursor-pointer
+                         ${!touched.employeeType
+                              ? "border-red-400"
+                              : "border-gray-300"
+                            }`}
+                          value={employeeWorkType}
+                          onChange={(e) => setEmployeeWorkType(e.target.value)}
+                        >
+                          <option value="" selected disabled>
+                            Choose Type
+                          </option>
+                          <option value="Intern">Internship</option>
+                          <option value="Full Time">Employee</option>
+                          <option value="Part Time">Part Time</option>
+                          <option value="Freelancer">Freelancer</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {employeeWorkType === "Intern" && (
+                      <div className="flex flex-col xl:flex-row justify-between gap-1">
+                        <div className="flex flex-col w-full sm:w-auto">
+                          <label className="font-medium text-sm uppercase">
+                            Intership Duration
+                            <span className="text-red-500">*</span>
+                          </label>
+                        </div>
+                        <select
+                          className={`lg:w-72 py-2 px-5 text-left border-2 border-gray-300 rounded-xl shadow-sm flex justify-between items-center cursor-pointer
+                        `}
+                          value={internMonths}
+                          onChange={(e) => setInternMonths(e.target.value)}
+                        >
+                          <option value="" disabled>
+                            Choose Duration
+                          </option>
+                          {[...Array(7)].map((_, i) => (
+                            <option key={i + 1} value={`${i + 1} Month`}>
+                              {i + 1} Month{i + 1 > 1 ? "s" : ""}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+
+                    {/* <div className="flex flex-col xl:flex-row justify-between gap-1">
                   <label className="font-medium text-sm">Department</label>
                   <div
                     className="relative w-full lg:w-72"
@@ -1884,53 +1887,52 @@ const CreateEmployee_Mainbar = () => {
                   </div>
                 </div> */}
 
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <label className="font-medium text-sm">
-                    ROLES <span className="text-red-500">*</span>
-                  </label>
-                  <div
-                    className="relative w-full lg:w-72"
-                    ref={roleDropdownRef}
-                  >
-                    <button
-                      onClick={() => setPositionIsOpen(!positionIsOpen)}
-                      className={`w-full py-2 px-5 text-left border-2  rounded-xl shadow-sm flex justify-between items-center
-                         ${
-                           !touched.SelectedRolestype
-                             ? "border-red-400 "
-                             : "border-gray-300"
-                         }`}
-                    >
-                      {selectedPositionId
-                        ? positionOptions.find(
-                            (r) => r._id === selectedPositionId
-                          )?.name
-                        : "Choose Position"}
-                      {positionIsOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                    </button>
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <label className="font-medium text-sm">
+                        ROLES <span className="text-red-500">*</span>
+                      </label>
+                      <div
+                        className="relative w-full lg:w-72"
+                        ref={roleDropdownRef}
+                      >
+                        <button
+                          onClick={() => setPositionIsOpen(!positionIsOpen)}
+                          className={`w-full py-2 px-5 text-left border-2  rounded-xl shadow-sm flex justify-between items-center
+                         ${!touched.SelectedRolestype
+                              ? "border-red-400 "
+                              : "border-gray-300"
+                            }`}
+                        >
+                          {selectedPositionId
+                            ? positionOptions.find(
+                              (r) => r._id === selectedPositionId
+                            )?.name
+                            : "Choose Position"}
+                          {positionIsOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                        </button>
 
-                    {positionIsOpen && (
-                      <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                        {positionOptions.map((role) => (
-                          <li
-                            key={role._id}
-                            className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                            onClick={() => {
-                              setSelectedPositionId(role._id);
-                              setPositionIsOpen(false);
-                            }}
-                          >
-                            {role.name}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </div>
+                        {positionIsOpen && (
+                          <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                            {positionOptions.map((role) => (
+                              <li
+                                key={role._id}
+                                className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                                onClick={() => {
+                                  setSelectedPositionId(role._id);
+                                  setPositionIsOpen(false);
+                                }}
+                              >
+                                {role.name}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </div>
 
-                {/* Department */}
+                    {/* Department */}
 
-                {/* <div className="flex flex-col xl:flex-row justify-between gap-1">
+                    {/* <div className="flex flex-col xl:flex-row justify-between gap-1">
                   <div className="flex flex-col w-full sm:w-auto">
                     <label
                       className="font-medium text-sm"
@@ -2017,7 +2019,7 @@ const CreateEmployee_Mainbar = () => {
                   </div>
                 </div> */}
 
-                {/* <div className="flex flex-col xl:flex-row justify-between gap-1">
+                    {/* <div className="flex flex-col xl:flex-row justify-between gap-1">
       <div className="flex flex-col w-full sm:w-auto">
         <label
           className="font-medium text-sm"
@@ -2086,498 +2088,487 @@ const CreateEmployee_Mainbar = () => {
       </div>
     </div> */}
 
-                {/* Date of Joining */}
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="DATE OF JOINING"
-                      onClick={() => {
-                        setTouched({
-                          ...touched,
-                          dateOfJoin: true,
-                        });
-                      }}
-                    >
-                      DATE OF JOINING <span className="text-red-500">*</span>
-                    </label>
-                    {/* <p className="text-sm">employee's date of join</p> */}
-                  </div>
-
-                  <div className="relative  lg:w-72">
-                    <DatePicker
-                      id="DATE OF JOINING"
-                      placeholderText="Employee date of join"
-                      className={`border-2 rounded-xl h-10 px-4 w-full lg:w-72  block  ${
-                        !touched.dateOfJoin
-                          ? "border-red-400"
-                          : "border-gray-300"
-                      }`}
-                      onKeyUp={handleKeyUp}
-                      selected={employeeDateOfJoin}
-                      onChange={handleDateChange}
-                      dateFormat="dd/MM/yyyy"
-                      showYearDropdown={true}
-                    />
-                  </div>
-                </div>
-
-                {/* employee id */}
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="employeeid"
-                      id="employeeid"
-                      name="employeeid"
-                      aria-readonly
-                    >
-                      EMPLOYEE ID <span className="text-red-500">*</span>
-                    </label>
-                    {/* <p className="text-sm">Add employee id</p> */}
-                  </div>
-                  <input
-                    id="employeeid"
-                    type="text"
-                    placeholder="Employee ID"
-                    value={employeeid}
-                    onChange={(e) => {
-                      setEmployeeId(e.target.value);
-                    }}
-                    className={`border-2 rounded-xl px-4 h-10  w-full  lg:w-72 ${
-                      !touched.employeeId ? "border-red-400" : "border-gray-300"
-                    }`}
-                    onKeyUp={handleKeyUp}
-                  />
-                </div>
-
-                  {/* Github email id */}
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="githubemail"
-                      id="githubemail"
-                      name="githubemail"
-                      aria-readonly
-                    >
-                      Github Email Address 
-                    </label>
-                    {/* <p className="text-sm">Add employee id</p> */}
-                  </div>
-                  <input
-                    id="githubemail"
-                    type="email"
-                    placeholder="Github Email Address"
-                    value={githubEmailId}
-                    onChange={(e) => {
-                      setGithubEmailId(e.target.value);
-                    }}
-                    className={`border-2 rounded-xl px-4 h-10  w-full  lg:w-72 border-gray-300
-                    `}
-                    onKeyUp={handleKeyUp}
-                  />
-                </div>
-                {/* linked in */}
-
-                          <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="linkedIn"
-                      id="linkedIn"
-                      name="linkedIn"
-                      aria-readonly
-                    >
-                      linkedIn Url
-                    </label>
-                    {/* <p className="text-sm">Add employee id</p> */}
-                  </div>
-                  <input
-                    id="linkedIn"
-                    type="email"
-                    placeholder="Github Email Address"
-                    value={linkedIn}
-                    onChange={(e) => {
-                      setLinkedIn(e.target.value);
-                    }}
-                    className={`border-2 rounded-xl px-4 h-10  w-full  lg:w-72 border-gray-300
-                    `}
-                    onKeyUp={handleKeyUp}
-                  />
-                </div>
-              </div>
-
-              <hr className="my-5" />
-
-              <p className="text-xl font-semibold">Personal Info</p>
-              {/*Gender */}
-              <div className="flex flex-col gap-4 mt-4">
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label className="font-medium text-sm" htmlFor="GENDER">
-                      GENDER
-                    </label>
-                  </div>
-                  <select
-                    id="GENDER"
-                    name="GENDER"
-                    className={`border-2 rounded-xl px-4 h-10  w-full lg:w-72 ${
-                      !touched.gender ? "border-red-400" : "border-gray-300"
-                    }`}
-                    onChange={(e) => {
-                      setGender(e.target.value);
-                      setTouched({
-                        ...touched,
-                        gender: true,
-                      });
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        console.log("Enter pressed on:", e.target.value);
-                      }
-                      if (e.key === "Tab") {
-                        console.log("Tab pressed, moving to the next element.");
-                      }
-                    }}
-                  >
-                    <option value="" disabled selected>
-                      Select
-                    </option>
-                    <option value="male">MALE</option>
-                    <option value="female">FEMALE</option>
-                  </select>
-                </div>
-
-                {/* Passport No. */}
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="PASSPORT NO."
-                    >
-                      PASSPORT NO
-                    </label>
-                    {/* <p className="text-sm">Add passport No</p> */}
-                  </div>
-                  <input
-                    id="PASSPORT NO."
-                    type="text"
-                    placeholder="Passport No."
-                    value={passport_number}
-                    onChange={(e) => {
-                      setPassportNumber(e.target.value);
-                    }}
-                    className={` border-2 h-10 rounded-xl px-4   w-full  lg:w-72 ${
-                      !touched.passportNo ? "border-red-400" : "border-gray-300"
-                    }`}
-                    onKeyUp={handleKeyUp}
-                  />
-                </div>
-
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label className="font-medium text-sm" htmlFor="empEmail">
-                      EMAIL ADDRESS
-                    </label>
-                    {/* <p className="text-sm">Add passport No</p> */}
-                  </div>
-                  <input
-                    id="empEmail"
-                    type="email"
-                    placeholder="Employee Personal Email"
-                    value={personalEmail}
-                    onChange={(e) => {
-                      setPersonalEmail(e.target.value);
-                    }}
-                    className={` border-2 h-10 rounded-xl px-4   w-full  lg:w-72 border-gray-300`}
-                    onKeyUp={handleKeyUp}
-                  />
-                </div>
-
-                {/*pan no */}
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="PASSPORT EXP DATE"
-                    >
-                      PAN NO
-                    </label>
-                    {/* <p className="text-sm">Add Pan No</p> */}
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <input
-                      type="text"
-                      className={`border-2 rounded-xl h-10 px-4 border-gray-300  w-full lg:w-72  ${
-                        !touched.panNo ? "border-red-400" : "border-gray-300"
-                      }`}
-                      onKeyUp={handleKeyUp}
-                      placeholder="Pan Number"
-                      value={pan_number}
-                      onChange={(e) => {
-                        setPanNumber(e.target.value);
-                      }}
-                    />
-                    {!touched.panNo && (
-                      <p className="text-red-400 text-sm">
-                        Invalid Pan Number Format.
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Aadhar No */}
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label className="font-medium text-sm" htmlFor="AADHAR NO">
-                      AADHAR NO
-                    </label>
-                    {/* <p className="text-sm">Add Aadhar No</p> */}
-                  </div>
-
-                  <div className="flex flex-col gap-1">
-                    <input
-                      id="AADHAR NO"
-                      type="number"
-                      placeholder="Aadhar No"
-                      value={aadhar_no}
-                      onChange={(e) => {
-                        setAadharNumber(e.target.value);
-                      }}
-                      onKeyUp={handleKeyUp}
-                      className={` [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 h-10 rounded-xl px-4 border-gray-300  w-full  lg:w-72  ${
-                        !touched.aadharNo ? "border-red-400" : "border-gray-300"
-                      }`}
-                    />
-                    {!touched.aadharNo && (
-                      <p className="text-red-400 text-sm">
-                        Aadhar no must contain 12 digits.
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Date of Birth */}
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="DATE OF BIRTH"
-                      onClick={() =>
-                        setTouched({
-                          ...touched,
-                          dob: true,
-                        })
-                      }
-                    >
-                      DATE OF BIRTH
-                    </label>
-                    {/* <p className="text-sm">Choose employee's DOB</p> */}
-                  </div>
-                  <div className="relative">
-                    <DatePicker
-                      id="DATE OF BIRTH"
-                      placeholderText="Choose DOB"
-                      className={`border-2 rounded-xl h-10 px-4 border-gray-300  w-full lg:w-72 ${
-                        !touched.dob ? "border-red-400" : "border-gray-300"
-                      }`}
-                      onKeyUp={handleKeyUp}
-                      selected={employeeDob}
-                      onChange={handleDateofBirth}
-                      dateFormat="dd/MM/yyyy"
-                      showYearDropdown={true}
-                    />
-                  </div>
-                </div>
-                {error.date_of_birth && (
-                  <p className="text-red-500 text-sm mt-2">
-                    {error.date_of_birth[0]}
-                  </p>
-                )}
-
-                {/* father name */}
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="PASSPORT EXP DATE"
-                    >
-                      FATHER NAME
-                    </label>
-                    {/* <p className="text-sm">Add Pan No</p> */}
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <input
-                      type="text"
-                      className={`border-2 rounded-xl h-10 px-4 border-gray-300  w-full lg:w-72  ${
-                        !touched.fathername
-                          ? "border-red-400"
-                          : "border-gray-300"
-                      }`}
-                      onKeyUp={handleKeyUp}
-                      placeholder="Father name"
-                      value={father_name}
-                      onChange={(e) => {
-                        setFathername(e.target.value);
-                      }}
-                    />
-                    {!touched.fathername && (
-                      <p className="text-red-400 text-sm">Enter Father name</p>
-                    )}
-                  </div>
-                </div>
-
-                {/* mother name */}
-
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="PASSPORT EXP DATE"
-                    >
-                      MOTHER NAME
-                    </label>
-                    {/* <p className="text-sm">Add Pan No</p> */}
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <input
-                      type="text"
-                      className={`border-2 rounded-xl h-10 px-4 border-gray-300  w-full lg:w-72  ${
-                        !touched.mothername
-                          ? "border-red-400"
-                          : "border-gray-300"
-                      }`}
-                      onKeyUp={handleKeyUp}
-                      placeholder="Mother name"
-                      value={mother_name}
-                      onChange={(e) => {
-                        setMothername(e.target.value);
-                      }}
-                    />
-                    {!touched.mothername && (
-                      <p className="text-red-400 text-sm">Enter Mother name</p>
-                    )}
-                  </div>
-                </div>
-
-                {/* address1 */}
-
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="PASSPORT EXP DATE"
-                    >
-                      ADDRESS 1
-                    </label>
-                    {/* <p className="text-sm">Add Pan No</p> */}
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <input
-                      type="text"
-                      className={`border-2 rounded-xl h-10 px-4 border-gray-300  w-full lg:w-72  ${
-                        !touched.address1error
-                          ? "border-red-400"
-                          : "border-gray-300"
-                      }`}
-                      onKeyUp={handleKeyUp}
-                      placeholder="Enter Address"
-                      value={address1}
-                      onChange={(e) => {
-                        setAddress1(e.target.value);
-                      }}
-                    />
-                    {!touched.address1error && (
-                      <p className="text-red-400 text-sm">Enter Address1</p>
-                    )}
-                  </div>
-                </div>
-
-                {/* address2 */}
-
-                <div className="flex flex-col xl:flex-row justify-between gap-1">
-                  <div className="flex flex-col w-full sm:w-auto">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="PASSPORT EXP DATE"
-                    >
-                      ADDRESS 2
-                    </label>
-                    {/* <p className="text-sm">Add Pan No</p> */}
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <input
-                      type="text"
-                      className={`border-2 rounded-xl h-10 px-4 border-gray-300  w-full lg:w-72  ${
-                        !touched.address2error
-                          ? "border-red-400"
-                          : "border-gray-300"
-                      }`}
-                      onKeyUp={handleKeyUp}
-                      placeholder="Enter Address"
-                      value={address2}
-                      onChange={(e) => {
-                        setAddress2(e.target.value);
-                      }}
-                    />
-                    {!touched.address2error && (
-                      <p className="text-red-400 text-sm">Enter Address2</p>
-                    )}
-                  </div>
-                </div>
-
-                {/* marital status */}
-                <div className="flex flex-col xl:flex-row justify-between gap-1 ">
-                  <div className="flex flex-col  w-full sm:w-auto">
-                    <label className="font-medium text-sm">
-                      MARITAL STATUS
-                    </label>
-                    {/* <p className="text-sm">Choose option </p> */}
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <div className="flex flex-wrap gap-4">
-                      <div className="flex items-center gap-1">
-                        <input
-                          type="radio"
-                          name="marital_status"
-                          id="Single"
-                          value="Single"
-                          checked={maritalStatus === "Single"}
-                          onChange={(e) => {
-                            setMaritalStatus(e.target.value);
+                    {/* Date of Joining */}
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="DATE OF JOINING"
+                          onClick={() => {
                             setTouched({
                               ...touched,
-                              MaritalStatus: true,
+                              dateOfJoin: true,
                             });
                           }}
-                        />
-                        <label htmlFor="Single" className="tex-sm font-medium">
-                          Single
+                        >
+                          DATE OF JOINING <span className="text-red-500">*</span>
                         </label>
+                        {/* <p className="text-sm">employee's date of join</p> */}
                       </div>
 
-                      <div className="flex items-center gap-1">
+                      <div className="relative  lg:w-72">
+                        <DatePicker
+                          id="DATE OF JOINING"
+                          placeholderText="Employee date of join"
+                          className={`border-2 rounded-xl h-10 px-4 w-full lg:w-72  block  ${!touched.dateOfJoin
+                              ? "border-red-400"
+                              : "border-gray-300"
+                            }`}
+                          onKeyUp={handleKeyUp}
+                          selected={employeeDateOfJoin}
+                          onChange={handleDateChange}
+                          dateFormat="dd/MM/yyyy"
+                          showYearDropdown={true}
+                        />
+                      </div>
+                    </div>
+
+                    {/* employee id */}
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="employeeid"
+                          id="employeeid"
+                          name="employeeid"
+                          aria-readonly
+                        >
+                          EMPLOYEE ID <span className="text-red-500">*</span>
+                        </label>
+                        {/* <p className="text-sm">Add employee id</p> */}
+                      </div>
+                      <input
+                        id="employeeid"
+                        type="text"
+                        placeholder="Employee ID"
+                        value={employeeid}
+                        onChange={(e) => {
+                          setEmployeeId(e.target.value);
+                        }}
+                        className={`border-2 rounded-xl px-4 h-10  w-full  lg:w-72 ${!touched.employeeId ? "border-red-400" : "border-gray-300"
+                          }`}
+                        onKeyUp={handleKeyUp}
+                      />
+                    </div>
+
+                    {/* Github email id */}
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="githubemail"
+                          id="githubemail"
+                          name="githubemail"
+                          aria-readonly
+                        >
+                          Github Email Address
+                        </label>
+                        {/* <p className="text-sm">Add employee id</p> */}
+                      </div>
+                      <input
+                        id="githubemail"
+                        type="email"
+                        placeholder="Github Email Address"
+                        value={githubEmailId}
+                        onChange={(e) => {
+                          setGithubEmailId(e.target.value);
+                        }}
+                        className={`border-2 rounded-xl px-4 h-10  w-full  lg:w-72 border-gray-300
+                    `}
+                        onKeyUp={handleKeyUp}
+                      />
+                    </div>
+                    {/* linked in */}
+
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="linkedIn"
+                          id="linkedIn"
+                          name="linkedIn"
+                          aria-readonly
+                        >
+                          linkedIn Url
+                        </label>
+                        {/* <p className="text-sm">Add employee id</p> */}
+                      </div>
+                      <input
+                        id="linkedIn"
+                        type="email"
+                        placeholder="Github Email Address"
+                        value={linkedIn}
+                        onChange={(e) => {
+                          setLinkedIn(e.target.value);
+                        }}
+                        className={`border-2 rounded-xl px-4 h-10  w-full  lg:w-72 border-gray-300
+                    `}
+                        onKeyUp={handleKeyUp}
+                      />
+                    </div>
+                  </div>
+
+                  <hr className="my-5" />
+
+                  <p className="text-xl font-semibold">Personal Info</p>
+                  {/*Gender */}
+                  <div className="flex flex-col gap-4 mt-4">
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label className="font-medium text-sm" htmlFor="GENDER">
+                          GENDER
+                        </label>
+                      </div>
+                      <select
+                        id="GENDER"
+                        name="GENDER"
+                        className={`border-2 rounded-xl px-4 h-10  w-full lg:w-72 ${!touched.gender ? "border-red-400" : "border-gray-300"
+                          }`}
+                        onChange={(e) => {
+                          setGender(e.target.value);
+                          setTouched({
+                            ...touched,
+                            gender: true,
+                          });
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            console.log("Enter pressed on:", e.target.value);
+                          }
+                          if (e.key === "Tab") {
+                            console.log("Tab pressed, moving to the next element.");
+                          }
+                        }}
+                      >
+                        <option value="" disabled selected>
+                          Select
+                        </option>
+                        <option value="male">MALE</option>
+                        <option value="female">FEMALE</option>
+                      </select>
+                    </div>
+
+                    {/* Passport No. */}
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="PASSPORT NO."
+                        >
+                          PASSPORT NO
+                        </label>
+                        {/* <p className="text-sm">Add passport No</p> */}
+                      </div>
+                      <input
+                        id="PASSPORT NO."
+                        type="text"
+                        placeholder="Passport No."
+                        value={passport_number}
+                        onChange={(e) => {
+                          setPassportNumber(e.target.value);
+                        }}
+                        className={` border-2 h-10 rounded-xl px-4   w-full  lg:w-72 ${!touched.passportNo ? "border-red-400" : "border-gray-300"
+                          }`}
+                        onKeyUp={handleKeyUp}
+                      />
+                    </div>
+
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label className="font-medium text-sm" htmlFor="empEmail">
+                          EMAIL ADDRESS
+                        </label>
+                        {/* <p className="text-sm">Add passport No</p> */}
+                      </div>
+                      <input
+                        id="empEmail"
+                        type="email"
+                        placeholder="Employee Personal Email"
+                        value={personalEmail}
+                        onChange={(e) => {
+                          setPersonalEmail(e.target.value);
+                        }}
+                        className={` border-2 h-10 rounded-xl px-4   w-full  lg:w-72 border-gray-300`}
+                        onKeyUp={handleKeyUp}
+                      />
+                    </div>
+
+                    {/*pan no */}
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="PASSPORT EXP DATE"
+                        >
+                          PAN NO
+                        </label>
+                        {/* <p className="text-sm">Add Pan No</p> */}
+                      </div>
+                      <div className="flex flex-col gap-1">
                         <input
-                          type="radio"
-                          name="marital_status"
-                          id="Married"
-                          value="Married"
-                          checked={maritalStatus === "Married"}
+                          type="text"
+                          className={`border-2 rounded-xl h-10 px-4 border-gray-300  w-full lg:w-72  ${!touched.panNo ? "border-red-400" : "border-gray-300"
+                            }`}
+                          onKeyUp={handleKeyUp}
+                          placeholder="Pan Number"
+                          value={pan_number}
                           onChange={(e) => {
-                            setMaritalStatus(e.target.value);
+                            setPanNumber(e.target.value);
+                          }}
+                        />
+                        {!touched.panNo && (
+                          <p className="text-red-400 text-sm">
+                            Invalid Pan Number Format.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Aadhar No */}
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label className="font-medium text-sm" htmlFor="AADHAR NO">
+                          AADHAR NO
+                        </label>
+                        {/* <p className="text-sm">Add Aadhar No</p> */}
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        <input
+                          id="AADHAR NO"
+                          type="number"
+                          placeholder="Aadhar No"
+                          value={aadhar_no}
+                          onChange={(e) => {
+                            setAadharNumber(e.target.value);
+                          }}
+                          onKeyUp={handleKeyUp}
+                          className={` [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 h-10 rounded-xl px-4 border-gray-300  w-full  lg:w-72  ${!touched.aadharNo ? "border-red-400" : "border-gray-300"
+                            }`}
+                        />
+                        {!touched.aadharNo && (
+                          <p className="text-red-400 text-sm">
+                            Aadhar no must contain 12 digits.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Date of Birth */}
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="DATE OF BIRTH"
+                          onClick={() =>
                             setTouched({
                               ...touched,
-                              MaritalStatus: true,
-                            });
+                              dob: true,
+                            })
+                          }
+                        >
+                          DATE OF BIRTH
+                        </label>
+                        {/* <p className="text-sm">Choose employee's DOB</p> */}
+                      </div>
+                      <div className="relative">
+                        <DatePicker
+                          id="DATE OF BIRTH"
+                          placeholderText="Choose DOB"
+                          className={`border-2 rounded-xl h-10 px-4 border-gray-300  w-full lg:w-72 ${!touched.dob ? "border-red-400" : "border-gray-300"
+                            }`}
+                          onKeyUp={handleKeyUp}
+                          selected={employeeDob}
+                          onChange={handleDateofBirth}
+                          dateFormat="dd/MM/yyyy"
+                          showYearDropdown={true}
+                        />
+                      </div>
+                    </div>
+                    {error.date_of_birth && (
+                      <p className="text-red-500 text-sm mt-2">
+                        {error.date_of_birth[0]}
+                      </p>
+                    )}
+
+                    {/* father name */}
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="PASSPORT EXP DATE"
+                        >
+                          FATHER NAME
+                        </label>
+                        {/* <p className="text-sm">Add Pan No</p> */}
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <input
+                          type="text"
+                          className={`border-2 rounded-xl h-10 px-4 border-gray-300  w-full lg:w-72  ${!touched.fathername
+                              ? "border-red-400"
+                              : "border-gray-300"
+                            }`}
+                          onKeyUp={handleKeyUp}
+                          placeholder="Father name"
+                          value={father_name}
+                          onChange={(e) => {
+                            setFathername(e.target.value);
                           }}
                         />
-                        <label htmlFor="Married" className="tex-sm font-medium">
-                          Married
-                        </label>
+                        {!touched.fathername && (
+                          <p className="text-red-400 text-sm">Enter Father name</p>
+                        )}
                       </div>
+                    </div>
 
-                      {/* <div className="flex items-center gap-1">
+                    {/* mother name */}
+
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="PASSPORT EXP DATE"
+                        >
+                          MOTHER NAME
+                        </label>
+                        {/* <p className="text-sm">Add Pan No</p> */}
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <input
+                          type="text"
+                          className={`border-2 rounded-xl h-10 px-4 border-gray-300  w-full lg:w-72  ${!touched.mothername
+                              ? "border-red-400"
+                              : "border-gray-300"
+                            }`}
+                          onKeyUp={handleKeyUp}
+                          placeholder="Mother name"
+                          value={mother_name}
+                          onChange={(e) => {
+                            setMothername(e.target.value);
+                          }}
+                        />
+                        {!touched.mothername && (
+                          <p className="text-red-400 text-sm">Enter Mother name</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* address1 */}
+
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="PASSPORT EXP DATE"
+                        >
+                          ADDRESS 1
+                        </label>
+                        {/* <p className="text-sm">Add Pan No</p> */}
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <input
+                          type="text"
+                          className={`border-2 rounded-xl h-10 px-4 border-gray-300  w-full lg:w-72  ${!touched.address1error
+                              ? "border-red-400"
+                              : "border-gray-300"
+                            }`}
+                          onKeyUp={handleKeyUp}
+                          placeholder="Enter Address"
+                          value={address1}
+                          onChange={(e) => {
+                            setAddress1(e.target.value);
+                          }}
+                        />
+                        {!touched.address1error && (
+                          <p className="text-red-400 text-sm">Enter Address1</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* address2 */}
+
+                    <div className="flex flex-col xl:flex-row justify-between gap-1">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="PASSPORT EXP DATE"
+                        >
+                          ADDRESS 2
+                        </label>
+                        {/* <p className="text-sm">Add Pan No</p> */}
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <input
+                          type="text"
+                          className={`border-2 rounded-xl h-10 px-4 border-gray-300  w-full lg:w-72  ${!touched.address2error
+                              ? "border-red-400"
+                              : "border-gray-300"
+                            }`}
+                          onKeyUp={handleKeyUp}
+                          placeholder="Enter Address"
+                          value={address2}
+                          onChange={(e) => {
+                            setAddress2(e.target.value);
+                          }}
+                        />
+                        {!touched.address2error && (
+                          <p className="text-red-400 text-sm">Enter Address2</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* marital status */}
+                    <div className="flex flex-col xl:flex-row justify-between gap-1 ">
+                      <div className="flex flex-col  w-full sm:w-auto">
+                        <label className="font-medium text-sm">
+                          MARITAL STATUS
+                        </label>
+                        {/* <p className="text-sm">Choose option </p> */}
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex flex-wrap gap-4">
+                          <div className="flex items-center gap-1">
+                            <input
+                              type="radio"
+                              name="marital_status"
+                              id="Single"
+                              value="Single"
+                              checked={maritalStatus === "Single"}
+                              onChange={(e) => {
+                                setMaritalStatus(e.target.value);
+                                setTouched({
+                                  ...touched,
+                                  MaritalStatus: true,
+                                });
+                              }}
+                            />
+                            <label htmlFor="Single" className="tex-sm font-medium">
+                              Single
+                            </label>
+                          </div>
+
+                          <div className="flex items-center gap-1">
+                            <input
+                              type="radio"
+                              name="marital_status"
+                              id="Married"
+                              value="Married"
+                              checked={maritalStatus === "Married"}
+                              onChange={(e) => {
+                                setMaritalStatus(e.target.value);
+                                setTouched({
+                                  ...touched,
+                                  MaritalStatus: true,
+                                });
+                              }}
+                            />
+                            <label htmlFor="Married" className="tex-sm font-medium">
+                              Married
+                            </label>
+                          </div>
+
+                          {/* <div className="flex items-center gap-1">
                         <input
                           type="radio"
                           name="marital_status"
@@ -2599,19 +2590,19 @@ const CreateEmployee_Mainbar = () => {
                           Divorced
                         </label>
                       </div> */}
+                        </div>
+
+                        {!touched.MaritalStatus && (
+                          <p className="text-red-400 text-sm">
+                            Please Choose Marital Status.
+                          </p>
+                        )}
+                      </div>
                     </div>
 
-                    {!touched.MaritalStatus && (
-                      <p className="text-red-400 text-sm">
-                        Please Choose Marital Status.
-                      </p>
-                    )}
-                  </div>
-                </div>
+                    {/* spouse */}
 
-                {/* spouse */}
-
-                {/* {maritalStatus === "Married" && (
+                    {/* {maritalStatus === "Married" && (
                   <div className="flex flex-col xl:flex-row justify-between gap-1 mt-4">
                     <div className="flex flex-col w-full sm:w-auto">
                       <label
@@ -2643,344 +2634,341 @@ const CreateEmployee_Mainbar = () => {
                     </div>
                   </div>
                 )} */}
-              </div>
-            </div>
-
-            <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6 ">
-              <p className="text-xl font-semibold ">PF Info</p>
-
-              <div className="flex flex-col gap-4 mt-4">
-                <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
-                  <div className="flex flex-col">
-                    <label className="font-medium text-sm" htmlFor="UAN NO">
-                      UAN NO
-                    </label>
-                    {/* <p className="text-sm">Add UAN NO.</p> */}
-                  </div>
-
-                  <div className="flex flex-col gap-1 ">
-                    <input
-                      id="UAN NO"
-                      type="number"
-                      placeholder="UAN No"
-                      value={uan_number}
-                      onChange={(e) => {
-                        setUANNumber(e.target.value);
-                      }}
-                      className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 rounded-xl px-4 h-10   w-full  lg:w-72 border-gray-300`}
-                      onKeyUp={handleKeyUp}
-                    />
-
-                    {error.uan_number && (
-                      <p className="text-red-500 text-sm ">
-                        {error.uan_number[0]}
-                      </p>
-                    )}
                   </div>
                 </div>
 
-                <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
-                  <div className="flex flex-col">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="PF JOIN DATE"
-                    >
-                      PF JOIN DATE
-                    </label>
-                  </div>
+                <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6 ">
+                  <p className="text-xl font-semibold ">PF Info</p>
 
-                  <div className="relative">
-                    <DatePicker
-                      id="PF JOIN DATE"
-                      placeholderText="PF Join Date"
-                      className={`border-2 rounded-xl h-10 px-4   w-full lg:w-72 border-gray-300`}
-                      onKeyUp={handleKeyUp}
-                      selected={pfJoinDate}
-                      onChange={handlePfJoinDate}
-                      dateFormat="dd/MM/yyyy"
-                      showYearDropdown={true}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
-                  <div className="flex flex-col">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="PF EXP DATE"
-                    >
-                      PF EXP DATE
-                    </label>
-                  </div>
-
-                  <div className="relative">
-                    <DatePicker
-                      id="PF EXP DATE"
-                      placeholderText="PF  Exp Date"
-                      className={`border-2 rounded-xl h-10 px-4   w-full lg:w-72 border-gray-300`}
-                      onKeyUp={handleKeyUp}
-                      selected={pfExpiryDate}
-                      onChange={handlePfExpDate}
-                      dateFormat="dd/MM/yyyy"
-                      showYearDropdown={true}
-                      minDate={pfJoinDate}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
-              <p className="text-xl font-semibold">Emergency Contact</p>
-
-              <div className="flex flex-col gap-4 mt-4">
-                <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
-                  <div className="flex flex-col">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="INSURANCE NO"
-                    >
-                      FULL NAME
-                    </label>
-                    {/* <p className="text-sm">Add UAN NO.</p> */}
-                  </div>
-                  <input
-                    id="INSURANCE NO"
-                    type="text"
-                    placeholder="Full name"
-                    value={emergency_fullname}
-                    onChange={(e) => {
-                      setEmergencyName(e.target.value);
-                    }}
-                    className={`border-2 rounded-xl px-4   h-10 w-full  lg:w-72 ${
-                      !touched.emergencyName
-                        ? "border-red-400 "
-                        : "border-gray-300"
-                    }`}
-                    onKeyUp={handleKeyUp}
-                  />
-                </div>
-                <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
-                  <div className="flex flex-col">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="NOMINEE NAME"
-                    >
-                      CONTACT
-                    </label>
-                    {/* <p className="text-sm">Nominal Name</p> */}
-                  </div>
-                  <div className="flex flex-col">
-                    <input
-                      id="NOMINEE NAME"
-                      type="number"
-                      placeholder="Contact Number"
-                      value={emergencyContact}
-                      onChange={(e) => {
-                        setemergencyContact(e.target.value);
-                      }}
-                      className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 rounded-xl px-4 border-gray-300  h-10 w-full  lg:w-72 ${
-                        !touched.emergencyContact
-                          ? "border-red-400"
-                          : "border-gray-300"
-                      }`}
-                      onKeyUp={handleKeyUp}
-                    />
-                    {!touched.emergencyContact && (
-                      <p className="text-red-400 text-sm">
-                        Phone Number must be 10 digits.
-                      </p>
-                    )}
-                  </div>
-                </div>{" "}
-                <div className="flex flex-col xl:flex-row gap-1 justify-between    relative">
-                  <div className="flex flex-col sm:flex-row w-full gap-1 flex-wrap  justify-between">
-                    <label className="font-medium text-sm">RELATION TYPE</label>
-                    <div className="flex flex-col gap-1">
-                      <div className="flex flex-wrap gap-x-4 gap-y-2">
-                        <div className="flex items-center gap-1">
-                          <input
-                            type="radio"
-                            name="RELATION"
-                            id="Father"
-                            value="Father"
-                            onChange={(e) => {
-                              setRelationType(e.target.value);
-                              setTouched({
-                                ...touched,
-                                emergencyRelationType: true,
-                              });
-                            }}
-                          />
-                          <label
-                            htmlFor="Father"
-                            className="tex-sm font-medium"
-                          >
-                            Father
-                          </label>
-                        </div>
-
-                        <div className="flex items-center gap-1">
-                          <input
-                            type="radio"
-                            name="RELATION"
-                            id="Mother"
-                            value="Mother"
-                            onChange={(e) => {
-                              setRelationType(e.target.value);
-                              setTouched({
-                                ...touched,
-                                emergencyRelationType: true,
-                              });
-                            }}
-                          />
-                          <label
-                            htmlFor="Mother"
-                            className="tex-sm font-medium"
-                          >
-                            Mother
-                          </label>
-                        </div>
-
-                        <div className="flex items-center gap-1">
-                          <input
-                            type="radio"
-                            name="RELATION"
-                            id="Friend"
-                            value="Friend"
-                            onChange={(e) => {
-                              setRelationType(e.target.value);
-                              setTouched({
-                                ...touched,
-                                emergencyRelationType: true,
-                              });
-                            }}
-                          />
-                          <label
-                            htmlFor="Friend"
-                            className="tex-sm font-medium"
-                          >
-                            Friend
-                          </label>
-                        </div>
-
-                        <div className="flex items-center gap-1">
-                          <input
-                            type="radio"
-                            name="RELATION"
-                            id="Sibling"
-                            value="Sibling"
-                            onChange={(e) => {
-                              setRelationType(e.target.value);
-                              setTouched({
-                                ...touched,
-                                emergencyRelationType: true,
-                              });
-                            }}
-                          />
-                          <label
-                            htmlFor="Sibling"
-                            className="tex-sm font-medium"
-                          >
-                            Sibling
-                          </label>
-                        </div>
+                  <div className="flex flex-col gap-4 mt-4">
+                    <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
+                      <div className="flex flex-col">
+                        <label className="font-medium text-sm" htmlFor="UAN NO">
+                          UAN NO
+                        </label>
+                        {/* <p className="text-sm">Add UAN NO.</p> */}
                       </div>
 
-                      {!touched.emergencyRelationType && (
-                        <p className="text-red-400 text-sm">
-                          Please Choose Relation Type.
-                        </p>
-                      )}
+                      <div className="flex flex-col gap-1 ">
+                        <input
+                          id="UAN NO"
+                          type="number"
+                          placeholder="UAN No"
+                          value={uan_number}
+                          onChange={(e) => {
+                            setUANNumber(e.target.value);
+                          }}
+                          className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 rounded-xl px-4 h-10   w-full  lg:w-72 border-gray-300`}
+                          onKeyUp={handleKeyUp}
+                        />
+
+                        {error.uan_number && (
+                          <p className="text-red-500 text-sm ">
+                            {error.uan_number[0]}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
+                      <div className="flex flex-col">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="PF JOIN DATE"
+                        >
+                          PF JOIN DATE
+                        </label>
+                      </div>
+
+                      <div className="relative">
+                        <DatePicker
+                          id="PF JOIN DATE"
+                          placeholderText="PF Join Date"
+                          className={`border-2 rounded-xl h-10 px-4   w-full lg:w-72 border-gray-300`}
+                          onKeyUp={handleKeyUp}
+                          selected={pfJoinDate}
+                          onChange={handlePfJoinDate}
+                          dateFormat="dd/MM/yyyy"
+                          showYearDropdown={true}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
+                      <div className="flex flex-col">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="PF EXP DATE"
+                        >
+                          PF EXP DATE
+                        </label>
+                      </div>
+
+                      <div className="relative">
+                        <DatePicker
+                          id="PF EXP DATE"
+                          placeholderText="PF  Exp Date"
+                          className={`border-2 rounded-xl h-10 px-4   w-full lg:w-72 border-gray-300`}
+                          onKeyUp={handleKeyUp}
+                          selected={pfExpiryDate}
+                          onChange={handlePfExpDate}
+                          dateFormat="dd/MM/yyyy"
+                          showYearDropdown={true}
+                          minDate={pfJoinDate}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
-              <p className="text-xl font-semibold">Education Info</p>
+                <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
+                  <p className="text-xl font-semibold">Emergency Contact</p>
 
-              {/* List Education Info */}
-              <div className="mt-5">
-                {educationInfo.map((info, index) => (
-                  <div key={index} className="flex justify-between">
-                    <div className=" px-2  flex flex-col ">
-                      <p className="font-semibold">{info.schoolName}</p>
-                      <p className="text-sm font-medium text-gray-500">
-                        {info.departmentName}
-                      </p>
-                      <p className="text-sm font-medium text-gray-500">
-                        {info.period}
-                      </p>
-                      <hr className="my-3" />
+                  <div className="flex flex-col gap-4 mt-4">
+                    <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
+                      <div className="flex flex-col">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="INSURANCE NO"
+                        >
+                          FULL NAME
+                        </label>
+                        {/* <p className="text-sm">Add UAN NO.</p> */}
+                      </div>
+                      <input
+                        id="INSURANCE NO"
+                        type="text"
+                        placeholder="Full name"
+                        value={emergency_fullname}
+                        onChange={(e) => {
+                          setEmergencyName(e.target.value);
+                        }}
+                        className={`border-2 rounded-xl px-4   h-10 w-full  lg:w-72 ${!touched.emergencyName
+                            ? "border-red-400 "
+                            : "border-gray-300"
+                          }`}
+                        onKeyUp={handleKeyUp}
+                      />
                     </div>
-                    <IoClose
-                      onClick={() => onClickEducationInfoDelete(index)}
-                      className="ms-20 text-red-500 text-2xl cursor-pointer "
-                    />
-                  </div>
-                ))}
-              </div>
-              {/* Add Work Education */}
-              <div
-                onClick={openAddEducationInfoModal}
-                className="flex items-center gap-4 mt-5 cursor-pointer"
-              >
-                <IoAddCircleSharp className="text-blue-500 text-3xl" />
-                <p className="font-medium">Add education info</p>
-              </div>
-            </div>
-          </div>
+                    <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
+                      <div className="flex flex-col">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="NOMINEE NAME"
+                        >
+                          CONTACT
+                        </label>
+                        {/* <p className="text-sm">Nominal Name</p> */}
+                      </div>
+                      <div className="flex flex-col">
+                        <input
+                          id="NOMINEE NAME"
+                          type="number"
+                          placeholder="Contact Number"
+                          value={emergencyContact}
+                          onChange={(e) => {
+                            setemergencyContact(e.target.value);
+                          }}
+                          className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 rounded-xl px-4 border-gray-300  h-10 w-full  lg:w-72 ${!touched.emergencyContact
+                              ? "border-red-400"
+                              : "border-gray-300"
+                            }`}
+                          onKeyUp={handleKeyUp}
+                        />
+                        {!touched.emergencyContact && (
+                          <p className="text-red-400 text-sm">
+                            Phone Number must be 10 digits.
+                          </p>
+                        )}
+                      </div>
+                    </div>{" "}
+                    <div className="flex flex-col xl:flex-row gap-1 justify-between    relative">
+                      <div className="flex flex-col sm:flex-row w-full gap-1 flex-wrap  justify-between">
+                        <label className="font-medium text-sm">RELATION TYPE</label>
+                        <div className="flex flex-col gap-1">
+                          <div className="flex flex-wrap gap-x-4 gap-y-2">
+                            <div className="flex items-center gap-1">
+                              <input
+                                type="radio"
+                                name="RELATION"
+                                id="Father"
+                                value="Father"
+                                onChange={(e) => {
+                                  setRelationType(e.target.value);
+                                  setTouched({
+                                    ...touched,
+                                    emergencyRelationType: true,
+                                  });
+                                }}
+                              />
+                              <label
+                                htmlFor="Father"
+                                className="tex-sm font-medium"
+                              >
+                                Father
+                              </label>
+                            </div>
 
-          {/* rightside bar */}
-          <div className=" flex flex-grow basis-[30vw]  flex-col gap-3 ">
-            <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
-              <p className="text-xl font-semibold">Bank information</p>
+                            <div className="flex items-center gap-1">
+                              <input
+                                type="radio"
+                                name="RELATION"
+                                id="Mother"
+                                value="Mother"
+                                onChange={(e) => {
+                                  setRelationType(e.target.value);
+                                  setTouched({
+                                    ...touched,
+                                    emergencyRelationType: true,
+                                  });
+                                }}
+                              />
+                              <label
+                                htmlFor="Mother"
+                                className="tex-sm font-medium"
+                              >
+                                Mother
+                              </label>
+                            </div>
 
-              <div className="flex flex-col gap-3 mt-4">
-                <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
-                  <div className="flex flex-col">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="BANK ACCOUNT NO"
-                    >
-                      BANK ACCOUNT NO
-                    </label>
-                    {/* <p className="text-sm">Bank account NO.</p> */}
-                  </div>
-                  <div className="flex flex-col justify-end">
-                    <input
-                      id="BANK ACCOUNT NO"
-                      type="number"
-                      placeholder="Enter account number"
-                      value={account_number}
-                      onChange={(e) => {
-                        setAccountNumber(e.target.value);
-                        setTouched({
-                          ...touched,
-                          accountNumber: true,
-                        });
-                      }}
-                      className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 h-10 rounded-xl px-4 border-gray-300  w-full lg:w-52   ${
-                        !touched.accountNumber
-                          ? "border-red-400 "
-                          : "border-gray-300"
-                      }`}
-                      onKeyUp={handleKeyUp}
-                    />
+                            <div className="flex items-center gap-1">
+                              <input
+                                type="radio"
+                                name="RELATION"
+                                id="Friend"
+                                value="Friend"
+                                onChange={(e) => {
+                                  setRelationType(e.target.value);
+                                  setTouched({
+                                    ...touched,
+                                    emergencyRelationType: true,
+                                  });
+                                }}
+                              />
+                              <label
+                                htmlFor="Friend"
+                                className="tex-sm font-medium"
+                              >
+                                Friend
+                              </label>
+                            </div>
 
-                    {error["bank.accountNo"] && (
-                      <p className="text-red-500 text-xs ">
-                        {error["bank.accountNo"]}
-                      </p>
-                    )}
+                            <div className="flex items-center gap-1">
+                              <input
+                                type="radio"
+                                name="RELATION"
+                                id="Sibling"
+                                value="Sibling"
+                                onChange={(e) => {
+                                  setRelationType(e.target.value);
+                                  setTouched({
+                                    ...touched,
+                                    emergencyRelationType: true,
+                                  });
+                                }}
+                              />
+                              <label
+                                htmlFor="Sibling"
+                                className="tex-sm font-medium"
+                              >
+                                Sibling
+                              </label>
+                            </div>
+                          </div>
+
+                          {!touched.emergencyRelationType && (
+                            <p className="text-red-400 text-sm">
+                              Please Choose Relation Type.
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* bank name */}
-                {/* og code */}
-                {/* <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
+                <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
+                  <p className="text-xl font-semibold">Education Info</p>
+
+                  {/* List Education Info */}
+                  <div className="mt-5">
+                    {educationInfo.map((info, index) => (
+                      <div key={index} className="flex justify-between">
+                        <div className=" px-2  flex flex-col ">
+                          <p className="font-semibold">{info.schoolName}</p>
+                          <p className="text-sm font-medium text-gray-500">
+                            {info.departmentName}
+                          </p>
+                          <p className="text-sm font-medium text-gray-500">
+                            {info.period}
+                          </p>
+                          <hr className="my-3" />
+                        </div>
+                        <IoClose
+                          onClick={() => onClickEducationInfoDelete(index)}
+                          className="ms-20 text-red-500 text-2xl cursor-pointer "
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  {/* Add Work Education */}
+                  <div
+                    onClick={openAddEducationInfoModal}
+                    className="flex items-center gap-4 mt-5 cursor-pointer"
+                  >
+                    <IoAddCircleSharp className="text-blue-500 text-3xl" />
+                    <p className="font-medium">Add education info</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* rightside bar */}
+              <div className=" flex flex-grow basis-[30vw]  flex-col gap-3 ">
+                <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
+                  <p className="text-xl font-semibold">Bank information</p>
+
+                  <div className="flex flex-col gap-3 mt-4">
+                    <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
+                      <div className="flex flex-col">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="BANK ACCOUNT NO"
+                        >
+                          BANK ACCOUNT NO
+                        </label>
+                        {/* <p className="text-sm">Bank account NO.</p> */}
+                      </div>
+                      <div className="flex flex-col justify-end">
+                        <input
+                          id="BANK ACCOUNT NO"
+                          type="number"
+                          placeholder="Enter account number"
+                          value={account_number}
+                          onChange={(e) => {
+                            setAccountNumber(e.target.value);
+                            setTouched({
+                              ...touched,
+                              accountNumber: true,
+                            });
+                          }}
+                          className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 h-10 rounded-xl px-4 border-gray-300  w-full lg:w-52   ${!touched.accountNumber
+                              ? "border-red-400 "
+                              : "border-gray-300"
+                            }`}
+                          onKeyUp={handleKeyUp}
+                        />
+
+                        {error["bank.accountNo"] && (
+                          <p className="text-red-500 text-xs ">
+                            {error["bank.accountNo"]}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* bank name */}
+                    {/* og code */}
+                    {/* <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
                   <div className="flex flex-col">
                     <label
                       className="font-medium text-sm"
@@ -3052,177 +3040,170 @@ const CreateEmployee_Mainbar = () => {
                   </div>
                 </div> */}
 
-                {/* gpay or phonepay */}
+                    {/* gpay or phonepay */}
 
-                <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
-                  <div className="flex flex-col">
-                    <label
-                      className="font-medium text-sm text-transform: uppercase"
-                      htmlFor="BANK gpay NO"
-                    >
-                      Gpay number / phone pay number
-                    </label>
-                    {/* <p className="text-sm">Bank gpay NO.</p> */}
-                  </div>
-                  <div className="flex flex-col justify-end">
-                    <input
-                      id="BANK gpay NO"
-                      type="number"
-                      placeholder="Enter  number"
-                      value={gpay_number}
-                      onChange={(e) => {
-                        setGpayNumber(e.target.value);
-                        setTouched({
-                          ...touched,
-                          accountNumber: true,
-                        });
-                      }}
-                      className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 h-10 rounded-xl px-4 border-gray-300  w-full lg:w-52   ${
-                        !touched.accountNumber
-                          ? "border-red-400 "
-                          : "border-gray-300"
-                      }`}
-                      onKeyUp={handleKeyUp}
-                    />
-                    {error.bank_account_no && (
-                      <p className="text-red-500 text-xs ">
-                        {error.bank_account_no[0]}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex flex-col xl:flex-row gap-1 justify-between">
-                  <div className="flex flex-col">
-                    <label
-                      className="font-medium text-sm"
-                      onClick={() => {
-                        setBankNameIsOpen(!bankNameIsOpen);
-                      }}
-                    >
-                      BANK NAME
-                    </label>
-                    {/* <p className="text-sm">Bank Name</p> */}
-                  </div>
-
-                  <div
-                    className={`relative w-full lg:w-52  xx`}
-                    ref={bankNameDropdownRef}
-                  >
-                    <button
-                      onFocus={() => setBankNameIsOpen(true)} // Open on focus
-                      onMouseDown={handleDropdownClick}
-                      onKeyDown={handleBankKeyDown}
-                      className={`w-full ${
-                        selectedBankNameOption ? "text-black" : "text-gray-400"
-                      } py-2 px-4  text-left rounded-xl  bg-white  focus:outline-black  outline-1 border-2  border-gray-300  flex justify-between items-center ${
-                        bankNameIsOpen ? "border-black" : ""
-                      } ${
-                        !touched.BankName ? "border-red-400" : "border-gray-300"
-                      } `}
-                      tabIndex={0}
-                      style={{
-                        color: selectedBankNameOption ? "black" : "gray",
-                      }}
-                    >
-                      {selectedBankNameOption || "Choose bank"}
-                      {bankNameIsOpen ? (
-                        <IoIosArrowUp className=" text-black" />
-                      ) : (
-                        <IoIosArrowDown className=" text-black" />
-                      )}
-                    </button>
-
-                    {bankNameIsOpen && (
-                      <div className="absolute mt-1 left-0 z-10 w-full bg-white border border-gray-300  shadow-lg">
-                        <input
-                          type="text"
-                          value={searchedBankName}
-                          onChange={(e) => setSearchedBankName(e.target.value)}
-                          className="w-full px-4 py-2 border-b border-gray-200 focus:outline-none"
-                          placeholder="Search..."
-                          tabIndex={0}
-                        />
-
-                        <ul className="max-h-48 overflow-y-auto">
-                          {filteredBankNametOptions.length > 0 ? (
-                            filteredBankNametOptions.map((option, index) => (
-                              <li
-                                key={index}
-                                ref={(el) => (listRef.current[index] = el)} // Store the ref for each item
-                                onClick={() => handleSelectBankOption(option)}
-                                className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${
-                                  bankActiveIndex === index ? "bg-gray-200" : ""
-                                }`}
-                                tabIndex={0}
-                                onKeyDown={handleBankKeyDown}
-                                onFocus={() => setBankActiveIndex(index)}
-                              >
-                                {option}
-                              </li>
-                            ))
-                          ) : (
-                            <li className="px-4 py-2 text-gray-500">
-                              No results found
-                            </li>
-                          )}
-                        </ul>
+                    <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
+                      <div className="flex flex-col">
+                        <label
+                          className="font-medium text-sm text-transform: uppercase"
+                          htmlFor="BANK gpay NO"
+                        >
+                          Gpay number / phone pay number
+                        </label>
+                        {/* <p className="text-sm">Bank gpay NO.</p> */}
                       </div>
-                    )}
+                      <div className="flex flex-col justify-end">
+                        <input
+                          id="BANK gpay NO"
+                          type="number"
+                          placeholder="Enter  number"
+                          value={gpay_number}
+                          onChange={(e) => {
+                            setGpayNumber(e.target.value);
+                            setTouched({
+                              ...touched,
+                              accountNumber: true,
+                            });
+                          }}
+                          className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 h-10 rounded-xl px-4 border-gray-300  w-full lg:w-52   ${!touched.accountNumber
+                              ? "border-red-400 "
+                              : "border-gray-300"
+                            }`}
+                          onKeyUp={handleKeyUp}
+                        />
+                        {error.bank_account_no && (
+                          <p className="text-red-500 text-xs ">
+                            {error.bank_account_no[0]}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col xl:flex-row gap-1 justify-between">
+                      <div className="flex flex-col">
+                        <label
+                          className="font-medium text-sm"
+                          onClick={() => {
+                            setBankNameIsOpen(!bankNameIsOpen);
+                          }}
+                        >
+                          BANK NAME
+                        </label>
+                        {/* <p className="text-sm">Bank Name</p> */}
+                      </div>
+
+                      <div
+                        className={`relative w-full lg:w-52  xx`}
+                        ref={bankNameDropdownRef}
+                      >
+                        <button
+                          onFocus={() => setBankNameIsOpen(true)} // Open on focus
+                          onMouseDown={handleDropdownClick}
+                          onKeyDown={handleBankKeyDown}
+                          className={`w-full ${selectedBankNameOption ? "text-black" : "text-gray-400"
+                            } py-2 px-4  text-left rounded-xl  bg-white  focus:outline-black  outline-1 border-2  border-gray-300  flex justify-between items-center ${bankNameIsOpen ? "border-black" : ""
+                            } ${!touched.BankName ? "border-red-400" : "border-gray-300"
+                            } `}
+                          tabIndex={0}
+                          style={{
+                            color: selectedBankNameOption ? "black" : "gray",
+                          }}
+                        >
+                          {selectedBankNameOption || "Choose bank"}
+                          {bankNameIsOpen ? (
+                            <IoIosArrowUp className=" text-black" />
+                          ) : (
+                            <IoIosArrowDown className=" text-black" />
+                          )}
+                        </button>
+
+                        {bankNameIsOpen && (
+                          <div className="absolute mt-1 left-0 z-10 w-full bg-white border border-gray-300  shadow-lg">
+                            <input
+                              type="text"
+                              value={searchedBankName}
+                              onChange={(e) => setSearchedBankName(e.target.value)}
+                              className="w-full px-4 py-2 border-b border-gray-200 focus:outline-none"
+                              placeholder="Search..."
+                              tabIndex={0}
+                            />
+
+                            <ul className="max-h-48 overflow-y-auto">
+                              {filteredBankNametOptions.length > 0 ? (
+                                filteredBankNametOptions.map((option, index) => (
+                                  <li
+                                    key={index}
+                                    ref={(el) => (listRef.current[index] = el)} // Store the ref for each item
+                                    onClick={() => handleSelectBankOption(option)}
+                                    className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${bankActiveIndex === index ? "bg-gray-200" : ""
+                                      }`}
+                                    tabIndex={0}
+                                    onKeyDown={handleBankKeyDown}
+                                    onFocus={() => setBankActiveIndex(index)}
+                                  >
+                                    {option}
+                                  </li>
+                                ))
+                              ) : (
+                                <li className="px-4 py-2 text-gray-500">
+                                  No results found
+                                </li>
+                              )}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
+                      <div className="flex flex-col">
+                        <label className="font-medium text-sm" htmlFor="PAN NO">
+                          BANK BRANCH
+                        </label>
+                        {/* <p className="text-sm">BANK BRANCH</p> */}
+                      </div>
+                      <input
+                        id="PAN NO"
+                        type="text"
+                        placeholder="Enter Branch Name"
+                        value={bank_branch}
+                        onChange={(e) => setBankBranch(e.target.value)}
+                        className={`border-2 rounded-xl h-10 px-4 w-full lg:w-52   ${!touched.accountbranch
+                            ? "border-red-400 "
+                            : "border-gray-300"
+                          }`}
+                        onKeyUp={handleKeyUp}
+                      />
+                    </div>
+
+                    <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
+                      <div className="flex flex-col">
+                        <label className="font-medium text-sm" htmlFor="IFSC CODE">
+                          IFSC CODE
+                        </label>
+                        {/* <p className="text-sm">IFSC CODE</p> */}
+                      </div>
+                      <input
+                        id="IFSC CODE"
+                        type="text"
+                        placeholder="Ente IFSC code"
+                        value={ifsc_code}
+                        onChange={(e) => {
+                          setIFSCCode(e.target.value);
+                        }}
+                        className={`border-2 rounded-xl h-10 px-4 w-full lg:w-52 border-gray-300   ${!touched.ifscCode ? "border-red-400 " : "border-gray-300"
+                          }`}
+                        onKeyUp={handleKeyUp}
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
-                  <div className="flex flex-col">
-                    <label className="font-medium text-sm" htmlFor="PAN NO">
-                      BANK BRANCH
-                    </label>
-                    {/* <p className="text-sm">BANK BRANCH</p> */}
-                  </div>
-                  <input
-                    id="PAN NO"
-                    type="text"
-                    placeholder="Enter Branch Name"
-                    value={bank_branch}
-                    onChange={(e) => setBankBranch(e.target.value)}
-                    className={`border-2 rounded-xl h-10 px-4 w-full lg:w-52   ${
-                      !touched.accountbranch
-                        ? "border-red-400 "
-                        : "border-gray-300"
-                    }`}
-                    onKeyUp={handleKeyUp}
-                  />
-                </div>
+                <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
+                  <p className="text-xl font-semibold">Salary Information</p>
 
-                <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
-                  <div className="flex flex-col">
-                    <label className="font-medium text-sm" htmlFor="IFSC CODE">
-                      IFSC CODE
-                    </label>
-                    {/* <p className="text-sm">IFSC CODE</p> */}
-                  </div>
-                  <input
-                    id="IFSC CODE"
-                    type="text"
-                    placeholder="Ente IFSC code"
-                    value={ifsc_code}
-                    onChange={(e) => {
-                      setIFSCCode(e.target.value);
-                    }}
-                    className={`border-2 rounded-xl h-10 px-4 w-full lg:w-52 border-gray-300   ${
-                      !touched.ifscCode ? "border-red-400 " : "border-gray-300"
-                    }`}
-                    onKeyUp={handleKeyUp}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
-              <p className="text-xl font-semibold">Salary Information</p>
-
-              <div className="flex flex-col gap-3 mt-4">
-                {/* <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
+                  <div className="flex flex-col gap-3 mt-4">
+                    {/* <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
                   <div className="flex flex-col">
                     <label
                       className="font-medium text-sm"
@@ -3249,34 +3230,33 @@ const CreateEmployee_Mainbar = () => {
                   />
                 </div> */}
 
-                <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
-                  <div className="flex flex-col">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="SALARY AMOUNT"
-                    >
-                      SALARY AMOUNT
-                    </label>
-                    {/* <p className="text-sm">Per Month</p> */}
-                  </div>
-                  <input
-                    id="SALARY AMOUNT"
-                    type="number"
-                    placeholder="Enter Salary"
-                    value={salary_amount}
-                    onChange={(e) => {
-                      setSalaryAmount(e.target.value);
-                    }}
-                    onKeyUp={handleKeyUp}
-                    className={` [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 rounded-xl px-4 h-10 border-gray-300  w-full lg:w-52 ${
-                      !touched.salaryAmount
-                        ? "border-red-400 "
-                        : "border-gray-300"
-                    }`}
-                  />
-                </div>
+                    <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
+                      <div className="flex flex-col">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="SALARY AMOUNT"
+                        >
+                          SALARY AMOUNT
+                        </label>
+                        {/* <p className="text-sm">Per Month</p> */}
+                      </div>
+                      <input
+                        id="SALARY AMOUNT"
+                        type="number"
+                        placeholder="Enter Salary"
+                        value={salary_amount}
+                        onChange={(e) => {
+                          setSalaryAmount(e.target.value);
+                        }}
+                        onKeyUp={handleKeyUp}
+                        className={` [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 rounded-xl px-4 h-10 border-gray-300  w-full lg:w-52 ${!touched.salaryAmount
+                            ? "border-red-400 "
+                            : "border-gray-300"
+                          }`}
+                      />
+                    </div>
 
-                {/* <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
+                    {/* <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
                   <div className="flex flex-col">
                     <label
                       className="font-medium text-sm"
@@ -3291,7 +3271,7 @@ const CreateEmployee_Mainbar = () => {
                     placeholder="Enter PAN NO"
                     className="border-2 rounded-xl ps-4 h-10 border-gray-300 outline-none w-full lg:w-52"
                   /> */}
-                {/* 
+                    {/* 
                   <div className="relative">
                     <DatePicker
                       id="Exp date"
@@ -3308,17 +3288,17 @@ const CreateEmployee_Mainbar = () => {
                   </div>
                 </div>  */}
 
-                <div className="flex flex-col xl:flex-row justify-between  ">
-                  <div className="flex flex-col">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="PAYMENT TYPE"
-                    >
-                      PAYMENT TYPE
-                    </label>
-                    {/* <p className="text-sm">Payment Type</p> */}
-                  </div>
-                  {/* <input
+                    <div className="flex flex-col xl:flex-row justify-between  ">
+                      <div className="flex flex-col">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="PAYMENT TYPE"
+                        >
+                          PAYMENT TYPE
+                        </label>
+                        {/* <p className="text-sm">Payment Type</p> */}
+                      </div>
+                      {/* <input
                     id="PAYMENT TYPE"
                     type="text"
                     placeholder="Enter payment type"
@@ -3336,7 +3316,7 @@ const CreateEmployee_Mainbar = () => {
                         : "border-gray-300"
                     }`}
                   /> */}
-                  {/* <select
+                      {/* <select
                     name=""
                     id="PAYMENT TYPE"
                     className={`border-2 rounded-xl px-4 h-10 outline-none w-full lg:w-52   ${
@@ -3359,158 +3339,155 @@ const CreateEmployee_Mainbar = () => {
                     <option value="BANK">BANK</option>
                     <option value="CASH">CASH</option>
                   </select> */}
-                  <select
-                    id="PAYMENT TYPE"
-                    name="PAYMENT TYPE"
-                    className={`border-2 rounded-xl px-4 h-10  w-full lg:w-52 ${
-                      !touched.PaymentType
-                        ? "border-red-400"
-                        : "border-gray-300"
-                    }`}
-                    onChange={(e) => {
-                      setPaymentType(e.target.value);
-                      setTouched({
-                        ...touched,
-                        PaymentType: true,
-                      });
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        console.log("Enter pressed on:", e.target.value);
-                      }
-                      if (e.key === "Tab") {
-                        console.log("Tab pressed, moving to the next element.");
-                      }
-                    }}
-                  >
-                    <option value="" disabled selected>
-                      Select
-                    </option>
-                    <option value="UPI">UPI</option>
-                    <option value="BANK">BANK</option>
-                    <option value="CASH">CASH</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
-              <p className="text-xl font-semibold">Insurance Information</p>
-
-              <div className="flex flex-col gap-3 mt-4">
-                <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
-                  <div className="flex flex-col">
-                    <label
-                      className="font-medium text-sm text-transform: uppercase"
-                      htmlFor="INSURANCE NO"
-                    >
-                      Insurance No
-                    </label>
-                    {/* <p className="text-sm">Per Month</p> */}
-                  </div>
-                  <input
-                    id="INSURANCE NO"
-                    type="number"
-                    placeholder="Enter Insurance"
-                    value={insurance_number}
-                    onChange={(e) => {
-                      setInsuranceNumber(e.target.value);
-                    }}
-                    onKeyUp={handleKeyUp}
-                    className={` [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 rounded-xl px-4 h-10 border-gray-300  w-full lg:w-52 ${
-                      !touched.salaryAmount
-                        ? "border-red-400 "
-                        : "border-gray-300"
-                    }`}
-                  />
-                </div>
-                <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
-                  <div className="flex flex-col">
-                    <label
-                      className="font-medium text-sm text-transform: uppercase"
-                      htmlFor="INSURANCE DATE"
-                    >
-                      Insurance DATE
-                    </label>
-                  </div>
-
-                  <div className="relative">
-                    <DatePicker
-                      id="INSURANCE DATE"
-                      placeholderText="Insurance Date"
-                      className={` [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 rounded-xl px-4 h-10 border-gray-300  w-full lg:w-52 ${
-                        !touched.salaryAmount
-                          ? "border-red-400 "
-                          : "border-gray-300"
-                      }`}
-                      onKeyUp={handleKeyUp}
-                      selected={insurance_date}
-                      onChange={handleInsuranceDate}
-                      dateFormat="dd/MM/yyyy"
-                      showYearDropdown={true}
-                    />
+                      <select
+                        id="PAYMENT TYPE"
+                        name="PAYMENT TYPE"
+                        className={`border-2 rounded-xl px-4 h-10  w-full lg:w-52 ${!touched.PaymentType
+                            ? "border-red-400"
+                            : "border-gray-300"
+                          }`}
+                        onChange={(e) => {
+                          setPaymentType(e.target.value);
+                          setTouched({
+                            ...touched,
+                            PaymentType: true,
+                          });
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            console.log("Enter pressed on:", e.target.value);
+                          }
+                          if (e.key === "Tab") {
+                            console.log("Tab pressed, moving to the next element.");
+                          }
+                        }}
+                      >
+                        <option value="" disabled selected>
+                          Select
+                        </option>
+                        <option value="UPI">UPI</option>
+                        <option value="BANK">BANK</option>
+                        <option value="CASH">CASH</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
-                {/* {error.insurance_number && (
-                  <p className="text-red-500 text-sm mt-2">{error.insurance_number[0]}</p>
-                )} */}
-              </div>
-            </div>
 
-            {/* Experience */}
-            <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
-              <p className="text-xl font-semibold"> Experience </p>
-              {workExperiences.map((experience, index) => (
-                <div
-                  key={index}
-                  className="flex items-start  justify-between mt-4 border rounded-lg p-4 bg-gray-50"
-                >
-                  <div>
-                    <div className="flex flex-col gap-2">
-                      <div className="flex gap-1 flex-wrap items-center ">
-                        <p className="text-sm ">Job Title:</p>
-                        <p className="text-sm font-semibold">
-                          {experience.jobTitle}
-                        </p>
+                <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
+                  <p className="text-xl font-semibold">Insurance Information</p>
+
+                  <div className="flex flex-col gap-3 mt-4">
+                    <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
+                      <div className="flex flex-col">
+                        <label
+                          className="font-medium text-sm text-transform: uppercase"
+                          htmlFor="INSURANCE NO"
+                        >
+                          Insurance No
+                        </label>
+                        {/* <p className="text-sm">Per Month</p> */}
+                      </div>
+                      <input
+                        id="INSURANCE NO"
+                        type="number"
+                        placeholder="Enter Insurance"
+                        value={insurance_number}
+                        onChange={(e) => {
+                          setInsuranceNumber(e.target.value);
+                        }}
+                        onKeyUp={handleKeyUp}
+                        className={` [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 rounded-xl px-4 h-10 border-gray-300  w-full lg:w-52 ${!touched.salaryAmount
+                            ? "border-red-400 "
+                            : "border-gray-300"
+                          }`}
+                      />
+                    </div>
+                    <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
+                      <div className="flex flex-col">
+                        <label
+                          className="font-medium text-sm text-transform: uppercase"
+                          htmlFor="INSURANCE DATE"
+                        >
+                          Insurance DATE
+                        </label>
                       </div>
 
-                      <div className="flex gap-1 flex-wrap items-center ">
-                        <p className="text-sm">Company Name:</p>
-                        <p className="text-sm font-semibold">
-                          {experience.companyName}
-                        </p>
-                      </div>
-
-                      <div className="flex gap-1 flex-wrap items-center">
-                        <h1 className="text-sm ">Start & End Date:</h1>
-                        <p className="text-sm font-semibold">
-                          {experience.startWork} - ${experience.endWork}
-                        </p>
-                      </div>
-
-                      <div className="flex gap-1 flex-wrap items-center">
-                        <h1 className="text-sm">Responsibilities:</h1>
-                        <p className="text-sm font-semibold">
-                          {experience.responsibilities}
-                        </p>
-                      </div>
-
-                      <div className="flex gap-1 flex-wrap items-center">
-                        <h1 className="text-sm">Selected Documents:</h1>
-                        <ul className="text-sm flex flex-wrap gap-x-4">
-                          {experience.selectedDocs.map((res, idx) => (
-                            <li key={idx} className="flex items-center">
-                              <p className="">
-                                {" "}
-                                <GoDotFill className="mr-2  inline-flex" />
-                                {res}
-                              </p>
-                            </li>
-                          ))}
-                        </ul>
+                      <div className="relative">
+                        <DatePicker
+                          id="INSURANCE DATE"
+                          placeholderText="Insurance Date"
+                          className={` [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 rounded-xl px-4 h-10 border-gray-300  w-full lg:w-52 ${!touched.salaryAmount
+                              ? "border-red-400 "
+                              : "border-gray-300"
+                            }`}
+                          onKeyUp={handleKeyUp}
+                          selected={insurance_date}
+                          onChange={handleInsuranceDate}
+                          dateFormat="dd/MM/yyyy"
+                          showYearDropdown={true}
+                        />
                       </div>
                     </div>
-                    {/* <p className="font-semibold"> {experience.jobTitle} </p>
+                    {/* {error.insurance_number && (
+                  <p className="text-red-500 text-sm mt-2">{error.insurance_number[0]}</p>
+                )} */}
+                  </div>
+                </div>
+
+                {/* Experience */}
+                <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
+                  <p className="text-xl font-semibold"> Experience </p>
+                  {workExperiences.map((experience, index) => (
+                    <div
+                      key={index}
+                      className="flex items-start  justify-between mt-4 border rounded-lg p-4 bg-gray-50"
+                    >
+                      <div>
+                        <div className="flex flex-col gap-2">
+                          <div className="flex gap-1 flex-wrap items-center ">
+                            <p className="text-sm ">Job Title:</p>
+                            <p className="text-sm font-semibold">
+                              {experience.jobTitle}
+                            </p>
+                          </div>
+
+                          <div className="flex gap-1 flex-wrap items-center ">
+                            <p className="text-sm">Company Name:</p>
+                            <p className="text-sm font-semibold">
+                              {experience.companyName}
+                            </p>
+                          </div>
+
+                          <div className="flex gap-1 flex-wrap items-center">
+                            <h1 className="text-sm ">Start & End Date:</h1>
+                            <p className="text-sm font-semibold">
+                              {experience.startWork} - ${experience.endWork}
+                            </p>
+                          </div>
+
+                          <div className="flex gap-1 flex-wrap items-center">
+                            <h1 className="text-sm">Responsibilities:</h1>
+                            <p className="text-sm font-semibold">
+                              {experience.responsibilities}
+                            </p>
+                          </div>
+
+                          <div className="flex gap-1 flex-wrap items-center">
+                            <h1 className="text-sm">Selected Documents:</h1>
+                            <ul className="text-sm flex flex-wrap gap-x-4">
+                              {experience.selectedDocs.map((res, idx) => (
+                                <li key={idx} className="flex items-center">
+                                  <p className="">
+                                    {" "}
+                                    <GoDotFill className="mr-2  inline-flex" />
+                                    {res}
+                                  </p>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                        {/* <p className="font-semibold"> {experience.jobTitle} </p>
                     <p className="font-medium"> {experience.companyName} </p>
                     <p> {experience.companyIndustry} </p>
                     <p> {experience.previousSalary} </p>
@@ -3518,7 +3495,7 @@ const CreateEmployee_Mainbar = () => {
                       {experience.startWork} - {experience.endWork}
                     </p>
                     */}
-                    {/* <ul className="mt-2">
+                        {/* <ul className="mt-2">
                       {experience.responsibilities.map((res, idx) => (
                         <li key={idx} className="flex items-center">
                           <p className="">
@@ -3529,131 +3506,131 @@ const CreateEmployee_Mainbar = () => {
                         </li>
                       ))}
                     </ul> */}
-                    {/* <p className="text-sm">{experience.responsibilities}</p> */}
-                  </div>
-                  <button
-                    onClick={() => onClickWorkExperienceDelete(index)}
-                    className="text-xl text-red-500"
-                  >
-                    &times;
-                  </button>
-                </div>
-              ))}
-              <div
-                onClick={openWorkExperienceModal}
-                className="flex gap-3 cursor-pointer items-center mt-5"
-              >
-                <IoAddCircleSharp className="text-blue-500 text-3xl" />
-                <p>Add work experience </p>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
-              <p className="text-xl font-semibold">Skills</p>
-
-              <div className="bg-gray-100 p-4 rounded-xl mt-3">
-                <input
-                  type="text"
-                  placeholder="Add a skill and press Enter"
-                  className="w-full  rounded-md bg-gray-100 h-5 border-none outline-none "
-                  value={skillsInputValue}
-                  onChange={(e) => setSkillsInputValue(e.target.value)}
-                  onKeyPress={handleSkillsKeyPress}
-                />
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {skills.map((skill, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center bg-white text-gray-800 px-2 py-1 rounded-full"
-                    >
-                      <span className="mr-2">{skill}</span>
+                        {/* <p className="text-sm">{experience.responsibilities}</p> */}
+                      </div>
                       <button
-                        className="text-black hover:text-red-600"
-                        onClick={() => handleDeleteSkill(skill)}
+                        onClick={() => onClickWorkExperienceDelete(index)}
+                        className="text-xl text-red-500"
                       >
                         &times;
                       </button>
                     </div>
                   ))}
+                  <div
+                    onClick={openWorkExperienceModal}
+                    className="flex gap-3 cursor-pointer items-center mt-5"
+                  >
+                    <IoAddCircleSharp className="text-blue-500 text-3xl" />
+                    <p>Add work experience </p>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Document Section */}
-            <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
-              <p className="text-xl font-semibold">Documents</p>
-              {/* Display Uploaded Files Outside Modal */}
-              <div className="mt-4">
-                <ul className="list-disc space-y-2">
-                  {uploadedDocuments.map((fileWrapper) => (
-                    <li
-                      key={fileWrapper.id}
-                      className="flex items-center justify-between text-sm border-2 border-green-600 rounded-2xl px-4 py-3"
-                    >
-                      <div className=" w-full">
-                        <p className="text-gray-500">
-                          Title: {fileWrapper.title}
-                        </p>
-                        {fileWrapper.files && fileWrapper.files.length > 0 ? (
-                          fileWrapper.files.map((file) => (
-                            <div
-                              key={file.id}
-                              className="mt-2 w-full flex justify-between "
-                            >
-                              <button
-                                className="text-blue-500 hover:text-blue-700"
-                                onClick={() => {
-                                  if (file.preview) {
-                                    window.open(file.preview, "_blank");
-                                  } else {
-                                    alert("Preview not available");
-                                  }
-                                }}
-                              >
-                                <p>{file.file.path}</p>
-                              </button>
-                              <p
-                                className="text-red-500 cursor-pointer"
-                                onClick={() =>
-                                  onClickDocumentDeleteButton(file.file.path)
-                                }
-                              >
-                                x
-                              </p>
-                            </div>
-                          ))
-                        ) : (
-                          <p>Unknown file</p>
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div
-                onClick={openAddEmployeeDocumentsModal}
-                className="flex gap-3 items-center font-medium mt-5 cursor-pointer"
-              >
-                <IoAddCircleSharp className="text-blue-500 text-3xl" />
-                <p>Add employee documents</p>
-              </div>
-            </div>
+                <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
+                  <p className="text-xl font-semibold">Skills</p>
 
-            <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
-              <h2 className="text-xl font-semibold">Drive Link</h2>
-              <input
-                id="INSURANCE NO"
-                type="url"
-                placeholder="Paste drive link here.."
-                value={driveLink}
-                onChange={(e) => {
-                  setDriveLink(e.target.value);
-                }}
-                className={`border-2 mt-3 rounded-xl px-4 h-10 border-gray-300  w-full `}
-              />
-            </div>
+                  <div className="bg-gray-100 p-4 rounded-xl mt-3">
+                    <input
+                      type="text"
+                      placeholder="Add a skill and press Enter"
+                      className="w-full  rounded-md bg-gray-100 h-5 border-none outline-none "
+                      value={skillsInputValue}
+                      onChange={(e) => setSkillsInputValue(e.target.value)}
+                      onKeyPress={handleSkillsKeyPress}
+                    />
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {skills.map((skill, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center bg-white text-gray-800 px-2 py-1 rounded-full"
+                        >
+                          <span className="mr-2">{skill}</span>
+                          <button
+                            className="text-black hover:text-red-600"
+                            onClick={() => handleDeleteSkill(skill)}
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
 
-            {/* <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
+                {/* Document Section */}
+                <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
+                  <p className="text-xl font-semibold">Documents</p>
+                  {/* Display Uploaded Files Outside Modal */}
+                  <div className="mt-4">
+                    <ul className="list-disc space-y-2">
+                      {uploadedDocuments.map((fileWrapper) => (
+                        <li
+                          key={fileWrapper.id}
+                          className="flex items-center justify-between text-sm border-2 border-green-600 rounded-2xl px-4 py-3"
+                        >
+                          <div className=" w-full">
+                            <p className="text-gray-500">
+                              Title: {fileWrapper.title}
+                            </p>
+                            {fileWrapper.files && fileWrapper.files.length > 0 ? (
+                              fileWrapper.files.map((file) => (
+                                <div
+                                  key={file.id}
+                                  className="mt-2 w-full flex justify-between "
+                                >
+                                  <button
+                                    className="text-blue-500 hover:text-blue-700"
+                                    onClick={() => {
+                                      if (file.preview) {
+                                        window.open(file.preview, "_blank");
+                                      } else {
+                                        alert("Preview not available");
+                                      }
+                                    }}
+                                  >
+                                    <p>{file.file.path}</p>
+                                  </button>
+                                  <p
+                                    className="text-red-500 cursor-pointer"
+                                    onClick={() =>
+                                      onClickDocumentDeleteButton(file.file.path)
+                                    }
+                                  >
+                                    x
+                                  </p>
+                                </div>
+                              ))
+                            ) : (
+                              <p>Unknown file</p>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div
+                    onClick={openAddEmployeeDocumentsModal}
+                    className="flex gap-3 items-center font-medium mt-5 cursor-pointer"
+                  >
+                    <IoAddCircleSharp className="text-blue-500 text-3xl" />
+                    <p>Add employee documents</p>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
+                  <h2 className="text-xl font-semibold">Drive Link</h2>
+                  <input
+                    id="INSURANCE NO"
+                    type="url"
+                    placeholder="Paste drive link here.."
+                    value={driveLink}
+                    onChange={(e) => {
+                      setDriveLink(e.target.value);
+                    }}
+                    className={`border-2 mt-3 rounded-xl px-4 h-10 border-gray-300  w-full `}
+                  />
+                </div>
+
+                {/* <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
               <p className="text-xl font-semibold">Verification Doc.</p>
               <div className="flex gap-5 flex-wrap items-center mt-5 cursor-pointer">
                 <div className="flex gap-2">
@@ -3687,248 +3664,240 @@ const CreateEmployee_Mainbar = () => {
                 </div>
               </div>
             </div> */}
-          </div>
-        </div>
-      </div>
-
-      {addWorkExperienceModalOpen && (
-        <div className="fixed inset-0 backdrop-blur-sm  z-50">
-          {/* Overlay */}
-          <div
-            className="absolute inset-0 "
-            onClick={closeAddWorkExperienceModal}
-          >
-            {" "}
-          </div>
-          <div
-            className={`fixed top-0 right-0 h-full overflow-y-scroll w-screen sm:w-[90vw] md:w-[70vw] bg-white shadow-lg px-5 md:px-16 py-5 md:py-10 transform transition-transform duration-500 ease-in-out ${
-              isAnimating ? "translate-x-0" : "translate-x-full"
-            }`}
-          >
-            <div
-              className="w-6 h-6 rounded-full  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
-              title="Toggle Sidebar"
-              onClick={closeAddWorkExperienceModal}
-            >
-              <IoIosArrowForward className="w-3 h-3" />
+              </div>
             </div>
-            <div className="flex flex-col md:flex-row justify-between ">
-              <p className="text-3xl font-medium mt-3 md:mt-8"> Experience </p>
-              <div className="flex gap-5 justify-end mt-4 md:mt-8">
-                <button
+          </div>
+
+          {addWorkExperienceModalOpen && (
+            <div className="fixed inset-0 backdrop-blur-sm  z-50">
+              {/* Overlay */}
+              <div
+                className="absolute inset-0 "
+                onClick={closeAddWorkExperienceModal}
+              >
+                {" "}
+              </div>
+              <div
+                className={`fixed top-0 right-0 h-full overflow-y-scroll w-screen sm:w-[90vw] md:w-[70vw] bg-white shadow-lg px-5 md:px-16 py-5 md:py-10 transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                  }`}
+              >
+                <div
+                  className="w-6 h-6 rounded-full  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
+                  title="Toggle Sidebar"
                   onClick={closeAddWorkExperienceModal}
-                  className=" bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
                 >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSaveExperience}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 md:px-9 py-2 font-semibold rounded-full"
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-            <div className="flex flex-col gap-3 mt-4 md:mt-8">
-              <div className="flex flex-col lg:flex-row gap-1 justify-between">
-                <div className="flex flex-col ">
-                  <label className="font-medium text-sm" htmlFor="jobTitle">
-                    JOB TITLE
-                  </label>
-                  {/* <p className="text-sm"> Job title </p> */}
+                  <IoIosArrowForward className="w-3 h-3" />
                 </div>
-                <input
-                  type="text"
-                  id="jobTitle"
-                  value={experienceForm.jobTitle}
-                  onChange={(e) =>
-                    setExperienceForm((prev) => ({
-                      ...prev,
-                      jobTitle: e.target.value,
-                    }))
-                  }
-                  placeholder="Enter job title"
-                  className={` border-2 rounded-xl px-4 h-10  w-full md:w-96  ${
-                    !expTouched.jobTitle ? "border-red-400" : "border-gray-300 "
-                  }`}
-                  onKeyUp={handleKeyUp}
-                />
-              </div>
-              <div className="flex flex-col lg:flex-row gap-1 justify-between">
-                <div className="flex flex-col">
-                  <label
-                    className="font-medium text-sm"
-                    htmlFor="companyIndustry"
-                  >
-                    COMPANY'S INDUSTRY
-                  </label>
-                  {/* <p className="text-sm"> Company's industry</p> */}
+                <div className="flex flex-col md:flex-row justify-between ">
+                  <p className="text-3xl font-medium mt-3 md:mt-8"> Experience </p>
+                  <div className="flex gap-5 justify-end mt-4 md:mt-8">
+                    <button
+                      onClick={closeAddWorkExperienceModal}
+                      className=" bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSaveExperience}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 md:px-9 py-2 font-semibold rounded-full"
+                    >
+                      Save
+                    </button>
+                  </div>
                 </div>
-                <input
-                  type="text"
-                  value={experienceForm.companyIndustry}
-                  onChange={(e) =>
-                    setExperienceForm((prev) => ({
-                      ...prev,
-                      companyIndustry: e.target.value,
-                    }))
-                  }
-                  id="companyIndustry"
-                  placeholder="Information Technology"
-                  className={`border-2 rounded-xl px-4 h-10 border-gray-300  w-full md:w-96 ${
-                    !expTouched.companyIndustry
-                      ? "border-red-400"
-                      : "border-gray-300 "
-                  }`}
-                  onKeyUp={handleKeyUp}
-                />
-              </div>
-              <div className="flex flex-col lg:flex-row gap-1 justify-between">
-                <div className="flex flex-col">
-                  <label className="font-medium text-sm" htmlFor="companyName">
-                    COMPANY NAME
-                  </label>
-                  {/* <p className="text-sm"> Company name </p> */}
-                </div>
-                <input
-                  value={experienceForm.companyName}
-                  onChange={(e) =>
-                    setExperienceForm((prev) => ({
-                      ...prev,
-                      companyName: e.target.value,
-                    }))
-                  }
-                  type="text"
-                  id="companyName"
-                  placeholder="Company name"
-                  className={`border-2 rounded-xl px-4 h-10 border-gray-300  w-full md:w-96 ${
-                    !expTouched.companyName
-                      ? "border-red-400"
-                      : "border-gray-300 "
-                  }`}
-                  onKeyUp={handleKeyUp}
-                />
-              </div>
-              <div className="flex flex-col lg:flex-row gap-1 justify-between">
-                <div className="flex flex-col">
-                  <label
-                    className="font-medium text-sm"
-                    htmlFor="previousSalary"
-                  >
-                    PREVIOUS SALARY
-                  </label>
-                  {/* <p className="text-sm"> Previous salary </p> */}
-                </div>
-                <input
-                  value={experienceForm.previousSalary}
-                  onChange={(e) =>
-                    setExperienceForm((prev) => ({
-                      ...prev,
-                      previousSalary: e.target.value,
-                    }))
-                  }
-                  type="text"
-                  id="previousSalary"
-                  placeholder="Previous salary"
-                  className={`border-2 rounded-xl px-4 h-10 border-gray-300  w-full md:w-96 ${
-                    !expTouched.previousSalary
-                      ? "border-red-400"
-                      : "border-gray-300 "
-                  }`}
-                  onKeyUp={handleKeyUp}
-                />
-              </div>
+                <div className="flex flex-col gap-3 mt-4 md:mt-8">
+                  <div className="flex flex-col lg:flex-row gap-1 justify-between">
+                    <div className="flex flex-col ">
+                      <label className="font-medium text-sm" htmlFor="jobTitle">
+                        JOB TITLE
+                      </label>
+                      {/* <p className="text-sm"> Job title </p> */}
+                    </div>
+                    <input
+                      type="text"
+                      id="jobTitle"
+                      value={experienceForm.jobTitle}
+                      onChange={(e) =>
+                        setExperienceForm((prev) => ({
+                          ...prev,
+                          jobTitle: e.target.value,
+                        }))
+                      }
+                      placeholder="Enter job title"
+                      className={` border-2 rounded-xl px-4 h-10  w-full md:w-96  ${!expTouched.jobTitle ? "border-red-400" : "border-gray-300 "
+                        }`}
+                      onKeyUp={handleKeyUp}
+                    />
+                  </div>
+                  <div className="flex flex-col lg:flex-row gap-1 justify-between">
+                    <div className="flex flex-col">
+                      <label
+                        className="font-medium text-sm"
+                        htmlFor="companyIndustry"
+                      >
+                        COMPANY'S INDUSTRY
+                      </label>
+                      {/* <p className="text-sm"> Company's industry</p> */}
+                    </div>
+                    <input
+                      type="text"
+                      value={experienceForm.companyIndustry}
+                      onChange={(e) =>
+                        setExperienceForm((prev) => ({
+                          ...prev,
+                          companyIndustry: e.target.value,
+                        }))
+                      }
+                      id="companyIndustry"
+                      placeholder="Information Technology"
+                      className={`border-2 rounded-xl px-4 h-10 border-gray-300  w-full md:w-96 ${!expTouched.companyIndustry
+                          ? "border-red-400"
+                          : "border-gray-300 "
+                        }`}
+                      onKeyUp={handleKeyUp}
+                    />
+                  </div>
+                  <div className="flex flex-col lg:flex-row gap-1 justify-between">
+                    <div className="flex flex-col">
+                      <label className="font-medium text-sm" htmlFor="companyName">
+                        COMPANY NAME
+                      </label>
+                      {/* <p className="text-sm"> Company name </p> */}
+                    </div>
+                    <input
+                      value={experienceForm.companyName}
+                      onChange={(e) =>
+                        setExperienceForm((prev) => ({
+                          ...prev,
+                          companyName: e.target.value,
+                        }))
+                      }
+                      type="text"
+                      id="companyName"
+                      placeholder="Company name"
+                      className={`border-2 rounded-xl px-4 h-10 border-gray-300  w-full md:w-96 ${!expTouched.companyName
+                          ? "border-red-400"
+                          : "border-gray-300 "
+                        }`}
+                      onKeyUp={handleKeyUp}
+                    />
+                  </div>
+                  <div className="flex flex-col lg:flex-row gap-1 justify-between">
+                    <div className="flex flex-col">
+                      <label
+                        className="font-medium text-sm"
+                        htmlFor="previousSalary"
+                      >
+                        PREVIOUS SALARY
+                      </label>
+                      {/* <p className="text-sm"> Previous salary </p> */}
+                    </div>
+                    <input
+                      value={experienceForm.previousSalary}
+                      onChange={(e) =>
+                        setExperienceForm((prev) => ({
+                          ...prev,
+                          previousSalary: e.target.value,
+                        }))
+                      }
+                      type="text"
+                      id="previousSalary"
+                      placeholder="Previous salary"
+                      className={`border-2 rounded-xl px-4 h-10 border-gray-300  w-full md:w-96 ${!expTouched.previousSalary
+                          ? "border-red-400"
+                          : "border-gray-300 "
+                        }`}
+                      onKeyUp={handleKeyUp}
+                    />
+                  </div>
 
-              <div className="flex flex-col lg:flex-row gap-1 justify-between">
-                <div className="flex flex-col">
-                  <label className="font-medium text-sm" htmlFor="periodOfWork">
-                    PERIOD OF WORK
-                  </label>
-                  {/* <p className="text-sm"> Period of work </p> */}
-                </div>
+                  <div className="flex flex-col lg:flex-row gap-1 justify-between">
+                    <div className="flex flex-col">
+                      <label className="font-medium text-sm" htmlFor="periodOfWork">
+                        PERIOD OF WORK
+                      </label>
+                      {/* <p className="text-sm"> Period of work </p> */}
+                    </div>
 
-                <div className="flex flex-col md:flex-row flex-wrap gap-3 w-full md:w-96 overflow-hidden">
-                  <DatePicker
-                    id="DATE OF JOINING"
-                    placeholderText="Start work"
-                    selected={
-                      experienceForm.startWork
-                        ? new Date(experienceForm.startWork, 0)
-                        : null
-                    }
-                    onChange={(date) =>
-                      setExperienceForm((prev) => ({
-                        ...prev,
-                        startWork: date?.getFullYear(),
-                      }))
-                    }
-                    className={`border-2  rounded-xl w-full md:w-44 h-10 px-4 border-gray-300  ${
-                      !expTouched.startWork
-                        ? "border-red-400"
-                        : "border-gray-300 "
-                    }`}
-                    onKeyUp={handleKeyUp}
-                    showYearDropdown
-                    showYearPicker
-                    dateFormat="yyyy"
-                  />
+                    <div className="flex flex-col md:flex-row flex-wrap gap-3 w-full md:w-96 overflow-hidden">
+                      <DatePicker
+                        id="DATE OF JOINING"
+                        placeholderText="Start work"
+                        selected={
+                          experienceForm.startWork
+                            ? new Date(experienceForm.startWork, 0)
+                            : null
+                        }
+                        onChange={(date) =>
+                          setExperienceForm((prev) => ({
+                            ...prev,
+                            startWork: date?.getFullYear(),
+                          }))
+                        }
+                        className={`border-2  rounded-xl w-full md:w-44 h-10 px-4 border-gray-300  ${!expTouched.startWork
+                            ? "border-red-400"
+                            : "border-gray-300 "
+                          }`}
+                        onKeyUp={handleKeyUp}
+                        showYearDropdown
+                        showYearPicker
+                        dateFormat="yyyy"
+                      />
 
-                  <DatePicker
-                    id="DATE OF JOINING"
-                    placeholderText="End work"
-                    selected={
-                      experienceForm.endWork
-                        ? new Date(experienceForm.endWork, 0)
-                        : null
-                    }
-                    onChange={(date) =>
-                      setExperienceForm((prev) => ({
-                        ...prev,
-                        endWork: date?.getFullYear(),
-                      }))
-                    }
-                    className={`border-2 rounded-xl h-10 px-4 w-full md:w-44 border-gray-300  ${
-                      !expTouched.startWork
-                        ? "border-red-400"
-                        : "border-gray-300 "
-                    }`}
-                    onKeyUp={handleKeyUp}
-                    showYearDropdown
-                    showYearPicker
-                    dateFormat="yyyy"
-                  />
-                </div>
-              </div>
+                      <DatePicker
+                        id="DATE OF JOINING"
+                        placeholderText="End work"
+                        selected={
+                          experienceForm.endWork
+                            ? new Date(experienceForm.endWork, 0)
+                            : null
+                        }
+                        onChange={(date) =>
+                          setExperienceForm((prev) => ({
+                            ...prev,
+                            endWork: date?.getFullYear(),
+                          }))
+                        }
+                        className={`border-2 rounded-xl h-10 px-4 w-full md:w-44 border-gray-300  ${!expTouched.startWork
+                            ? "border-red-400"
+                            : "border-gray-300 "
+                          }`}
+                        onKeyUp={handleKeyUp}
+                        showYearDropdown
+                        showYearPicker
+                        dateFormat="yyyy"
+                      />
+                    </div>
+                  </div>
 
-              <div className="flex flex-col lg:flex-row gap-1 justify-between">
-                <div className="flex flex-col">
-                  <label
-                    className="font-medium text-sm"
-                    htmlFor="responsibilities"
-                  >
-                    RESPONSIBILITIES
-                  </label>
-                  {/* <p className="text-sm"> Short description about job </p> */}
-                </div>
-                <textarea
-                  type="text"
-                  placeholder="Add responsibilities"
-                  value={experienceForm.responsibilities}
-                  onChange={(e) =>
-                    setExperienceForm((prev) => ({
-                      ...prev,
-                      responsibilities: e.target.value,
-                    }))
-                  }
-                  rows="3"
-                  className={`  w-full md:w-96 pt-2 rounded-xl px-4   border-2  ${
-                    !expTouched.responsibilities
-                      ? "border-red-400"
-                      : "border-gray-300 "
-                  }`}
-                  onKeyUp={handleKeyUp}
-                />
-                {/* <ul className="mt-2">
+                  <div className="flex flex-col lg:flex-row gap-1 justify-between">
+                    <div className="flex flex-col">
+                      <label
+                        className="font-medium text-sm"
+                        htmlFor="responsibilities"
+                      >
+                        RESPONSIBILITIES
+                      </label>
+                      {/* <p className="text-sm"> Short description about job </p> */}
+                    </div>
+                    <textarea
+                      type="text"
+                      placeholder="Add responsibilities"
+                      value={experienceForm.responsibilities}
+                      onChange={(e) =>
+                        setExperienceForm((prev) => ({
+                          ...prev,
+                          responsibilities: e.target.value,
+                        }))
+                      }
+                      rows="3"
+                      className={`  w-full md:w-96 pt-2 rounded-xl px-4   border-2  ${!expTouched.responsibilities
+                          ? "border-red-400"
+                          : "border-gray-300 "
+                        }`}
+                      onKeyUp={handleKeyUp}
+                    />
+                    {/* <ul className="mt-2">
                     {experienceForm.responsibilities.map((res, index) => (
                       <div className="flex items-start justify-between pe-5">
                         <li key={index}>
@@ -3947,335 +3916,328 @@ const CreateEmployee_Mainbar = () => {
                       </div>
                     ))}
                   </ul> */}
-              </div>
-            </div>
-
-            <div>
-              <p className="text-3xl font-medium mt-8">Verification Process</p>
-
-              <div className="flex mt-5 gap-5">
-                <div className="flex gap-2 ">
-                  <input
-                    type="checkbox"
-                    name="Payslip 1"
-                    id="Payslip 1"
-                    onChange={handleCheckboxChangeVerification}
-                  />
-                  <label htmlFor="Payslip 1">Payslip 1</label>
+                  </div>
                 </div>
 
-                <div className="flex gap-2 ">
-                  <input
-                    type="checkbox"
-                    name="Payslip 2"
-                    id="Payslip 2"
-                    onChange={handleCheckboxChangeVerification}
-                  />
-                  <label htmlFor="Payslip 2">Payslip 2</label>
+                <div>
+                  <p className="text-3xl font-medium mt-8">Verification Process</p>
+
+                  <div className="flex mt-5 gap-5">
+                    <div className="flex gap-2 ">
+                      <input
+                        type="checkbox"
+                        name="Payslip 1"
+                        id="Payslip 1"
+                        onChange={handleCheckboxChangeVerification}
+                      />
+                      <label htmlFor="Payslip 1">Payslip 1</label>
+                    </div>
+
+                    <div className="flex gap-2 ">
+                      <input
+                        type="checkbox"
+                        name="Payslip 2"
+                        id="Payslip 2"
+                        onChange={handleCheckboxChangeVerification}
+                      />
+                      <label htmlFor="Payslip 2">Payslip 2</label>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <input
+                        type="checkbox"
+                        name="Payslip 3"
+                        id="Payslip 3"
+                        onChange={handleCheckboxChangeVerification}
+                      />
+                      <label htmlFor="Payslip 3">Payslip 3</label>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 mt-5">
+                    <input
+                      type="checkbox"
+                      name="last company appointment letter"
+                      id="last company appointment letter"
+                      onChange={handleCheckboxChangeVerification}
+                    />
+                    <label htmlFor="last company appointment letter">
+                      last company appointment letter
+                    </label>
+                  </div>
+
+                  <div className="flex gap-2 mt-5">
+                    <input
+                      type="checkbox"
+                      name="last company experience letter"
+                      id="last company experience letter"
+                      onChange={handleCheckboxChangeVerification}
+                    />
+                    <label htmlFor="last company experience letter">
+                      last company experience letter
+                    </label>
+                  </div>
                 </div>
-
-                <div className="flex gap-2">
-                  <input
-                    type="checkbox"
-                    name="Payslip 3"
-                    id="Payslip 3"
-                    onChange={handleCheckboxChangeVerification}
-                  />
-                  <label htmlFor="Payslip 3">Payslip 3</label>
-                </div>
-              </div>
-
-              <div className="flex gap-2 mt-5">
-                <input
-                  type="checkbox"
-                  name="last company appointment letter"
-                  id="last company appointment letter"
-                  onChange={handleCheckboxChangeVerification}
-                />
-                <label htmlFor="last company appointment letter">
-                  last company appointment letter
-                </label>
-              </div>
-
-              <div className="flex gap-2 mt-5">
-                <input
-                  type="checkbox"
-                  name="last company experience letter"
-                  id="last company experience letter"
-                  onChange={handleCheckboxChangeVerification}
-                />
-                <label htmlFor="last company experience letter">
-                  last company experience letter
-                </label>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {addEducationalInfoModalOpen && (
-        <div className="fixed inset-0 top-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
-          {/* Overlay */}
-          <div
-            className="absolute inset-0"
-            onClick={closeAddEducationInfoModal}
-          ></div>
-          <div
-            className={`fixed top-0 right-0 h-screen overflow-y-scroll w-[90vw] md:w-[70vw] bg-white shadow-lg px-5 md:px-16 py-5 md:py-10 transform transition-transform duration-500 ease-in-out ${
-              isAnimating ? "translate-x-0" : "translate-x-full"
-            }`}
-          >
-            <div
-              className="w-6 h-6 rounded-full border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
-              title="Toggle Sidebar"
-              onClick={closeAddEducationInfoModal}
-            >
-              <IoIosArrowForward className="w-3 h-3" />
-            </div>
-            <div className="flex flex-col md:flex-row justify-between ">
-              <p className="text-3xl font-medium mt-3 md:mt-8">Education Info</p>
-              <div className="flex gap-5 justify-end mt-4 md:mt-8">
-                <button
+          {addEducationalInfoModalOpen && (
+            <div className="fixed inset-0 top-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
+              {/* Overlay */}
+              <div
+                className="absolute inset-0"
+                onClick={closeAddEducationInfoModal}
+              ></div>
+              <div
+                className={`fixed top-0 right-0 h-screen overflow-y-scroll w-[90vw] md:w-[70vw] bg-white shadow-lg px-5 md:px-16 py-5 md:py-10 transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                  }`}
+              >
+                <div
+                  className="w-6 h-6 rounded-full border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
+                  title="Toggle Sidebar"
                   onClick={closeAddEducationInfoModal}
-                  className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
                 >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSaveEducationInfo}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-            
-            <div className="flex flex-col gap-3 mt-8">
-              {/* School Name */}
-              <div className="flex flex-col lg:flex-row gap-1 justify-between">
-                <div className="flex flex-col">
-                  <label className="font-medium text-sm" htmlFor="school-name">
-                    Institute Name
-                  </label>
-                  {/* <p className="text-sm text-gray-500">Add School Name</p> */}
+                  <IoIosArrowForward className="w-3 h-3" />
                 </div>
-                <input
-                  type="text"
-                  id="school-name"
-                  placeholder="School name"
-                  className={`border-2 rounded-xl px-4  h-10 w-full md:w-96 ${
-                    !educationTouched.SchoolName
-                      ? "border-red-400"
-                      : "border gray-300"
-                  }`}
-                  onKeyUp={handleKeyUp}
-                  value={schoolName}
-                  onChange={(e) => setSchoolName(e.target.value)}
-                />
-              </div>
-
-              {/* Department Name */}
-              <div className="flex flex-col lg:flex-row gap-1 justify-between">
-                <div className="flex flex-col">
-                  <label
-                    className="font-medium text-sm"
-                    htmlFor="department-name"
-                  >
-                    DEPARTMENT NAME
-                  </label>
-                  {/* <p className="text-sm text-gray-500">Add Department</p> */}
-                </div>
-                <input
-                  type="text"
-                  id="department-name"
-                  placeholder="Department name"
-                  className={`border-2 rounded-xl px-4  h-10 w-full md:w-96 ${
-                    !educationTouched.DepartmentName
-                      ? "border-red-400"
-                      : "border-gray-300"
-                  }`}
-                  onKeyUp={handleKeyUp}
-                  value={departmentName}
-                  onChange={(e) => setDepartmentName(e.target.value)}
-                />
-              </div>
-              {/* Period of Year */}
-              <div className="flex flex-col lg:flex-row gap-1 justify-between">
-                <div className="flex flex-col">
-                  <label className="font-medium text-sm" htmlFor="period-year">
-                    YEAR OF PASSING
-                  </label>
-                  {/* <p className="text-sm text-gray-500">YEAR OF PASSING</p> */}
+                <div className="flex flex-col md:flex-row justify-between ">
+                  <p className="text-3xl font-medium mt-3 md:mt-8">Education Info</p>
+                  <div className="flex gap-5 justify-end mt-4 md:mt-8">
+                    <button
+                      onClick={closeAddEducationInfoModal}
+                      className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSaveEducationInfo}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
+                    >
+                      Save
+                    </button>
+                  </div>
                 </div>
 
-                <input
-                  type="month"
-                  // placeholder="End year"
-                  className={`border-2 rounded-xl px-4 h-10 w-full md:w-96 ${
-                    !educationTouched.YearOfPassing
-                      ? "border-red-400"
-                      : "border-gray-300"
-                  }`}
-                  onKeyUp={handleKeyUp}
-                  value={endYear}
-                  onChange={(e) => setEndYear(e.target.value)}
-                />
+                <div className="flex flex-col gap-3 mt-8">
+                  {/* School Name */}
+                  <div className="flex flex-col lg:flex-row gap-1 justify-between">
+                    <div className="flex flex-col">
+                      <label className="font-medium text-sm" htmlFor="school-name">
+                        Institute Name
+                      </label>
+                      {/* <p className="text-sm text-gray-500">Add School Name</p> */}
+                    </div>
+                    <input
+                      type="text"
+                      id="school-name"
+                      placeholder="School name"
+                      className={`border-2 rounded-xl px-4  h-10 w-full md:w-96 ${!educationTouched.SchoolName
+                          ? "border-red-400"
+                          : "border gray-300"
+                        }`}
+                      onKeyUp={handleKeyUp}
+                      value={schoolName}
+                      onChange={(e) => setSchoolName(e.target.value)}
+                    />
+                  </div>
+
+                  {/* Department Name */}
+                  <div className="flex flex-col lg:flex-row gap-1 justify-between">
+                    <div className="flex flex-col">
+                      <label
+                        className="font-medium text-sm"
+                        htmlFor="department-name"
+                      >
+                        DEPARTMENT NAME
+                      </label>
+                      {/* <p className="text-sm text-gray-500">Add Department</p> */}
+                    </div>
+                    <input
+                      type="text"
+                      id="department-name"
+                      placeholder="Department name"
+                      className={`border-2 rounded-xl px-4  h-10 w-full md:w-96 ${!educationTouched.DepartmentName
+                          ? "border-red-400"
+                          : "border-gray-300"
+                        }`}
+                      onKeyUp={handleKeyUp}
+                      value={departmentName}
+                      onChange={(e) => setDepartmentName(e.target.value)}
+                    />
+                  </div>
+                  {/* Period of Year */}
+                  <div className="flex flex-col lg:flex-row gap-1 justify-between">
+                    <div className="flex flex-col">
+                      <label className="font-medium text-sm" htmlFor="period-year">
+                        YEAR OF PASSING
+                      </label>
+                      {/* <p className="text-sm text-gray-500">YEAR OF PASSING</p> */}
+                    </div>
+
+                    <input
+                      type="month"
+                      // placeholder="End year"
+                      className={`border-2 rounded-xl px-4 h-10 w-full md:w-96 ${!educationTouched.YearOfPassing
+                          ? "border-red-400"
+                          : "border-gray-300"
+                        }`}
+                      onKeyUp={handleKeyUp}
+                      value={endYear}
+                      onChange={(e) => setEndYear(e.target.value)}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {addEmployeeDocumentsModalOpen && (
-        <div className="fixed inset-0 bg-black/10 backdrop-blur-sm z-50">
-          <div
-            className="absolute inset-0"
-            onClick={closeAddEmployeeDocumentsModal}
-          ></div>
-          <div
-            className={`fixed top-0 right-0 h-full  overflow-y-scroll w-[90vw] md:w-[100vw] bg-white  px-5 md:px-16 py-10 transform transition-transform duration-500 ease-in-out ${
-              isAnimating ? "translate-x-0" : "translate-x-full"
-            }`}
-          >
-            <div
-              className="w-6 h-6 rounded-full border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
-              title="Toggle Sidebar"
-              onClick={closeAddEmployeeDocumentsModal}
-            >
-              <IoIosArrowForward className="w-3 h-3" />
-            </div>
-            <div className="flex flex-col md:flex-row justify-between ">
-              <p className="text-3xl font-medium mt-3 md:mt-8">Documents</p>
-              <div className="flex gap-5 justify-end mt-4 md:mt-8">
-                <button
+          {addEmployeeDocumentsModalOpen && (
+            <div className="fixed inset-0 bg-black/10 backdrop-blur-sm z-50">
+              <div
+                className="absolute inset-0"
+                onClick={closeAddEmployeeDocumentsModal}
+              ></div>
+              <div
+                className={`fixed top-0 right-0 h-full  overflow-y-scroll w-[90vw] md:w-[100vw] bg-white  px-5 md:px-16 py-10 transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                  }`}
+              >
+                <div
+                  className="w-6 h-6 rounded-full border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
+                  title="Toggle Sidebar"
                   onClick={closeAddEmployeeDocumentsModal}
-                  className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
                 >
-                  Cancel
-                </button>
-                <button
-                  onClick={saveUploadedFile}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 md:px-9 py-1 md:py-2 text-sm  md:text-base font-semibold rounded-full"
+                  <IoIosArrowForward className="w-3 h-3" />
+                </div>
+                <div className="flex flex-col md:flex-row justify-between ">
+                  <p className="text-3xl font-medium mt-3 md:mt-8">Documents</p>
+                  <div className="flex gap-5 justify-end mt-4 md:mt-8">
+                    <button
+                      onClick={closeAddEmployeeDocumentsModal}
+                      className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={saveUploadedFile}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-5 md:px-9 py-1 md:py-2 text-sm  md:text-base font-semibold rounded-full"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+
+                {/* Title Input */}
+                <div className="flex flex-col lg:flex-row gap-1  justify-between mt-8">
+                  <div className="flex flex-col">
+                    <label className="font-medium text-sm" htmlFor="school-name">
+                      ENTER TITLE
+                    </label>
+                    {/* <p className="text-sm text-gray-500">Doc title</p> */}
+                  </div>
+                  <input
+                    type="text"
+                    id="school-name"
+                    placeholder="Enter title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className={`border-2 rounded-xl px-4 py-2   w-full md:w-96 ${!docTitle ? "border-red-400" : "border-gray-300"
+                      }`}
+                    onKeyUp={handleKeyUp}
+                  />
+                </div>
+                {/* Drag and Drop Area */}
+                <div
+                  {...getRootProps()}
+                  className={`border-2 border-dashed mt-5 rounded-lg py-10 px-5 text-center ${isDragActive ? "border-blue-500" : "border-gray-300"
+                    } ${!title.trim() ? "opacity-50 pointer-events-none" : ""}`} // Visual indicator when disabled
                 >
-                  Save
-                </button>
-              </div>
-            </div>
-            
-            {/* Title Input */}
-            <div className="flex flex-col lg:flex-row gap-1  justify-between mt-8">
-              <div className="flex flex-col">
-                <label className="font-medium text-sm" htmlFor="school-name">
-                  ENTER TITLE
-                </label>
-                {/* <p className="text-sm text-gray-500">Doc title</p> */}
-              </div>
-              <input
-                type="text"
-                id="school-name"
-                placeholder="Enter title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className={`border-2 rounded-xl px-4 py-2   w-full md:w-96 ${
-                  !docTitle ? "border-red-400" : "border-gray-300"
-                }`}
-                onKeyUp={handleKeyUp}
-              />
-            </div>
-            {/* Drag and Drop Area */}
-            <div
-              {...getRootProps()}
-              className={`border-2 border-dashed mt-5 rounded-lg py-10 px-5 text-center ${
-                isDragActive ? "border-blue-500" : "border-gray-300"
-              } ${!title.trim() ? "opacity-50 pointer-events-none" : ""}`} // Visual indicator when disabled
-            >
-              <input {...getInputProps()} />
-              {isDragActive ? (
-                <p className="text-blue-500">Drop your files here...</p>
-              ) : (
-                <div className="text-gray-500">
-                  <IoCloudUploadOutline className="text-6xl text-blue-500 mx-auto" />
-                  <p className="mt-3">
-                    Drag & drop files here, or{" "}
-                    <span className="text-blue-500 underline cursor-pointer">
-                      browse
-                    </span>
-                  </p>
-                  <p>Supported formats: JPEG, PNG, PDF</p>
-                  {!title.trim() && (
-                    <p className="text-red-500 mt-2">
-                      Enter a title to enable file upload.
-                    </p>
+                  <input {...getInputProps()} />
+                  {isDragActive ? (
+                    <p className="text-blue-500">Drop your files here...</p>
+                  ) : (
+                    <div className="text-gray-500">
+                      <IoCloudUploadOutline className="text-6xl text-blue-500 mx-auto" />
+                      <p className="mt-3">
+                        Drag & drop files here, or{" "}
+                        <span className="text-blue-500 underline cursor-pointer">
+                          browse
+                        </span>
+                      </p>
+                      <p>Supported formats: JPEG, PNG, PDF</p>
+                      {!title.trim() && (
+                        <p className="text-red-500 mt-2">
+                          Enter a title to enable file upload.
+                        </p>
+                      )}
+                    </div>
                   )}
                 </div>
-              )}
-            </div>
-            <div className="mt-5">
-              {uploadedFiles.length > 0 ? (
-                <div>
-                  {uploadedFiles.map((group) => (
-                    <div key={group.title} className="mb-4">
-                      <p className="font-medium text-lg text-gray-700">
-                        {group.title}
-                      </p>
-                      <ul className="list-disc space-y-2 ml-4">
-                        {group.files.map((fileWrapper) => (
-                          <li
-                            key={fileWrapper.id}
-                            className="flex items-center justify-between text-sm border-2 border-green-600 rounded-2xl px-4 py-3"
-                          >
-                            <div>
-                              <button
-                                className="text-blue-500 hover:text-blue-700"
-                                onClick={() =>
-                                  window.open(fileWrapper.preview, "_blank")
-                                }
+                <div className="mt-5">
+                  {uploadedFiles.length > 0 ? (
+                    <div>
+                      {uploadedFiles.map((group) => (
+                        <div key={group.title} className="mb-4">
+                          <p className="font-medium text-lg text-gray-700">
+                            {group.title}
+                          </p>
+                          <ul className="list-disc space-y-2 ml-4">
+                            {group.files.map((fileWrapper) => (
+                              <li
+                                key={fileWrapper.id}
+                                className="flex items-center justify-between text-sm border-2 border-green-600 rounded-2xl px-4 py-3"
                               >
-                                {fileWrapper.file.path}
-                              </button>
-                            </div>
-                            <MdDeleteForever
-                              className="text-2xl text-red-400 hover:text-red-600 cursor-pointer"
-                              onClick={() =>
-                                handleDelete(fileWrapper.id, group.title)
-                              }
-                            />
-                          </li>
-                        ))}
-                      </ul>
+                                <div>
+                                  <button
+                                    className="text-blue-500 hover:text-blue-700"
+                                    onClick={() =>
+                                      window.open(fileWrapper.preview, "_blank")
+                                    }
+                                  >
+                                    {fileWrapper.file.path}
+                                  </button>
+                                </div>
+                                <MdDeleteForever
+                                  className="text-2xl text-red-400 hover:text-red-600 cursor-pointer"
+                                  onClick={() =>
+                                    handleDelete(fileWrapper.id, group.title)
+                                  }
+                                />
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  ) : (
+                    <p className="text-gray-500">No documents uploaded yet.</p>
+                  )}
                 </div>
-              ) : (
-                <p className="text-gray-500">No documents uploaded yet.</p>
-              )}
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {/*Image Popup  */}
-      {/* Modal for Larger Image */}
-      {openImageModal && (
-        <div
-          className="fixed inset-0 backdrop-blur bg-opacity-50 flex items-center justify-center"
-          onClick={() => setOpenImageModal(false)} // Close modal on overlay click
-        >
-          <div className="relative">
-            <img
-              src={URL.createObjectURL(selectedImage)}
-              alt="Full Size"
-              className="max-w-full h-[70vh] object-contain"
-            />
-            <button
-              className="absolute top-2 right-2 bg-white rounded-full px-4 py-1"
-              onClick={() => setOpenImageModal(false)} // Close modal on button click
+          {/*Image Popup  */}
+          {/* Modal for Larger Image */}
+          {openImageModal && (
+            <div
+              className="fixed inset-0 backdrop-blur bg-opacity-50 flex items-center justify-center"
+              onClick={() => setOpenImageModal(false)} // Close modal on overlay click
             >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+              <div className="relative">
+                <img
+                  src={URL.createObjectURL(selectedImage)}
+                  alt="Full Size"
+                  className="max-w-full h-[70vh] object-contain"
+                />
+                <button
+                  className="absolute top-2 right-2 bg-white rounded-full px-4 py-1"
+                  onClick={() => setOpenImageModal(false)} // Close modal on button click
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>

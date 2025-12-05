@@ -387,9 +387,10 @@ const Employees_Card = () => {
 
             {/* breadcrumbs */}
 
-            <div className="flex justify-between gap-1 md:gap-2 md:mt-5 items-center cursor-pointer">
+            <div className="cursor-pointer">
               <Mobile_Sidebar />
-              <div className="flex gap-2 items-center">
+            </div>
+            <div className="flex justify-end mt-2 md:mt-0 gap-2 items-center">
               <p
                 className="text-sm text-gray-500"
                 onClick={() => navigate("/dashboard")}
@@ -400,12 +401,22 @@ const Employees_Card = () => {
 
               <p className="text-sm text-blue-500">Employees</p>
               </div>
-            </div>
 
             <div className="flex flex-wrap  md:flex-row  justify-between ">
+              <div>
               <p className="text-xl md:text-3xl  font-semibold mt-1 md:mt-4">
                 Employees
               </p>
+              </div>
+              <div className="flex justify-between gap-2 ">
+              <button
+                      onClick={() =>
+                        navigate(-1)
+                      }
+                      className=" w-fit text-xs md:text-base text-center mt-1 md:mt-4  text-white bg-gray-500 hover:bg-gray-600 font-medium px-2 md:px-3 py-2 rounded-full "
+                    >
+                      Back
+                    </button>
               <button
                 onClick={onClickAddNewMember}
                 className=" w-fit text-xs md:text-base text-center mt-1 md:mt-4  text-white bg-blue-500 hover:bg-blue-600 font-medium px-1 md:px-3 py-2 rounded-full "
@@ -413,6 +424,7 @@ const Employees_Card = () => {
                 Add New Member{" "}
                 <BiSolidMessageAltAdd className="inline-block ms-1 md:ms-3" />
               </button>
+              </div>
             </div>
 
             {/* {isLoading ? (

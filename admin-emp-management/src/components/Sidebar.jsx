@@ -769,10 +769,10 @@ const Sidebar = () => {
                                     "/client-details",
                                     "/invoice-details",
                                     "/mom-details",
-                                    "/document-details",
-                                    "/asset-document",
+                                    // "/document-details",
+                                    // "/asset-document",
 
-                                    "/client-note-details"
+                                    // "/client-note-details"
  
                                   ].includes(currentPath) ? (
                                     <IoIosArrowUp />
@@ -791,8 +791,8 @@ const Sidebar = () => {
                                 "/client-details",
                                 "/invoice-details",
                                 "/mom-details",
-                                "/document-details",
-                                "/client-note-details",
+                                // "/document-details",
+                                // "/client-note-details",
                               ].includes(currentPath)
                                 ? "max-h-50 opacity-100"
                                 : "max-h-0 opacity-0"
@@ -834,7 +834,7 @@ const Sidebar = () => {
                                 MOM
                               </button>
 
-                              <button
+                              {/* <button
                                 onClick={() => navigate("/document-details")}
                                 className={`px-2 py-1 rounded-full 
                                     ${
@@ -844,8 +844,8 @@ const Sidebar = () => {
                                     }`}
                               >
                                 Document
-                              </button>
-                               <button
+                              </button> */}
+                               {/* <button
                                 onClick={() => navigate("/asset-document")}
                                 className={`px-2 py-1 rounded-full 
                                     ${
@@ -855,10 +855,10 @@ const Sidebar = () => {
                                     }`}
                               >
                                 Asset Doc
-                              </button>
+                              </button> */}
 
 
-                              <button
+                              {/* <button
                                 onClick={() => navigate("/client-note-details")}
                                 className={`px-2 py-1 rounded-full 
                                     ${
@@ -868,7 +868,7 @@ const Sidebar = () => {
                                     }`}
                               >
                                 Client Notes
-                              </button>
+                              </button> */}
 
                               {/* <div
                         onClick={() => onClickSidebarMenu("client-details")}
@@ -1455,7 +1455,7 @@ const Sidebar = () => {
                       >
                         <MdManageAccounts />
                         {!arrowClicked && (
-                          <p className="text-sm">Asset Management</p>
+                          <p className="text-sm">Asset</p>
                         )}
                       </div>
                     </>
