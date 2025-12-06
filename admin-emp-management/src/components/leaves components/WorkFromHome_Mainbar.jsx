@@ -685,18 +685,18 @@ const WorkFromHome_Mainbar = () => {
                 ></div>
 
                 <div
-                  className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[70vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                  className={`fixed top-0 right-0 h-full overflow-y-auto w-screen sm:w-[90vw] md:w-[70vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
                     }`}
                 >
                   <div
-                    className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
+                    className="w-6 h-6 rounded-full  bg-white  mt-2 ms-2  border-2 transition-all duration-500  border-gray-300 flex items-center justify-center cursor-pointer"
                     title="Toggle Sidebar"
                     onClick={closeAddLeaveRequestModal}
                   >
                     <IoIosArrowForward className="w-3 h-3" />
                   </div>
 
-                  <div className="px-5 lg:px-14 py-2 md:py-5">
+                  <div className="px-5 lg:px-14 py-2 md:py-5  h-full pb-5">
                     <p className="text-2xl md:text-3xl font-medium">
                       Work From Request
                     </p>
@@ -764,7 +764,7 @@ const WorkFromHome_Mainbar = () => {
                         {/* Accordion Content */}
                         {expandedIndex === index && (
                           <div
-                            className={`flex flex-col px-5 gap-3 mt-5 transition ease-out duration-1000 ${isVisible ? "opacity-100 " : "opacity-0 "
+                            className={`flex flex-col px-5 h-auto pb-5 gap-3  mt-5 transition ease-out duration-1000 ${isVisible ? "opacity-100 " : "opacity-0 "
                               }`}
                           >
                             {/* Content here */}

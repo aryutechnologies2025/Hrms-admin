@@ -954,7 +954,7 @@ const Leaves_Mainbar = () => {
                 ></div>
 
                 <div
-                  className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[70vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                  className={`fixed top-0 right-0 h-full  overflow-y-auto w-screen sm:w-[90vw] md:w-[70vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
                     }`}
                 >
                   <div
@@ -965,7 +965,7 @@ const Leaves_Mainbar = () => {
                     <IoIosArrowForward className="w-3 h-3" />
                   </div>
 
-                  <div className="px-5 lg:px-14 py-2 md:py-5">
+                  <div className="px-5 lg:px-14 py-2 md:py-5 h-full pb-5 ">
                     <p className="text-2xl md:text-3xl font-medium">
                       Leave Request
                     </p>

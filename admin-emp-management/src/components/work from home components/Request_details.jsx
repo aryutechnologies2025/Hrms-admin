@@ -511,7 +511,7 @@ const Request_details = () => {
                     onChange={(e) => setSubjectFilter(e.value)}
                     options={subjectOptions}
                     optionLabel="label"
-                    placeholder="Filter by Status"
+                    placeholder="Filter by Subject"
                     className="w-full"
                   />
                 </div>
@@ -672,7 +672,7 @@ const Request_details = () => {
                         {/* Accordion Content */}
                         {expandedIndex === index && (
                           <div
-                            className={`flex flex-col px-5 gap-3 mt-5 transition ease-out duration-1000 ${isVisible ? "opacity-100 " : "opacity-0 "
+                            className={`flex flex-col px-5  h-auto pb-5 gap-3 mt-5 transition ease-out duration-1000 ${isVisible ? "opacity-100 " : "opacity-0 "
                               }`}
                           >
                             {/* Content here */}

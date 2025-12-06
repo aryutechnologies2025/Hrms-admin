@@ -801,12 +801,13 @@ console.log("Current date format:", dynamicDateFormat);
           },
         },
         columnOrder: [
+           "block",
           "todo",
           "inprogress",
           "inreview",
           "done",
           "completed",
-          "block",
+         
         ],
       };
 
