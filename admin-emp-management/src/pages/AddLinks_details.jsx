@@ -4,7 +4,7 @@ import DataTable from "datatables.net-react";
 import DT from "datatables.net-dt";
 import "datatables.net-responsive-dt/css/responsive.dataTables.css";
 DataTable.use(DT);
-
+import { TbHandClick } from "react-icons/tb";
 import axios from "../api/axiosConfig";
 import { API_URL } from "../config";
 // import { capitalizeFirstLetter } from "../../StringCaps";
@@ -74,7 +74,7 @@ const AddLinks_details = () => {
     setIsAddModalOpen(false);
     setErrors("");
   };
- const[categoryall ,setCategoryall] =useState("");
+  const [categoryall, setCategoryall] = useState("");
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
 
@@ -85,8 +85,8 @@ const AddLinks_details = () => {
     try {
       const formData = {
         title: title,
-        url:url,
-        category:categoryall,
+        url: url,
+        category: categoryall,
       };
 
       const response = await axios.post(
@@ -122,7 +122,7 @@ const AddLinks_details = () => {
   //   edit
 
   //
-   const[categoryalledit ,setCategoryalledit] =useState("");
+  const [categoryalledit, setCategoryalledit] = useState("");
   const [titleedit, setTitleedit] = useState("");
   const [urledit, setUrledit] = useState("");
 
@@ -151,8 +151,8 @@ const AddLinks_details = () => {
     try {
       const formData = {
         title: titleedit,
-        url:urledit,
-        category:categoryalledit,
+        url: urledit,
+        category: categoryalledit,
       };
 
       const response = await axios.put(
@@ -230,18 +230,38 @@ const AddLinks_details = () => {
       title: "Title",
       data: "title",
     },
-     {
-  title: "URL",
-  data: "url",
-  render: function (data, type, row) {
-    if (data) {
-      return `<a href="${data}" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">Click Me</a>`;
-    }
-    return "";
-  }
-},
+    {
+      title: "URL",
+      data: "url",
+      render: function (data, type, row) {
+        const id = `url-${row._id || Math.random()}`;
 
-   
+        setTimeout(() => {
+          const container = document.getElementById(id);
+          if (container && !container.hasChildNodes()) {
+            ReactDOM.render(
+              data ? (
+                <a
+                  href={data}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 text-xl cursor-pointer flex justify-center"
+                >
+                  <TbHandClick />
+                </a>
+              ) : (
+                ""
+              ),
+              container
+            );
+          }
+        }, 0);
+
+        return `<div id="${id}"></div>`;
+      },
+    },
+
+
 
     {
       title: "Action",
@@ -326,7 +346,7 @@ const AddLinks_details = () => {
       <div>
         <Mobile_Sidebar />
 
-        <div className="flex gap-2 items-center cursor-pointer">
+        <div className="flex justify-end mt-2 md:mt-0 gap-2 items-center cursor-pointer">
           <p
             className="text-sm text-gray-500"
             onClick={() => navigate("/dashboard")}
@@ -338,7 +358,7 @@ const AddLinks_details = () => {
             className="text-sm text-gray-500"
             onClick={() => navigate("/links")}
           >
-            Links 
+            Links
           </p>
           <p>{">"}</p>
 
@@ -400,7 +420,7 @@ const AddLinks_details = () => {
 
               {/* title */}
 
-               <div className="mb-3">
+              <div className="mb-3">
                 <label className="block text-sm font-medium mb-2">Title</label>
                 <input
                   type="text"
@@ -422,7 +442,7 @@ const AddLinks_details = () => {
               </div>
 
               {/* Status */}
-             
+
 
               {/* Buttons */}
               <div className="flex justify-end gap-2 mt-4">
@@ -433,7 +453,7 @@ const AddLinks_details = () => {
                   Cancel
                 </button>
                 <button
-                    onClick={handlesubmit}
+                  onClick={handlesubmit}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 font-semibold rounded-full"
                 >
                   Save
@@ -449,7 +469,7 @@ const AddLinks_details = () => {
             <div className="bg-white p-5 rounded-xl w-[400px] h-[400px] overflow-y-auto px-8 py-6">
               <h2 className="text-xl font-semibold mb-4">Edit Link</h2>
 
-             {/* Title */}
+              {/* Title */}
               <div className="mb-3">
                 <label className="block text-sm font-medium mb-2">Category</label>
 
@@ -469,7 +489,7 @@ const AddLinks_details = () => {
 
               {/* title */}
 
-               <div className="mb-3">
+              <div className="mb-3">
                 <label className="block text-sm font-medium mb-2">Title</label>
                 <input
                   type="text"

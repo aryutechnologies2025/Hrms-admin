@@ -156,6 +156,9 @@ const Task_details = () => {
   const [showToDatePicker, setShowToDatePicker] = useState(false);
   const [clearTriggered, setClearTriggered] = useState(false);
 
+  const [taskType, setTaskType] = useState("bug");
+  const [taskTypeEdit, setTaskTypeEdit] = useState("bug");
+
   const fetchEmployeeList = async () => {
     try {
       const response = await axios.get(
@@ -791,7 +794,7 @@ const Task_details = () => {
         <div>
           <Mobile_Sidebar />
 
-          <div className="flex gap-2 items-center cursor-pointer">
+          <div className="flex justify-end mt-2 md:mt-0 gap-2 items-center cursor-pointer">
             <p
               className="text-sm text-gray-500"
               onClick={() => navigate("/dashboard")}
@@ -1174,6 +1177,57 @@ const Task_details = () => {
                 {errors.title && (
                   <p className="text-red-500 text-sm mb-4">{errors.title}</p>
                 )}
+
+                 <div className="mt-5 items-center">
+                      <label className="block text-md font-medium mb-2">
+                        Task Type{" "}
+                        <span className="text-red-500">*</span>
+                      </label>
+                      <div className="w-full rounded-lg">
+                        <div className="flex flex-wrap md:flex-nowrap items-center w-full gap-5 mb-2 md:mb-4">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="taskType"
+                              value="bug"
+                              checked={taskType === "bug"}
+                              onChange={() => setTaskType("bug")}
+                              className="text-indigo-600 focus:ring-indigo-500"
+                            />
+                            <span className="text-gray-700">Bug</span>
+                          </label>
+
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="taskType"
+                              value="maintainance"
+                              checked={taskType === "maintainance"}
+                              onChange={() => setTaskType("maintainance")}
+                              className="text-indigo-600 focus:ring-indigo-500"
+                            />
+                            <span className="text-gray-700">Maintainance</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="taskType"
+                              value="newRequirement"
+                              checked={taskType === "newRequirement"}
+                              onChange={() => setTaskType("newRequirement")}
+                              className="text-indigo-600 focus:ring-indigo-500"
+                            />
+                            <span className="text-gray-700">New Requirement</span>
+                          </label>
+                        </div>
+                        {errors.taskType && (
+                          <p className="flex justify-start text-red-500 text-sm ">
+                            {errors.taskType}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
                 <label
                   htmlFor="roleName"
                   className="block text-sm font-medium mb-2 mt-2"
@@ -1456,6 +1510,56 @@ const Task_details = () => {
                 {errors.title && (
                   <p className="text-red-500 text-sm mb-4">{errors.title}</p>
                 )}
+
+                 <div className="mt-5 items-center">
+                      <label className="block text-md font-medium mb-2">
+                        Task Type{" "}
+                        <span className="text-red-500">*</span>
+                      </label>
+                      <div className="w-full rounded-lg">
+                        <div className="flex flex-wrap md:flex-nowrap items-center w-full gap-5 mb-2 md:mb-4">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="taskType"
+                              value="bug"
+                              checked={taskTypeEdit === "bug"}
+                              onChange={() => setTaskTypeEdit("bug")}
+                              className="text-indigo-600 focus:ring-indigo-500"
+                            />
+                            <span className="text-gray-700">Bug</span>
+                          </label>
+
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="taskType"
+                              value="maintainance"
+                              checked={taskTypeEdit === "maintainance"}
+                              onChange={() => setTaskTypeEdit("maintainance")}
+                              className="text-indigo-600 focus:ring-indigo-500"
+                            />
+                            <span className="text-gray-700">Maintainance</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="taskType"
+                              value="newRequirement"
+                              checked={taskTypeEdit === "newRequirement"}
+                              onChange={() => setTaskTypeEdit("newRequirement")}
+                              className="text-indigo-600 focus:ring-indigo-500"
+                            />
+                            <span className="text-gray-700">New Requirement</span>
+                          </label>
+                        </div>
+                        {errors.taskType && (
+                          <p className="flex justify-start text-red-500 text-sm ">
+                            {errors.taskType}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                 <label
                   htmlFor="roleName"
                   className="block text-sm font-medium mb-2 mt-2"
