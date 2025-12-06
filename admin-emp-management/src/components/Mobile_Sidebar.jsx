@@ -28,6 +28,7 @@ import { IoSettings } from "react-icons/io5";
 import Button_Loader from "./Button_Loader";
 import { MdManageAccounts } from "react-icons/md";
 import { GrAnnounce } from "react-icons/gr";
+import AdminImage from "../assets/Yuvaraj-CEO-Aryu-Academy.png"
 
 const Mobile_Sidebar = () => {
   let navigate = useNavigate();
@@ -153,7 +154,7 @@ const Mobile_Sidebar = () => {
   {/* RIGHT - Profile Circle */}
   <div className="relative" ref={menuRef}>
    <img
-  src="https://i.pravatar.cc/150?img=12"
+  src={AdminImage}
   alt="profile"
   className="w-10 h-10 rounded-full border border-gray-300 cursor-pointer object-cover"
   onClick={() => setOpenMenu(!openMenu)}
