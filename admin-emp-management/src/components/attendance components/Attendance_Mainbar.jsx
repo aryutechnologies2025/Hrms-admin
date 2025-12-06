@@ -394,7 +394,7 @@ const Attendance_Mainbar = () => {
           "-"
         ),
     },
-    { field: "employeeId", header: "ID" },
+    // { field: "employeeId", header: "ID" },
   ];
 
   // const wfhDatacolumns = [
@@ -834,18 +834,25 @@ const Attendance_Mainbar = () => {
             </div>
 
             {/* MOBILE — Combined Absent + WFH Card */}
-            <div className="flex md:hidden flex-row justify-between items-center gap-3 bg-white px-5 py-4 rounded-xl mt-5">
+            <div className="flex md:hidden flex-row justify-between items-center gap-2 bg-white px-5 py-3 rounded-xl mt-5">
+              {/* present */}
+              <div className="flex flex-1 gap-2 justify-center cursor-pointer">
+                <p className="text-xl font-bold text-blue-500">{attendanceCount?.present}</p>
+                <p className="text-lg font-semibold text-gray-500 uppercase">Present</p>
+              </div>
+
+              {/* <div className="w-[1px] bg-gray-300 h-12" /> */}
 
               {/* Absent */}
-              <div onClick={() => setAbsentlistIsOpen(true)} className="flex flex-1 gap-3 justify-center cursor-pointer">
+              <div onClick={() => setAbsentlistIsOpen(true)} className="flex flex-1 gap-2 justify-center cursor-pointer">
                 <p className="text-xl font-bold text-blue-500">{attendanceCount?.absent}</p>
                 <p className="text-lg font-semibold text-gray-500 uppercase">Absent</p>
               </div>
 
-              <div className="w-[1px] bg-gray-300 h-12" />
+              {/* <div className="w-[1px] bg-gray-300 h-12" /> */}
 
               {/* WFH */}
-              <div onClick={() => setWfhlistIsOpen(true)} className="flex flex-1 gap-3 justify-center cursor-pointer">
+              <div onClick={() => setWfhlistIsOpen(true)} className="flex flex-1 gap-2 justify-center cursor-pointer">
                 <p className="text-xl font-bold text-blue-500">{attendanceCount?.wfh}</p>
                 <p className="text-lg font-semibold text-gray-500 uppercase">WFH</p>
               </div>
@@ -1046,15 +1053,23 @@ const Attendance_Mainbar = () => {
             )}
 
             {absentlistIsOpen && (
-              <div className="">
+              <div>
                 <div
-                  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 "
+                  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
                   onClick={() => setAbsentlistIsOpen(false)}
                 >
                   <div
-                    className="bg-white p-6 rounded-lg shadow-lg w-[600px] h-[600px] overflow-y-auto"
+                    className="bg-white p-6 rounded-lg shadow-lg w-[600px] h-[600px] overflow-y-auto relative"
                     onClick={(e) => e.stopPropagation()}
                   >
+                    {/* Close Button */}
+                    <button
+                      className="absolute top-4 right-4 text-gray-600 hover:text-black"
+                      onClick={() => setAbsentlistIsOpen(false)}
+                    >
+                      <IoClose size={24} />
+                    </button>
+
                     <h2 className="text-xl font-semibold mb-2">
                       Absent List{" "}
                       <span className="text-gray-500 text-[16px]">
@@ -1077,12 +1092,6 @@ const Attendance_Mainbar = () => {
                           field={col.field}
                           header={col.header}
                           body={col.body}
-                          // style={{
-                          //   minWidth: "150px",
-                          //   wordWrap: "break-word", // Allow text to wrap
-                          //   overflow: "hidden", // Prevent text overflow
-                          //   whiteSpace: "normal", // Ensure that text wraps within the available space
-                          // }}
                           style={col.style}
                           bodyStyle={col.bodyStyle}
                         />
@@ -1093,16 +1102,25 @@ const Attendance_Mainbar = () => {
               </div>
             )}
 
+
             {wfhlistIsOpen && (
-              <div className="">
+              <div>
                 <div
-                  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 "
+                  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
                   onClick={() => setWfhlistIsOpen(false)}
                 >
                   <div
-                    className="bg-white p-6 rounded-lg shadow-lg w-[600px] h-[600px] overflow-y-auto"
+                    className="bg-white p-6 rounded-lg shadow-lg w-[600px] h-[600px] overflow-y-auto relative"
                     onClick={(e) => e.stopPropagation()}
                   >
+                    {/* Close Button */}
+                    <button
+                      className="absolute top-4 right-4 text-gray-600 hover:text-black"
+                      onClick={() => setWfhlistIsOpen(false)}
+                    >
+                      <IoClose size={24} />
+                    </button>
+
                     <h2 className="text-xl font-semibold mb-2">
                       WFH List{" "}
                       <span className="text-gray-500 text-[16px]">
@@ -1125,12 +1143,6 @@ const Attendance_Mainbar = () => {
                           field={col.field}
                           header={col.header}
                           body={col.body}
-                          // style={{
-                          //   minWidth: "150px",
-                          //   wordWrap: "break-word", // Allow text to wrap
-                          //   overflow: "hidden", // Prevent text overflow
-                          //   whiteSpace: "normal", // Ensure that text wraps within the available space
-                          // }}
                           style={col.style}
                           bodyStyle={col.bodyStyle}
                         />
@@ -1140,6 +1152,7 @@ const Attendance_Mainbar = () => {
                 </div>
               </div>
             )}
+
           </div>
 
           {/* {tooltipData && (

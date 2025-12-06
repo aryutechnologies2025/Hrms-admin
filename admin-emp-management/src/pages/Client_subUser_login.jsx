@@ -115,7 +115,7 @@ const inactiveClass = "hover:underline";
 
 
   return (
-   <div className="min-h-screen bg-[#F3F4F6] flex flex-col justify-between">
+   <div className="min-h-screen bg-[#F3F4F6] flex flex-col ">
    <div className="px-3">
   {/* Top Navigation */}
   <div className="flex justify-center md:justify-end gap-4 py-3 text-sm md:text-lg font-semibold text-[#0050AA]">
@@ -153,19 +153,19 @@ const inactiveClass = "hover:underline";
   </div>
   {/* Logo */}
   <div className='items-center'>
-  <div className="flex flex-col items-center mb-10 md:mb-0">
+  <div className="flex flex-col items-center mt-20 md:mt-0">
     <img src={aryu_logo} alt="Logo" className="w-20 mb-1" />
     <p className='text-lg md:text-xl font-semibold text-[#0050AA]'>ARYU PORTAL</p>
   </div>
   
 
   {/* Main Content */}
-  <div className="flex md:flex-1 items-center justify-center px-4">
+  <div className="flex md:flex-1 items-center justify-center mt-14 md:mt-0 px-4">
     <div className="flex w-full max-w-6xl bg-white shadow-xl rounded-3xl overflow-hidden">
 
       {/* Left Section (Form) */}
       <div className="flex-1 flex flex-col items-center justify-center p-5 md:p-10">
-        <h1 className="text-[#0050aa] font-semibold text-xl md:text-4xl mb-2 md:mb-6">
+        <h1 className="text-[#0050aa] font-semibold text-md md:text-4xl mb-2 md:mb-6">
            CLIENT USER 
         </h1>
 
@@ -231,7 +231,7 @@ const inactiveClass = "hover:underline";
   </div>
   </div>
 
-  <div className="mt-3"><Footer /></div>
+  <div className="w-full flex justify-center bottom-0 fixed"><Footer /></div>
   
 </div>
   );
