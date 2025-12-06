@@ -85,11 +85,11 @@ const Payroll_Mainbar = () => {
   }, [payrollList]);
 
   const columns = [
-    {
-      field: "sno",
-      header: "S NO",
-      body: (rowData, { rowIndex }) => rowIndex + 1,
-    },
+    // {
+    //   field: "sno",
+    //   header: "S NO",
+    //   body: (rowData, { rowIndex }) => rowIndex + 1,
+    // },
     {
       field: "netSalary",
       header: "Net Salary",
@@ -695,6 +695,17 @@ const Payroll_Mainbar = () => {
                         headerStyle={{ width: "3rem" }}
                         bodyStyle={{ textAlign: "center" }}
                       />
+
+                      <Column
+                        header="SI No"
+                        body={(rowData, meta) => meta.rowIndex + 1}
+                        // footer="Total"
+                        frozen={!isMobile}
+                        style={{ minWidth: "100px", textAlign: "center" }}
+                      />
+
+
+
 
                       <Column
                         field="name"
