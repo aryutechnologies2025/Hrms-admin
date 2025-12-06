@@ -22,6 +22,7 @@ import ppt from "../../assets/document/ppt.svg";
 import Word from "../../assets/document/word.svg";
 import Image from "../../assets/document/image.svg";
 import Sav from "../../assets/document/sav-file-format.png";
+import Zip from "../../assets/document/folderimage.jpg"
 import { useParams } from "react-router-dom";
 import { capitalizeFirstLetter } from "../../utils/StringCaps";
 // import { dateFormat } from "../../dateformat";
@@ -98,6 +99,7 @@ function Task_view_all() {
     const wordFormats = ["docx", "doc", "word"];
     const pptFormats = ["ppt", "pptx"];
     const SavFormats = ["sav"];
+    const zipFormats = ["zip"];
 
     const commonClass = "w-7 h-7 object-contain";
 
@@ -122,6 +124,10 @@ function Task_view_all() {
 
     if (pptFormats.includes(type)) {
       return <img src={ppt} className={commonClass} alt="ppt" />;
+    }
+
+    if (zipFormats.includes(type)) {
+      return <img src={Zip} className={commonClass} alt="zip" />;
     }
 
     if (type === "pdf") {
@@ -241,7 +247,7 @@ function Task_view_all() {
       updatedBy: employeeeId,
     };
 
-    console.log("payload", payload);
+    // console.log("payload", payload);
 
     try {
       const response = await axios.patch(
