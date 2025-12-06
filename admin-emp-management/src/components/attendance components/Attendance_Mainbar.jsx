@@ -196,29 +196,29 @@ const Attendance_Mainbar = () => {
     //     ) || "-",
     // },
 
- {
-  field: "login_time",
-  header: "Login Time",
-  body: (rowData) => {
-    const [time, meridian] = rowData?.login?.split(" ") || [];
-    const [hoursStr, minutesStr] = time?.split(":") || [];
-    const hours = parseInt(hoursStr, 10);
-    const minutes = parseInt(minutesStr, 10);
+    {
+      field: "login_time",
+      header: "Login Time",
+      body: (rowData) => {
+        const [time, meridian] = rowData?.login?.split(" ") || [];
+        const [hoursStr, minutesStr] = time?.split(":") || [];
+        const hours = parseInt(hoursStr, 10);
+        const minutes = parseInt(minutesStr, 10);
 
-    let colorClass = "";
+        let colorClass = "";
 
-    // Orange for 10:05 to 10:29
-    if (hours === 10 && minutes >= 5 && minutes < 30) {
-      colorClass = "text-yellow-500 font-bold";
-    }
-    // Red for 10:30 and onwards
-    else if (hours > 10 || (hours === 10 && minutes >= 30) || meridian === "pm") {
-      colorClass = "text-red-500";
-    }
+        // Orange for 10:05 to 10:29
+        if (hours === 10 && minutes >= 5 && minutes < 30) {
+          colorClass = "text-yellow-500 font-bold";
+        }
+        // Red for 10:30 and onwards
+        else if (hours > 10 || (hours === 10 && minutes >= 30) || meridian === "pm") {
+          colorClass = "text-red-500";
+        }
 
-    return <p className={colorClass}>{rowData.login}</p> || "-";
-  },
-},
+        return <p className={colorClass}>{rowData.login}</p> || "-";
+      },
+    },
 
 
     { field: "logout", header: "Logout Time" },
@@ -622,28 +622,28 @@ const Attendance_Mainbar = () => {
       ) : (
         <>
           <div>
-            
-            
-           
-              <div className=" cursor-pointer ">
-                <Mobile_Sidebar />
-                
-                
-              </div>
-              <div className="flex justify-end gap-1 items-center">
-                <ToastContainer />
-                <p
-                  className="text-sm text-gray-500"
-                  onClick={() => navigate("/dashboard")}
-                >
-                  Dashboard
-                </p>
-                <p>{">"}</p>
 
-                <p className="text-sm text-blue-500">Attendance</p>
-                </div>
 
-              {/* <div className="font-medium text-md  lg:text-left mt-2 md:mt-5 w-full md:w-fit text-right bg-white px-3 py-1 md:px-4 md:py-2 rounded-full">
+
+            <div className=" cursor-pointer ">
+              <Mobile_Sidebar />
+
+
+            </div>
+            <div className="flex justify-end gap-1 items-center">
+              <ToastContainer />
+              <p
+                className="text-sm text-gray-500"
+                onClick={() => navigate("/dashboard")}
+              >
+                Dashboard
+              </p>
+              <p>{">"}</p>
+
+              <p className="text-sm text-blue-500">Attendance</p>
+            </div>
+
+            {/* <div className="font-medium text-md  lg:text-left mt-2 md:mt-5 w-full md:w-fit text-right bg-white px-3 py-1 md:px-4 md:py-2 rounded-full">
                 
                 <span>{day}, </span>
                 <span>{date} </span>
@@ -652,7 +652,7 @@ const Attendance_Mainbar = () => {
                   {hours}:{minutes}:{seconds} {amPm}
                 </span>
               </div> */}
-            
+
 
             {/* Heading */}
             <section className="flex flex-wrap md:flex-row justify-between items-center mt-1 md:mt-4 ">
@@ -667,7 +667,7 @@ const Attendance_Mainbar = () => {
                   onChange={(e) => {
                     getAttendanceData(e.target.value);
                     setSelectedDate(e.target.value);
-                    
+
                   }}
                 />
               </div>
@@ -768,9 +768,9 @@ const Attendance_Mainbar = () => {
             </div>
 
             {/* Cards */}
-            <div className="flex flex-col sm:flex-row mt-5 flex-grow gap-3">
+            <div className="hidden md:flex flex-col sm:flex-row mt-5 flex-grow gap-3">
               <div
-                className="hidden md:flex flex-grow gap-2 w-full sm:w-1/4  transition-all duration-100 flex-col justify-between bg-white px-5 py-5 rounded-xl"
+                className="flex flex-grow gap-2 w-full sm:w-1/4  transition-all duration-100 flex-col justify-between bg-white px-5 py-5 rounded-xl"
               >
                 <div className="flex items-center justify-between gap-3 text-4xl">
                   <img src={WFH} alt="" className="h-12 w-12" />
@@ -832,6 +832,26 @@ const Attendance_Mainbar = () => {
                 </p>
               </div>
             </div>
+
+            {/* MOBILE — Combined Absent + WFH Card */}
+            <div className="flex md:hidden flex-row justify-between items-center gap-3 bg-white px-5 py-4 rounded-xl mt-5">
+
+              {/* Absent */}
+              <div onClick={() => setAbsentlistIsOpen(true)} className="flex flex-1 gap-3 justify-center cursor-pointer">
+                <p className="text-xl font-bold text-blue-500">{attendanceCount?.absent}</p>
+                <p className="text-lg font-semibold text-gray-500 uppercase">Absent</p>
+              </div>
+
+              <div className="w-[1px] bg-gray-300 h-12" />
+
+              {/* WFH */}
+              <div onClick={() => setWfhlistIsOpen(true)} className="flex flex-1 gap-3 justify-center cursor-pointer">
+                <p className="text-xl font-bold text-blue-500">{attendanceCount?.wfh}</p>
+                <p className="text-lg font-semibold text-gray-500 uppercase">WFH</p>
+              </div>
+
+            </div>
+
 
             {/* data table */}
             <div
