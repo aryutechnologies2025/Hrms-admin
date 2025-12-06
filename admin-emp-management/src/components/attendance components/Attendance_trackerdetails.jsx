@@ -112,6 +112,7 @@ const Attendance_trackerdetails = () => {
     Present: "P",
     Absent: "A",
     Holiday: "H",
+    Leave: "L",
     // Weekend: "WK",
 
   };

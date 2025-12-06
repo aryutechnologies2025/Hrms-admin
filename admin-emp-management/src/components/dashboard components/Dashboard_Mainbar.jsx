@@ -40,6 +40,8 @@ const Dashboard_Mainbar = () => {
   
   const [wfhlistData, setWfhlistData] = useState("");
   const [presentlistData, setpresentlistData] = useState("");
+
+  console.log("presentlistData", presentlistData);
   const [selectedDate, setSelectedDate] = useState("");
   // console.log("upcomingHolidays:", attendanceCount);
   const [loading, setLoading] = useState(true);
@@ -108,9 +110,7 @@ const Dashboard_Mainbar = () => {
       const token = localStorage.getItem("admin_token");
       // console.log("token",token);
 
-      const response = await axios.get(`${API_URL}/api/employees/dashboard`, {
-        withCredentials: true, // Include cookies with the request
-      });
+      const response = await axios.get(`${API_URL}/api/employees/dashboard`);
       console.log("Response:", response.data.data);
       const {
         upcomingHolidays,
@@ -586,11 +586,9 @@ const Dashboard_Mainbar = () => {
                           {/* DATE */}
                           <div className="flex flex-col items-center">
                             <p className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                              {formatDateTime(item.date, "MMM")}   {/* MONTH */}
+                              {formatDateTime(item.date, "MMM")}   
                             </p>
-                            <p className="text-gray-800 font-bold text-xl -mt-1">
-                              {formatDateTime(item.date, "DD")}    {/* DAY */}
-                            </p>
+                          
                           </div>
 
                           <div className="flex-grow border-b border-dashed border-gray-400"></div>
