@@ -174,10 +174,37 @@ const Announcement_Details = () => {
 
 
   const handlesubmitedit = async (e) => {
+    console.log("ffff")
     e.preventDefault();
     setErrors({});
 
-  
+
+    // Client-side validation
+    const newErrors = {};
+    // if (!displayEdit.trim()) {
+    //   newErrors.display = "Display is required.";
+    // }
+    if (!dateEdit.trim()) {
+      newErrors.date = "Date is required.";
+    }
+    if (!expiryDateEdit.trim()) {
+      newErrors.expiryDate = "Expiry Date is required.";
+    }
+    if (!messageEdit.trim()) {
+      newErrors.message = "Message is required.";
+    }
+    if (!visibleEdit.trim()) {
+      newErrors.visible = "Visible is required.";
+    }
+    if (!statusEdit) {
+      newErrors.status = "Status is required.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     try {
       const formData = {
         display: displayEdit,

@@ -1335,7 +1335,9 @@ function Task_view_All_client() {
       "PNG",
       "JPG",
       "SVG",
-      "MP4"
+      "MP4",
+      "zip",
+      "ZIP"
     ];
     const excelFormats = ["xlsx", "xls", "csv"];
     const wordFormats = ["docx", "doc", "word"];
