@@ -41,7 +41,7 @@ const Dashboard_Mainbar = () => {
   const [wfhlistData, setWfhlistData] = useState("");
   const [presentlistData, setpresentlistData] = useState("");
 
-  console.log("presentlistData", presentlistData);
+  // console.log("presentlistData", presentlistData);
   const [selectedDate, setSelectedDate] = useState("");
   // console.log("upcomingHolidays:", attendanceCount);
   const [loading, setLoading] = useState(true);
@@ -50,7 +50,11 @@ const Dashboard_Mainbar = () => {
   const [upcomingBirthdays, setUpcomingBirthdays] = useState([]);
   const [emplopyeereliving, setEmplopyeereliving] = useState([]);
   const [interns, setinterns] = useState([]);
-  console.log("interns", interns);
+
+  const [announcements, setAnnouncements] = useState([]);
+
+  console.log("announcements", announcements)
+  // console.log("interns", interns);
 
   useEffect(() => {
     const updateTime = () => {
@@ -105,12 +109,16 @@ const Dashboard_Mainbar = () => {
 
   const getApiData = async () => {
     try {
-      console.log("API_URL:", API_URL);
-      console.log("Fetching data...");
+      // console.log("API_URL:", API_URL);
+      // console.log("Fetching data...");
       const token = localStorage.getItem("admin_token");
       // console.log("token",token);
 
-      const response = await axios.get(`${API_URL}/api/employees/dashboard`);
+      const response = await axios.get(`${API_URL}/api/employees/dashboard`, {
+        params: {
+          role: "Admin",
+        }
+      });
       console.log("Response:", response.data.data);
       const {
         upcomingHolidays,
@@ -120,6 +128,8 @@ const Dashboard_Mainbar = () => {
         todayBirthday,
         futureEmployees,
         interns,
+
+        announcements,
       } = response.data?.data;
       setUpcomingHolidays(upcomingHolidays);
       setEmployeeRequests(employeeRequests);
@@ -130,6 +140,7 @@ const Dashboard_Mainbar = () => {
       setUpcomingBirthdays(todayBirthday);
       setEmplopyeereliving(futureEmployees);
       setinterns(interns);
+      setAnnouncements(announcements)
 
       // const employeereleving =
       futureEmployees.map((emp) => emp);
@@ -188,36 +199,36 @@ const Dashboard_Mainbar = () => {
           "-"
         ),
     },
-  {
-  field: "login_time",
-  header: "Login Time",
-  body: (rowData) => {
-    if (!rowData?.login) return "-";
+    {
+      field: "login_time",
+      header: "Login Time",
+      body: (rowData) => {
+        if (!rowData?.login) return "-";
 
-    const iso = rowData.login; // "2025-12-08T10:43:41.655Z"
-    const time = iso.substring(11, 16); // "10:43"
+        const iso = rowData.login; // "2025-12-08T10:43:41.655Z"
+        const time = iso.substring(11, 16); // "10:43"
 
-    let [hours, minutes] = time.split(":").map(Number);
+        let [hours, minutes] = time.split(":").map(Number);
 
-    // Convert to AM/PM
-    const ampm = hours >= 12 ? "PM" : "AM";
-    const displayHours = hours % 12 || 12; // convert 0 → 12, 13 → 1 etc.
-    const formattedTime = `${displayHours}:${minutes.toString().padStart(2, "0")} ${ampm}`;
+        // Convert to AM/PM
+        const ampm = hours >= 12 ? "PM" : "AM";
+        const displayHours = hours % 12 || 12; // convert 0 → 12, 13 → 1 etc.
+        const formattedTime = `${displayHours}:${minutes.toString().padStart(2, "0")} ${ampm}`;
 
-    let colorClass = "";
+        let colorClass = "";
 
-    // Orange for 10:05 to 10:29
-    if (hours === 10 && minutes >= 5 && minutes < 30) {
-      colorClass = "text-yellow-500 font-bold";
-    }
-    // Red for 10:30 onwards
-    else if (hours > 10 || (hours === 10 && minutes >= 30)) {
-      colorClass = "text-red-500";
-    }
+        // Orange for 10:05 to 10:29
+        if (hours === 10 && minutes >= 5 && minutes < 30) {
+          colorClass = "text-yellow-500 font-bold";
+        }
+        // Red for 10:30 onwards
+        else if (hours > 10 || (hours === 10 && minutes >= 30)) {
+          colorClass = "text-red-500";
+        }
 
-    return <p className={colorClass}>{formattedTime}</p>;
-  },
-},
+        return <p className={colorClass}>{formattedTime}</p>;
+      },
+    },
 
 
 
@@ -226,6 +237,9 @@ const Dashboard_Mainbar = () => {
 
     // { field: "employeeId", header: "Employee ID" },
   ];
+
+  const [show, setShow] = useState(true);
+
 
   return (
     <div className=" w-screen min-h-screen flex flex-col justify-between bg-gray-100 md:px-5 px-3 py-2 md:pt-5 ">
@@ -255,6 +269,113 @@ const Dashboard_Mainbar = () => {
                 </span>
               </div>
             </div>
+            {/* 
+            <div
+              className={`
+        transition-all duration-500 
+        ${show ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5"} 
+        fixed top-4 left-1/2 transform -translate-x-1/2 
+        w-[90%] md:w-[600px] z-50
+      `}
+            >
+              <div className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-5 py-4 rounded-xl shadow-xl border border-white/20 backdrop-blur-md flex justify-between items-center">
+
+                <p className="font-medium flex items-center gap-2">
+                  <span className="text-2xl animate-pulse">📢</span>
+                  <div
+    className="font-medium flex items-center gap-2"
+    dangerouslySetInnerHTML={{ __html: announcements?.message }}
+  />
+                </p>
+
+                <button
+                  onClick={() => setShow(false)}
+                  className="text-white text-xl font-bold hover:scale-125 transition"
+                >
+                  ×
+                </button>
+
+              </div>
+            </div> */}
+
+
+            {/* {announcements.length > 0 &&
+  announcements.map((item, index) => (
+    console.log("announcementsxsxzczc",announcements),
+  <div
+        key={index}
+
+    className={`
+      transition-all duration-500 
+      ${show ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5"} 
+      fixed top-4 left-1/2 transform -translate-x-1/2 
+      w-[90%] md:w-[600px] z-50
+    `}
+  >
+    <div className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-5 py-4 rounded-xl shadow-xl border border-white/20 backdrop-blur-md flex justify-between items-center">
+
+      <div className="font-medium flex items-center gap-2">
+        <span className="text-2xl animate-pulse">📢</span>
+
+        <div
+          className="font-medium"
+          dangerouslySetInnerHTML={{ __html: item.message }}
+        />
+      </div>
+
+      <button
+        onClick={() => setShow(false)}
+        className="text-white text-xl font-bold hover:scale-125 transition"
+      >
+        ×
+      </button>
+
+    </div>
+  </div>
+))}
+   */}
+
+{announcements.length > 0 && (
+  <div
+    className={`
+      transition-all duration-500 
+      ${show ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5"} 
+      fixed top-4 left-1/2 transform -translate-x-1/2 
+      w-[90%] md:w-[600px] z-50
+    `}
+  >
+    <div className="relative bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-5 py-5 rounded-xl shadow-xl border border-white/20 backdrop-blur-md">
+
+      {/* Close Button on TOP RIGHT */}
+      <button
+        onClick={() => setShow(false)}
+        className="absolute top-2 right-3 text-white text-2xl font-bold hover:scale-125 transition"
+      >
+        ×
+      </button>
+
+      {/* Icon + Messages */}
+      <div className="flex items-start gap-3 mt-3">
+        <span className="text-3xl animate-pulse">📢</span>
+
+        {/* BULLET POINTS - MAP */}
+        <ul className="list-disc pl-6 space-y-1">
+          {announcements.map((item, i) => {
+            const cleanMessage = item.message.replace(/<\/?p>/g, "").trim();
+            return <li key={i}>{cleanMessage}</li>;
+          })}
+        </ul>
+      </div>
+
+    </div>
+  </div>
+)}
+
+
+
+
+
+
 
             <div>
 
