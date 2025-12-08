@@ -126,6 +126,8 @@ import AssectDocument from "./components/Assect Document/AssectDocument";
 import AssentDocumentPage from "./pages/AssentDocumentPage";
 import AssetSubCategory_mainbar from "./components/Asset management components/AssetSubCategory_mainbar";
 import Clients_note_main from "./pages/Clients_note_main";
+import Complainence_Mainbar from "./components/complainence/Complainence_Mainbar";
+import Recurring_Mainbar from "./components/finance components/Recurring_Mainbar";
 
 
 export const SettingsContext = createContext();
@@ -714,6 +716,29 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
           <Payment_type_main />
+        </ProtectedRoute>
+      ),
+    },
+
+    {
+      path: "/recurring",
+      permissionTitle: "Finance",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Recurring_Mainbar />
+        </ProtectedRoute>
+      ),
+    },
+     
+    /* -------------------------------------------
+      COMPLAINENCE
+  --------------------------------------------*/
+     {
+      path: "/complainence",
+      permissionTitle: "Complainence",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Complainence_Mainbar />
         </ProtectedRoute>
       ),
     },
