@@ -154,7 +154,7 @@ const EmployeeDetails_Mainbar = () => {
     : `https://${employee?.linkedIn}`;
 
   return (
-    <div className="w-screen min-h-screen bg-gray-100 px-3 md:px-5 py-2 md:py-5">
+    <div className="w-full min-h-screen bg-gray-100 px-3 md:px-5 py-2 md:py-5 overflow-x-auto">
 
 
       {/* breadcrumb */}
