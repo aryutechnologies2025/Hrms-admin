@@ -93,7 +93,7 @@ function Task_view_all() {
       "JPG",
       "SVG",
       "MP4",
-      "zip"
+      "zip", 
     ];
     const excelFormats = ["xlsx", "xls", "csv"];
     const wordFormats = ["docx", "doc", "word"];

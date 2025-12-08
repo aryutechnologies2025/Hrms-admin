@@ -174,14 +174,15 @@ const Announcement_Details = () => {
 
 
   const handlesubmitedit = async (e) => {
+    console.log("ffff")
     e.preventDefault();
     setErrors({});
 
     // Client-side validation
     const newErrors = {};
-    if (!displayEdit.trim()) {
-      newErrors.display = "Display is required.";
-    }
+    // if (!displayEdit.trim()) {
+    //   newErrors.display = "Display is required.";
+    // }
     if (!dateEdit.trim()) {
       newErrors.date = "Date is required.";
     }
