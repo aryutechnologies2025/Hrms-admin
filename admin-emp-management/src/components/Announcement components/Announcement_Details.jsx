@@ -33,10 +33,10 @@ const Announcement_Details = () => {
   const parsedDetails = JSON.parse(null);
   const userid = parsedDetails ? parsedDetails.id : null;
   const [errors, setErrors] = useState({});
-  console.log("errors:", errors);
+  // console.log("errors:", errors);
   const [isAnimating, setIsAnimating] = useState(false);
   const [announceDetails, setAnnounceDetails] = useState([])
-  console.log("announceDetails", announceDetails)
+  // console.log("announceDetails", announceDetails)
   const [loading, setLoading] = useState(true); // State to manage loading
   let navigate = useNavigate();
 
@@ -178,6 +178,7 @@ const Announcement_Details = () => {
     e.preventDefault();
     setErrors({});
 
+
     // Client-side validation
     const newErrors = {};
     // if (!displayEdit.trim()) {
@@ -203,6 +204,7 @@ const Announcement_Details = () => {
       setErrors(newErrors);
       return;
     }
+
     try {
       const formData = {
         display: displayEdit,

@@ -27,6 +27,7 @@ import { LuUserSearch } from "react-icons/lu";
 import { BsFillCameraReelsFill } from "react-icons/bs";
 import { MdManageAccounts } from "react-icons/md";
 import { GrAnnounce } from "react-icons/gr";
+import { GiDiscussion } from "react-icons/gi";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -253,6 +254,24 @@ const Sidebar = () => {
                       {!arrowClicked && <p className="text-sm">Links</p>}
                     </div>
                   )}
+
+                  {/*complainence*/}
+              {hasPermission("Complainence") && (
+                    <div
+                      onClick={() => onClickSidebarMenu("complainence")}
+                      className={`flex w-full items-center flex-grow ${
+                        arrowClicked ? "justify-center  " : "justify-normal"
+                      } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
+                        currentPath === "/complainence"
+                          ? "bg-blue-100 text-[#4F46E5]"
+                          : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
+                      }`}
+                    >
+                      <GiDiscussion />
+                      {!arrowClicked && <p className="text-sm">Complainence</p>}
+                    </div>
+                  )}
+
               {/* client dashboard */}
 
               {client && (
@@ -913,6 +932,7 @@ const Sidebar = () => {
                                 "/expense/details",
                                 "/payment-type",
                                 "/bankstatement",
+                                "/recurring",
                               ].includes(currentPath)
                                 ? "bg-blue-100 text-[#4F46E5]"
                                 : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
@@ -930,6 +950,7 @@ const Sidebar = () => {
                                     "/expense/details",
                                     "/payment-type",
                                     "/bankstatement",
+                                    "/recurring",
                                   ].includes(currentPath) ? (
                                     <IoIosArrowUp />
                                   ) : (
@@ -948,6 +969,7 @@ const Sidebar = () => {
                                 "/expense/details",
                                 "/payment-type",
                                 "/bankstatement",
+                                "/recurring",
                               ].includes(currentPath)
                                 ? "max-h-50 opacity-100"
                                 : "max-h-0 opacity-0"
@@ -1008,6 +1030,17 @@ const Sidebar = () => {
                             }`}
                               >
                                 Bank Statement
+                              </button>
+                              <button
+                                onClick={() => navigate("/recurring")}
+                                className={`px-2 py-1 rounded-full 
+                            ${
+                              currentPath === "/recurring"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                            }`}
+                              >
+                                Recurring
                               </button>
                               {/* <div
                         onClick={() => onClickSidebarMenu("client-details")}
