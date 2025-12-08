@@ -37,7 +37,7 @@ const Dashboard_Mainbar = () => {
   const [presentlistIsOpen, setpresentlistIsOpen] = useState(false);
   const [absentlistData, setAbsentlistData] = useState("");
 
-  
+
   const [wfhlistData, setWfhlistData] = useState("");
   const [presentlistData, setpresentlistData] = useState("");
 
@@ -188,6 +188,42 @@ const Dashboard_Mainbar = () => {
           "-"
         ),
     },
+  {
+  field: "login_time",
+  header: "Login Time",
+  body: (rowData) => {
+    if (!rowData?.login) return "-";
+
+    const iso = rowData.login; // "2025-12-08T10:43:41.655Z"
+    const time = iso.substring(11, 16); // "10:43"
+
+    let [hours, minutes] = time.split(":").map(Number);
+
+    // Convert to AM/PM
+    const ampm = hours >= 12 ? "PM" : "AM";
+    const displayHours = hours % 12 || 12; // convert 0 → 12, 13 → 1 etc.
+    const formattedTime = `${displayHours}:${minutes.toString().padStart(2, "0")} ${ampm}`;
+
+    let colorClass = "";
+
+    // Orange for 10:05 to 10:29
+    if (hours === 10 && minutes >= 5 && minutes < 30) {
+      colorClass = "text-yellow-500 font-bold";
+    }
+    // Red for 10:30 onwards
+    else if (hours > 10 || (hours === 10 && minutes >= 30)) {
+      colorClass = "text-red-500";
+    }
+
+    return <p className={colorClass}>{formattedTime}</p>;
+  },
+},
+
+
+
+
+
+
     // { field: "employeeId", header: "Employee ID" },
   ];
 
@@ -218,6 +254,10 @@ const Dashboard_Mainbar = () => {
                   {hours}:{minutes}:{seconds} {amPm}
                 </span>
               </div>
+            </div>
+
+            <div>
+
             </div>
 
             {/* upcoming holiday */}
@@ -586,9 +626,9 @@ const Dashboard_Mainbar = () => {
                           {/* DATE */}
                           <div className="flex flex-col items-center">
                             <p className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                              {formatDateTime(item.date, "MMM")}   
+                              {formatDateTime(item.date, "MMM")}
                             </p>
-                          
+
                           </div>
 
                           <div className="flex-grow border-b border-dashed border-gray-400"></div>

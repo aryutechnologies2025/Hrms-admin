@@ -29,6 +29,7 @@ import Button_Loader from "./Button_Loader";
 import { MdManageAccounts } from "react-icons/md";
 import { GrAnnounce } from "react-icons/gr";
 import AdminImage from "../assets/Yuvaraj-CEO-Aryu-Academy.png"
+import { GiDiscussion } from "react-icons/gi";
 
 const Mobile_Sidebar = () => {
   let navigate = useNavigate();
@@ -246,8 +247,7 @@ const Mobile_Sidebar = () => {
                         </div>
                         <p>Dashboard</p>
                       </div>
-                      {/* onboarding */}
-
+                      {/* links */}
                         <div
                         onClick={() => onClickSidebarMenu("links")}
                         className="flex items-center w-full hover:bg-blue-100 hover:text-[#4F46E5] px-3 py-2 rounded-lg gap-2 text-gray-500 text-sm font-medium cursor-pointer"
@@ -257,6 +257,17 @@ const Mobile_Sidebar = () => {
                         </div>
                         <p>Links</p>
                       </div>
+                      {/*complainence*/}
+                      <div
+                        onClick={() => onClickSidebarMenu("complainence")}
+                        className="flex items-center w-full hover:bg-blue-100 hover:text-[#4F46E5] px-3 py-2 rounded-lg gap-2 text-gray-500 text-sm font-medium cursor-pointer"
+                      >
+                        <div className="flex items-center justify-center h-5 w-5">
+                          <GiDiscussion />
+                        </div>
+                        <p>Complainence</p>
+                      </div>
+                       {/* onboarding */}
                       <div
                         onClick={() =>
                           setOpenSection(
@@ -571,6 +582,12 @@ const Mobile_Sidebar = () => {
                               className="hover:bg-blue-100 px-2 py-1 rounded-full"
                             >
                               Bank Statement
+                            </button>
+                            <button
+                              onClick={() => onClickSidebarMenu("recurring")}
+                              className="hover:bg-blue-100 px-2 py-1 rounded-full"
+                            >
+                              Recurring
                             </button>
                           </div>
                         </div>
