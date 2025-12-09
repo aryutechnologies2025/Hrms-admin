@@ -28,6 +28,7 @@ import { BsFillCameraReelsFill } from "react-icons/bs";
 import { MdManageAccounts } from "react-icons/md";
 import { GrAnnounce } from "react-icons/gr";
 import { GiDiscussion } from "react-icons/gi";
+import { FaSlack } from "react-icons/fa";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -1526,6 +1527,25 @@ const Sidebar = () => {
                       <IoSettings />
 
                       {!arrowClicked && <p className="text-sm">Settings</p>}
+                    </div>
+                  )}
+
+
+
+                   {hasPermission("slack") && (
+                    <div
+                      onClick={() => onClickSidebarMenu("slack")}
+                      className={`flex items-center w-full flex-grow ${
+                        arrowClicked ? "justify-center  " : "justify-normal"
+                      } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
+                        currentPath === "/slack"
+                          ? "bg-blue-100 text-[#4F46E5]"
+                          : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
+                      }`}
+                    >
+                      <FaSlack  />
+
+                      {!arrowClicked && <p className="text-sm">Slack</p>}
                     </div>
                   )}
                 </>
