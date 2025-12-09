@@ -128,6 +128,8 @@ import AssetSubCategory_mainbar from "./components/Asset management components/A
 import Clients_note_main from "./pages/Clients_note_main";
 import Complainence_Mainbar from "./components/complainence/Complainence_Mainbar";
 import Recurring_Mainbar from "./components/finance components/Recurring_Mainbar";
+import Slack_details from "./components/Slack Componenet/Slack_details";
+import Slack_mainbar from "./components/Slack Componenet/Slack_mainbar";
 
 
 export const SettingsContext = createContext();
@@ -1023,6 +1025,11 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
     {
       path: "/assetcategory",
       element: <AssetCategory_mainbar />
+    },
+
+    {
+      path: "/slack",
+      element: <Slack_mainbar />
     },
     
     {

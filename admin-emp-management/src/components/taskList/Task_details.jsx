@@ -688,6 +688,7 @@ const Task_details = () => {
   ];
 
   const [projectManagerName, setProjectManagerName] = useState("");
+  console.log("projectManagerName",projectManagerName)
   const handleRoleChange = (name) => {
     // const selectedRoleName = e.target.value;
     setProjectName(name);
