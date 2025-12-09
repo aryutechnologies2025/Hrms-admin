@@ -312,7 +312,11 @@ const Task_details = () => {
     document: [],
     startDate: "",
     dueDate: "",
+
+    taskId:""
+
     taskType: "",
+
   });
 
   const openEditModal = (row) => {
@@ -320,6 +324,7 @@ const Task_details = () => {
     setTaskData({
       id: row._id,
       // currentDate: row.currentDate,
+      taskId:row.taskId,
       project: row.projectId?._id,
       taskTitle: row.title,
       description: row.description,
@@ -1761,7 +1766,7 @@ const Task_details = () => {
                       {/* Delete Icon */}
                       <button
                         onClick={() =>
-                          handleDeleteTaskFile(index, doc.filepath, taskData.id)
+                          handleDeleteTaskFile(index, doc.filepath, taskData?.taskId)
                         }
                         className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full text-xs opacity-80 hover:opacity-100"
                         title="Delete file"
