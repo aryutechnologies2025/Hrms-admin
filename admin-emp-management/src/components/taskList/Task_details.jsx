@@ -26,7 +26,7 @@ import { useNavigate } from "react-router-dom";
 import { ImCancelCircle } from "react-icons/im";
 
 const Task_details = () => {
- 
+
   const navigate = useNavigate();
   const employeeDetails = JSON.parse(localStorage.getItem("hrmsuser"));
 
@@ -156,8 +156,9 @@ const Task_details = () => {
   const [showToDatePicker, setShowToDatePicker] = useState(false);
   const [clearTriggered, setClearTriggered] = useState(false);
 
-  const [taskType, setTaskType] = useState("bug");
-  const [taskTypeEdit, setTaskTypeEdit] = useState("bug");
+  const [taskType, setTaskType] = useState("");
+
+  // console.log("taskType", taskType);
 
   const fetchEmployeeList = async () => {
     try {
@@ -243,6 +244,7 @@ const Task_details = () => {
       formData.append("assignedTo", assignTo);
       formData.append("createdById", superUser ? employeeemail : employeeId);
       formData.append("priority", priority);
+      formData.append("taskType", taskType);
       formData.append("projectId", projectname);
       formData.append("projectManagerId", projectManagerName);
       uploadedFiles.forEach((file) => {
@@ -310,11 +312,15 @@ const Task_details = () => {
     document: [],
     startDate: "",
     dueDate: "",
+
     taskId:""
+
+    taskType: "",
+
   });
 
   const openEditModal = (row) => {
-    // console.log("row", row);
+    console.log("row", row);
     setTaskData({
       id: row._id,
       // currentDate: row.currentDate,
@@ -327,6 +333,7 @@ const Task_details = () => {
       document: row.document,
       startDate: row?.startDate?.split("T")[0],
       dueDate: row?.dueDate?.split("T")[0],
+      taskType: row.taskType,
     });
     setIsEditModalOpen(true);
   };
@@ -355,6 +362,7 @@ const Task_details = () => {
       formData.append("dueDate", taskData.dueDate);
       formData.append("description", taskData.description);
       formData.append("assignedTo", taskData.assignTo);
+      formData.append("taskType", taskData.taskType);
       formData.append("priority", priority);
 
       uploadedFiles.forEach((file) => {
@@ -510,9 +518,8 @@ const Task_details = () => {
             (value) => value && value.trim()
           ) || "N/A";
 
-        const id = `assigned-to-${
-          row?.assignedTo?.employeeName || row?.id || Date.now()
-        }`;
+        const id = `assigned-to-${row?.assignedTo?.employeeName || row?.id || Date.now()
+          }`;
 
         return `<div id="${id}">${displayName}</div>`;
       },
@@ -708,10 +715,10 @@ const Task_details = () => {
     const selectedRole = project.find((proj) => proj.value === projectname);
     return selectedRole
       ? employeeOption.filter(
-          (emp) =>
-            selectedRole.teamMembers?.includes(emp.value) ||
-            selectedRole.projectManager.includes(emp.value)
-        )
+        (emp) =>
+          selectedRole.teamMembers?.includes(emp.value) ||
+          selectedRole.projectManager.includes(emp.value)
+      )
       : employeeOption;
   })();
 
@@ -937,7 +944,7 @@ const Task_details = () => {
                   Search
                 </button>
 
-                {/* ✅ Clear All Button */}
+                {/*  Clear All Button */}
                 <button
                   onClick={() => {
                     setProjectName(null);
@@ -948,7 +955,7 @@ const Task_details = () => {
                     setStatus("");
                     setPriority("");
                     setSearchTerm("");
-                   setClearTriggered(true); 
+                    setClearTriggered(true);
                   }}
                   className="bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-md px-6 py-2 text-sm transition-all duration-200 shadow-sm focus:ring-2 focus:ring-gray-400"
                 >
@@ -1050,11 +1057,10 @@ const Task_details = () => {
                         disabled={currentPage === 1}
                         onClick={() => fetchProjectlist(currentPage - 1, limit)}
                         className={`px-3 py-1 rounded border 
-        ${
-          currentPage === 1
-            ? " border-gray-200 cursor-not-allowed  bg-blue-600 text-white font-medium"
-            : " hover:bg-blue-700 border-gray-300 bg-blue-600 text-white font-medium"
-        }`}
+        ${currentPage === 1
+                            ? " border-gray-200 cursor-not-allowed  bg-blue-600 text-white font-medium"
+                            : " hover:bg-blue-700 border-gray-300 bg-blue-600 text-white font-medium"
+                          }`}
                       >
                         ‹ {/* Left Arrow */}
                       </button>
@@ -1074,11 +1080,10 @@ const Task_details = () => {
                         disabled={currentPage === totalPages}
                         onClick={() => fetchProjectlist(currentPage + 1, limit)}
                         className={`px-3 py-1 rounded border 
-        ${
-          currentPage === totalPages
-            ? " border-gray-200 cursor-not-allowed bg-blue-600 text-white font-medium"
-            : " hover:bg-blue-700 border-gray-300 bg-blue-600 text-white font-medium"
-        }`}
+        ${currentPage === totalPages
+                            ? " border-gray-200 cursor-not-allowed bg-blue-600 text-white font-medium"
+                            : " hover:bg-blue-700 border-gray-300 bg-blue-600 text-white font-medium"
+                          }`}
                       >
                         › {/* Right Arrow */}
                       </button>
@@ -1180,55 +1185,55 @@ const Task_details = () => {
                   <p className="text-red-500 text-sm mb-4">{errors.title}</p>
                 )}
 
-                 <div className="mt-5 items-center">
-                      <label className="block text-md font-medium mb-2">
-                        Task Type{" "}
-                        <span className="text-red-500">*</span>
+                <div className="mt-5 items-center">
+                  <label className="block text-sm font-medium mb-2 mt-3">
+                    Task Type{" "}
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <div className="w-full rounded-lg">
+                    <div className="flex flex-wrap md:flex-nowrap items-center w-full gap-5 mb-2 md:mb-4">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="taskType"
+                          value="bug"
+                          checked={taskType === "bug"}
+                          onChange={() => setTaskType("bug")}
+                          className="text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <span className="text-gray-700">Bug</span>
                       </label>
-                      <div className="w-full rounded-lg">
-                        <div className="flex flex-wrap md:flex-nowrap items-center w-full gap-5 mb-2 md:mb-4">
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="radio"
-                              name="taskType"
-                              value="bug"
-                              checked={taskType === "bug"}
-                              onChange={() => setTaskType("bug")}
-                              className="text-indigo-600 focus:ring-indigo-500"
-                            />
-                            <span className="text-gray-700">Bug</span>
-                          </label>
 
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="radio"
-                              name="taskType"
-                              value="maintainance"
-                              checked={taskType === "maintainance"}
-                              onChange={() => setTaskType("maintainance")}
-                              className="text-indigo-600 focus:ring-indigo-500"
-                            />
-                            <span className="text-gray-700">Maintainance</span>
-                          </label>
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="radio"
-                              name="taskType"
-                              value="newRequirement"
-                              checked={taskType === "newRequirement"}
-                              onChange={() => setTaskType("newRequirement")}
-                              className="text-indigo-600 focus:ring-indigo-500"
-                            />
-                            <span className="text-gray-700">New Requirement</span>
-                          </label>
-                        </div>
-                        {errors.taskType && (
-                          <p className="flex justify-start text-red-500 text-sm ">
-                            {errors.taskType}
-                          </p>
-                        )}
-                      </div>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="taskType"
+                          value="maintainance"
+                          checked={taskType === "maintainance"}
+                          onChange={() => setTaskType("maintainance")}
+                          className="text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <span className="text-gray-700">Maintainance</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="taskType"
+                          value="newRequirement"
+                          checked={taskType === "newRequirement"}
+                          onChange={() => setTaskType("newRequirement")}
+                          className="text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <span className="text-gray-700">New Requirement</span>
+                      </label>
                     </div>
+                    {errors.taskType && (
+                      <p className="flex justify-start text-red-500 text-sm ">
+                        {errors.taskType}
+                      </p>
+                    )}
+                  </div>
+                </div>
 
                 <label
                   htmlFor="roleName"
@@ -1260,7 +1265,7 @@ const Task_details = () => {
                     value={assignTo}
                     onChange={(e) => setAssignTo(e.value)}
                     // options={filteredEmployees}
-                     options={projectname ? filteredEmployees : []}
+                    options={projectname ? filteredEmployees : []}
                     placeholder="Select Employee"
                     filter
                     className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1513,55 +1518,70 @@ const Task_details = () => {
                   <p className="text-red-500 text-sm mb-4">{errors.title}</p>
                 )}
 
-                 <div className="mt-5 items-center">
-                      <label className="block text-md font-medium mb-2">
-                        Task Type{" "}
-                        <span className="text-red-500">*</span>
-                      </label>
-                      <div className="w-full rounded-lg">
-                        <div className="flex flex-wrap md:flex-nowrap items-center w-full gap-5 mb-2 md:mb-4">
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="radio"
-                              name="taskType"
-                              value="bug"
-                              checked={taskTypeEdit === "bug"}
-                              onChange={() => setTaskTypeEdit("bug")}
-                              className="text-indigo-600 focus:ring-indigo-500"
-                            />
-                            <span className="text-gray-700">Bug</span>
-                          </label>
+                <div className="mt-5 items-center">
+                  <label className="block text-sm font-medium mb-2 mt-3">
+                    Task Type <span className="text-red-500">*</span>
+                  </label>
 
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="radio"
-                              name="taskType"
-                              value="maintainance"
-                              checked={taskTypeEdit === "maintainance"}
-                              onChange={() => setTaskTypeEdit("maintainance")}
-                              className="text-indigo-600 focus:ring-indigo-500"
-                            />
-                            <span className="text-gray-700">Maintainance</span>
-                          </label>
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="radio"
-                              name="taskType"
-                              value="newRequirement"
-                              checked={taskTypeEdit === "newRequirement"}
-                              onChange={() => setTaskTypeEdit("newRequirement")}
-                              className="text-indigo-600 focus:ring-indigo-500"
-                            />
-                            <span className="text-gray-700">New Requirement</span>
-                          </label>
-                        </div>
-                        {errors.taskType && (
-                          <p className="flex justify-start text-red-500 text-sm ">
-                            {errors.taskType}
-                          </p>
-                        )}
-                      </div>
+                  <div className="w-full rounded-lg">
+                    <div className="flex flex-wrap md:flex-nowrap items-center w-full gap-5 mb-2 md:mb-4">
+
+                      {/* BUG */}
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="taskType"
+                          value="bug"
+                          checked={taskData.taskType === "bug"}
+                          onChange={(e) =>
+                            setTaskData({ ...taskData, taskType: e.target.value })
+                          }
+                          className="text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <span className="text-gray-700">Bug</span>
+                      </label>
+
+                      {/* MAINTENANCE */}
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="taskType"
+                          value="maintainance"
+                          checked={taskData.taskType === "maintainance"}
+                          onChange={(e) =>
+                            setTaskData({ ...taskData, taskType: e.target.value })
+                          }
+                          className="text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <span className="text-gray-700">Maintainance</span>
+                      </label>
+
+                      {/* NEW REQUIREMENT */}
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="taskType"
+                          value="newRequirement"
+                          checked={taskData.taskType === "newRequirement"}
+                          onChange={(e) =>
+                            setTaskData({ ...taskData, taskType: e.target.value })
+                          }
+                          className="text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <span className="text-gray-700">New Requirement</span>
+                      </label>
+
                     </div>
+
+                    {errors.taskType && (
+                      <p className="flex justify-start text-red-500 text-sm">
+                        {errors.taskType}
+                      </p>
+                    )}
+
+                  </div>
+                </div>
+
                 <label
                   htmlFor="roleName"
                   className="block text-sm font-medium mb-2 mt-2"
