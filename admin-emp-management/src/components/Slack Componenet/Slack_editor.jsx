@@ -255,16 +255,16 @@ const modules = {
     ]
   };
   return (
-    <div className="relative bg-white border-t border-gray-300 p-4 shadow-md">
+<div className="relative bg-white dark:bg-gray-900 border-t border-gray-300 dark:border-gray-700 p-4 shadow-md">
 
       {/* Emoji Picker */}
       {showEmoji && (
         <div
           ref={emojiRef}
-          className="absolute bottom-20 left-0 z-50 bg-white text-black border border-gray-300 shadow-lg rounded-xl"
+      className="absolute bottom-20 left-0 z-50 bg-white dark:bg-gray-800 text-black dark:text-gray-200 border border-gray-300 dark:border-gray-700 shadow-lg rounded-xl"
         >
           <Picker
-            theme="light"
+            theme="dark"
             onEmojiClick={(e) => setValue((prev) => prev + e.emoji)}
           />
         </div>
@@ -277,7 +277,7 @@ const modules = {
         <div className="flex items-center gap-3 flex-nowrap">
           <Plus
             size={22}
-            className="text-gray-600 hover:text-black transition cursor-pointer"
+        className="text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white transition cursor-pointer"
           />
 
           <input
@@ -289,13 +289,13 @@ const modules = {
 
           <Paperclip
             size={22}
-            className="text-gray-600 hover:text-black transition cursor-pointer"
+        className="text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white transition cursor-pointer"
             onClick={() => fileInputRef.current.click()}
           />
 
           <SmilePlus
             size={22}
-            className="text-gray-600 hover:text-black transition cursor-pointer"
+        className="text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white transition cursor-pointer"
             onClick={() => setShowEmoji(!showEmoji)}
           />
         </div>
@@ -303,20 +303,20 @@ const modules = {
         {/* Send Button */}
         <button
           onClick={handleSend}
-          className="flex items-center gap-2 bg-black text-white hover:bg-gray-800 px-4 py-2 font-medium rounded-lg shadow-md transition"
+      className="flex items-center gap-2 bg-black dark:bg-blue-600 text-white hover:bg-gray-800 dark:hover:bg-blue-700 px-4 py-2 font-medium rounded-lg shadow-md transition"
         >
           <Send size={18} /> Send
         </button>
       </div>
 
       {/* Editor */}
-      <div className="bg-white border border-gray-300 rounded-xl overflow-hidden shadow-inner">
+  <div className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl overflow-hidden shadow-inner">
         <ReactQuill
           theme="snow"
           value={value}
           onChange={setValue}
           placeholder="Message…"
-          className="text-black bg-white"
+      className="text-black dark:text-gray-200 bg-white dark:bg-gray-800"
          
           modules={{
   toolbar: [

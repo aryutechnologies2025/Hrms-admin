@@ -258,7 +258,7 @@ export default function Slack_chatwindow(activeChat) {
 
 
   return (
-    <div className="w-full h-screen flex flex-col bg-gray-100">
+<div className="w-full h-screen flex flex-col bg-gray-100 dark:bg-gray-900">
 
       {/* Header */}
       <Slack_header theme="light" />
@@ -271,7 +271,7 @@ export default function Slack_chatwindow(activeChat) {
         <p className="font-semibold text-lg">{Alldeatils.title}</p>
       </div> */}
 
-      <div className="h-14 bg-white flex items-center gap-3 px-4 shadow">
+      <div className="h-14 bg-white dark:bg-gray-800 flex items-center gap-3 px-4 shadow">
         <div className="relative">
           <img
             src={Alldeatils.avatar}
@@ -285,7 +285,7 @@ export default function Slack_chatwindow(activeChat) {
           )}
         </div>
 
-        <p className="font-semibold text-lg">{Alldeatils.title}</p>
+    <p className="font-semibold text-lg text-black dark:text-gray-200">{Alldeatils.title}</p>
       </div>
 
       {/* Messages */}
@@ -348,13 +348,13 @@ export default function Slack_chatwindow(activeChat) {
   <div ref={messagesEndRef} />
 </div> */}
 
-      <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-white shadow-inner">
+      <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-white dark:bg-gray-800  shadow-inner">
         {messages.map((msg) => (
           <div
             key={msg.id}
             className="flex flex-col group relative"  // group for hover
           >
-            <div className="flex items-start gap-2 p-2 rounded-lg hover:bg-gray-50">
+        <div className="flex items-start gap-2 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
 
               {/* Avatar */}
               <img
@@ -367,13 +367,13 @@ export default function Slack_chatwindow(activeChat) {
 
                 {/* Sender + Time */}
                 <div className="flex items-center gap-2">
-                  <p className="font-semibold text-black">{msg.sender}</p>
-                  <span className="text-xs text-gray-500">{msg.time}</span>
+                  <p className="font-semibold text-black dark:text-gray-200">{msg.sender}</p>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">{msg.time}</span>
                 </div>
 
                 {/* Reply Preview Block */}
                 {msg.replyTo && (
-                  <div className="bg-gray-100 border-l-4 border-blue-500 px-2 py-1 text-sm text-gray-600 mb-1 rounded">
+                  <div className="bg-gray-100 dark:bg-gray-700 border-l-4 border-blue-500 px-2 py-1 text-sm text-gray-600 mb-1 rounded">
                     Replying to <b>{msg.replyTo.sender}</b>:{" "}
                     {stripHTML(msg.replyTo.message).slice(0, 40)}...
                   </div>
@@ -381,7 +381,7 @@ export default function Slack_chatwindow(activeChat) {
 
                 {/* Message */}
                 <div
-                  className="text-black"
+                  className="text-black dark:text-gray-200"
                   dangerouslySetInnerHTML={{ __html: msg.message }}
                 />
               </div>
@@ -394,7 +394,7 @@ export default function Slack_chatwindow(activeChat) {
           absolute right-2 top-2 
           hidden group-hover:flex 
           items-center gap-1 
-          text-gray-600 hover:text-blue-600 
+            text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400
           text-xs px-2 py-1 
           rounded-md
         "
@@ -410,15 +410,15 @@ export default function Slack_chatwindow(activeChat) {
 
 
       {replyTo && (
-        <div className="px-4 py-2 bg-blue-50 border-l-4 border-blue-500 mb-1 flex justify-between items-center">
+    <div className="px-4 py-2 bg-blue-50/30 dark:bg-blue-900/20 border-l-4 border-blue-500 mb-1 flex justify-between items-center">
           <div>
-            <p className="font-semibold">Replying to {replyTo.sender}</p>
-            <p className="text-gray-600 text-sm"> {stripHTML(replyTo.message)}</p>
+            <p className="font-semibold text-black dark:text-gray-200">Replying to {replyTo.sender}</p>
+            <p className="text-gray-600 dark:text-gray-300  text-sm"> {stripHTML(replyTo.message)}</p>
           </div>
 
           <button
             onClick={() => setReplyTo(null)}
-            className="text-red-500 text-sm font-semibold"
+            className="text-red-500 dark:text-red-400 text-sm font-semibold"
           >
             Cancel
           </button>

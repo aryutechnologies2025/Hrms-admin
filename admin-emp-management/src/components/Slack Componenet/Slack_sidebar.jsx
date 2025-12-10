@@ -310,7 +310,9 @@ import { MultiSelect } from "primereact/multiselect";
 import axios from "axios";
 import { API_URL } from "../../config";
 
-export default function Slack_sidebar({ setActiveChat }) {
+export default function Slack_sidebar({ setActiveChat, darkMode }) {
+
+    console.log("darkMode", darkMode)
 
 
 
@@ -427,12 +429,12 @@ export default function Slack_sidebar({ setActiveChat }) {
             alert("Please enter channel name & select employee!");
             return;
         }
- const isPrivate = channelType === "private";
+        const isPrivate = channelType === "private";
         if (editingChannel) {
             setChannels(
                 channels.map((ch) =>
                     ch.id === editingChannel.id
-                        ? { ...ch, name: newChannelName, createdBy: selectedEmployee,private: isPrivate }
+                        ? { ...ch, name: newChannelName, createdBy: selectedEmployee, private: isPrivate }
                         : ch
                 )
             );
@@ -469,14 +471,17 @@ export default function Slack_sidebar({ setActiveChat }) {
 
 
     return (
-        <div className="w-[30%] bg-white text-black flex flex-col border-r border-gray-300">
+        <div className="w-[30%] bg-white text-black flex flex-col border-r   border-gray-300
+      dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700">
 
             {/* Workspace Title */}
-            <div className="p-4 pb-3 text-lg font-semibold border-b border-gray-300 bg-white">
+            <div className="p-4 pb-3 text-lg font-semibold border-b border-gray-300 
+            bg-white dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700">
                 Aryu Enterprises Pvt Ltd
             </div>
 
-            <div className="flex-1 overflow-y-auto px-3 pt-4 pb-6 space-y-6">
+
+            <div className="flex-1 overflow-y-auto px-3 pt-4 pb-6 space-y-3">
 
                 {/* THREADS */}
                 <div
@@ -487,7 +492,9 @@ export default function Slack_sidebar({ setActiveChat }) {
                             type: "threads",
                         })
                     }
-                    className="flex items-center gap-2 text-gray-500 text-xs uppercase cursor-pointer"
+                    // className="flex items-center gap-2 text-gray-500 text-xs uppercase cursor-pointer"
+                    className="flex items-center gap-2  text-gray-500 text-xs uppercase cursor-pointer
+             hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-md transition"
                 >
                     <MessageCircle size={14} />
                     Threads
@@ -501,7 +508,9 @@ export default function Slack_sidebar({ setActiveChat }) {
                             type: "General",
                         })
                     }
-                    className="flex items-center gap-2 text-gray-500 text-xs uppercase cursor-pointer"
+                    // className="flex items-center gap-2 text-gray-500 text-xs uppercase cursor-pointer"
+                    className="flex items-center gap-2 text-gray-500 text-xs uppercase cursor-pointer
+             hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-md transition"
                 >
                     #
                     General
@@ -509,7 +518,11 @@ export default function Slack_sidebar({ setActiveChat }) {
 
                 {/* CHANNELS */}
                 <div>
-                    <div className="flex justify-between items-center text-gray-500 text-xs uppercase cursor-pointer">
+                    <div
+                        // className="flex justify-between items-center text-gray-500 text-xs uppercase cursor-pointer"
+                        className="flex justify-between items-center gap-2 text-gray-500 text-xs uppercase cursor-pointer
+             hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-md transition"
+                    >
                         <div
                             className="flex items-center gap-2"
                             onClick={() => setShowChannels(!showChannels)}
@@ -520,7 +533,7 @@ export default function Slack_sidebar({ setActiveChat }) {
 
                         <Plus
                             size={18}
-                            className="cursor-pointer hover:text-black"
+                            className="cursor-pointer hover:text-black dark:hover:text-white"
                             onClick={() => {
                                 setEditingChannel(null);
                                 setNewChannelName("");
@@ -542,17 +555,20 @@ export default function Slack_sidebar({ setActiveChat }) {
                                             type: "channel",
                                         })
                                     }
-                                    className="flex items-center justify-between p-2 rounded-md bg-gray-100 hover:bg-gray-200 cursor-pointer group"
+                                    className="flex items-center justify-between p-2 rounded-md
+                     bg-gray-100 dark:bg-gray-800
+                     hover:bg-gray-200 dark:hover:bg-gray-700
+                     cursor-pointer group transition"
                                 >
                                     <div className="flex items-center gap-2">
                                         {ch.private ? <Lock size={16} /> : <Hash size={16} />}
-                                        <span className="text-sm">{ch.name}</span>
+                                        <span className="text-sm text-black dark:text-gray-200">{ch.name}</span>
                                     </div>
 
                                     <div className="flex items-center gap-3 opacity-0 group-hover:opacity-100">
                                         <Pencil
                                             size={16}
-                                            className="cursor-pointer"
+                                            className="cursor-pointer text-black dark:text-gray-200"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 editChannel(ch);
@@ -574,10 +590,11 @@ export default function Slack_sidebar({ setActiveChat }) {
                 </div>
 
                 {/* DIRECT MESSAGES */}
-                {/* DIRECT MESSAGES */}
                 <div>
                     <div
-                        className="flex items-center gap-2 text-gray-500 text-xs uppercase cursor-pointer"
+                        // className="flex items-center gap-2 text-gray-500 text-xs uppercase cursor-pointer"
+                        className="flex  items-center gap-2 text-gray-500 text-xs uppercase cursor-pointer
+             hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-md transition"
                         onClick={() => setShowDM(!showDM)}
                     >
                         {showDM ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
@@ -629,12 +646,18 @@ export default function Slack_sidebar({ setActiveChat }) {
                                             setActiveChat({
                                                 title: dm.employee_Name,
                                                 avatar: dm.employee_Image,
-                                                online:dm.online,
+                                                online: dm.online,
                                                 type: "dm",
                                             });
                                         }}
+                                        //                                 className={`flex items-center justify-between px-2 py-2 rounded-md cursor-pointer
+                                        //   ${isActive ? "bg-gray-200" : "hover:bg-gray-100"}`}
+
                                         className={`flex items-center justify-between px-2 py-2 rounded-md cursor-pointer
-          ${isActive ? "bg-gray-200" : "hover:bg-gray-100"}`}
+              ${isActive
+                                                ? "bg-gray-200 dark:bg-gray-700"
+                                                : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                                            } transition`}
                                     >
                                         {/* LEFT: Avatar + Name */}
                                         <div className="flex items-center gap-2">
@@ -651,7 +674,7 @@ export default function Slack_sidebar({ setActiveChat }) {
                                                 )}
                                             </div>
 
-                                            <span className="truncate text-sm">{dm.employee_Name}</span>
+                                            <span className="truncate text-sm text-black dark:text-gray-200">{dm.employee_Name}</span>
                                         </div>
 
                                         {/* UNREAD MESSAGE BADGE */}
@@ -673,8 +696,8 @@ export default function Slack_sidebar({ setActiveChat }) {
             {/* CREATE/EDIT CHANNEL MODAL */}
             {showCreateModal && (
                 <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-xl w-[50%] border shadow-2xl">
-                        <h3 className="text-lg font-semibold mb-4">
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl w-[50%] border border-gray-300 dark:border-gray-600 shadow-2xl">
+                        <h3 className="text-lg font-semibold mb-4 text-black dark:text-gray-200">
                             {editingChannel ? "Edit Channel" : "Create Channel"}
                         </h3>
 
@@ -683,7 +706,9 @@ export default function Slack_sidebar({ setActiveChat }) {
                             placeholder="Enter channel name"
                             value={newChannelName}
                             onChange={handleChannelInput}
-                            className="w-full border px-3 py-2 rounded-md mb-4"
+                            // className="w-full border px-3 py-2 rounded-md mb-4"
+                            className="w-full border border-gray-300 dark:border-gray-600 px-3 py-2 rounded-md mb-4
+                   bg-white dark:bg-gray-700 text-black dark:text-gray-200"
                         />
 
                         <MultiSelect
@@ -692,12 +717,14 @@ export default function Slack_sidebar({ setActiveChat }) {
                             options={employees}
                             filter
                             placeholder="Select Employees"
-                            className="w-full border rounded-lg"
+                            // className="w-full border rounded-lg"
+                            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg
+                   bg-white dark:bg-gray-700 text-black dark:text-gray-200"
                             display="chip"
                         />
 
-                         <div className="flex items-center gap-6 my-4">
-                            <label className="flex items-center gap-2 cursor-pointer">
+                        <div className="flex items-center gap-6 my-4">
+                            <label className="flex items-center gap-2 cursor-pointer text-black dark:text-gray-200">
                                 <input
                                     type="radio"
                                     name="channelType"
@@ -710,7 +737,7 @@ export default function Slack_sidebar({ setActiveChat }) {
                                 </span>
                             </label>
 
-                            <label className="flex items-center gap-2 cursor-pointer">
+                            <label className="flex items-center gap-2 cursor-pointer text-black dark:text-gray-200">
                                 <input
                                     type="radio"
                                     name="channelType"
@@ -724,20 +751,20 @@ export default function Slack_sidebar({ setActiveChat }) {
                             </label>
                         </div>
 
-                        <div className="text-xs text-gray-500 mt-3 mb-4">
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-3 mb-4">
                             Channel URL: <b>#{newChannelName || "your-channel"}</b>
                         </div>
 
                         <div className="flex justify-end gap-3">
                             <button
-                                className="px-3 py-1 rounded bg-gray-200"
+                                className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-black dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
                                 onClick={() => setShowCreateModal(false)}
                             >
                                 Cancel
                             </button>
 
                             <button
-                                className="px-3 py-1 rounded bg-black text-white"
+                                className="px-3 py-1 rounded bg-black text-white hover:bg-gray-800 dark:hover:bg-gray-900 transition"
                                 onClick={createChannel}
                             >
                                 {editingChannel ? "Update" : "Create"}
