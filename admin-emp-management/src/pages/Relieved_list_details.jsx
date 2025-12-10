@@ -49,6 +49,9 @@ const Relieved_list_details = () => {
   const EmpolyeeId = alldatarow.id;
 
   // console.log("EmpolyeeId",EmpolyeeId);
+  window.onClickCard = function (id) {
+  navigate(`/employeedetails/${id}`);
+};
 
 
   const openAddModal = (row) => {
@@ -230,13 +233,23 @@ const Relieved_list_details = () => {
     },
 
     {
-      title: "Employee",
-      data: null,
-      render: (row) => {
-        
-        return `${row.employeeName} <br/> <span class="text-blue-500 text-sm"> ${row.role}</span>`;
-      },
-    },
+  title: "Employee",
+  data: null,
+  render: function (data, type, row) {
+    if (!row.employeeId) return "-";
+
+    return `
+      <div class="cursor-pointer" onclick="onClickCard('${row.employeeId._id}')">
+        ${row.employeeName}
+        <br/>
+        <span class="text-blue-600 text-sm">
+          ${row.role || "-"}
+        </span>
+      </div>
+    `;
+  }
+},
+
     {
       title: "Joining Date",
       data: "relievingCheckList.dateOfJoining",
