@@ -24,6 +24,7 @@ import { API_URL } from "../../config";
 import { Column } from "primereact/column";
 import Loader from "../Loader";
 import { useDateUtils } from "../../hooks/useDateUtils";
+import Clock from "./Clock";
 
 const Dashboard_Mainbar = () => {
   const formatDateTime = useDateUtils();
@@ -56,56 +57,7 @@ const Dashboard_Mainbar = () => {
   console.log("announcements", announcements)
   // console.log("interns", interns);
 
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      const formattedTime = ` ${now.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true,
-      })}`;
-      const formattedDate = `${String(now.getDate()).padStart(2, "0")}-${String(
-        now.getMonth() + 1
-      ).padStart(2, "0")}-${now.getFullYear()}`;
-      setCurrentTime(formattedTime);
-      setCurrentDate(formattedDate);
-    };
-
-    updateTime(); // Initial call to set time immediately
-    const interval = setInterval(updateTime, 1000);
-
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, []);
-  let navigate = useNavigate();
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-
-  const formatHours = (hours) =>
-    hours > 12 ? hours - 12 : hours === 0 ? 12 : hours;
-
-  const formatNumber = (number) => (number < 10 ? `0${number}` : number);
-
-  const day = days[currentTime1.getDay()];
-  const month = months[currentTime1.getMonth()];
-  const date = currentTime1.getDate();
-  const hours = formatHours(currentTime1.getHours());
-  const minutes = formatNumber(currentTime1.getMinutes());
-  const seconds = formatNumber(currentTime1.getSeconds());
-  const amPm = currentTime1.getHours() >= 12 ? "PM" : "AM";
+ 
 
   const getApiData = async () => {
     try {
@@ -117,7 +69,9 @@ const Dashboard_Mainbar = () => {
       const response = await axios.get(`${API_URL}/api/employees/dashboard`, {
         params: {
           role: "Admin",
-        }
+        },
+        withCredentials: true, // Include cookies with the request
+      
       });
       console.log("Response:", response.data.data);
       const {
@@ -261,12 +215,13 @@ const Dashboard_Mainbar = () => {
               <p className="font-semibold">Dashboard</p>
 
               <div className="font-medium text-sm lg:text-base text-center lg:text-left">
-                <span>{day}, </span>
+                {/* <span>{day}, </span>
                 <span>{date} </span>
                 <span>{month} </span>
                 <span className="inline-block  text-center">
                   {hours}:{minutes}:{seconds} {amPm}
-                </span>
+                </span> */}
+                <Clock/>
               </div>
             </div>
             {/* 
