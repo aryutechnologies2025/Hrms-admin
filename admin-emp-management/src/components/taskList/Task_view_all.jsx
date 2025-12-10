@@ -65,6 +65,8 @@ function Task_view_all() {
   const [projectDescription, setProjectDescription] = useState("");
   const [priority, setPriority] = useState("");
   const [assignToChange, setAssignToChange] = useState("");
+  const [taskType, setTaskType] = useState("");
+  console.log("taskType", taskType);
 
   // const handleStatusChange = (e) => {
   //   const newStatus = e.target.value;
@@ -172,6 +174,7 @@ function Task_view_all() {
         setTester(response?.data?.data?.testerStatus || "-");
         setSubTasks(response?.data?.data?.subtasks || []);
         setAssignToChange(response?.data?.data?.assignedTo?._id || "");
+        setTaskType(response?.data?.data?.taskType);
         setMessage(response?.data?.data?.comments || "");
       } else {
         console.log("Failed to fetch roles.");
@@ -301,6 +304,7 @@ function Task_view_all() {
       );
 
       console.log("Assigned updated:", response.data);
+      fetchProjectall()
 
       toast.success("Task assigned updated successfully");
       fetchProjectlogs();
@@ -311,6 +315,52 @@ function Task_view_all() {
       );
       fetchProjectall();
     }
+  };
+  const handleTaskTypetoChange = async (e) => {
+    const newAssignedTo = e.taskType;
+    console.log("newAssignedTo", newAssignedTo);
+    setTaskType(newAssignedTo);
+
+    const now = new Date().toISOString();
+    // let updatedStartTime = startTime;
+    // let updatedStopTime = stopTime;
+
+    // if (newStatus === "in-progress" && !startTime) {
+    //   updatedStartTime = now;
+    //   setStartTime(now);
+    // } else if (newStatus === "in-review" && !stopTime) {
+    //   updatedStopTime = now;
+    //   setStopTime(now);
+    // }
+    const payload = {
+      taskType: newAssignedTo,
+      // startTime: updatedStartTime,
+      // endTime: updatedStopTime,
+      status: e.status,
+      updatedAt: now,
+      updatedBy: employeeeId,
+    };
+
+    console.log("coming asss 2,", payload);
+    try {
+      const response = await axios.patch(
+        `${API_URL}/api/task/updated-status/${taskId}`,
+        payload
+      );
+
+      console.log("Assigned updated:", response.data);
+
+      toast.success("Task assigned updated successfully");
+      // window.location.reload();
+      fetchProjectall();
+      fetchProjectlogs();
+    } catch (error) {
+      
+      console.error("Error updating status:", error);
+      toast.error(
+        error?.response?.data?.message || "Failed to update task  asssignedTo."
+      );
+      }
   };
 
   // messages
@@ -1636,6 +1686,29 @@ function Task_view_all() {
                     />
                   </div>
                 </div>
+               <div className="flex flex-col md:flex-row md:items-center gap-4">
+  {/* Label */}
+  <div className="w-full md:w-1/2 font-bold text-[14px] text-gray-500">
+    Task Type
+  </div>
+
+  {/* Dropdown */}
+  <select
+    name="taskType"
+    value={alldata.taskType}
+    onChange={(e) =>
+      handleTaskTypetoChange({ ...alldata, taskType: e.target.value })
+    }
+    className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-500"
+  >
+    <option value="">Select Task Type</option>
+    <option value="bug">Bug</option>
+    <option value="maintainance">Maintenance</option>
+    <option value="newRequirement">New Requirement</option>
+  </select>
+</div>
+
+
 
                 {/* created by */}
                 <div className="flex flex-wrap md:flex-nowrap items-center space-x-4">
