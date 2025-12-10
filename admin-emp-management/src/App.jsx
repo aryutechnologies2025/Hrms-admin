@@ -311,8 +311,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
         </ProtectedRoute>
       ),
     },
-    
-
+  
     /* -------------------------------------------
      ADMIN MODULE: ON BOARDING
   --------------------------------------------*/
