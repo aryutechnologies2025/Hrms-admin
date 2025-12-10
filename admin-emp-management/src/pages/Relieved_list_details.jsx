@@ -233,7 +233,16 @@ const Relieved_list_details = () => {
       title: "Employee",
       data: null,
       render: (row) => {
-        return `${row.employeeName}<br/>${row.employeeId}`;
+        
+        return `${row.employeeName} <br/> <span class="text-blue-500 text-sm"> ${row.role}</span>`;
+      },
+    },
+    {
+      title: "Joining Date",
+      data: "relievingCheckList.dateOfJoining",
+      render: (data) => {
+        if (!data) return "-";
+        return formatDateTime(data);
       },
     },
     {
@@ -745,7 +754,7 @@ const Relieved_list_details = () => {
   // };
 
   return (
-    <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-5">
+    <div className="flex flex-col justify-between bg-gray-100 w-full min-h-screen px-3 md:px-5 pt-2 md:pt-5 overflow-x-auto">
       {loading ? (
         <Loader />
       ) : (
