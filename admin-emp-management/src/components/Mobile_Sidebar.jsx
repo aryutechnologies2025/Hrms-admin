@@ -787,6 +787,14 @@ const Mobile_Sidebar = () => {
                             >
                               Candidate
                             </button>
+                            <button
+                              onClick={() =>
+                                onClickSidebarMenu("source-Recruitment")
+                              }
+                              className="hover:bg-blue-100 px-2 py-1 rounded-full"
+                            >
+                              Source
+                            </button>
                           </div>
                         </div>
                       )}

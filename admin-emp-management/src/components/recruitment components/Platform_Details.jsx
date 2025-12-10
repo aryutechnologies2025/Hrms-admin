@@ -292,13 +292,13 @@ const Platform_Details = () => {
                 Dashboard
               </p>
           <IoIosArrowForward className="w-3 h-3" />
-          <p className="text-sm text-blue-500">Platform</p>
+          <p className="text-sm text-blue-500">Source</p>
           </div>
 
         {/* Add Button */}
         <div className="flex justify-between mt-1 md:mt-4">
           <div className="">
-            <h1 className="text-2xl md:text-3xl font-semibold">Platform</h1>
+            <h1 className="text-2xl md:text-3xl font-semibold">Source</h1>
           </div>
 
           <button
@@ -348,7 +348,7 @@ const Platform_Details = () => {
               </div>
 
               <div className="p-5">
-                <p className="text-2xl md:text-3xl font-medium">Add Platform</p>
+                <p className="text-2xl md:text-3xl font-medium">Add Source</p>
                 <div className="mt-5 flex justify-between items-center">
                   <label className="block text-md font-medium mb-2">
                     Name <span className="text-red-500">*</span>
@@ -436,7 +436,7 @@ const Platform_Details = () => {
               </div>
 
               <div className="p-5">
-                <p className="text-2xl md:text-3xl font-medium">Edit Platform</p>
+                <p className="text-2xl md:text-3xl font-medium">Edit Source</p>
                 <div className="mt-5 flex justify-between items-center">
                   <label className="block text-md font-medium mb-2">
                     Name <span className="text-red-500">*</span>
