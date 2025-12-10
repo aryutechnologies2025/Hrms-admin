@@ -1049,8 +1049,8 @@ const CreateEmployee_Mainbar = () => {
     const isAddress1Valid = address1 !== "" ? true : false;
     const isAddress2Valid = address2 !== "" ? true : false;
 
-    const isEmergencyNameValid =
-      emergency_fullname.trim() !== "" ? true : false;
+    // const isEmergencyNameValid =
+    //   emergency_fullname.trim() !== "" ? true : false;
     const isEmergencyContactValid = phoneRegex.test(emergencyContact);
     const isRelationTypeValid = emergency_relationtype !== "" ? true : false;
 
@@ -1067,25 +1067,26 @@ const CreateEmployee_Mainbar = () => {
     const isselectedEmployeeOption =
       selectedEmployeeOption !== null ? true : false;
     // const isselectedRolesValid = selectedRoles.length > 0 ? true : false;
-    const isselectedRolesValid = selectedPositionId !== null ? true : false;
-    const isselectedDepartmentOptionValid =
-      selectedDepartmentOption !== null ? true : false;
+    // const isselectedRolesValid = selectedPositionId !== null ? true : false;
+    // const isselectedDepartmentOptionValid =
+    //   selectedDepartmentOption !== null ? true : false;
 
-    const isselectedEmployeeTypeId = employeeWorkType !== "" ? true : false;
+    // const isselectedEmployeeTypeId = employeeWorkType !== "" ? true : false;
 
     // //education info
     // const isSchoolNameValid = schoolName.trim() !== '' ? true : false;
     // const isDepartmentNameValid = departmentName.trim() !== '' ? true : false;
     // const isendYeadValid = endYear.trim() !== '' ? true : false;
 
-    const isphotovalid = selectedImage !== null ? true : false;
+    // const isphotovalid = selectedImage !== null ? true : false;
     const touchedValues = {
-      employeeId: isEmpoyeeIDValid,
-      fullName: isFullNameValid,
-      phoneNum: isPhoneNumValid,
+      // employeeId: isEmpoyeeIDValid,
+      // fullName: isFullNameValid,
+      // phoneNum: isPhoneNumValid,
       email: isEmailValid,
       password: isPasswordValid,
-      dateOfJoin: isDateofJoinValid,
+      // dateOfJoin: isDateofJoinValid,
+
       // passportNo: ispassportNoValid,
       // panNo: ispanNumberValid,
       // aadharNo: isaadharNumberValid,
@@ -1093,21 +1094,22 @@ const CreateEmployee_Mainbar = () => {
       // MaritalStatus: ismaritalStatusValid,
       // spousename: isSpouseNameValid,
 
-      fathername: true,
-      mothername: true,
-      address1error: true,
-      address2error: true,
-      passportNo: true,
-      panNo: true,
-      aadharNo: true,
-      dob: true,
-      MaritalStatus: true,
-      spousename: true,
+      // fathername: true,
+      // mothername: true,
+      // address1error: true,
+      // address2error: true,
+      // passportNo: true,
+      // panNo: true,
+      // aadharNo: true,
+      // dob: true,
+      // MaritalStatus: true,
+      // spousename: true,
 
-      fathername: true,
-      mothername: true,
-      address1error: true,
-      address2error: true,
+      // fathername: true,
+      // mothername: true,
+      // address1error: true,
+      // address2error: true,
+
       // uanNumber: isuanNumber,
       // pfJoinDate: ispfjoindateValid,
       // pfExpiryDate: ispfExpdateValid,
@@ -1118,22 +1120,32 @@ const CreateEmployee_Mainbar = () => {
       // BankName: isBankNameValid,
       // ifscCode: isIfscCodeValid,
       // accountbranch: isbankBranchValid,
-      emergencyName: true,
-      emergencyContact: true,
-      emergencyRelationType: true,
-      accountNumber: true,
-      BankName: true,
-      ifscCode: true,
-      accountbranch: true,
+      
+      // emergencyName: true,
+      // emergencyContact: true,
+      // emergencyRelationType: true,
+      // accountNumber: true,
+      // BankName: true,
+      // ifscCode: true,
+      // accountbranch: true,
+
+
       // SalaryBasis: issalaryBasisValid,
-      salaryAmount: true,
+
+      // salaryAmount: true,
+
+
       // EffectiveDate: iseffectiveDateValid,
-      PaymentType: true,
+
+      // PaymentType: true,
+
       // SelectedEmployeeTypeOption: isselectedEmployeeOption,
-      SelectedRolestype: isselectedRolesValid,
+
+      // SelectedRolestype: isselectedRolesValid,
+
       // SelectedDepartmentOption: isselectedDepartmentOptionValid,
-      UploadPhoto: isphotovalid,
-      employeeType: isselectedEmployeeTypeId,
+      // UploadPhoto: isphotovalid,
+      // employeeType: isselectedEmployeeTypeId,
     };
 
     // Update touched state
