@@ -290,9 +290,8 @@ const EmployeeDetails_Mainbar = () => {
                     <p className="text-xs text-gray-600">DATE OF JOINING</p>
                     <p className="font-semibold">
                       {/* {employee?.employee_details?.date_of_joining} */}
-                      {new Date(employee?.dateOfJoining)
-                        .toLocaleDateString("en-IN")
-                        .replaceAll("/", "-")}
+                     {formatDateTime(employee?.dateOfJoining)}
+                        
                       {/* {employee?.dateOfJoining} */}
                     </p>
                   </div>

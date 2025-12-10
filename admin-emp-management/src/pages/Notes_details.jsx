@@ -512,7 +512,7 @@ const Notes_details = () => {
                     disabled
                     type="text"
                     value={roleDetails.name}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <div className="my-2">
                     <label
