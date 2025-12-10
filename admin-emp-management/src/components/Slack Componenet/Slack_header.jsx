@@ -25,7 +25,11 @@
 import React, { useState,useRef,useEffect } from "react";
 import { Search, Sun, Moon } from "lucide-react";
 
-export default function Slack_header({ darkMode, setDarkMode }) {
+export default function Slack_header() {
+  const [darkMode, setDarkMode] = useState(false);
+
+
+  console.log("darkMode",darkMode)
   const [menuOpen, setMenuOpen] = useState(false);
   console.log("menuOpen",menuOpen)
 
@@ -100,13 +104,14 @@ useEffect(() => {
 
       {/* Theme Toggle Button */}
 <div className="relative" ref={menuRef}>
-  <button
-    onClick={() => setMenuOpen(!menuOpen)}
-    className="p-2 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-gray-200 
-               hover:bg-gray-200 dark:hover:bg-gray-600 transition flex items-center gap-2"
-  >
-    {darkMode ? <Sun size={16} /> : <Moon size={16} />}
-  </button>
+<button
+  onClick={() => setMenuOpen(!menuOpen)}
+  className="p-2 rounded-xl bg-gray-100 dark:bg-gray-700 text-yellow-500 dark:text-gray-200 
+             hover:bg-gray-200 dark:hover:bg-gray-600 transition flex items-center gap-2"
+>
+  {darkMode ? <Moon size={16} /> : <Sun size={16} className="text-yellow-400" />}
+</button>
+
 
   {/* Floating Panel */}
   {menuOpen && (

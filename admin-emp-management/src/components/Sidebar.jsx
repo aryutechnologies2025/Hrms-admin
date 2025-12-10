@@ -158,15 +158,15 @@ const Sidebar = () => {
   };
 
   return (
-    <div>
+    <div className="">
       <section
-        className={`bg-white max-md:hidden max-h-dvh  transition-all duration-500 flex flex-col  ${
-          arrowClicked ? "w-[60px]" : "w-52"
+        className={`bg-white dark:md:bg-gray-900  max-md:hidden max-h-dvh  transition-all duration-500 flex flex-col  ${
+          arrowClicked ? "w-[60px]" : "w-52 dark:w-48"
         }`}
       >
         <ToastContainer />
         <div
-          className={`fixed flex flex-col  h-full  ${
+          className={`fixed flex flex-col  h-full dark:bg-gray-900 ${
             arrowClicked ? "w-[50px]" : "w-48"
           }`}
         >
@@ -1624,7 +1624,7 @@ const Sidebar = () => {
           </div>
           {/* User Section */}
           <div
-            className={`fixed bottom-0  bg-white ${
+            className={`fixed bottom-0  bg-white dark:bg-gray-900 ${
               arrowClicked ? "w-[60px]" : "w-52"
             }`}
           >
