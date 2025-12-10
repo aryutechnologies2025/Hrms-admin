@@ -324,6 +324,7 @@ export default function Slack_sidebar({ setActiveChat }) {
     const [newChannelName, setNewChannelName] = useState("");
     const [editingChannel, setEditingChannel] = useState(null);
     const [selectedEmployee, setSelectedEmployee] = useState("");
+    const [channelType, setChannelType] = useState("common");
 
     const [channels, setChannels] = useState([
         // { id: 1, name: "general", private: false, createdBy: "John Doe" },
@@ -360,6 +361,9 @@ export default function Slack_sidebar({ setActiveChat }) {
                     employee_Name: employee.employeeName,
 
                     employee_dutyStatus: employee.dutyStatus,
+
+                    online: true,
+                    unreadCount: "2",
 
                 }));
                 const sortedData = transformedData.sort((a, b) =>
@@ -423,12 +427,12 @@ export default function Slack_sidebar({ setActiveChat }) {
             alert("Please enter channel name & select employee!");
             return;
         }
-
+ const isPrivate = channelType === "private";
         if (editingChannel) {
             setChannels(
                 channels.map((ch) =>
                     ch.id === editingChannel.id
-                        ? { ...ch, name: newChannelName, createdBy: selectedEmployee }
+                        ? { ...ch, name: newChannelName, createdBy: selectedEmployee,private: isPrivate }
                         : ch
                 )
             );
@@ -436,7 +440,7 @@ export default function Slack_sidebar({ setActiveChat }) {
             const newChannel = {
                 id: Date.now(),
                 name: newChannelName,
-                private: false,
+                private: isPrivate,
                 createdBy: selectedEmployee,
             };
             setChannels([...channels, newChannel]);
@@ -444,6 +448,7 @@ export default function Slack_sidebar({ setActiveChat }) {
 
         setNewChannelName("");
         setSelectedEmployee("");
+        setChannelType("common")
         setEditingChannel(null);
         setShowCreateModal(false);
     };
@@ -452,6 +457,7 @@ export default function Slack_sidebar({ setActiveChat }) {
         setEditingChannel(channel);
         setNewChannelName(channel.name);
         setSelectedEmployee(channel?.createdBy);
+        setChannelType(channel.private ? "private" : "common");
         setShowCreateModal(true);
     };
 
@@ -579,36 +585,86 @@ export default function Slack_sidebar({ setActiveChat }) {
                     </div>
 
                     {showDM && (
+                        // <div className="mt-3 space-y-1">
+                        //     {directMessages.map((dm) => (
+                        //         <div
+                        //             key={dm.name}
+                        //             onClick={() => {
+                        //                 setActiveUser(dm.
+                        //                     employee_Name
+                        //                 );
+                        //                 setActiveChat({
+                        //                     title: dm.
+                        //                         employee_Name
+                        //                     ,
+                        //                     avatar: dm.employee_Image
+                        //                     ,
+                        //                     type: "dm",
+                        //                 });
+                        //             }}
+                        //             className={`flex items-center gap-2 px-2 py-2 rounded-md cursor-pointer
+                        // ${activeUser === dm.name ? "bg-gray-200" : "hover:bg-gray-100"}`}
+                        //         >
+                        //             <img
+                        //                 src={dm.employee_Image
+                        //                 }
+                        //                 alt={dm.employee_Name}
+                        //                 className="w-7 h-7 rounded-full"
+                        //             />
+                        //             <span className="truncate text-sm">{dm.employee_Name}</span>
+                        //         </div>
+                        //     ))}
+                        // </div>
+
+
                         <div className="mt-3 space-y-1">
-                            {directMessages.map((dm) => (
-                                <div
-                                    key={dm.name}
-                                    onClick={() => {
-                                        setActiveUser(dm.
-                                            employee_Name
-                                        );
-                                        setActiveChat({
-                                            title: dm.
-                                                employee_Name
-                                            ,
-                                            avatar: dm.employee_Image
-                                            ,
-                                            type: "dm",
-                                        });
-                                    }}
-                                    className={`flex items-center gap-2 px-2 py-2 rounded-md cursor-pointer
-                        ${activeUser === dm.name ? "bg-gray-200" : "hover:bg-gray-100"}`}
-                                >
-                                    <img
-                                        src={dm.employee_Image
-                                        }
-                                        alt={dm.employee_Name}
-                                        className="w-7 h-7 rounded-full"
-                                    />
-                                    <span className="truncate text-sm">{dm.employee_Name}</span>
-                                </div>
-                            ))}
+                            {directMessages.map((dm) => {
+                                const isActive = activeUser === dm.employee_Name; // FIXED
+
+                                return (
+                                    <div
+                                        key={dm.employee_Name}
+                                        onClick={() => {
+                                            setActiveUser(dm.employee_Name);
+                                            setActiveChat({
+                                                title: dm.employee_Name,
+                                                avatar: dm.employee_Image,
+                                                online:dm.online,
+                                                type: "dm",
+                                            });
+                                        }}
+                                        className={`flex items-center justify-between px-2 py-2 rounded-md cursor-pointer
+          ${isActive ? "bg-gray-200" : "hover:bg-gray-100"}`}
+                                    >
+                                        {/* LEFT: Avatar + Name */}
+                                        <div className="flex items-center gap-2">
+                                            <div className="relative">
+                                                <img
+                                                    src={dm.employee_Image}
+                                                    alt={dm.employee_Name}
+                                                    className="w-7 h-7 rounded-full"
+                                                />
+
+                                                {/* GREEN ONLINE DOT */}
+                                                {dm.online && (
+                                                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full"></span>
+                                                )}
+                                            </div>
+
+                                            <span className="truncate text-sm">{dm.employee_Name}</span>
+                                        </div>
+
+                                        {/* UNREAD MESSAGE BADGE */}
+                                        {dm.unreadCount > 0 && (
+                                            <span className="bg-green-500 text-white text-xs px-2 py-0.5 rounded-full">
+                                                {dm.unreadCount}
+                                            </span>
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
+
                     )}
                 </div>
 
@@ -639,6 +695,34 @@ export default function Slack_sidebar({ setActiveChat }) {
                             className="w-full border rounded-lg"
                             display="chip"
                         />
+
+                         <div className="flex items-center gap-6 my-4">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="channelType"
+                                    value="common"
+                                    checked={channelType === "common"}
+                                    onChange={() => setChannelType("common")}
+                                />
+                                <span className="flex items-center gap-1 text-sm">
+                                    <Hash size={14} /> Common
+                                </span>
+                            </label>
+
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="channelType"
+                                    value="private"
+                                    checked={channelType === "private"}
+                                    onChange={() => setChannelType("private")}
+                                />
+                                <span className="flex items-center gap-1 text-sm">
+                                    <Lock size={14} /> Private
+                                </span>
+                            </label>
+                        </div>
 
                         <div className="text-xs text-gray-500 mt-3 mb-4">
                             Channel URL: <b>#{newChannelName || "your-channel"}</b>

@@ -239,7 +239,21 @@ export default function Slack_editor({ onSend }) {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
+const modules = {
+    syntax: {
+      highlight: (text) => hljs.highlightAuto(text).value
+    },
+    toolbar: [
+      [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+      [{ 'align': [] }],
+      ['link', 'image', 'video'],
+      ['clean'],
+      ['code-block']
+    ]
+  };
   return (
     <div className="relative bg-white border-t border-gray-300 p-4 shadow-md">
 
@@ -303,13 +317,7 @@ export default function Slack_editor({ onSend }) {
           onChange={setValue}
           placeholder="Message…"
           className="text-black bg-white"
-          // modules={{
-          //   toolbar: [
-          //     ["bold", "italic", "underline"],
-          //     [{ list: "ordered" }, { list: "bullet" }],
-          //     ["code-block", "link"],
-          //   ],
-          // }}
+         
           modules={{
   toolbar: [
     // Text formatting

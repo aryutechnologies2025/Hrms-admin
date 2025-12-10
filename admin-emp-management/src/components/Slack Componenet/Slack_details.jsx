@@ -8,6 +8,7 @@ import Mobile_Sidebar from "../Mobile_Sidebar";
 import { useNavigate } from "react-router-dom";
 import Slack_sidebar from "./Slack_sidebar";
 import Slack_chatwindow from "./Slack_chatwindow";
+import Slack_threads_window from "./Slack_threads_window";
 
 
 const Slack_details = () => {
@@ -30,7 +31,12 @@ const [activeChat, setActiveChat] = useState({
         </div>
             <div className="flex h-screen bg-gray-100">
      <Slack_sidebar setActiveChat={setActiveChat} />
-      <Slack_chatwindow activeChat={activeChat} />
+      {/* <Slack_chatwindow activeChat={activeChat} /> */}
+        {activeChat?.type === "threads" ? (
+    <Slack_threads_window />
+  ) : (
+    <Slack_chatwindow activeChat={activeChat} />
+  )}
     </div>
 
         </div>
