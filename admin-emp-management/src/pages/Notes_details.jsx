@@ -308,41 +308,54 @@ const Notes_details = () => {
   return (
     <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
       <div>
-        
 
-        <div className="flex justify-between gap-2 items-center cursor-pointer">
+
+        <div className="cursor-pointer">
           <Mobile_Sidebar />
-          <div className="flex gap-1 items-center">
-          <p
-            className="text-sm text-gray-500"
-            onClick={() => navigate("/dashboard")}
-          >
-            Dashboard
-          </p>
-          <p>{">"}</p>
-          <p
-            onClick={() => navigate("/employees")}
-            className="text-sm text-gray-500 cursor-pointer "
-          >
-            Employees
-          </p>
-          <p>{">"}</p>
-
-          <p className="text-sm text-blue-500">Notes</p>
-          </div>
+          
         </div>
+        <div className="flex justify-end gap-1 items-center">
+            <p
+              className="text-sm text-gray-500"
+              onClick={() => navigate("/dashboard")}
+            >
+              Dashboard
+            </p>
+            <p>{">"}</p>
+            <p
+              onClick={() => navigate("/employees")}
+              className="text-sm text-gray-500 cursor-pointer "
+            >
+              Employees
+            </p>
+            <p>{">"}</p>
+
+            <p className="text-sm text-blue-500">Notes</p>
+          </div>
 
         {/* Add Button */}
         <div className="flex justify-between mt-2 md:mt-5 mb-1 md:mb-3">
+          <div>
           <h1 className="text-2xl md:text-3xl font-semibold">Notes</h1>
+          </div>
+          <div className="flex justify-between gap-2">
+          <button
+            onClick={() =>
+              navigate(-1)
+            }
+            className="bg-gray-500 hover:bg-gray-600 px-3 py-2 text-white w-20 rounded-2xl hover:scale-105 duration-300"
+          >
+            Back
+          </button>
           <button
             onClick={openAddModal}
-            className="bg-blue-600 px-3 py-2 text-white w-20 rounded-2xl"
+            className="bg-blue-600 hover:bg-blue-500 px-3 py-2 text-white w-20 rounded-2xl"
           >
             Add
           </button>
+          </div>
         </div>
-        
+
 
         <div className="datatable-container">
           {/* Responsive wrapper for the table */}
@@ -378,11 +391,11 @@ const Notes_details = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-               {errors.date && (
-                    <p className="text-red-500 text-sm mb-4">
-                      {errors.date}
-                    </p>
-                  )}
+              {errors.date && (
+                <p className="text-red-500 text-sm mb-4">
+                  {errors.date}
+                </p>
+              )}
 
               {/* Revision Notes */}
               <div className="mb-3">
@@ -394,11 +407,11 @@ const Notes_details = () => {
                   rows={4}
                 ></textarea>
               </div>
-               {errors.notes && (
-                    <p className="text-red-500 text-sm mb-4">
-                      {errors.notes}
-                    </p>
-                  )}
+              {errors.notes && (
+                <p className="text-red-500 text-sm mb-4">
+                  {errors.notes}
+                </p>
+              )}
 
               {/* Buttons */}
               <div className="flex justify-end gap-2">
