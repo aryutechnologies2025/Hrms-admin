@@ -960,7 +960,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       ),
     },
     {
-      path: "/platform-Recruitment",
+      path: "/source-Recruitment",
       permissionTitle: "Recruitment",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">

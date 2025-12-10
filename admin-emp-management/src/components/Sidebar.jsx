@@ -1388,15 +1388,15 @@ const Sidebar = () => {
                           </button>
 
                           <button
-                            onClick={() => navigate("/platform-Recruitment")}
+                            onClick={() => navigate("/source-Recruitment")}
                             className={`px-2 py-1 rounded-full 
     ${
-      currentPath === "/platform-Recruitment"
+      currentPath === "/source-Recruitment"
         ? " text-[#4F46E5]"
         : "hover:bg-blue-100 text-gray-500"
     }`}
                           >
-                            Platform
+                            Source
                           </button>
 
                           <button
