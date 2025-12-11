@@ -93,12 +93,12 @@ const Sidebar = () => {
   //   const logingname = parsedDetails ? parsedDetails.name : "";
   //   setAdminName(logingname);
   // }, []);
-
+  
   const user = JSON.parse(localStorage.getItem("hrmsuser"));
   const email = user?.email ? user?.email : "";
   const id = user?._id ? user?._id : "";
   const client =
-    user?.type === "client" || user?.type === "subuser" ? true : false;
+  user?.type === "client" || user?.type === "subuser" ? true : false;
   const name = user?.name ? user?.name : "";
 
   const clientView = (id) => {
@@ -240,7 +240,7 @@ const Sidebar = () => {
               )}
               
               {/* links */}
-              {hasPermission("Links") && (
+              {!client && hasPermission("Links") && (
                     <div
                       onClick={() => onClickSidebarMenu("links")}
                       className={`flex w-full items-center flex-grow ${
