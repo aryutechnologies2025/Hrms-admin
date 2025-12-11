@@ -3,7 +3,7 @@ import Loader from '../Loader';
 import Footer from '../Footer';
 import Mobile_Sidebar from '../Mobile_Sidebar';
 
-const Complainence_Details = () => {
+const Complaince_Details = () => {
   
   const [loading, setLoading] = useState();
 
@@ -29,13 +29,13 @@ const Complainence_Details = () => {
               </p>
           <p>{">"}</p>
 
-          <p className="text-sm text-blue-500">Complainence</p>
+          <p className="text-sm text-blue-500">Complaince</p>
           </div>
 
         {/* Add Button */}
         <div className="flex justify-between mt-1 md:mt-4">
           <div className="">
-            <h1 className="text-2xl md:text-3xl font-semibold">Complainence</h1>
+            <h1 className="text-2xl md:text-3xl font-semibold">Complaince</h1>
           </div>
 
           {/* <button
@@ -47,7 +47,7 @@ const Complainence_Details = () => {
         </div>
 
         <div className='bg-white rounded-2xl px-2 py-2 md:px-5 md:py-5 flex justify-between mt-1 '>
-        <p>This module was create for complainence note*</p>
+        <p>This module was create for complaince note*</p>
         </div>
 
         <div>
@@ -63,4 +63,4 @@ const Complainence_Details = () => {
     </div>
   );
 };
-export default Complainence_Details;
+export default Complaince_Details;

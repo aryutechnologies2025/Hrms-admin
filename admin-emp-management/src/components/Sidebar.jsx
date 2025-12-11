@@ -256,20 +256,20 @@ const Sidebar = () => {
                     </div>
                   )}
 
-                  {/*complainence*/}
-              {hasPermission("Complainence") && (
+                  {/*complaince*/}
+              {hasPermission("Complaince") && (
                     <div
-                      onClick={() => onClickSidebarMenu("complainence")}
+                      onClick={() => onClickSidebarMenu("complaince")}
                       className={`flex w-full items-center flex-grow ${
                         arrowClicked ? "justify-center  " : "justify-normal"
                       } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                        currentPath === "/complainence"
+                        currentPath === "/complaince"
                           ? "bg-blue-100 text-[#4F46E5]"
                           : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
                       }`}
                     >
                       <GiDiscussion />
-                      {!arrowClicked && <p className="text-sm">Complainence</p>}
+                      {!arrowClicked && <p className="text-sm">Complaince</p>}
                     </div>
                   )}
 
