@@ -16,7 +16,7 @@ import aryu_logo from "../assets/aryu_logo.svg";
 const Client_login = () => {
   let navigate = useNavigate();
 
-  const [error, setError] = useState({});
+  const [error, setError] = useState({}); 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -117,7 +117,7 @@ const inactiveClass = "hover:underline";
    <div className="min-h-screen bg-[#F3F4F6] flex flex-col ">
     <div className="px-3">
   {/* Top Navigation */}
-  <div className="flex justify-center md:justify-end gap-4 py-3 text-sm md:text-lg font-semibold text-[#0050AA]">
+  <div className="flex justify-center md:justify-end gap-4 py-3 text-sm md:text-lg font-medium text-[#0050AA]">
     {/* <Link to="/" className="hover:underline">Admin Login</Link>
     <Link to="/client-user" className="hover:underline">Client User Login</Link> */}
      <nav className="flex text-center gap-4 p-2">
@@ -152,19 +152,19 @@ const inactiveClass = "hover:underline";
  </div>
   {/* Logo */}
   <div className='items-center'>
-  <div className="flex flex-col items-center mt-20 md:mt-0">
+  <div className="flex flex-col items-center mt-20 md:mt-0 xl:mb-2 2xl:mt-14 md:mb-2">
     <img src={aryu_logo} alt="Logo" className="w-20 mb-1" />
-    <p className='text-lg md:text-xl font-semibold text-[#0050AA]'>ARYU PORTAL</p>
+    <p className='text-lg md:text-2xl font-semibold text-[#0050AA]'>ARYU PORTAL</p>
   </div>
   
 
   {/* Main Content */}
-  <div className="flex md:flex-1 items-center justify-center mt-14 md:mt-0 px-4">
+  <div className="flex md:flex-1 items-center justify-center mt-14 md:mt-0 xl:mt-3 2xl:mt-14 mb-5 px-4">
     <div className="flex w-full max-w-6xl bg-white shadow-xl rounded-3xl overflow-hidden">
 
       {/* Left Section (Form) */}
       <div className="flex-1 flex flex-col items-center justify-center p-5 md:p-10">
-        <h1 className="text-[#0050aa] font-semibold text-md md:text-4xl mb-2 md:mb-6">
+        <h1 className="text-[#000000] font-semibold text-md md:text-xl mb-2 md:mb-6">
            CLIENT 
         </h1>
 
@@ -230,7 +230,7 @@ const inactiveClass = "hover:underline";
   </div>
   </div>
   
-  <div className="w-full flex justify-center bottom-0 fixed"><Footer /></div>
+  <div className="w-full md:mt-3 flex justify-center bottom-0 fixed"><Footer /></div>
   
 </div>
   );

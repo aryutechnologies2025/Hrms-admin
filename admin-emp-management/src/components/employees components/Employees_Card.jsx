@@ -18,7 +18,7 @@ import Loader from "../Loader";
 import { FaEye } from "react-icons/fa";
 import { TfiPencilAlt } from "react-icons/tfi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
-import { useDateUtils  } from "../../hooks/useDateUtils";
+import { useDateUtils } from "../../hooks/useDateUtils";
 
 const Employees_Card = () => {
   let navigate = useNavigate();
@@ -67,6 +67,7 @@ const Employees_Card = () => {
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [roleFilter, setRoleFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
+
 
   const fetchEmployees = async () => {
     try {
@@ -265,19 +266,19 @@ const Employees_Card = () => {
     //   },
     // },
     {
-  title: "Current Part",
-  data: "employee_Position",
-  render: function (data) {
-    if (!data) return "-";
+      title: "Current Part",
+      data: "employee_Position",
+      render: function (data) {
+        if (!data) return "-";
 
-    const map = {
-      Intern: "Internship",
-      "Full Time": "Employee",
-    };
+        const map = {
+          Intern: "Internship",
+          "Full Time": "Employee",
+        };
 
-    return map[data] || data;
-  },
-},
+        return map[data] || data;
+      },
+    },
 
     {
       title: "Email",
@@ -292,7 +293,7 @@ const Employees_Card = () => {
       data: "employee_dateofjoining",
       render: function (data) {
         if (!data) return "-";
-        
+
         return formatDateTime(data)
       },
     },
@@ -361,7 +362,7 @@ const Employees_Card = () => {
       ) : (
         <>
           <div>
-            
+
 
             {/* header */}
             {/* date & timing */}
@@ -400,30 +401,30 @@ const Employees_Card = () => {
               <p>{">"}</p>
 
               <p className="text-sm text-blue-500">Employees</p>
-              </div>
+            </div>
 
             <div className="flex flex-wrap  md:flex-row  justify-between ">
               <div>
-              <p className="text-xl md:text-3xl  font-semibold mt-1 md:mt-4">
-                Employees
-              </p>
+                <p className="text-xl md:text-3xl  font-semibold mt-1 md:mt-4">
+                  Employees
+                </p>
               </div>
               <div className="flex justify-between gap-2 ">
-              <button
-                      onClick={() =>
-                        navigate(-1)
-                      }
-                      className=" w-fit text-xs md:text-base text-center mt-1 md:mt-4  text-white bg-gray-500 hover:bg-gray-600 font-medium px-2 md:px-3 py-2 rounded-full "
-                    >
-                      Back
-                    </button>
-              <button
-                onClick={onClickAddNewMember}
-                className=" w-fit text-xs md:text-base text-center mt-1 md:mt-4  text-white bg-blue-500 hover:bg-blue-600 font-medium px-1 md:px-3 py-2 rounded-full "
-              >
-                Add New Member{" "}
-                <BiSolidMessageAltAdd className="inline-block ms-1 md:ms-3" />
-              </button>
+                <button
+                  onClick={() =>
+                    navigate(-1)
+                  }
+                  className=" w-fit text-xs md:text-base text-center mt-1 md:mt-4  text-white bg-gray-500 hover:bg-gray-600 font-medium px-2 md:px-3 py-2 rounded-full "
+                >
+                  Back
+                </button>
+                <button
+                  onClick={onClickAddNewMember}
+                  className=" w-fit text-xs md:text-base text-center mt-1 md:mt-4  text-white bg-blue-500 hover:bg-blue-600 font-medium px-1 md:px-3 py-2 rounded-full "
+                >
+                  Add New Member{" "}
+                  <BiSolidMessageAltAdd className="inline-block ms-1 md:ms-3" />
+                </button>
               </div>
             </div>
 
@@ -510,13 +511,20 @@ const Employees_Card = () => {
                     onChange={(e) => setRoleFilter(e.target.value)}
                   >
                     <option value="">Role</option>
+
                     {[
-                      ...new Set(allEmployees.map((emp) => emp.employee_role)),
-                    ].map((role, index) => (
-                      <option key={index} value={role}>
-                        {role}
-                      </option>
-                    ))}
+                      ...new Set(
+                        allEmployees
+                          .map((emp) => emp.employee_role?.trim())
+                          .filter((role) => role && role.length > 0)
+                      ),
+                    ]
+                      .sort((a, b) => a.localeCompare(b))
+                      .map((role, index) => (
+                        <option key={index} value={role}>
+                          {role}
+                        </option>
+                      ))}
                   </select>
 
                   {/* JOINING DATE FILTER */}

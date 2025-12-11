@@ -23,6 +23,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import Button_Loader from "../Button_Loader";
 import { useRef } from "react";
+import { IoIosCloseCircle } from "react-icons/io";
 import Loader from "../Loader";
 
 const CreateEmployee_Mainbar = () => {
@@ -727,6 +728,7 @@ const CreateEmployee_Mainbar = () => {
   const [emergency_relationtype, setRelationType] = useState("");
   // const [pf, setPfExpiryDate] = useState(null);
 
+
   //bank
   const [account_number, setAccountNumber] = useState("");
   const [gpay_number, setGpayNumber] = useState("");
@@ -1120,7 +1122,7 @@ const CreateEmployee_Mainbar = () => {
       // BankName: isBankNameValid,
       // ifscCode: isIfscCodeValid,
       // accountbranch: isbankBranchValid,
-      
+
       // emergencyName: true,
       // emergencyContact: true,
       // emergencyRelationType: true,
@@ -1530,6 +1532,43 @@ const CreateEmployee_Mainbar = () => {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize
       .join(" "); // Join with space
   }
+  const [emergencyContacts, setEmergencyContacts] = useState([
+    {
+      fullName: "",
+      contact: "",
+      relation: "",
+    },
+  ]);
+
+
+
+  const addEmergencyContact = () => {
+    setEmergencyContacts([
+      ...emergencyContacts,
+      {
+        fullName: "",
+        contact: "",
+        relation: "",
+      },
+    ]);
+  };
+
+
+  const updateContact = (index, field, value) => {
+    const updated = [...emergencyContacts];
+
+    console.log("updated", updated)
+    updated[index][field] = value;
+    setEmergencyContacts(updated);
+  };
+
+  const deleteEmergencyContact = (index) => {
+    const updated = [...emergencyContacts];
+    updated.splice(index, 1);
+    setEmergencyContacts(updated);
+  };
+
+
 
   return (
     <div className="w-screen min-h-screen bg-gray-100 px-5 py-2 md:py-5">
@@ -1542,26 +1581,26 @@ const CreateEmployee_Mainbar = () => {
 
           <div className="">
             <Mobile_Sidebar />
-            
+
           </div>
           <div className="flex justify-end mt-2 md:mt-0 gap-2 items-center">
-              <p
-                className="text-xs md:text-sm text-gray-500"
-                onClick={() => navigate("/dashboard")}
-              >
-                Dashboard
-              </p>
-              <p>{">"}</p>
-              <p
-                onClick={() => navigate("/employees")}
-                className="text-xs md:text-sm text-gray-500 cursor-pointer "
-              >
-                Employees
-              </p>
-              <p>{">"}</p>
-              <p className="text-xs md:text-sm text-blue-500 ">Create Employees</p>
-              {/* <p>{">"}</p> */}
-            </div>
+            <p
+              className="text-xs md:text-sm text-gray-500"
+              onClick={() => navigate("/dashboard")}
+            >
+              Dashboard
+            </p>
+            <p>{">"}</p>
+            <p
+              onClick={() => navigate("/employees")}
+              className="text-xs md:text-sm text-gray-500 cursor-pointer "
+            >
+              Employees
+            </p>
+            <p>{">"}</p>
+            <p className="text-xs md:text-sm text-blue-500 ">Create Employees</p>
+            {/* <p>{">"}</p> */}
+          </div>
 
           <div>
             <div className="flex flex-col sm:flex-row justify-between mt-2 md:mt-5">
@@ -2123,8 +2162,8 @@ const CreateEmployee_Mainbar = () => {
                           id="DATE OF JOINING"
                           placeholderText="Employee date of join"
                           className={`border-2 rounded-xl h-10 px-4 w-full lg:w-72  block  ${!touched.dateOfJoin
-                              ? "border-red-400"
-                              : "border-gray-300"
+                            ? "border-red-400"
+                            : "border-gray-300"
                             }`}
                           onKeyUp={handleKeyUp}
                           selected={employeeDateOfJoin}
@@ -2418,8 +2457,8 @@ const CreateEmployee_Mainbar = () => {
                         <input
                           type="text"
                           className={`border-2 rounded-xl h-10 px-4 border-gray-300  w-full lg:w-72  ${!touched.fathername
-                              ? "border-red-400"
-                              : "border-gray-300"
+                            ? "border-red-400"
+                            : "border-gray-300"
                             }`}
                           onKeyUp={handleKeyUp}
                           placeholder="Father name"
@@ -2450,8 +2489,8 @@ const CreateEmployee_Mainbar = () => {
                         <input
                           type="text"
                           className={`border-2 rounded-xl h-10 px-4 border-gray-300  w-full lg:w-72  ${!touched.mothername
-                              ? "border-red-400"
-                              : "border-gray-300"
+                            ? "border-red-400"
+                            : "border-gray-300"
                             }`}
                           onKeyUp={handleKeyUp}
                           placeholder="Mother name"
@@ -2482,8 +2521,8 @@ const CreateEmployee_Mainbar = () => {
                         <input
                           type="text"
                           className={`border-2 rounded-xl h-10 px-4 border-gray-300  w-full lg:w-72  ${!touched.address1error
-                              ? "border-red-400"
-                              : "border-gray-300"
+                            ? "border-red-400"
+                            : "border-gray-300"
                             }`}
                           onKeyUp={handleKeyUp}
                           placeholder="Enter Address"
@@ -2514,8 +2553,8 @@ const CreateEmployee_Mainbar = () => {
                         <input
                           type="text"
                           className={`border-2 rounded-xl h-10 px-4 border-gray-300  w-full lg:w-72  ${!touched.address2error
-                              ? "border-red-400"
-                              : "border-gray-300"
+                            ? "border-red-400"
+                            : "border-gray-300"
                             }`}
                           onKeyUp={handleKeyUp}
                           placeholder="Enter Address"
@@ -2733,9 +2772,11 @@ const CreateEmployee_Mainbar = () => {
                   </div>
                 </div>
 
-                <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
-                  <p className="text-xl font-semibold">Emergency Contact</p>
-
+                {/* <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
+                  <div className="flex justify-between">
+                    <p className="text-xl font-semibold">Emergency Contact</p>
+                    <IoAddCircleSharp className=" flex justify-end text-blue-500 text-3xl" />
+                  </div>
                   <div className="flex flex-col gap-4 mt-4">
                     <div className="flex flex-col xl:flex-row gap-1 justify-between  ">
                       <div className="flex flex-col">
@@ -2745,7 +2786,6 @@ const CreateEmployee_Mainbar = () => {
                         >
                           FULL NAME
                         </label>
-                        {/* <p className="text-sm">Add UAN NO.</p> */}
                       </div>
                       <input
                         id="INSURANCE NO"
@@ -2756,8 +2796,8 @@ const CreateEmployee_Mainbar = () => {
                           setEmergencyName(e.target.value);
                         }}
                         className={`border-2 rounded-xl px-4   h-10 w-full  lg:w-72 ${!touched.emergencyName
-                            ? "border-red-400 "
-                            : "border-gray-300"
+                          ? "border-red-400 "
+                          : "border-gray-300"
                           }`}
                         onKeyUp={handleKeyUp}
                       />
@@ -2770,7 +2810,6 @@ const CreateEmployee_Mainbar = () => {
                         >
                           CONTACT
                         </label>
-                        {/* <p className="text-sm">Nominal Name</p> */}
                       </div>
                       <div className="flex flex-col">
                         <input
@@ -2782,8 +2821,8 @@ const CreateEmployee_Mainbar = () => {
                             setemergencyContact(e.target.value);
                           }}
                           className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 rounded-xl px-4 border-gray-300  h-10 w-full  lg:w-72 ${!touched.emergencyContact
-                              ? "border-red-400"
-                              : "border-gray-300"
+                            ? "border-red-400"
+                            : "border-gray-300"
                             }`}
                           onKeyUp={handleKeyUp}
                         />
@@ -2796,108 +2835,124 @@ const CreateEmployee_Mainbar = () => {
                     </div>{" "}
                     <div className="flex flex-col xl:flex-row gap-1 justify-between    relative">
                       <div className="flex flex-col sm:flex-row w-full gap-1 flex-wrap  justify-between">
-                        <label className="font-medium text-sm">RELATION TYPE</label>
-                        <div className="flex flex-col gap-1">
-                          <div className="flex flex-wrap gap-x-4 gap-y-2">
-                            <div className="flex items-center gap-1">
-                              <input
-                                type="radio"
-                                name="RELATION"
-                                id="Father"
-                                value="Father"
-                                onChange={(e) => {
-                                  setRelationType(e.target.value);
-                                  setTouched({
-                                    ...touched,
-                                    emergencyRelationType: true,
-                                  });
-                                }}
-                              />
-                              <label
-                                htmlFor="Father"
-                                className="tex-sm font-medium"
-                              >
-                                Father
-                              </label>
-                            </div>
+                        <label className="font-medium text-sm" htmlFor="RELATION TYPE">RELATION TYPE</label>
 
-                            <div className="flex items-center gap-1">
-                              <input
-                                type="radio"
-                                name="RELATION"
-                                id="Mother"
-                                value="Mother"
-                                onChange={(e) => {
-                                  setRelationType(e.target.value);
-                                  setTouched({
-                                    ...touched,
-                                    emergencyRelationType: true,
-                                  });
-                                }}
-                              />
-                              <label
-                                htmlFor="Mother"
-                                className="tex-sm font-medium"
-                              >
-                                Mother
-                              </label>
-                            </div>
-
-                            <div className="flex items-center gap-1">
-                              <input
-                                type="radio"
-                                name="RELATION"
-                                id="Friend"
-                                value="Friend"
-                                onChange={(e) => {
-                                  setRelationType(e.target.value);
-                                  setTouched({
-                                    ...touched,
-                                    emergencyRelationType: true,
-                                  });
-                                }}
-                              />
-                              <label
-                                htmlFor="Friend"
-                                className="tex-sm font-medium"
-                              >
-                                Friend
-                              </label>
-                            </div>
-
-                            <div className="flex items-center gap-1">
-                              <input
-                                type="radio"
-                                name="RELATION"
-                                id="Sibling"
-                                value="Sibling"
-                                onChange={(e) => {
-                                  setRelationType(e.target.value);
-                                  setTouched({
-                                    ...touched,
-                                    emergencyRelationType: true,
-                                  });
-                                }}
-                              />
-                              <label
-                                htmlFor="Sibling"
-                                className="tex-sm font-medium"
-                              >
-                                Sibling
-                              </label>
-                            </div>
-                          </div>
-
-                          {!touched.emergencyRelationType && (
-                            <p className="text-red-400 text-sm">
-                              Please Choose Relation Type.
-                            </p>
-                          )}
-                        </div>
+                        <select
+                          id="RELATION TYPE"
+                          name="RELATION TYPE"
+                          className={`border-2 rounded-xl px-4 h-10  w-full lg:w-72 ${!touched.gender ? "border-red-400" : "border-gray-300"
+                            }`}
+                          onChange={(e) => {
+                            setGender(e.target.value);
+                            setTouched({
+                              ...touched,
+                              gender: true,
+                            });
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              console.log("Enter pressed on:", e.target.value);
+                            }
+                            if (e.key === "Tab") {
+                              console.log("Tab pressed, moving to the next element.");
+                            }
+                          }}
+                        >
+                          <option value="" disabled selected>
+                            Select
+                          </option>
+                          <option value="male">Father</option>
+                          <option value="female">Mother</option>
+                          <option value="female">Sibling</option>
+                          <option value="female">Friend</option>
+                        </select>
                       </div>
                     </div>
                   </div>
+                </div> */}
+
+                {/* emergency contact form new*/}
+
+                <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
+                  <div className="flex justify-between items-center">
+                    <p className="text-xl font-semibold">Emergency Contact</p>
+
+                    {/* Add Button */}
+                    <IoAddCircleSharp
+                      className="text-blue-500 text-3xl cursor-pointer"
+                      onClick={addEmergencyContact}
+                    />
+                  </div>
+
+                  {/* Contact Blocks */}
+                  <div className="flex flex-col gap-6 mt-4">
+                    {emergencyContacts.map((item, index) => (
+                      <div
+                        key={index}
+                        className="pt-6 pb-5 relative border-b flex flex-col gap-4"
+                      >
+                        {/* Delete Button */}
+                        {index !== 0 && (
+                          <button
+                            className="absolute -top-3 right-0 text-red-500 text-3xl"
+                            onClick={() => deleteEmergencyContact(index)}
+                          >
+                            <IoIosCloseCircle />
+                          </button>
+                        )}
+
+                        {/* Full Name */}
+                        <div className="flex flex-col xl:flex-row gap-1 justify-between">
+                          <label className="font-medium text-sm">FULL NAME</label>
+
+                          <input
+                            type="text"
+                            placeholder="Full name"
+                            value={item.fullName}
+                            onChange={(e) => updateContact(index, "fullName", e.target.value)}
+                            className="border-2 rounded-xl px-4 h-10 w-full lg:w-72"
+                          />
+                        </div>
+
+                        {/* Contact */}
+                        <div className="flex flex-col xl:flex-row gap-1 justify-between">
+                          <label className="font-medium text-sm">CONTACT</label>
+
+                          <input
+                            type="number"
+                            placeholder="Contact Number"
+                            value={item.contact}
+                            onChange={(e) => updateContact(index, "contact", e.target.value)}
+                            className="border-2 rounded-xl px-4 h-10 w-full lg:w-72
+            [appearance:textfield]
+            [&::-webkit-inner-spin-button]:appearance-none
+            [&::-webkit-outer-spin-button]:appearance-none"
+                          />
+                        </div>
+
+                        {/* Relation */}
+                        <div className="flex flex-col xl:flex-row gap-1 justify-between">
+                          <label className="font-medium text-sm">RELATION TYPE</label>
+
+                          <select
+                            value={item.relation}
+                            onChange={(e) => updateContact(index, "relation", e.target.value)}
+                            className="border-2 rounded-xl px-4 h-10 w-full lg:w-72"
+                          >
+                            <option value="">Select</option>
+                            <option value="Father">Father</option>
+                            <option value="Mother">Mother</option>
+                            <option value="Sibling">Sibling</option>
+                            <option value="Friend">Friend</option>
+                          </select>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
                 </div>
+
+
 
                 <div className="rounded-2xl border-2 border-gray-200 bg-white py-4 px-4 lg:px-6">
                   <p className="text-xl font-semibold">Education Info</p>
@@ -2964,8 +3019,8 @@ const CreateEmployee_Mainbar = () => {
                             });
                           }}
                           className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 h-10 rounded-xl px-4 border-gray-300  w-full lg:w-52   ${!touched.accountNumber
-                              ? "border-red-400 "
-                              : "border-gray-300"
+                            ? "border-red-400 "
+                            : "border-gray-300"
                             }`}
                           onKeyUp={handleKeyUp}
                         />
@@ -3078,8 +3133,8 @@ const CreateEmployee_Mainbar = () => {
                             });
                           }}
                           className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 h-10 rounded-xl px-4 border-gray-300  w-full lg:w-52   ${!touched.accountNumber
-                              ? "border-red-400 "
-                              : "border-gray-300"
+                            ? "border-red-400 "
+                            : "border-gray-300"
                             }`}
                           onKeyUp={handleKeyUp}
                         />
@@ -3181,8 +3236,8 @@ const CreateEmployee_Mainbar = () => {
                         value={bank_branch}
                         onChange={(e) => setBankBranch(e.target.value)}
                         className={`border-2 rounded-xl h-10 px-4 w-full lg:w-52   ${!touched.accountbranch
-                            ? "border-red-400 "
-                            : "border-gray-300"
+                          ? "border-red-400 "
+                          : "border-gray-300"
                           }`}
                         onKeyUp={handleKeyUp}
                       />
@@ -3262,8 +3317,8 @@ const CreateEmployee_Mainbar = () => {
                         }}
                         onKeyUp={handleKeyUp}
                         className={` [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 rounded-xl px-4 h-10 border-gray-300  w-full lg:w-52 ${!touched.salaryAmount
-                            ? "border-red-400 "
-                            : "border-gray-300"
+                          ? "border-red-400 "
+                          : "border-gray-300"
                           }`}
                       />
                     </div>
@@ -3355,8 +3410,8 @@ const CreateEmployee_Mainbar = () => {
                         id="PAYMENT TYPE"
                         name="PAYMENT TYPE"
                         className={`border-2 rounded-xl px-4 h-10  w-full lg:w-52 ${!touched.PaymentType
-                            ? "border-red-400"
-                            : "border-gray-300"
+                          ? "border-red-400"
+                          : "border-gray-300"
                           }`}
                         onChange={(e) => {
                           setPaymentType(e.target.value);
@@ -3409,8 +3464,8 @@ const CreateEmployee_Mainbar = () => {
                         }}
                         onKeyUp={handleKeyUp}
                         className={` [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 rounded-xl px-4 h-10 border-gray-300  w-full lg:w-52 ${!touched.salaryAmount
-                            ? "border-red-400 "
-                            : "border-gray-300"
+                          ? "border-red-400 "
+                          : "border-gray-300"
                           }`}
                       />
                     </div>
@@ -3429,8 +3484,8 @@ const CreateEmployee_Mainbar = () => {
                           id="INSURANCE DATE"
                           placeholderText="Insurance Date"
                           className={` [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-2 rounded-xl px-4 h-10 border-gray-300  w-full lg:w-52 ${!touched.salaryAmount
-                              ? "border-red-400 "
-                              : "border-gray-300"
+                            ? "border-red-400 "
+                            : "border-gray-300"
                             }`}
                           onKeyUp={handleKeyUp}
                           selected={insurance_date}
@@ -3763,8 +3818,8 @@ const CreateEmployee_Mainbar = () => {
                       id="companyIndustry"
                       placeholder="Information Technology"
                       className={`border-2 rounded-xl px-4 h-10 border-gray-300  w-full md:w-96 ${!expTouched.companyIndustry
-                          ? "border-red-400"
-                          : "border-gray-300 "
+                        ? "border-red-400"
+                        : "border-gray-300 "
                         }`}
                       onKeyUp={handleKeyUp}
                     />
@@ -3788,8 +3843,8 @@ const CreateEmployee_Mainbar = () => {
                       id="companyName"
                       placeholder="Company name"
                       className={`border-2 rounded-xl px-4 h-10 border-gray-300  w-full md:w-96 ${!expTouched.companyName
-                          ? "border-red-400"
-                          : "border-gray-300 "
+                        ? "border-red-400"
+                        : "border-gray-300 "
                         }`}
                       onKeyUp={handleKeyUp}
                     />
@@ -3816,8 +3871,8 @@ const CreateEmployee_Mainbar = () => {
                       id="previousSalary"
                       placeholder="Previous salary"
                       className={`border-2 rounded-xl px-4 h-10 border-gray-300  w-full md:w-96 ${!expTouched.previousSalary
-                          ? "border-red-400"
-                          : "border-gray-300 "
+                        ? "border-red-400"
+                        : "border-gray-300 "
                         }`}
                       onKeyUp={handleKeyUp}
                     />
@@ -3847,8 +3902,8 @@ const CreateEmployee_Mainbar = () => {
                           }))
                         }
                         className={`border-2  rounded-xl w-full md:w-44 h-10 px-4 border-gray-300  ${!expTouched.startWork
-                            ? "border-red-400"
-                            : "border-gray-300 "
+                          ? "border-red-400"
+                          : "border-gray-300 "
                           }`}
                         onKeyUp={handleKeyUp}
                         showYearDropdown
@@ -3871,8 +3926,8 @@ const CreateEmployee_Mainbar = () => {
                           }))
                         }
                         className={`border-2 rounded-xl h-10 px-4 w-full md:w-44 border-gray-300  ${!expTouched.startWork
-                            ? "border-red-400"
-                            : "border-gray-300 "
+                          ? "border-red-400"
+                          : "border-gray-300 "
                           }`}
                         onKeyUp={handleKeyUp}
                         showYearDropdown
@@ -3904,8 +3959,8 @@ const CreateEmployee_Mainbar = () => {
                       }
                       rows="3"
                       className={`  w-full md:w-96 pt-2 rounded-xl px-4   border-2  ${!expTouched.responsibilities
-                          ? "border-red-400"
-                          : "border-gray-300 "
+                        ? "border-red-400"
+                        : "border-gray-300 "
                         }`}
                       onKeyUp={handleKeyUp}
                     />
@@ -4044,8 +4099,8 @@ const CreateEmployee_Mainbar = () => {
                       id="school-name"
                       placeholder="School name"
                       className={`border-2 rounded-xl px-4  h-10 w-full md:w-96 ${!educationTouched.SchoolName
-                          ? "border-red-400"
-                          : "border gray-300"
+                        ? "border-red-400"
+                        : "border gray-300"
                         }`}
                       onKeyUp={handleKeyUp}
                       value={schoolName}
@@ -4069,8 +4124,8 @@ const CreateEmployee_Mainbar = () => {
                       id="department-name"
                       placeholder="Department name"
                       className={`border-2 rounded-xl px-4  h-10 w-full md:w-96 ${!educationTouched.DepartmentName
-                          ? "border-red-400"
-                          : "border-gray-300"
+                        ? "border-red-400"
+                        : "border-gray-300"
                         }`}
                       onKeyUp={handleKeyUp}
                       value={departmentName}
@@ -4090,8 +4145,8 @@ const CreateEmployee_Mainbar = () => {
                       type="month"
                       // placeholder="End year"
                       className={`border-2 rounded-xl px-4 h-10 w-full md:w-96 ${!educationTouched.YearOfPassing
-                          ? "border-red-400"
-                          : "border-gray-300"
+                        ? "border-red-400"
+                        : "border-gray-300"
                         }`}
                       onKeyUp={handleKeyUp}
                       value={endYear}
