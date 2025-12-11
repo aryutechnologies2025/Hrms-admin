@@ -1290,8 +1290,10 @@ import { toast } from "react-toastify";
 import { PiFlagPennantFill } from "react-icons/pi";
 import { AiFillDelete, AiTwotoneDelete } from "react-icons/ai";
 import { LuFileVideo2 } from "react-icons/lu";
+import { useDateUtils } from "../../hooks/useDateUtils";
 
 function Task_view_All_client() {
+  const formatDateTime=useDateUtils()
   const employeeDetails = JSON.parse(localStorage.getItem("hrmsuser"));
   // console.log("employeeDetails:", employeeDetails.email);
 
