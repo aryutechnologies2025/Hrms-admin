@@ -9,18 +9,16 @@ import { useNavigate } from "react-router-dom";
 import Slack_sidebar from "./Slack_sidebar";
 import Slack_chatwindow from "./Slack_chatwindow";
 import Slack_threads_window from "./Slack_threads_window";
-
+import { connectSocket } from "../../services/socket";
 
 const Slack_details = () => {
   const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(false);
-
   const [activeChat, setActiveChat] = useState({
     title: "General",
     avatar: "https://cdn-icons-png.flaticon.com/512/906/906343.png", // Default channel icon
     type: "channel"
   });
-
     React.useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
@@ -28,6 +26,25 @@ const Slack_details = () => {
       document.documentElement.classList.remove("dark");
     }
   }, [darkMode]);
+
+
+  // 
+   const [socket, setSocket] = useState(null);
+  const token = localStorage.getItem("admin_token"); // your login token
+
+  useEffect(() => {
+    console.log("1",token);
+    if (!token) return;
+    console.log("2");
+
+    const s = connectSocket(token);
+    setSocket(s);
+
+    return () => {
+      s.disconnect();
+    };
+  }, [token]);
+
 
 
   return (
@@ -40,14 +57,19 @@ const Slack_details = () => {
 
         </div>
         <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
-          <Slack_sidebar setActiveChat={setActiveChat} />
+          <Slack_sidebar setActiveChat={setActiveChat}/>
           {/* <Slack_chatwindow activeChat={activeChat} /> */}
           {activeChat?.type === "threads" ? (
             <Slack_threads_window />
           ) : (
+            
             <Slack_chatwindow activeChat={activeChat} />
           )}
         </div>
+        <div>
+      <h2>Chat App</h2>
+      {socket ? <p>Connected to socket</p> : <p>Connecting...</p>}
+    </div>
 
       </div>
 

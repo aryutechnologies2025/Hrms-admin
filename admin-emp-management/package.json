@@ -46,6 +46,7 @@
     "react-select": "^5.10.0",
     "react-toastify": "^11.0.5",
     "save-as": "^0.1.8",
+    "socket.io-client": "^4.8.1",
     "sweetalert2": "^11.22.2",
     "swiper": "^11.1.15"
   },
