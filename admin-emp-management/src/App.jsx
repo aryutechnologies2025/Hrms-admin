@@ -126,7 +126,7 @@ import AssectDocument from "./components/Assect Document/AssectDocument";
 import AssentDocumentPage from "./pages/AssentDocumentPage";
 import AssetSubCategory_mainbar from "./components/Asset management components/AssetSubCategory_mainbar";
 import Clients_note_main from "./pages/Clients_note_main";
-import Complainence_Mainbar from "./components/complainence/Complainence_Mainbar";
+import Complaince_Mainbar from "./components/complaince/Complaince_Mainbar";
 import Recurring_Mainbar from "./components/finance components/Recurring_Mainbar";
 import Slack_details from "./components/Slack Componenet/Slack_details";
 import Slack_mainbar from "./components/Slack Componenet/Slack_mainbar";
@@ -735,11 +735,11 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       COMPLAINENCE
   --------------------------------------------*/
      {
-      path: "/complainence",
-      permissionTitle: "Complainence",
+      path: "/complaince",
+      permissionTitle: "Complaince",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
-          <Complainence_Mainbar />
+          <Complaince_Mainbar />
         </ProtectedRoute>
       ),
     },
