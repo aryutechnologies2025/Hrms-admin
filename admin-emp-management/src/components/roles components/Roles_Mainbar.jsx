@@ -33,7 +33,7 @@ const Roles_Mainbar = () => {
     fetchRoles();
   }, []);
 
-  console.log("roles", roles);
+  // console.log("roles", roles);
 
   const [rolename, setRoleName] = useState("");
   const [status, setStatus] = useState("");
@@ -52,7 +52,7 @@ const Roles_Mainbar = () => {
       const response = await axios.get(
         `${API_URL}/api/roles/view-employeerole`
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setRoles(response.data.data);
         setLoading(false);
@@ -85,7 +85,7 @@ const Roles_Mainbar = () => {
   });
 
   const openEditModal = (id, name, status, departmentId) => {
-    console.log("123", departmentId);
+    // console.log("123", departmentId);
     setRoleDetails({
       name,
       status,
@@ -132,7 +132,7 @@ const Roles_Mainbar = () => {
 
   const handleSave = async (roleId) => {
     const { name, status, departmentId } = roleDetails;
-    console.log(roleId);
+    // console.log(roleId);
     if (roleDetails.name.length <= 0) {
       setErrors((prevErrors) => ({
         ...prevErrors,

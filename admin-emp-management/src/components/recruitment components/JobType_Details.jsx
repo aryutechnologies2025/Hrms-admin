@@ -29,10 +29,10 @@ const JobType_Details = () => {
   const parsedDetails = JSON.parse(null);
   const userid = parsedDetails ? parsedDetails.id : null;
   const [errors, setErrors] = useState({});
-  console.log("errors:", errors);
+  // console.log("errors:", errors);
   const [isAnimating, setIsAnimating] = useState(false);
   const [jobTypeDetails, setJobTypeDetails] = useState([])
-  console.log("jobTypeDetails", jobTypeDetails)
+  // console.log("jobTypeDetails", jobTypeDetails)
   const [loading, setLoading] = useState(true); // State to manage loading
   let navigate = useNavigate();
 
@@ -46,7 +46,7 @@ const JobType_Details = () => {
       const response = await axios.get(
         `${API_URL}/api/job-type/view-jobtype`
       );
-      console.log(response);
+      // console.log(response);
 
 
       setJobTypeDetails(response.data?.jobType)
@@ -122,7 +122,7 @@ const JobType_Details = () => {
   const [editId, setEditid] = useState("");
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     setNameEdit(row.name);
@@ -161,7 +161,7 @@ const JobType_Details = () => {
         `${API_URL}/api/job-type/edit-jobtype/${editId}`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       
 
       setIsEditModalOpen(false);

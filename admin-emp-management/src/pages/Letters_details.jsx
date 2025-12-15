@@ -33,7 +33,7 @@ const Letters_details = () => {
   // const location = useLocation();
 
   const employeeIds = window.location.pathname.split("/")[2];
-  console.log("window.location.pathname", employeeIds);
+  // console.log("window.location.pathname", employeeIds);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -69,12 +69,12 @@ const Letters_details = () => {
   const [errors, setErrors] = useState({});
 
   const [clientdetails, setClientdetails] = useState([]);
-  console.log("clientdetails", clientdetails);
+  // console.log("clientdetails", clientdetails);
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/letter/view-letter`);
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setClientdetails(response.data.data);
         setLoading(false);
@@ -118,7 +118,7 @@ const Letters_details = () => {
         `${API_URL}/api/letter/create-letter`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Letters added successfully!",
@@ -159,7 +159,7 @@ const Letters_details = () => {
   // console.log("editid", editid);
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     setTitleedit(row.title);
@@ -190,7 +190,7 @@ const Letters_details = () => {
         `${API_URL}/api/letter/edit-letter/${editid}`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Letters Update successfully!",
@@ -232,7 +232,7 @@ const Letters_details = () => {
           `${API_URL}/api/letter/delete-letter/${id}`
         );
         Swal.fire("Deleted!", "The Letters has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setClientdetails((prev) => prev.filter((item) => item._id !== id));
         // fetchProject();
       } catch (err) {

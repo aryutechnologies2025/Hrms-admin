@@ -32,7 +32,7 @@ const Leave_type_details = () => {
   // const location = useLocation();
 
   const employeeIds = window.location.pathname.split("/")[2];
-  console.log("window.location.pathname", employeeIds);
+  // console.log("window.location.pathname", employeeIds);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -68,14 +68,14 @@ const Leave_type_details = () => {
   const [errors, setErrors] = useState({});
 
   const [clientdetails, setClientdetails] = useState([]);
-  console.log("clientdetails", clientdetails);
+  // console.log("clientdetails", clientdetails);
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/leaveType/view-leavetype`
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setClientdetails(response.data.data);
         setLoading(false);
@@ -117,7 +117,7 @@ const Leave_type_details = () => {
         `${API_URL}/api/leaveType/create-createleavetype`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Leave added successfully!",
@@ -152,10 +152,10 @@ const Leave_type_details = () => {
 
   const [editid, setEditid] = useState([]);
 
-  console.log("editid", editid);
+  // console.log("editid", editid);
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     setLeaveTypeEdit(row.type);
@@ -184,7 +184,7 @@ const Leave_type_details = () => {
         `${API_URL}/api/leaveType/edit-leavetype/${editid}`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Leave Update successfully!",
@@ -226,7 +226,7 @@ const Leave_type_details = () => {
           `${API_URL}/api/leaveType/delete-leavetype/${id}`
         );
         Swal.fire("Deleted!", "The Leave has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setClientdetails((prev) => prev.filter((item) => item._id !== id));
         // fetchProject();
       } catch (err) {

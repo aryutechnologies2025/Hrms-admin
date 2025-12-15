@@ -20,7 +20,7 @@ const Client_view_details = () =>{
   const navigate = useNavigate();
   const location = useLocation();
   const id = location?.state?.id || "";
-  console.log("idempok", id);
+  // console.log("idempok", id);
 
   useEffect(() => {
     fetchProject();
@@ -34,7 +34,7 @@ const Client_view_details = () =>{
   const fetchProject = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/client/view-clientdetails-id/${id}`);
-      console.log("response", response);
+      // console.log("response", response);
       if (response.data.success) {
         setName(response.data.data?.client_name || "");
         setCompanyName(response.data.data?.company_name || "");

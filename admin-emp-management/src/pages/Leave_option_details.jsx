@@ -52,7 +52,7 @@ const Leave_option_details = () => {
         label: emp.employeeName, // what you show in dropdown
         value: emp._id, // or emp.employeeId (whatever your API has as unique id)
       }));
-      console.log("employeeemail", response.data.data);
+      // console.log("employeeemail", response.data.data);
       setEmployeeOption(employeeemail);
       setLoading(false);
     } catch (error) {
@@ -69,7 +69,7 @@ const Leave_option_details = () => {
       const response = await axios.get(
         `${API_URL}/api/leaveType/get-leavetype `
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setLeaves(response.data.data);
         setLoading(false);
@@ -124,12 +124,12 @@ const Leave_option_details = () => {
   const [errors, setErrors] = useState({});
 
   const [notedetails, setNotedetails] = useState([]);
-  console.log("notedetails", notedetails);
+  // console.log("notedetails", notedetails);
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/leave/admin-get-leave`);
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setNotedetails(response.data.data);
         setLoading(false);
@@ -201,7 +201,7 @@ const Leave_option_details = () => {
         `${API_URL}/api/leave/admin-add-leave`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Leave added successfully!",
@@ -256,7 +256,7 @@ const Leave_option_details = () => {
   // console.log("editid", editid);
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
     setDateedit(row.startDate);
     setEnddateedit(row.endDate);
     setNotesedit(row.note);
@@ -295,7 +295,7 @@ const Leave_option_details = () => {
         `${API_URL}/api/leave/update-status/${editid}`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Leave Update successfully!",
@@ -352,7 +352,7 @@ const Leave_option_details = () => {
           `${API_URL}/api/leave/delete-leave/${id}`
         );
         Swal.fire("Deleted!", "The Leave has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         // setNotedetails((prev) => prev.filter((item) => item._id !== _id));
         // fetchProject();
         fetchProject();
@@ -499,7 +499,7 @@ const Leave_option_details = () => {
       : [];
 
   const [selectedLeaveTypes, setSelectedLeaveTypes] = useState({});
-  console.log("selectedLeaveTypes", selectedLeaveTypes);
+  // console.log("selectedLeaveTypes", selectedLeaveTypes);
   const handleLeaveTypeChange = (date, value) => {
     setSelectedLeaveTypes((prev) => ({
       ...prev,

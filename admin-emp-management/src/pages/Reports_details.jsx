@@ -24,7 +24,7 @@ function Reports_details() {
   const [selectedEmployeeName, setSelectedEmployeeName] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  console.log("selectedEmployeeName", selectedEmployeeName);
+  // console.log("selectedEmployeeName", selectedEmployeeName);
 
   const fetchData = async () => {
     try {
@@ -74,7 +74,7 @@ function Reports_details() {
 
   const [tasklist, setTasklist] = useState([]);
 
-  console.log("tasklist", tasklist);
+  // console.log("tasklist", tasklist);
 
   useEffect(() => {
     // fetchData();
@@ -84,7 +84,7 @@ function Reports_details() {
 
   const [selectedEmployeeDeatils, setSelectedEmployeeDetails] = useState(null);
 
-  console.log("selectedEmployeeDeatils", selectedEmployeeDeatils);
+  // console.log("selectedEmployeeDeatils", selectedEmployeeDeatils);
   // const [employeeData, setEmployeeData] = useState([]);
 
   const handleSubmit = async () => {
@@ -94,7 +94,7 @@ function Reports_details() {
       month: `${monthDate.getMonth() + 1}-${monthDate.getFullYear()}`,
       employeeId: selectedEmployeeDeatils.split(" - ")[0],
     };
-    console.log(payload);
+    // console.log(payload);
 
     try {
       const response = await axios.get(
@@ -102,7 +102,7 @@ function Reports_details() {
         { params: payload }
       );
       setTasklist(response.data.data);
-      console.log(response.data.data);
+      // console.log(response.data.data);
     } catch (error) {
       console.log(error);
       setEmployeeData("");
@@ -123,7 +123,7 @@ function Reports_details() {
         employeeId: selectedEmployeeName,
       };
 
-      console.log("payload", payload);
+      // console.log("payload", payload);
 
       try {
         const response = await axios.get(
@@ -131,7 +131,7 @@ function Reports_details() {
           { params: payload }
         );
         setTasklist(response.data.data);
-        console.log("All employees' data for today:", response.data.data);
+        // console.log("All employees data for today:", response.data.data);
       } catch (error) {
         console.log(error);
         setEmployeeData("");
@@ -298,7 +298,7 @@ function Reports_details() {
                 </button>
               </div>
             </div>
-            {console.log("selectedEmployeeName 123", selectedEmployeeName)}
+            {/* {console.log("selectedEmployeeName 123", selectedEmployeeName)} */}
             {/* reports desgins */}
             <div className=" mt-4 md:mt-0 p-3 md:p-5 bg-gray-100 min-h-screen">
               <h1 className="text-2xl font-bold mb-6">Monthly Task Tracker</h1>

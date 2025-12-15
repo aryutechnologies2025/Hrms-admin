@@ -76,7 +76,7 @@ export const AdminPrivileges = () => {
       );
       setPrivilegesOption(response.data.data);
       setLoading(false);
-      console.log(response.data);
+      // console.log(response.data);
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -99,7 +99,7 @@ export const AdminPrivileges = () => {
 
   const handlesubmit = async () => {
     // e.preventDefault();
-    console.log(selectedEmployee, selectedPrivileges);
+    // console.log(selectedEmployee, selectedPrivileges);
 
     try {
       const response = await axios.post(
@@ -193,7 +193,7 @@ export const AdminPrivileges = () => {
   };
 
   const openEditPrivilegesModal = (rowData) => {
-    console.log(rowData);
+    // console.log(rowData);
 
     const matchedEmployee = employeeOption.find(
       (emp) => emp.value == rowData.employeeId._id

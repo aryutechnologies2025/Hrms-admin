@@ -35,7 +35,7 @@ const Revision_details = () => {
   // const location = useLocation();
 
   const employeeIds = window.location.pathname.split("/")[2];
-  console.log("window.location.pathname", employeeIds);
+  // console.log("window.location.pathname", employeeIds);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -49,7 +49,7 @@ const Revision_details = () => {
     fetchProject();
   }, []);
 
-  console.log("roles", roles);
+  // console.log("roles", roles);
 
   const [projectname, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
@@ -61,14 +61,14 @@ const Revision_details = () => {
   const [errors, setErrors] = useState({});
 
   const [clientdetails, setClientdetails] = useState([]);
-  console.log("clientdetails", clientdetails);
+  // console.log("clientdetails", clientdetails);
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/revision/view-revision/${employeeIds}`
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setClientdetails(response.data.data);
       } else {
@@ -151,7 +151,7 @@ const Revision_details = () => {
         `${API_URL}/api/revision/create-revision`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Revision added successfully!",
@@ -193,10 +193,10 @@ const Revision_details = () => {
 
   const [editid, setEditid] = useState([]);
 
-  console.log("editid", editid);
+  // console.log("editid", editid);
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row.id);
 
@@ -266,7 +266,7 @@ const Revision_details = () => {
         `${API_URL}/api/revision/edit-revision/${editid}`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Revision Update successfully!",
@@ -308,7 +308,7 @@ const Revision_details = () => {
           `${API_URL}/api/revision/delete-revision/${id}`
         );
         Swal.fire("Deleted!", "The Revision has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setClientdetails((prev) => prev.filter((item) => item.id !== id));
         // fetchProject();
       } catch (err) {
