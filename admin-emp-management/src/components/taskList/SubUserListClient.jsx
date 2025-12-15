@@ -168,7 +168,7 @@ const SubUserListClient = () => {
           params: { clientId: employeeemail },
         }
       );
-      console.log("clientID", employeeemail);
+      // console.log("clientID", employeeemail);
       // console.log(response);
       if (response.data.success) {
         const projectName = response.data.data.map((emp) => ({
@@ -194,7 +194,7 @@ const SubUserListClient = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("employeeemail in subuser:");
+    // console.log("employeeemail in subuser:");
 
     try {
       const newErrors = {};
@@ -231,7 +231,7 @@ const SubUserListClient = () => {
         setErrors(newErrors);
         return;
       }
-      console.log("projectname selected:", projectname);
+      // console.log("projectname selected:", projectname);
       // Multi-select project list
       // const projectIds = projectname.map((item) => item.value);
 
@@ -251,7 +251,7 @@ const SubUserListClient = () => {
         payload
       );
 
-      console.log("response subuser:", response);
+      // console.log("response subuser:", response);
 
       if (response.data.success) {
         Swal.fire({
@@ -298,10 +298,10 @@ const SubUserListClient = () => {
   });
 
   const openEditModal = (row) => {
-    console.log("row", row);
+    // console.log("row", row);
     const ArrayofProjectId=row?.projectId?.map((item)=>item?._id);
-    console.log("ArrayofProjectId", ArrayofProjectId);
-    console.log("row.projectId", row.projectId);
+    // console.log("ArrayofProjectId", ArrayofProjectId);
+    // console.log("row.projectId", row.projectId);
     setUserData({
       id: row._id,
       projectId:ArrayofProjectId || [],
@@ -352,7 +352,7 @@ const SubUserListClient = () => {
         setEditErrors(newErrors);
         return;
       }
-      console.log("aaa");
+      // console.log("aaa");
       
       const payload = {
         name: userData.name,
@@ -368,7 +368,7 @@ const SubUserListClient = () => {
         payload
       );
 
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Client Update successfully!",

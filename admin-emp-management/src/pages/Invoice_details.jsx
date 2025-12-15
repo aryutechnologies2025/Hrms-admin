@@ -44,7 +44,7 @@ const Invoice_details = () => {
     fetchProject();
   }, []);
 
-  console.log("roles", roles);
+  // console.log("roles", roles);
 
   const [projectname, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
@@ -56,12 +56,12 @@ const Invoice_details = () => {
   const [errors, setErrors] = useState({});
 
   const [clientdetails, setClientdetails] = useState([]);
-  console.log("errors::", errors);
+  // console.log("errors::", errors);
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/invoice/view-invoice`);
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setClientdetails(response.data.data);
       } else {
@@ -86,7 +86,7 @@ const Invoice_details = () => {
   const [clientOption, setClientOption] = useState(null);
   const [projectOption, setProjectOption] = useState(null);
 
-  console.log("clientOption", clientOption);
+  // console.log("clientOption", clientOption);
 
   const fetchClientList = async () => {
     try {
@@ -100,7 +100,7 @@ const Invoice_details = () => {
       );
 
       const clientName = response.data.data.map((emp) => emp.client_name);
-      console.log("client name", clientName);
+      // console.log("client name", clientName);
       setClientOption(clientName);
     } catch (error) {
       console.log(error);
@@ -119,7 +119,7 @@ const Invoice_details = () => {
       );
 
       const clientName = response.data.data.map((emp) => emp.name);
-      console.log("client name", clientName);
+      // console.log("client name", clientName);
       setProjectOption(clientName);
     } catch (error) {
       console.log(error);
@@ -147,7 +147,7 @@ const Invoice_details = () => {
   };
 
   const handleDelete = async (id) => {
-    console.log("editid", id);
+    // console.log("editid", id);
 
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -164,7 +164,7 @@ const Invoice_details = () => {
           `${API_URL}/api/invoice/delete-invoice/${id}`
         );
         Swal.fire("Deleted!", "The role has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setClientdetails((prev) => prev.filter((item) => item._id !== id));
       } catch (err) {
         console.error("Failed to delete:", err);
@@ -483,7 +483,7 @@ const Invoice_details = () => {
         formData
       );
 
-      console.log("response:", response);
+      // console.log("response:", response);
 
       setIsAddModalOpen(false);
 
@@ -591,7 +591,7 @@ const Invoice_details = () => {
   };
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
 
@@ -668,7 +668,7 @@ const Invoice_details = () => {
         `${API_URL}/api/invoice/edit-invoice/${editid}`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Invoice Update successfully!",

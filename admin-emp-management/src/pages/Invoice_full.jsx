@@ -43,7 +43,7 @@ const Invoice_full = () => {
     fetchProject();
   }, []);
 
-  console.log("roles", roles);
+  // console.log("roles", roles);
 
   const [projectname, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
@@ -55,12 +55,12 @@ const Invoice_full = () => {
   const [errors, setErrors] = useState({});
 
   const [clientdetails, setClientdetails] = useState([]);
-  console.log("errors::", errors);
+  // console.log("errors::", errors);
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/invoice/view-invoice`);
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setClientdetails(response.data.data);
       } else {
@@ -79,7 +79,7 @@ const Invoice_full = () => {
   const [clientOption, setClientOption] = useState(null);
   const [projectOption, setProjectOption] = useState(null);
 
-  console.log("clientOption", clientOption);
+  // console.log("clientOption", clientOption);
 
   const fetchClientList = async () => {
     try {
@@ -93,7 +93,7 @@ const Invoice_full = () => {
       );
 
       const clientName = response.data.data.map((emp) => emp.client_name);
-      console.log("client name", clientName);
+      // console.log("client name", clientName);
       setClientOption(clientName);
     } catch (error) {
       console.log(error);
@@ -112,7 +112,7 @@ const Invoice_full = () => {
       );
 
       const clientName = response.data.data.map((emp) => emp.name);
-      console.log("client name", clientName);
+      // console.log("client name", clientName);
       setProjectOption(clientName);
     } catch (error) {
       console.log(error);
@@ -319,7 +319,7 @@ const Invoice_full = () => {
         formData
       );
 
-      console.log("response:", response);
+      // console.log("response:", response);
 
       setIsAddModalOpen(false);
 

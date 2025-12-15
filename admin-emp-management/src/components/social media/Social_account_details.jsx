@@ -33,7 +33,7 @@ const Social_account_details = () => {
   // const location = useLocation();
 
   const employeeIds = window.location.pathname.split("/")[2];
-  console.log("window.location.pathname", employeeIds);
+  // console.log("window.location.pathname", employeeIds);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -69,7 +69,7 @@ const Social_account_details = () => {
   const [errors, setErrors] = useState({});
 
   const [accountdetails, setAccountdetails] = useState([]);
-  console.log("accountdetails", accountdetails);
+  // console.log("accountdetails", accountdetails);
     const [loading, setLoading] = useState(true);
   
 
@@ -78,7 +78,7 @@ const Social_account_details = () => {
       const response = await axios.get(
         `${API_URL}/api/social-media/view-socialmedia`
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setAccountdetails(response.data.data);
                 setLoading(false);
@@ -119,7 +119,7 @@ const Social_account_details = () => {
         `${API_URL}/api/social-media/create-socialmedia`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Status added successfully!",
@@ -154,10 +154,10 @@ const Social_account_details = () => {
 
   const [editid, setEditid] = useState([]);
 
-  console.log("editid", editid);
+  // console.log("editid", editid);
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     SetNameedit(row.name);
@@ -185,7 +185,7 @@ const Social_account_details = () => {
         `${API_URL}/api/social-media/edit-socialmedia/${editid}`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Status Update successfully!",
@@ -227,7 +227,7 @@ const Social_account_details = () => {
           `${API_URL}/api/social-media/delete-socialmedia/${id}`
         );
         Swal.fire("Deleted!", "The Status has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setAccountdetails((prev) => prev.filter((item) => item._id !== id));
         // fetchProject();
       } catch (err) {

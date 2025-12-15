@@ -18,14 +18,14 @@ function Link_details() {
 
   const [alllist, setAlllist] = useState([]);
   const [loading, setLoading] = useState(true); 
-  console.log("alllist", alllist);
+  // console.log("alllist", alllist);
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/link/get-link-by-category`
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setAlllist(response.data.data);
         setLoading(false);

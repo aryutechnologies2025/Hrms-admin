@@ -84,7 +84,7 @@ const PermissionComponent = () => {
     axios
       .post(`${API_URL}/api/roles/update-permissions`, formattedPermissions)
       .then((response) => {
-        console.log("Permissions updated successfully:", response.data);
+        // console.log("Permissions updated successfully:", response.data);
       })
       .catch((error) => {
         console.error("Error updating permissions:", error);

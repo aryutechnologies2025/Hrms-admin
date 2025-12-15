@@ -1498,7 +1498,7 @@ const Task_details_client = () => {
   // };
   const [projectNameFilter,setProjectNameFilter]=useState("");
   const fetchProjectlist = async (page = 1, limitValue = limit, type = "") => {
-    console.log("hello 1234");
+    // console.log("hello 1234");
     setButtonLoading(true);
 
     try {
@@ -1662,17 +1662,17 @@ const Task_details_client = () => {
   // };
    const fetchProject = async () => {
     try {
-      console.log("coming", employeeDetails.subType);
+      // console.log("coming", employeeDetails.subType);
 
       if (employeeDetails.subType == "subuser") {
-        console.log("coming 12344");
+        // console.log("coming 12344");
         const response = await axios.get(
           `${API_URL}/api/project/clientsubuser`,
           {
             params: { clientId: employeeemail, subUserId: employeeDetails._id },
           }
         );
-        console.log("55555", response);
+        // console.log("55555", response);
         if (response.data.success) {
           const projectName = response.data.data.map((emp) => ({
             label: emp.name,

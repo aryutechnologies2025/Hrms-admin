@@ -860,7 +860,7 @@ const ProjectList = () => {
 
 
   const handleEditClick = (row) => {
-    console.log("row",row)
+    // console.log("row",row)
     // return
     // navigate(`/project-note-details/${row._id}`);
      navigate(`/project-note-details/${row._id}`, {

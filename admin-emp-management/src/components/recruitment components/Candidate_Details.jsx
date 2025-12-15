@@ -31,7 +31,7 @@ const Candidate_Details = () => {
   // console.log("errors:", errors);
   const [isAnimating, setIsAnimating] = useState(false);
   const [candidateDetails, setCandidateDetails] = useState([]);
-  console.log("candidateDetails:", candidateDetails);
+  // console.log("candidateDetails:", candidateDetails);
   const [loading, setLoading] = useState(true);
 
   const location = useLocation();
@@ -268,7 +268,7 @@ const Candidate_Details = () => {
   const [editId, setEditid] = useState("");
 
   const openEditModal = (row) => {
-    console.log("candidate row", row);
+    // console.log("candidate row", row);
 
     setEditid(row._id);
     setFirstNameEdit(row.firstName);
@@ -312,7 +312,7 @@ const Candidate_Details = () => {
         `${API_URL}/api/job-type/edit-candidate/${editId}`,
         formData
       );
-      console.log("candidate edit response:", response);
+      // console.log("candidate edit response:", response);
 
       setIsEditModalOpen(false);
       fetchCandidate();

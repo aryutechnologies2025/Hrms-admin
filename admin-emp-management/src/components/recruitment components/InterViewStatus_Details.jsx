@@ -23,7 +23,7 @@ const InterViewStatus_Details = () => {
   const [errors, setErrors] = useState({});
   const [isAnimating, setIsAnimating] = useState(false);
   const [interViewStatusDetails, setInterViewStatusDetails] = useState([]);
-  console.log("interViewStatusDetails", interViewStatusDetails);
+  // console.log("interViewStatusDetails", interViewStatusDetails);
   const [loading, setLoading] = useState(true);
 
   // View
@@ -36,7 +36,7 @@ const InterViewStatus_Details = () => {
       const response = await axios.get(
         `${API_URL}/api/job-type/view-jobinterview`
       );
-      console.log("Interview Status Response:", response);
+      // console.log("Interview Status Response:", response);
 
       // Adjust based on your API response structure
     
@@ -106,7 +106,7 @@ const InterViewStatus_Details = () => {
   const [editId, setEditid] = useState("");
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     setNameEdit(row.name);
@@ -144,7 +144,7 @@ const InterViewStatus_Details = () => {
         `${API_URL}/api/job-type/edit-jobinterview/${editId}`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
 
       setIsEditModalOpen(false);
       fetchInterViewStatus();
