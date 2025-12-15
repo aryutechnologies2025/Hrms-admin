@@ -10,7 +10,7 @@ import { API_URL } from "../config";
 // import { capitalizeFirstLetter } from "../../StringCaps";
 import { TfiPencilAlt } from "react-icons/tfi";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import ReactDOM from "react-dom";
+import ReactDOM, { render } from "react-dom";
 import Swal from "sweetalert2";
 import Footer from "../components/Footer";
 import Mobile_Sidebar from "../components/Mobile_Sidebar";
@@ -75,6 +75,7 @@ const Addcategory_details = () => {
 
   const [title, setTitle] = useState("");
   const [status, setStatus] = useState("");
+  const [orders, setOrders] = useState("");
 
   //   const [errors, setErrors] = useState({});
 
@@ -83,7 +84,7 @@ const Addcategory_details = () => {
     try {
       const formData = {
         title: title,
-
+        orders: orders,
         status: status,
       };
 
@@ -102,14 +103,24 @@ const Addcategory_details = () => {
       setIsAddModalOpen(false);
       fetchProject();
       setTitle("");
+      setOrders("");
       setStatus("");
 
       //   fetchProject();
       setErrors({});
     } catch (err) {
-      setErrors(err.response.data.errors);
-     
-    }
+  if (err.response && err.response.data?.message) {
+    Swal.fire({
+      icon: "error",
+      title: err.response.data.message,
+    });
+  } else {
+    Swal.fire({
+      icon: "error",
+      title: "Something went wrong",
+    });
+  }
+}
   };
 
   //   edit
@@ -117,7 +128,7 @@ const Addcategory_details = () => {
   //
   const [titleEdit, setTitleEdit] = useState("");
   const [statusEdit, setStatusEdit] = useState("");
-
+const [ordersEdit, setOrdersEdit] = useState("");
   const [editid, setEditid] = useState([]);
 
   console.log("editid", editid);
@@ -127,7 +138,7 @@ const Addcategory_details = () => {
 
     setEditid(row._id);
     setTitleEdit(row.title || "");
-
+    setOrdersEdit(row.orders || "");
     setStatusEdit(row.status);
 
     setIsEditModalOpen(true);
@@ -143,7 +154,7 @@ const Addcategory_details = () => {
     try {
       const formData = {
         title: titleEdit,
-
+        orders: ordersEdit,
         status: statusEdit,
       };
 
@@ -165,12 +176,19 @@ const Addcategory_details = () => {
       //   fetchProject();
       setErrors({});
     } catch (err) {
-      if (err.response?.data?.errors) {
-        setErrors(err.response.data.errors);
-      } else {
-        console.error("Error submitting form:", err);
-      }
-    }
+  if (err.response?.data?.message) {
+    Swal.fire({
+      icon: "error",
+      title: err.response.data.message,
+    });
+  } else {
+    Swal.fire({
+      icon: "error",
+      title: "Something went wrong",
+    });
+  }
+}
+
   };
 
   // Validate Status dynamically
@@ -189,7 +207,7 @@ const Addcategory_details = () => {
 
     if (result.isConfirmed) {
       try {
-        const res = await axios.post(
+        const res = await axios.delete(
           `${API_URL}/api/category/delete-categoryDelete/${id}`
         );
         Swal.fire("Deleted!", "The Category has been deleted.", "success");
@@ -217,6 +235,13 @@ const Addcategory_details = () => {
     {
       title: "Title",
       data: "title",
+    },
+    {
+      title: "Orders",
+      data: "orders",
+       render: (data) => {
+        return data || "-";
+      },
     },
 
     {
@@ -335,15 +360,20 @@ const Addcategory_details = () => {
                 scrollX: true,
                 responsive: true,
                 autoWidth: false,
+
               }}
               className="display nowrap bg-white"
+                              paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
             />
           </div>
         </div>
         {/* Add Modal */}
         {isAddModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-5 rounded-xl w-[400px] h-[300px] overflow-y-auto px-8 py-6">
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+             {/* Overlay */}
+            <div className="absolute inset-0 " onClick={closeAddModal}></div>
+            <div className="fixed bg-white p-5 rounded-xl w-[400px] h-[400px] overflow-y-auto px-8 py-6">
               <h2 className="text-xl font-semibold mb-4">Add Item</h2>
 
               {/* Title */}
@@ -353,6 +383,17 @@ const Addcategory_details = () => {
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+{/* orders */}
+               <div className="mb-3">
+                <label className="block text-sm font-medium mb-2">Orders</label>
+                <input
+                  type="number"
+                  value={orders}
+                  onChange={(e) => setOrders(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -392,8 +433,10 @@ const Addcategory_details = () => {
 
         {/* Edit Modal */}
         {isEditModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-5 rounded-xl w-[400px] h-[300px] overflow-y-auto px-8 py-6">
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 ">
+             {/* Overlay */}
+            <div className="absolute inset-0 " onClick={closeEditModal}></div>
+            <div className="fixed bg-white p-5 rounded-xl w-[400px] h-[400px] overflow-y-auto px-8 py-6">
               <h2 className="text-xl font-semibold mb-4">Edit Item</h2>
 
               {/* Title */}
@@ -403,6 +446,17 @@ const Addcategory_details = () => {
                   type="text"
                   value={titleEdit}
                   onChange={(e) => setTitleEdit(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              {/* orders */}
+               <div className="mb-3">
+                <label className="block text-sm font-medium mb-2">Orders</label>
+                <input
+                  type="number"
+                  value={ordersEdit}
+                  onChange={(e) => setOrdersEdit(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
