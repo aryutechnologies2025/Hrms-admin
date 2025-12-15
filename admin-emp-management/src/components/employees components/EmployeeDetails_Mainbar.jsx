@@ -26,12 +26,12 @@ const EmployeeDetails_Mainbar = () => {
 
 
   const employeeIds = window.location.pathname.split("/")[2];
-  console.log("window.location.pathname", employeeIds);
+  // console.log("window.location.pathname", employeeIds);
 
   // const { employeeId } = location.state || {};
   // console.log("employeeId",employeeId)
   const [employee, setData] = useState([]);
-  console.log("employee", employee);
+  // console.log("employee", employee);
   const [employeeDocuments, setEmployeeDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -42,7 +42,7 @@ const EmployeeDetails_Mainbar = () => {
         `${API_URL}/api/employees/view-employee/${employeeIds}`
       );
       setData(response.data.data);
-      console.log(response);
+      // console.log(response);
 
       const employeeDocuments = response.data?.data?.document;
 
@@ -70,7 +70,7 @@ const EmployeeDetails_Mainbar = () => {
   useEffect(() => {
     fetchData();
   }, []);
-  console.log(employee);
+  // console.log(employee);
   const openDocument = (fileName) => {
     const url = `${API_URL}/api/uploads/documents/${fileName}`;
     window.open(url, "_blank");

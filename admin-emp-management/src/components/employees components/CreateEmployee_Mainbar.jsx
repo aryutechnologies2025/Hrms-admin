@@ -1557,7 +1557,7 @@ const CreateEmployee_Mainbar = () => {
   const updateContact = (index, field, value) => {
     const updated = [...emergencyContacts];
 
-    console.log("updated", updated)
+    // console.log("updated", updated)
     updated[index][field] = value;
     setEmergencyContacts(updated);
   };

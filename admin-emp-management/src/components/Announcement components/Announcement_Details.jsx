@@ -53,7 +53,7 @@ const Announcement_Details = () => {
       const response = await axios.get(
         `${API_URL}/api/announcement/view-announcement`
       );
-      console.log("announce response", response);
+      // console.log("announce response", response);
 
 
       setAnnounceDetails(response.data.data)
@@ -154,7 +154,7 @@ const Announcement_Details = () => {
   // const canAccessEmployee = visibleEdit === "Both" || visibleEdit === "Employee";
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     setDisplayEdit(row._display);
@@ -174,7 +174,7 @@ const Announcement_Details = () => {
 
 
   const handlesubmitedit = async (e) => {
-    console.log("ffff")
+    // console.log("ffff")
     e.preventDefault();
     setErrors({});
 
@@ -219,7 +219,7 @@ const Announcement_Details = () => {
         `${API_URL}/api/announcement/edit-announcement/${editId}`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
 
 
       setIsEditModalOpen(false);

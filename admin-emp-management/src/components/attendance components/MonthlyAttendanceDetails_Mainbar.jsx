@@ -319,7 +319,7 @@ const MonthlyAttendanceDetails_Mainbar = () => {
 
   const [employeeName, setEmployeeName] = useState([]);
 
-  console.log("employeeName", employeeName);
+  // console.log("employeeName", employeeName);
 
   // console.log("summary", summary);
 
@@ -332,7 +332,7 @@ const MonthlyAttendanceDetails_Mainbar = () => {
       month: `${monthDate.getMonth() + 1}-${monthDate.getFullYear()}`,
       employeeId: selectedEmployeeDeatils.split(" - ")[0],
     };
-    console.log(payload);
+    // console.log(payload);
 
     try {
       const response = await axios.get(
@@ -340,13 +340,13 @@ const MonthlyAttendanceDetails_Mainbar = () => {
         { params: payload }
       );
 
-      console.log("response", response)
+      // console.log("response", response)
 
       setEmployeeData(response.data.data);
       setSummary(response.data.summary);
       setEmployeeName(response.data.employee)
 
-      console.log(response.data.data);
+      // console.log(response.data.data);
     } catch (error) {
       console.log(error);
       setEmployeeData("");

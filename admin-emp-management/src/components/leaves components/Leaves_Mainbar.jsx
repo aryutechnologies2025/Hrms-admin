@@ -28,9 +28,9 @@ const Leaves_Mainbar = () => {
 
   const [globalFilter, setGlobalFilter] = useState("");
   const [approvedRejectedList, setApprovedRejectedList] = useState([]);
-  console.log("approvedRejectedList", approvedRejectedList);
+  // console.log("approvedRejectedList", approvedRejectedList);
   const [pendingRequestList, setPendingRequestList] = useState([]);
-  console.log("pendingRequestList", pendingRequestList);
+  // console.log("pendingRequestList", pendingRequestList);
 
   const [loading, setLoading] = useState(true); // State to manage loading
   const [leaveRequestNotesToEmployee, setLeaveRequestNotesToEmployee] =
@@ -38,7 +38,7 @@ const Leaves_Mainbar = () => {
   const [selectedLeaveType, setSelectedLeaveType] = useState([]);
 
   const [selectedId, setSelectedId] = useState(null);
-  console.log("selectedId", selectedId);
+  // console.log("selectedId", selectedId);
 
   const [showModal, setShowModal] = useState(false);
   const [dropdownValue, setDropdownValue] = useState("");
@@ -53,7 +53,7 @@ const Leaves_Mainbar = () => {
   const [subleavetype, setSubleavetype] = useState([]);
   let navigate = useNavigate();
   const handleEditClick = (rowData) => {
-    console.log("Clicked row ID:", rowData);
+    // console.log("Clicked row ID:", rowData);
     setLeavetype(rowData.leaveType);
     setSubleavetype(rowData.leaveDuration);
     setSelectedId(rowData._id);

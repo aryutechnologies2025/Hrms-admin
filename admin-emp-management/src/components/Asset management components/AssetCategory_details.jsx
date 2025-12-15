@@ -28,10 +28,10 @@ const AssetCategory_details = () => {
   const parsedDetails = JSON.parse(null);
   const userid = parsedDetails ? parsedDetails.id : null;
   const [errors, setErrors] = useState({});
-  console.log("errors:", errors);
+  // console.log("errors:", errors);
   const [isAnimating, setIsAnimating] = useState(false);
   const [assetDetails, setAssetDetails] = useState([])
-  console.log("assetDetails", assetDetails)
+  // console.log("assetDetails", assetDetails)
   const [loading, setLoading] = useState(true); // State to manage loading
   let navigate = useNavigate();
 
@@ -45,7 +45,7 @@ const AssetCategory_details = () => {
       const response = await axios.get(
         `${API_URL}/api/asset-mannagement-category/assetCategory`
       );
-      console.log("response get check", response);
+      // console.log("response get check", response);
 
       setAssetDetails(response?.data?.data)
       setLoading(false);
@@ -120,7 +120,7 @@ const AssetCategory_details = () => {
   const [editId, setEditid] = useState("");
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     setNameEdit(row.name);
@@ -159,7 +159,7 @@ const AssetCategory_details = () => {
         `${API_URL}/api/asset-mannagement-category/edit-assetCategorydetails/${editId}`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
 
 
       setIsEditModalOpen(false);

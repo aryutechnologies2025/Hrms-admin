@@ -29,7 +29,7 @@ const Departments_Mainbar = () => {
     fetchRoles();
   }, []);
 
-  console.log("roles", roles);
+  // console.log("roles", roles);
   const [loading, setLoading] = useState(true);
   const [rolename, setRoleName] = useState("");
   const [status, setStatus] = useState("");
@@ -44,7 +44,7 @@ const Departments_Mainbar = () => {
       const response = await axios.get(
         `${API_URL}/api/department/view-employeedepartment`
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setRoles(response.data.data);
         setLoading(false);
@@ -118,7 +118,7 @@ const Departments_Mainbar = () => {
 
   const handleSave = async (roleId) => {
     const { name, status } = roleDetails;
-    console.log(roleId);
+    // console.log(roleId);
 
     if (roleDetails.name.length <= 0) {
       setErrors((prevErrors) => ({

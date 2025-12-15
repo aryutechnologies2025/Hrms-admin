@@ -54,7 +54,7 @@ const Dashboard_Mainbar = () => {
 
   const [announcements, setAnnouncements] = useState([]);
 
-  console.log("announcements", announcements)
+  // console.log("announcements", announcements)
   // console.log("interns", interns);
 
  
@@ -73,7 +73,7 @@ const Dashboard_Mainbar = () => {
         withCredentials: true, // Include cookies with the request
       
       });
-      console.log("Response:", response.data.data);
+      // console.log("Response:", response.data.data);
       const {
         upcomingHolidays,
         employeeRequests,

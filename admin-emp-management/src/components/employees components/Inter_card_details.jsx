@@ -62,7 +62,7 @@ const Inter_card_details = () => {
     const seconds = formatNumber(currentTime.getSeconds());
     const amPm = currentTime.getHours() >= 12 ? "PM" : "AM";
     const [employees, setEmployees] = useState([]);
-    console.log("employee checking", employees);
+    // console.log("employee checking", employees);
     const [allEmployees, setAllEmployees] = useState([]);
     const [filterInput, setFilterInput] = useState("");
     const [filteredEmployees, setFilteredEmployees] = useState([]);
@@ -81,7 +81,7 @@ const Inter_card_details = () => {
                 }
             );
 
-            console.log("response", response);
+            // console.log("response", response);
 
             const Employees = response.data.data;
 
@@ -104,7 +104,7 @@ const Inter_card_details = () => {
                 const sortedData = transformedData.sort((a, b) =>
                     a.employee_Name.localeCompare(b.employee_Name)
                 );
-                console.log("transformedData", transformedData);
+                // console.log("transformedData", transformedData);
                 //  setEmployees(transformedData);
                 // Sort before filtering
 
