@@ -29,10 +29,10 @@ const AssetSubCategory_details = () => {
   const parsedDetails = storedDetatis ? JSON.parse(storedDetatis) : null;
   const userid = parsedDetails ? parsedDetails.id : null;
   const [errors, setErrors] = useState({});
-  console.log("errors:", errors);
+  // console.log("errors:", errors);
   const [isAnimating, setIsAnimating] = useState(false);
   const [assetSubCategoryDetails, setAssetSubCategoryDetails] = useState([])
-  console.log("assetSubCategoryDetails", assetSubCategoryDetails)
+  // console.log("assetSubCategoryDetails", assetSubCategoryDetails)
   const [loading, setLoading] = useState(true); // State to manage loading
   let navigate = useNavigate();
 
@@ -46,7 +46,7 @@ const AssetSubCategory_details = () => {
       const response = await axios.get(
         `${API_URL}/api/sub-asset-category/subCategory`
       );
-      console.log("response get check", response);
+      // console.log("response get check", response);
 
 
       setAssetSubCategoryDetails(response?.data?.data)
@@ -123,7 +123,7 @@ const AssetSubCategory_details = () => {
 
   const openEditModal = (row) => {
 
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     setNameEdit(row.name);
@@ -162,7 +162,7 @@ const AssetSubCategory_details = () => {
         `${API_URL}/api/sub-asset-category/edit-subCategory/${editId}`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
 
 
       setIsEditModalOpen(false);

@@ -143,7 +143,7 @@ const Attendance_add_details = () => {
     try {
       const loginDateObj = new Date(`${date}T${loginTime}`);
       const logoutDateObj = new Date(`${date}T${logoutTime}`);
-      console.log("dates", loginDateObj, logoutDateObj);
+      // console.log("dates", loginDateObj, logoutDateObj);
 
       const formData = {
         employeeId: selectedEmployeeDetails,
@@ -159,7 +159,7 @@ const Attendance_add_details = () => {
         `${API_URL}/api/attendance/mark-by-admin`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Attendance added successfully!",
@@ -197,10 +197,10 @@ const Attendance_add_details = () => {
 
   const [editid, setEditid] = useState([]);
 
-  console.log("editid", editid);
+  // console.log("editid", editid);
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     setLeaveTypeEdit(row.type);
@@ -229,7 +229,7 @@ const Attendance_add_details = () => {
         `${API_URL}/api/leaveType/edit-leavetype/${editid}`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Leave Update successfully!",
@@ -271,7 +271,7 @@ const Attendance_add_details = () => {
           `${API_URL}/api/leaveType/delete-leavetype/${id}`
         );
         Swal.fire("Deleted!", "The Leave has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setClientdetails((prev) => prev.filter((item) => item._id !== id));
         // fetchProject();
       } catch (err) {

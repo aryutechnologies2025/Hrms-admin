@@ -44,12 +44,12 @@ const BankStatement_Detail = () => {
     // console.log("errors:", errors);
     const [isAnimating, setIsAnimating] = useState(false);
     const [bankStatementDetails, setBankStatementDetails] = useState([])
-    console.log("bank statement", bankStatementDetails)
+    // console.log("bank statement", bankStatementDetails)
     const [loading, setLoading] = useState(true); // State to manage loading
     let navigate = useNavigate();
     const [attachmentedit, setAttachmentedit] = useState(null);
     const [attachment, setAttachment] = useState(null);
-    console.log("attachment1122334 : ",attachment)
+    // console.log("attachment1122334 : ",attachment)
     const fileInputRef = useRef(null);
     const fileInputRefedit = useRef(null);
     const [selectedAccount, setSelectedAccount] = useState("");
@@ -59,7 +59,7 @@ const BankStatement_Detail = () => {
 
     const [openViewPopup, setOpenViewPopup] = useState(false);
     const [selectedRowData, setSelectedRowData] = useState(null);
-    console.log("checking:", selectedRowData)
+    // console.log("checking:", selectedRowData)
 
     const [selectedDate, setSelectedDate] = useState(() => {
         return new Date().toISOString().split("T")[0];
@@ -107,10 +107,10 @@ const BankStatement_Detail = () => {
             const finalURL = `${API_URL}/api/statement/getAllStatementDetails${query.length > 0 ? "?" + query.join("&") : ""
                 }`;
 
-            console.log("Final filter URL:", finalURL);
+            // console.log("Final filter URL:", finalURL);
 
             const response = await axios.get(finalURL);
-            console.log("API RESPONSE:", response.data);
+            // console.log("API RESPONSE:", response.data);
 
             setBankStatementDetails(response.data.allStatementDetails);
             setLoading(false);
@@ -145,7 +145,7 @@ const BankStatement_Detail = () => {
             );
 
             setAccountOption(response.data.data);
-            console.log("Account Options:", response.data.data);
+            // console.log("Account Options:", response.data.data);
         } catch (error) {
             console.error("Account list fetch error:", error);
         }
@@ -272,7 +272,7 @@ const BankStatement_Detail = () => {
 
     // create
 const handlesubmit = async (e) => {
-    console.log("selectedAccount:1");
+    // console.log("selectedAccount:1");
   e.preventDefault();
 
   // Reset errors
@@ -287,7 +287,7 @@ const handlesubmit = async (e) => {
       newErrors.date = "Please select a date";
     hasError = true;
     }
-    console.log("selectedAccount:2");
+    // console.log("selectedAccount:2");
 
       if (!selectedFile) {
     newErrors.file = "Please select a file";
@@ -325,7 +325,7 @@ const handlesubmit = async (e) => {
     formData.append("file", selectedFile);          // Excel file
     formData.append("account", selectedAccount._id); // Company ID
     formData.append("date", selectedDate);
-console.log("selectedAccount:3",formData);
+// console.log("selectedAccount:3",formData);
 
 // Debug: Check FormData contents
     console.log("FormData entries:");
@@ -342,7 +342,7 @@ console.log("selectedAccount:3",formData);
      }
     );
 
-    console.log("response:", response.data);
+    // console.log("response:", response.data);
    if (response.data.success) {
     toast.success(response.data.message || "Excel imported successfully!");
 

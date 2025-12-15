@@ -185,7 +185,7 @@ const Leave_Report = () => {
       );
 
       setEmployeeData(response.data.data);
-      console.log(response.data.data);
+      // console.log(response.data.data);
       setLoading(false);
     } catch (error) {
       console.log(error);
