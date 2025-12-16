@@ -130,6 +130,7 @@ import Complaince_Mainbar from "./components/complaince/Complaince_Mainbar";
 import Recurring_Mainbar from "./components/finance components/Recurring_Mainbar";
 import Slack_details from "./components/Slack Componenet/Slack_details";
 import Slack_mainbar from "./components/Slack Componenet/Slack_mainbar";
+import Setting_invoice_main from "./pages/Settings_invoice_main";
 
 
 export const SettingsContext = createContext();
@@ -648,6 +649,29 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       ),
     },
 
+
+    
+    {
+      path:"/invoice-full",
+      permissionTitle: "Clients",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Invoice_full_main />
+        </ProtectedRoute>
+      ),
+    },
+
+
+    {
+      path:"/invoice-pdf",
+      permissionTitle: "Clients",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Invoice />
+        </ProtectedRoute>
+      ),
+    },
+
     /* -------------------------------------------
       FINANCE
   --------------------------------------------*/
@@ -1009,8 +1033,18 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
     {
       path: "/settings",
       element: (
-        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="">
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
           <Setting_main />
+        </ProtectedRoute>
+      ),
+    },
+
+
+      {
+      path: "/settings-invoice",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Setting_invoice_main />
         </ProtectedRoute>
       ),
     },

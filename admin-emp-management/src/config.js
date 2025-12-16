@@ -5,7 +5,7 @@ export const API_URL = "https://hrms.aryuprojects.com";
 
 
 
-// export const API_URL = "https://hrms.aryutechnologies.com";
+export const API_URL = "https://hrms.aryutechnologies.com";
 
 
 

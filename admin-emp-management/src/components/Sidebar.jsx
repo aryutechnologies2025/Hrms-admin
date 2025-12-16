@@ -1514,6 +1514,7 @@ const Sidebar = () => {
                   )}
 
                   {hasPermission("Settings") && (
+                    <>
                     <div
                       onClick={() => onClickSidebarMenu("settings")}
                       className={`flex items-center w-full flex-grow ${
@@ -1526,9 +1527,28 @@ const Sidebar = () => {
                     >
                       <IoSettings />
 
-                      {!arrowClicked && <p className="text-sm">Settings</p>}
+                      {!arrowClicked && <p className="text-sm">General Settings</p>}
                     </div>
+
+                     <div
+                      onClick={() => onClickSidebarMenu("settings-invoice")}
+                      className={`flex items-center w-full flex-grow ${
+                        arrowClicked ? "justify-center  " : "justify-normal"
+                      } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
+                        currentPath === "/settings-invoice"
+                          ? "bg-blue-100 text-[#4F46E5]"
+                          : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
+                      }`}
+                    >
+                      <IoSettings />
+
+                      {!arrowClicked && <p className="text-sm">Invoice Settings</p>}
+                    </div>
+                    </>
                   )}
+
+
+                  
 
 
 
