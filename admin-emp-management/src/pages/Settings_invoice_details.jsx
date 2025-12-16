@@ -52,10 +52,38 @@ const Settings_invoice_details = () => {
   const [unhappyLeave, setUnhappyLeave] = useState("");
   const [permission, setPermission] = useState("");
 
-  const fetchSettings = async () => {
+
+
+
+  // Invoice (Left side)
+  // Invoice (Left)
+  const [invoiceAddress, setInvoiceAddress] = useState("");
+  const [invoiceState, setInvoiceState] = useState("");
+  const [invoiceCity, setInvoiceCity] = useState("");
+  const [invoiceGstin, setInvoiceGstin] = useState("");
+  const [invoiceEmail, setInvoiceEmail] = useState("");
+  const [invoicePhone, setInvoicePhone] = useState("");
+
+  // Company Bank Details (Right)
+  const [accountName, setAccountName] = useState("");
+  const [bankName, setBankName] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [ifscCode, setIfscCode] = useState("");
+  const [branchName, setBranchName] = useState("");
+  const [invoiceTerms, setInvoiceTerms] = useState("");
+
+  const [igst, setIgst] = useState("");
+const [sgst, setSgst] = useState("");
+const [cgst, setCgst] = useState("");
+
+
+
+
+
+ const fetchSettings = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/setting/view-setting`);
-      console.log("response", response);
+      const response = await axios.get(`${API_URL}/api/setting/view-invoice-setting`);
+      // console.log("response", response);
       if (response.data.success) {
         setGst(response.data.data[0]?.gst_percent);
         setPayrollBasic(response.data.data[0]?.payroll_basic_percent);
@@ -72,15 +100,15 @@ const Settings_invoice_details = () => {
         setPayrollErf(response.data.data[0]?.payroll_erpf_percent);
         setCasualLeave(response.data.data[0]?.casual_leave);
         setDateFormat(response.data.data[0]?.date_format);
-
+        
         setCompensatoryLeave(response.data.data[0]?.complementary_leave);
         setUnhappyLeave(response.data.data[0]?.unhappy_leave);
         setPermission(response.data.data[0]?.permission);
         setUnhappyLeaveOption(response.data.data[0]?.unhappy_leave_option);
         setWfh(response.data.data[0]?.wfh_leave);
 
-        // dynamic update date format in context
-
+      // dynamic update date format in context
+   
         setLoading(false);
       } else {
         setErrors("Failed to fetch roles.");
@@ -115,13 +143,13 @@ const Settings_invoice_details = () => {
       };
 
       const response = await axios.post(
-        `${API_URL}/api/setting/create-setting`,
+        `${API_URL}/api/setting/create-invoice-setting`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       toast.success("Settings updated successfully!");
 
-
+      
       setPassword("");
       setErrors({});
     } catch (err) {
@@ -133,29 +161,6 @@ const Settings_invoice_details = () => {
       // }
     }
   };
-
-
-
-  // Invoice (Left side)
-  // Invoice (Left)
-  const [invoiceAddress, setInvoiceAddress] = useState("");
-  const [invoiceState, setInvoiceState] = useState("");
-  const [invoiceCity, setInvoiceCity] = useState("");
-  const [invoiceGstin, setInvoiceGstin] = useState("");
-  const [invoiceEmail, setInvoiceEmail] = useState("");
-  const [invoicePhone, setInvoicePhone] = useState("");
-
-  // Company Bank Details (Right)
-  const [accountName, setAccountName] = useState("");
-  const [bankName, setBankName] = useState("");
-  const [accountNumber, setAccountNumber] = useState("");
-  const [ifscCode, setIfscCode] = useState("");
-  const [branchName, setBranchName] = useState("");
-  const [invoiceTerms, setInvoiceTerms] = useState("");
-
-  const [igst, setIgst] = useState("");
-const [sgst, setSgst] = useState("");
-const [cgst, setCgst] = useState("");
 
 
 
