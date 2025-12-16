@@ -35,7 +35,8 @@ const Source_Details = () => {
   const fetchSource = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/job-type/view-jobsource`
+        `${API_URL}/api/job-type/view-jobsource`,
+        {withCredentials: true}
       );
       // console.log("Source Response:", response);
 
@@ -82,7 +83,7 @@ const Source_Details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/job-type/create-jobsource`,
-        formdata
+        formdata, {withCredentials: true}
       );
 
       setIsAddModalOpen(false);
@@ -145,7 +146,7 @@ const Source_Details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/job-type/edit-jobsource/${editId}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
 
@@ -175,7 +176,9 @@ const Source_Details = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/job-type/delete-jobsource/${id}`)
+          .delete(`${API_URL}/api/job-type/delete-jobsource/${id}`,
+            {withCredentials: true}
+          )
           .then((response) => {
             if (response.data) {
               toast.success("Source has been deleted.");

@@ -1140,8 +1140,9 @@ const TaskList = () => {
 
       try {
         const response = await axios.patch(
-          `${API_URL}/api/task/updated-status/${movedItem.taskId}`,
-          payload
+        `${API_URL}/api/task/updated-status/${movedItem.taskId}`,
+          payload,{ withCredentials: true}
+          
         );
         //       console.log("Dragged Task Object:", movedItem);
         // console.log("Calling PATCH on:", `${API_URL}api/task/updated-status/${movedItem.taskId}`);
@@ -1322,7 +1323,7 @@ const TaskList = () => {
 
       const response = await axios.post(
         `${API_URL}/api/task/create-task`,
-        formData
+        formData, {withCredentials: true}
       );
 
       // console.log("response", response);
@@ -1369,7 +1370,8 @@ const TaskList = () => {
           `${API_URL}/api/project/clientsubuser`,
           {
             params: { clientId: employeeemail, subUserId: employeeDetails._id },
-          }
+          },
+          {withCredentials: true}
         );
         // console.log("55555", response);
         if (response.data.success) {
@@ -1389,7 +1391,7 @@ const TaskList = () => {
           `${API_URL}/api/project/view-projects-id`,
           {
             params: { clientId: employeeemail },
-          }
+          },{withCredentials: true}
         );
         // console.log(response);
         if (response.data.success) {
@@ -1661,7 +1663,7 @@ const TaskList = () => {
 
       const response = await axios.get(
         `${API_URL}/api/task/particular-all-task-status-id`,
-        { params: payload }
+        { params: payload },{withCredentials: true}
       );
 
       const allTasks = response.data.data;

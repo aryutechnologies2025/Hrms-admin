@@ -80,7 +80,8 @@ const Bidding_all_details = () => {
             params:{
                 ids:ids,
                 bidder:"bidder",
-            }
+            },
+            withCredentials: true,
         }
       );
       // console.log(response);
@@ -112,7 +113,8 @@ const Bidding_all_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/bidder/delete-employee-bidder/${id}`
+          `${API_URL}/api/bidder/delete-employee-bidder/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Status has been deleted.", "success");
         // console.log("res", res);

@@ -99,7 +99,7 @@ function Reports_details() {
     try {
       const response = await axios.get(
         `${API_URL}/api/task/particularday-report`,
-        { params: payload }
+        { params: payload },{withCredentials: true}
       );
       setTasklist(response.data.data);
       // console.log(response.data.data);
@@ -128,7 +128,7 @@ function Reports_details() {
       try {
         const response = await axios.get(
           `${API_URL}/api/task/particularday-report`,
-          { params: payload }
+          { params: payload },{withCredentials: true}
         );
         setTasklist(response.data.data);
         // console.log("All employees data for today:", response.data.data);

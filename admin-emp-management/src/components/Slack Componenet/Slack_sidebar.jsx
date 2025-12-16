@@ -28,7 +28,9 @@ export default function Sidebar({ setActiveChat }) {
     useEffect(() => {
         const fetchEmployees = async () => {
             try {
-                const res = await axios.get(`${API_URL}/api/employees/all-active-employees`);
+                const res = await axios.get(`${API_URL}/api/employees/all-active-employees`,
+                    {withCredentials: true}
+                );
                 const Employees = res.data.data;
 
                 const transformed = Employees.map((e) => ({

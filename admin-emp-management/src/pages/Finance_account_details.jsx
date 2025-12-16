@@ -73,7 +73,8 @@ const Finance_account_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/income/view-financecompany`
+        `${API_URL}/api/income/view-financecompany`,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {
@@ -113,7 +114,7 @@ const Finance_account_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/income/create-financecompany`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -179,7 +180,7 @@ const Finance_account_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/income/edit-financecompany/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -220,7 +221,9 @@ const Finance_account_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/income/delete-financecompany/${id}`
+          `${API_URL}/api/income/delete-financecompany/${id}`,
+          {withCredentials: true}
+
         );
         Swal.fire("Deleted!", "The Status has been deleted.", "success");
         // console.log("res", res);

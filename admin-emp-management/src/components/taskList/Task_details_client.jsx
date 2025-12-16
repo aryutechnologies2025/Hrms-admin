@@ -1521,7 +1521,7 @@ const Task_details_client = () => {
        const response = await axios.get(`${API_URL}/api/task/all-tasklist-id`, {
      
         params: payload,
-      });
+      },{withCredentials: true});
 
       if (response.data.success) {
         setTaskdetails(response.data.data);
@@ -1670,7 +1670,7 @@ const Task_details_client = () => {
           `${API_URL}/api/project/clientsubuser`,
           {
             params: { clientId: employeeemail, subUserId: employeeDetails._id },
-          }
+          },{withCredentials: true}
         );
         // console.log("55555", response);
         if (response.data.success) {
@@ -1690,7 +1690,7 @@ const Task_details_client = () => {
           `${API_URL}/api/project/view-projects-id`,
           {
             params: { clientId: employeeemail },
-          }
+          },{withCredentials: true}
         );
         // console.log(response);
         if (response.data.success) {
@@ -1740,7 +1740,9 @@ const Task_details_client = () => {
       formData.append("document[]", file);
     });
 
-    const response = await axios.post(`${API_URL}/api/task/create-task`, formData);
+    const response = await axios.post(`${API_URL}/api/task/create-task`, formData,
+      {withCredentials: true}
+    );
 
     // 🧩 Check if backend actually reports success
     if (response.data.success === true) {
@@ -1857,7 +1859,7 @@ const Task_details_client = () => {
 
       const response = await axios.put(
         `${API_URL}/api/task/update-task/${taskData.id}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -1908,7 +1910,9 @@ const Task_details_client = () => {
 
     if (result.isConfirmed) {
       try {
-        const res = await axios.delete(`${API_URL}/api/task/delete-task/${id}`);
+        const res = await axios.delete(`${API_URL}/api/task/delete-task/${id}`,
+          {withCredentials: true}
+        );
         Swal.fire("Success", "The role has been deleted Successfully!");
 
         fetchProjectlist();
@@ -2248,7 +2252,7 @@ const Task_details_client = () => {
         const res = await axios.delete(
           `${API_URL}/api/task/delete-task-file/${id}/${index}`,
           {
-            // backend should accept this
+            withCredentials: true
           }
         );
         setTaskData((prev) => ({

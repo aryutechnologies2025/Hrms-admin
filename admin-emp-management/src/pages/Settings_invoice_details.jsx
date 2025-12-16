@@ -54,7 +54,9 @@ const Settings_invoice_details = () => {
 
   const fetchSettings = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/setting/view-setting`);
+      const response = await axios.get(`${API_URL}/api/setting/view-setting`,
+        {withCredentials: true}
+      );
       console.log("response", response);
       if (response.data.success) {
         setGst(response.data.data[0]?.gst_percent);
@@ -116,7 +118,7 @@ const Settings_invoice_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/setting/create-setting`,
-        formData
+        formData, {withCredentials: true}
       );
       console.log("response:", response);
       toast.success("Settings updated successfully!");

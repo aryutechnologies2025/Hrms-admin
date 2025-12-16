@@ -62,7 +62,9 @@ const Invoice_details = () => {
 
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/invoice/view-invoice`);
+      const response = await axios.get(`${API_URL}/api/invoice/view-invoice`,
+        {withCredentials: true}
+      );
       // console.log(response);
       if (response.data.success) {
         setClientdetails(response.data.data);

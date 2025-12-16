@@ -181,7 +181,8 @@ const Leave_Report = () => {
 
     try {
       const response = await axios.get(
-        `${API_URL}/api/leave/leave-report/${month}`
+        `${API_URL}/api/leave/leave-report/${month}`,
+        {withCredentials: true}
       );
 
       setEmployeeData(response.data.data);

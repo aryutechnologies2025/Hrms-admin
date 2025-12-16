@@ -66,7 +66,8 @@ const Bidding_reports_details = () => {
     const fetchData = async () => {
       try {
         const { data } = await axios.get(
-          `${API_URL}/api/bidder/get-account-bidder-wise`
+          `${API_URL}/api/bidder/get-account-bidder-wise`,
+          {withCredentials: true}
         );
         if (data.success) {
           setAccounts(data.data);

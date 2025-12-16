@@ -81,7 +81,8 @@ const Bidding_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/bidder/view-employee-bidder`
+        `${API_URL}/api/bidder/view-employee-bidder`,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {
@@ -112,7 +113,8 @@ const Bidding_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/bidder/delete-employee-bidder/${id}`
+          `${API_URL}/api/bidder/delete-employee-bidder/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Status has been deleted.", "success");
         // console.log("res", res);

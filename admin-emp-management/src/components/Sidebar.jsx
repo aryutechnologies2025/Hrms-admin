@@ -128,7 +128,7 @@ const Sidebar = () => {
     try {
       const response = await axios.put(
         `${API_URL}/api/auth/change-password`,
-        payload
+        payload, {withCredentials: true}
       );
       setAdminPassword("");
       setChangePasswordIsOpen(false);

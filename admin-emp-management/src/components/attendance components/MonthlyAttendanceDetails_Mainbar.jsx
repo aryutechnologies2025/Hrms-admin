@@ -337,7 +337,7 @@ const MonthlyAttendanceDetails_Mainbar = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/attendance/particular-month-attendancelist`,
-        { params: payload }
+        { params: payload }, {withCredentials: true}
       );
 
       // console.log("response", response)

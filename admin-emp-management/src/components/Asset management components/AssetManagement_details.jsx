@@ -63,7 +63,8 @@ const AssetManagement_details = () => {
     const fetchAssetManagement = async () => {
         try {
             const response = await axios.get(
-                `${API_URL}/api/asset-mannagement/view-asset`
+                `${API_URL}/api/asset-mannagement/view-asset`,
+                {withCredentials: true}
             );
             // console.log("asset get response", response);
 
@@ -84,7 +85,8 @@ const AssetManagement_details = () => {
         const fetchCategories = async () => {
             try {
                 const res = await axios.get(
-                    `${API_URL}/api/asset-mannagement-category/assetCategory`
+                    `${API_URL}/api/asset-mannagement-category/assetCategory`,
+                    {withCredentials: true}
                 );
                 // console.log("asset category get response", res);
                 const formatted = res.data?.data?.map((item) => ({
@@ -106,7 +108,8 @@ const AssetManagement_details = () => {
         const fetchSubCategories = async () => {
             try {
                 const res = await axios.get(
-                    `${API_URL}/api/sub-asset-category/subCategory`
+                    `${API_URL}/api/sub-asset-category/subCategory`,
+                    {withCredentials: true}
                 );
                 // console.log("asset subCategory get response", res);
                 const formatted = res.data?.data?.map((item) => ({
@@ -126,7 +129,9 @@ const AssetManagement_details = () => {
     // When you fetch asset data for editing
     const fetchAssetForEdit = async (id) => {
         try {
-            const response = await axios.get(`${API_URL}/api/asset-mannagement/view-asset/${id}`);
+            const response = await axios.get(`${API_URL}/api/asset-mannagement/view-asset/${id}`,
+                {withCredentials: true}
+            );
             const asset = response.data;
 
             // Handle existing files
@@ -441,7 +446,7 @@ const AssetManagement_details = () => {
         try {
             const response = await axios.post(
                 `${API_URL}/api/asset-mannagement/create-asset`,
-                formData,
+                formData,{withCredentials: true}
                 // {
                 //     headers: {
                 //         "Content-Type": "multipart/form-data",
@@ -661,7 +666,7 @@ const AssetManagement_details = () => {
         try {
             const response = await axios.put(
                 `${API_URL}/api/asset-mannagement/edit-assetdetails/${editId}`,
-                formData,
+                formData, {withCredentials: true},
                 { headers: { "Content-Type": "multipart/form-data" } }
             );
             // console.log("response:", response);

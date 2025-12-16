@@ -76,7 +76,8 @@ const Reliving_list_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/reliving/view-relivinglist`
+        `${API_URL}/api/reliving/view-relivinglist`,
+        {withCredentials: true}
       );
       // console.log("re", response);
       if (response.data.success) {
@@ -129,7 +130,7 @@ const Reliving_list_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/reliving/create-relivinglist`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -210,7 +211,7 @@ const Reliving_list_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/reliving/edit-relivinglist/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -251,7 +252,8 @@ const Reliving_list_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/reliving/delete-relivinglist/${id}`
+          `${API_URL}/api/reliving/delete-relivinglist/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Status has been deleted.", "success");
         // console.log("res", res);
