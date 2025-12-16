@@ -61,7 +61,9 @@ const Demo_invoice = () => {
 
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/invoice/view-invoice`);
+      const response = await axios.get(`${API_URL}/api/invoice/view-invoice`,
+        {withCredentials: true}
+      );
       // console.log(response);
       if (response.data.success) {
         setClientdetails(response.data.data);
@@ -318,7 +320,7 @@ const Demo_invoice = () => {
 
       const response = await axios.post(
         `${API_URL}/api/invoice/create-invoice`,
-        formData
+        formData, {withCredentials: true}
       );
 
       // console.log("response:", response);

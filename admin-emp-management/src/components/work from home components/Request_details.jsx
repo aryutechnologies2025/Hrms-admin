@@ -74,7 +74,7 @@ const Request_details = () => {
         {
           status: employeeRequest.status,
           notes: employeeRequest.notes,
-        }
+        },{withCredentials: true}
       );
 
       // console.log("Response:", response.data);
@@ -116,7 +116,8 @@ const Request_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/employeerequest/delete-employeerequest/${id}`
+          `${API_URL}/api/employeerequest/delete-employeerequest/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The request has been deleted.", "success");
 
@@ -271,7 +272,8 @@ const Request_details = () => {
   const fetchApproveRejectList = async () => {
     try {
       let response = await axios.get(
-        `${API_URL}/api/employeeRequest/view-employeerequest`
+        `${API_URL}/api/employeeRequest/view-employeerequest`,
+        {withCredentials: true}
       );
       setApprovedRejectedList(response.data.data);
       setLoading(false);
@@ -293,7 +295,7 @@ const Request_details = () => {
           params: {
             type: "pending",
           },
-        }
+        },{withCredentials: true}
       );
       setPendingRequestList(response.data.data);
       setLoading(false);
@@ -315,7 +317,7 @@ const Request_details = () => {
         {
           status: status,
           notes: leaveRequestNotesToEmployee,
-        }
+        },{withCredentials: true}
       );
       fetchPendingRequestList();
       addLeaveRequestModalOpen();
@@ -391,7 +393,8 @@ const Request_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/leaveType/get-leavetype `
+        `${API_URL}/api/leaveType/get-leavetype `,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {

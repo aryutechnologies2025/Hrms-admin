@@ -1396,7 +1396,8 @@ function Task_view_All_client() {
   const fetchProjectall = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/task/particular-task/${taskId}`
+        `${API_URL}/api/task/particular-task/${taskId}`,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {
@@ -1494,7 +1495,7 @@ function Task_view_All_client() {
     try {
       const response = await axios.patch(
         `${API_URL}/api/task/updated-status/${taskId}`,
-        payload
+        payload, {withCredentials: true}
       );
 
       // console.log("Status updated:", response.data);
@@ -1532,7 +1533,7 @@ function Task_view_All_client() {
     try {
       const response = await axios.post(
         `${API_URL}/api/task/task-comments`,
-        formData
+        formData, {withCredentials: true}
       );
 
       // console.log("Upload success:", response.data);
@@ -1552,7 +1553,8 @@ function Task_view_All_client() {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/task/particular-task-comment/${taskId}`
+        `${API_URL}/api/task/particular-task-comment/${taskId}`,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {
@@ -1689,7 +1691,7 @@ function Task_view_All_client() {
       try {
         const response = await axios.put(
           `${API_URL}/api/task/task-pasusecondition/${taskId}`,
-          payload
+          payload, {withCredentials: true}
         );
 
         // console.log("Status updated:", response.data);
@@ -1739,7 +1741,8 @@ function Task_view_All_client() {
   const fetchProjectlogs = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/task/tasklogs/${taskId}`
+        `${API_URL}/api/task/tasklogs/${taskId}`,
+        {withCredentials: true}
       );
       // console.log(response.data);
       if (response.data.success) {
@@ -1808,7 +1811,7 @@ function Task_view_All_client() {
       try {
         const response = await axios.put(
           `${API_URL}/api/task/updated-tester-status`,
-          payload
+          payload, {withCredentials: true}
         );
         // console.log(response);
 
@@ -1868,7 +1871,7 @@ function Task_view_All_client() {
       };
       const response = axios.post(
         `${API_URL}/api/subtasks/create-subtask`,
-        payload
+        payload, {withCredentials: true}
       );
       fetchProjectall();
     } catch (error) {
@@ -1886,7 +1889,7 @@ function Task_view_All_client() {
       };
       const response = axios.put(
         `${API_URL}/api/subtasks/update-subtask/${id}`,
-        payload
+        payload, {withCredentials: true}
       );
       fetchProjectall();
       toast.success("SubTask status updated successfully");
@@ -1901,7 +1904,8 @@ function Task_view_All_client() {
   const handleDeleteSubTask = (id) => {
     try {
       const response = axios.delete(
-        `${API_URL}/api/subtasks/delete-subtask/${id}`
+        `${API_URL}/api/subtasks/delete-subtask/${id}`,
+        {withCredentials: true}
       );
       fetchProjectall();
       toast.success("SubTask deleted successfully");

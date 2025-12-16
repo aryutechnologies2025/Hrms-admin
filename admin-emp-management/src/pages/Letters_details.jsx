@@ -73,7 +73,9 @@ const Letters_details = () => {
 
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/letter/view-letter`);
+      const response = await axios.get(`${API_URL}/api/letter/view-letter`,
+        {withCredentials: true}
+      );
       // console.log(response);
       if (response.data.success) {
         setClientdetails(response.data.data);
@@ -116,7 +118,7 @@ const Letters_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/letter/create-letter`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -188,7 +190,7 @@ const Letters_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/letter/edit-letter/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -229,7 +231,8 @@ const Letters_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/letter/delete-letter/${id}`
+          `${API_URL}/api/letter/delete-letter/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Letters has been deleted.", "success");
         // console.log("res", res);

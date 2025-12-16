@@ -95,7 +95,9 @@ const AssectDocument = () => {
   const fetchClients = async () => {
     try {
       setLoading(true);
-      const resp = await axios.get(`${API_URL}/api/client/view-clientdetails`);
+      const resp = await axios.get(`${API_URL}/api/client/view-clientdetails`,
+        {withCredentials: true}
+      );
 
       // console.log("resp.data.data :", resp.data.data);
       const clientName = resp.data.data.map((emp) => ({

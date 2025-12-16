@@ -84,7 +84,8 @@ const Payment_type_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/payment-type/view-paymenttype`
+        `${API_URL}/api/payment-type/view-paymenttype`,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {
@@ -103,7 +104,7 @@ const Payment_type_details = () => {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      });
+      },{withCredentials: true});
 
       const projectName = response.data.data.map((emp) => ({
         label: emp.name,
@@ -344,7 +345,7 @@ const Payment_type_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/payment-type/create-paymenttype`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -563,7 +564,7 @@ const Payment_type_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/payment-type/edit-paymenttype/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -604,7 +605,8 @@ const Payment_type_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/payment-type/delete-paymenttype/${id}`
+          `${API_URL}/api/payment-type/delete-paymenttype/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Payment has been deleted.", "success");
         // console.log("res", res);

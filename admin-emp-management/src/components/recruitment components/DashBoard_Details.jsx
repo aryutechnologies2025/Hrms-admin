@@ -20,7 +20,8 @@ const DashBoard_Details = () => {
   const fetchDashBoard = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/job-type/recruitment-dashboard`
+        `${API_URL}/api/job-type/recruitment-dashboard`,
+        {withCredentials: true}
       );
       setDashBoard(response.data.result);
       setLoading(false);

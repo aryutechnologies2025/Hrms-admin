@@ -20,7 +20,7 @@ const PermissionComponent = () => {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const rolesResponse = await axios.get(`${API_URL}/api/roles`);
+        const rolesResponse = await axios.get(`${API_URL}/api/roles`,{withCredentials: true});
         if (rolesResponse.data.success) {
           const fetchedRoles = rolesResponse.data.data;
           setRoles(fetchedRoles);
@@ -28,7 +28,8 @@ const PermissionComponent = () => {
 
           // Fetch permissions for roles
           const permissionsResponse = await axios.get(
-            `${API_URL}/api/roles/permissions`
+            `${API_URL}/api/roles/permissions`,
+            {withCredentials: true}
           );
           if (permissionsResponse.data.permissions) {
             const permissionsData = permissionsResponse.data.permissions;
@@ -82,7 +83,7 @@ const PermissionComponent = () => {
     }));
 
     axios
-      .post(`${API_URL}/api/roles/update-permissions`, formattedPermissions)
+      .post(`${API_URL}/api/roles/update-permissions`,{withCredentials: true}, formattedPermissions)
       .then((response) => {
         // console.log("Permissions updated successfully:", response.data);
       })

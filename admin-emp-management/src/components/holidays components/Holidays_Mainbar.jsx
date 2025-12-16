@@ -82,7 +82,8 @@ const Holidays_Mainbar = () => {
   const handleDeleteCLick = async (rowData) => {
     try {
       let response = await axios.delete(
-        `${API_URL}/api/upcomingholiday/delete-upcomingholiday/${rowData._id}`
+        `${API_URL}/api/upcomingholiday/delete-upcomingholiday/${rowData._id}`,
+        {withCredentials: true}
       );
       fetchHolidaysList();
       toast.success("Deleted Successfully!");
@@ -131,7 +132,7 @@ const Holidays_Mainbar = () => {
       };
       const response = await axios.post(
         `${API_URL}/api/upcomingholiday/create-upcomingholiday`,
-        payload
+        payload, {withCredentials: true}
       );
 
       setHolidayDate("");
@@ -155,7 +156,7 @@ const Holidays_Mainbar = () => {
         {
           reason: holidayReason,
           date: holidayDate,
-        }
+        },{withCredentials: true}
       );
 
       setHolidayDate("");
@@ -175,7 +176,8 @@ const Holidays_Mainbar = () => {
   const fetchHolidaysList = async () => {
     try {
       let response = await axios.get(
-        `${API_URL}/api/upcomingholiday/view-upcomingholiday`
+        `${API_URL}/api/upcomingholiday/view-upcomingholiday`,
+        {withCredentials: true}
       );
       setHolidaysList(response.data.data);
       setLoading(false);

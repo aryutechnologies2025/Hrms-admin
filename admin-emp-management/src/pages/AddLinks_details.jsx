@@ -53,7 +53,8 @@ const AddLinks_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/link/view-link`
+        `${API_URL}/api/link/view-link`,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {
@@ -91,7 +92,7 @@ const AddLinks_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/link/create-link`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -157,7 +158,7 @@ const AddLinks_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/link/edit-linkdetails/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -198,7 +199,8 @@ const AddLinks_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/link/delete-link/${id}`
+          `${API_URL}/api/link/delete-link/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The link has been deleted.", "success");
         // console.log("res", res);
@@ -324,7 +326,8 @@ const AddLinks_details = () => {
   const fetchProjectcat = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/link/get-title-from-category `
+        `${API_URL}/api/link/get-title-from-category `,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {

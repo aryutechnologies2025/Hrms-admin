@@ -72,7 +72,7 @@ const TaskList = () => {
             page: pageNum,
             limit: 10, // or whatever number backend expects
           },
-        }
+        },{withCredentials: true}
       );
 
       setCount(response.data.counts);
@@ -381,7 +381,7 @@ const TaskList = () => {
       try {
         const response = await axios.patch(
           `${API_URL}api/task/updated-status/${movedItem.taskId}`,
-          payload
+          payload, {withCredentials: true}
         );
         //       console.log("Dragged Task Object:", movedItem);
         // console.log("Calling PATCH on:", `${API_URL}api/task/updated-status/${movedItem.taskId}`);
@@ -500,7 +500,7 @@ const TaskList = () => {
 
       const response = await axios.post(
         `${API_URL}api/task/create-task`,
-        formData
+        formData, {withCredentials: true}
       );
 
       // console.log("response", response);
@@ -580,7 +580,7 @@ const TaskList = () => {
   const fetchProject = async () => {
     const empId = JSON.parse(localStorage.getItem("hrms_employee"))._id;
     try {
-      const response = await axios.get(`${API_URL}api/project/view-projects`);
+      const response = await axios.get(`${API_URL}api/project/view-projects`,{withCredentials: true});
       // console.log(response);
       if (response.data.success) {
         const filterProject = response.data.data.filter(

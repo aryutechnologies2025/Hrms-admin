@@ -33,7 +33,9 @@ const Client_view_details = () =>{
   const [website, setWebsite] = useState("");
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/client/view-clientdetails-id/${id}`);
+      const response = await axios.get(`${API_URL}/api/client/view-clientdetails-id/${id}`,
+        {withCredentials: true}
+      );
       // console.log("response", response);
       if (response.data.success) {
         setName(response.data.data?.client_name || "");

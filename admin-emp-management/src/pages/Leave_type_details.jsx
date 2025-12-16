@@ -73,7 +73,8 @@ const Leave_type_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/leaveType/view-leavetype`
+        `${API_URL}/api/leaveType/view-leavetype`,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {
@@ -115,7 +116,7 @@ const Leave_type_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/leaveType/create-createleavetype`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -182,7 +183,7 @@ const Leave_type_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/leaveType/edit-leavetype/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({

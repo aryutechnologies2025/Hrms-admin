@@ -27,6 +27,7 @@ const AbsentEmployees_Mainbar = () => {
           params: {
             filter: "absent",
           },
+          withCredentials: true,
         }
       );
       setAbsentedEmployeesList(response.data.employees);
@@ -70,6 +71,7 @@ const AbsentEmployees_Mainbar = () => {
         `${API_URL}/api/emp-attendances/present-employee`,
         {
           params,
+          withCredentials: true,
         }
       );
 

@@ -50,7 +50,8 @@ const Roles_Mainbar = () => {
   const fetchRoles = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/roles/view-employeerole`
+        `${API_URL}/api/roles/view-employeerole`,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {
@@ -112,7 +113,7 @@ const Roles_Mainbar = () => {
 
       const response = await axios.post(
         `${API_URL}/api/roles/create-employeerole`,
-        formdata
+        formdata, {withCredentials: true}
       );
       setIsAddModalOpen(false);
       fetchRoles(); // Refresh the table after adding a role
@@ -148,7 +149,7 @@ const Roles_Mainbar = () => {
         status,
         departmentId,
         // created_by: userid,
-      });
+      },{withCredentials: true});
 
       setRoleDetails({ name: "", status: "", id: "", departmentId: "" });
 
@@ -234,7 +235,9 @@ const Roles_Mainbar = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/roles/delete-employeerole/${roleId}`)
+          .delete(`${API_URL}/api/roles/delete-employeerole/${roleId}`,
+            {withCredentials: true}
+          )
           .then((response) => {
             if (response.data.success) {
               toast.success("Role has been deleted.");

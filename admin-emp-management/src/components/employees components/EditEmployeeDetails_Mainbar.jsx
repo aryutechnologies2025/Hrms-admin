@@ -222,7 +222,8 @@ const EditEmployeeDetails_Mainbar = () => {
   const fetchRoles = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/roles/view-employeerole`
+        `${API_URL}/api/roles/view-employeerole`,
+        {withCredentials: true}
       );
 
       if (response.data.success) {
@@ -239,7 +240,8 @@ const EditEmployeeDetails_Mainbar = () => {
     //abcd
     try {
       const response = await axios.get(
-        `${API_URL}/api/department/view-employeedepartment`
+        `${API_URL}/api/department/view-employeedepartment`,
+        {withCredentials: true}
       );
 
       if (response.data.success) {
@@ -274,7 +276,7 @@ const EditEmployeeDetails_Mainbar = () => {
       const response = await axios.post(`${API_URL}/api/employees/customId`, {
         dateofjoining: date.toISOString().split("T")[0], // Format to YYYY-MM-DD
         empid: employee_id,
-      });
+      },{withCredentials: true});
 
       // console.log('check data', response);
       // setEmployeeId(response.data.employeeid);
@@ -766,7 +768,8 @@ const EditEmployeeDetails_Mainbar = () => {
         );
         try {
           await axios.delete(
-            `${API_URL}/api/employees/delete-employee-file/${employee_id}/${clicked_index}`
+            `${API_URL}/api/employees/delete-employee-file/${employee_id}/${clicked_index}`,
+            {withCredentials: true}
           );
         } catch (error) {
           console.error("Error deleting document:", error);
@@ -912,7 +915,8 @@ const EditEmployeeDetails_Mainbar = () => {
 
     try {
       const response = await axios.get(
-        `${API_URL}/api/employees/view-employee/${employee_id}`
+        `${API_URL}/api/employees/view-employee/${employee_id}`,
+        {withCredentials: true}
       );
       const employee = response.data.data;
       setData(employee);
@@ -1152,7 +1156,8 @@ const EditEmployeeDetails_Mainbar = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
+        {withCredentials: true}
       );
 
       // console.log("response", response);

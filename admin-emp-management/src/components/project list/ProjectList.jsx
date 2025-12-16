@@ -134,7 +134,9 @@ const ProjectList = () => {
 
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/project/view-projects`);
+      const response = await axios.get(`${API_URL}/api/project/view-projects`,
+        {withCredentials: true}
+      );
       if (response.data.success) {
         setRoles(response.data.data);
         setLoading(false);
@@ -306,6 +308,7 @@ const ProjectList = () => {
       const response = await axios.post(
         `${API_URL}/api/project/create-project`,
         formData,
+        {withCredentials: true},
         {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -407,6 +410,7 @@ const ProjectList = () => {
       await axios.put(
         `${API_URL}/api/project/update-project/${roleId}`,
         formData,
+        {withCredentials: true},
         {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -504,7 +508,7 @@ const ProjectList = () => {
         const res = await axios.delete(
           `${API_URL}/api/project/delete-project-file/${id}/${index}`,
           {
-            // backend should accept this
+            withCredentials: true
           }
         );
         setRoleDetails((prev) => ({

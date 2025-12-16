@@ -100,7 +100,7 @@ const Task_details = () => {
       const response = await axios.get(`${API_URL}/api/task/all-tasklist`, {
         // params: { page, limit: limitValue, type },
         params: payload,
-      });
+      },{withCredentials: true});
 
       if (response.data.success) {
         setTaskdetails(response.data.data);
@@ -201,7 +201,7 @@ const Task_details = () => {
 
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/project/view-projects`);
+      const response = await axios.get(`${API_URL}/api/project/view-projects`,{withCredentials: true});
       // console.log(response);
       if (response.data.success) {
         const projectName = response.data.data.map((emp) => ({
@@ -267,7 +267,7 @@ const Task_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/task/create-task`,
-        formData
+        formData, {withCredentials: true}
       );
 
       Swal.fire({
@@ -380,7 +380,7 @@ const Task_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/task/update-task/${taskData.id}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -431,7 +431,7 @@ const Task_details = () => {
 
     if (result.isConfirmed) {
       try {
-        const res = await axios.delete(`${API_URL}/api/task/delete-task/${id}`);
+        const res = await axios.delete(`${API_URL}/api/task/delete-task/${id}`,{withCredentials: true});
         Swal.fire("Success", "The role has been deleted Successfully!");
 
         fetchProjectlist();
@@ -771,7 +771,7 @@ const Task_details = () => {
         const res = await axios.delete(
           `${API_URL}/api/task/delete-task-file/${id}/${index}`,
           {
-            // backend should accept this
+            withCredentials: true
           }
         );
         setTaskData((prev) => ({

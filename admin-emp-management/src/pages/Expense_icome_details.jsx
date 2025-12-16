@@ -84,7 +84,7 @@ const Expense_icome_details = () => {
   // console.log("accountOption", accountOption);
   const fetchAccount = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/income/finance-name`);
+      const response = await axios.get(`${API_URL}/api/income/finance-name`,{withCredentials: true});
       // console.log("response", response);
 
       const projectName = response.data.getFinanceName?.map((emp) => ({
@@ -99,7 +99,9 @@ const Expense_icome_details = () => {
 
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/expense/view-expense`);
+      const response = await axios.get(`${API_URL}/api/expense/view-expense`,
+        {withCredentials: true}
+      );
       // console.log(response);
       if (response.data.success) {
         setExpensedetails(response.data.data);
@@ -145,7 +147,7 @@ const Expense_icome_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/expense/create-expense`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -221,7 +223,7 @@ const Expense_icome_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/expense/edit-expense/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -273,7 +275,8 @@ const Expense_icome_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/expense/delete-enpense/${id}`
+          `${API_URL}/api/expense/delete-enpense/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Expense has been deleted.", "success");
         // console.log("res", res);
@@ -469,7 +472,8 @@ const Expense_icome_details = () => {
   const fetchExpenses = async () => {
     try {
       const res = await axios.get(
-        `${API_URL}/api/expense/get-monthly-total-expense`
+        `${API_URL}/api/expense/get-monthly-total-expense`,
+        {withCredentials: true}
       );
 
       const labels = res?.data?.data?.map((item) => item.month);
@@ -545,7 +549,8 @@ const Expense_icome_details = () => {
   const fetchExpensesyear = async () => {
     try {
       const res = await axios.get(
-        `${API_URL}/api/expense/get-yearly-total-expense`
+        `${API_URL}/api/expense/get-yearly-total-expense`,
+        {withCredentials: true}
       );
 
       // sort by month id

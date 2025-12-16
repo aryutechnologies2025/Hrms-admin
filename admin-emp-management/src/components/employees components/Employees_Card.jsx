@@ -75,7 +75,8 @@ const Employees_Card = () => {
         `${API_URL}/api/employees/all-active-employees`,
         {
           limit: 20,
-        }
+        },
+        {withCredentials: true}
       );
 
       console.log("response", response);

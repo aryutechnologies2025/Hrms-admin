@@ -77,7 +77,7 @@ const SubUserListClient = () => {
         `${API_URL}/api/clientsubuser/all-subusers/${employeeemail}`,
         {
           params: payload,
-        }
+        },{withCredentials: true}
       );
 
       if (response.data.success) {
@@ -166,7 +166,7 @@ const SubUserListClient = () => {
         `${API_URL}/api/project/view-projects-id`,
         {
           params: { clientId: employeeemail },
-        }
+        },{withCredentials: true}
       );
       // console.log("clientID", employeeemail);
       // console.log(response);
@@ -248,7 +248,7 @@ const SubUserListClient = () => {
 
       const response = await axios.post(
         `${API_URL}/api/clientsubuser/create-subuser`,
-        payload
+        payload, {withCredentials: true}
       );
 
       // console.log("response subuser:", response);
@@ -365,7 +365,7 @@ const SubUserListClient = () => {
 
       const response = await axios.put(
         `${API_URL}/api/clientsubuser/update-subuser/${userData.id}`,
-        payload
+        payload, {withCredentials: true}
       );
 
       // console.log("response:", response);
@@ -417,7 +417,8 @@ const SubUserListClient = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/clientsubuser/delete-subuser/${id}`
+          `${API_URL}/api/clientsubuser/delete-subuser/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Success", "The role has been deleted Successfully!");
         fetchProjectlist();

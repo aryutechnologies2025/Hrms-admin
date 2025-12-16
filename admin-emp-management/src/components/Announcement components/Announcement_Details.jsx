@@ -51,7 +51,9 @@ const Announcement_Details = () => {
   const fetchAnnounce = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/announcement/view-announcement`
+        `${API_URL}/api/announcement/view-announcement`,
+        {withCredentials: true}
+      
       );
       // console.log("announce response", response);
 

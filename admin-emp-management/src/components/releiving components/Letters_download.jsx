@@ -29,7 +29,7 @@ const Letters_download = ({ letterTitle, employeeId ,onReady}) => {
         `${API_URL}/api/letter/particular-letter-template/${employeeId}`,
         {
           params: { id: letterTitle },
-        }
+        },{withCredentials: true}
       );
 
       if (response.data.success) {

@@ -206,7 +206,7 @@ const Attendance_trackerdetails = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/attendance/particular-month-attendancelist-details`,
-        { params: payload }
+        { params: payload }, {withCredentials: true}
       );
 
 

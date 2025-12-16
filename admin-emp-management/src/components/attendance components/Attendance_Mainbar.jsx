@@ -536,7 +536,7 @@ const Attendance_Mainbar = () => {
       };
       const response = await axios.put(
         `${API_URL}/api/attendance/update-entry`,
-        payload
+        payload, {withCredentials: true}
       );
 
       toast.success("Attendance updated successfully!");

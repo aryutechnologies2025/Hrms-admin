@@ -151,7 +151,9 @@ function App() {
   
   const settingsApi = async () => {
 
-     const response = await axios.get(`${API_URL}/api/setting/view-setting`);
+     const response = await axios.get(`${API_URL}/api/setting/view-setting`,
+      {withCredentials: true}
+     );
      const dateFormat = response.data.data[0]?.date_format;
      setDynamicDateFormat(dateFormat);
      
@@ -180,7 +182,8 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
   const fetchPermissionModule = async () => {
     const user = JSON.parse(localStorage.getItem("hrmsuser"));
     const response = await axios.get(
-      `${API_URL}/api/hr-permission/get-employee-permission/${user?.employeeId}`
+      `${API_URL}/api/hr-permission/get-employee-permission/${user?.employeeId}`,
+      {withCredentials: true}
     );
 
 
