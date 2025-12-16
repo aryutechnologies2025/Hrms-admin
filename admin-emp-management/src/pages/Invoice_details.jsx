@@ -83,9 +83,13 @@ const Invoice_details = () => {
     setIsAddModalOpen(false);
   };
 
-  // client name deatails
 
-  //
+// edit page id passing
+const handleEdit = (row) => {
+  navigate("/invoice-edit", {
+    state: { rowData: row }
+  });
+};
 
 
 
@@ -152,9 +156,12 @@ const Invoice_details = () => {
         const id = `actions-${row.sno || Math.random()}`;
         setTimeout(() => {
           const container = document.getElementById(id);
-          if (container && !container.hasChildNodes()) {
-             const root = createRoot(container); 
-        root.render(
+          if (container) {
+        if (!container._root) {
+          container._root = createRoot(container);
+        }
+
+        container._root.render(
               <div
                 className="action-container"
                 style={{
@@ -177,7 +184,7 @@ const Invoice_details = () => {
                 >
                   <TfiPencilAlt
                     className="cursor-pointer"
-                    onClick={() => navigate("/invoice-full")}
+                    onClick={() => handleEdit(row)}
                   />
                   <MdOutlineDeleteOutline
                     className="text-red-600 text-xl cursor-pointer"
@@ -193,7 +200,7 @@ const Invoice_details = () => {
                   />
                 </div> */}
               </div>,
-              container
+              // container
             );
           }
         }, 0);

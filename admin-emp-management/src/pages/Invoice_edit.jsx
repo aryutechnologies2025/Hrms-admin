@@ -22,13 +22,20 @@ import { Editor } from "primereact/editor";
 import { FaTrash } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
 import { Dropdown } from "primereact/dropdown";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { use } from "react";
 import { MdClose } from "react-icons/md"; // nice rounded X icon
 
-const Invoice_full = () => {
+const Invoice_edit = () => {
+
+    const { state } = useLocation();
+  const rowData = state?.rowData;
+
+
+  // console.log("rowdata",rowData)
+
   const navigate = useNavigate();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -42,6 +49,9 @@ const Invoice_full = () => {
   useEffect(() => {
     fetchProject();
   }, []);
+
+
+
 
   // console.log("roles", roles);
 
@@ -192,6 +202,39 @@ const Invoice_full = () => {
   const [totalAmount, setTotalAmount] = useState("");
   const [notes, setNotes] = useState("");
 
+
+  
+  useEffect(() => {
+  setSelectedClient(rowData.client);
+  setSelectedProject(rowData.project);
+
+  setInvoiceDate(rowData.invoice_date.split("T")[0]);
+  setDueDate(rowData.due_date.split("T")[0]);
+
+  const formattedItems = rowData?.items.map(item => ({
+    description: item.description,
+    qty: item.quantity,
+    rate: item.rate,
+    total: item.amount
+  }));
+  const selectedCurrency = currencyOptions.find(
+  (c) => c.name === rowData.currency
+);
+
+setCurreny(selectedCurrency || null);
+
+  setItems(formattedItems)
+
+  // setCurreny(rowData.currency);
+  setSubTotal(rowData.sub_total);
+  setTax(rowData.tax);
+  setTotalAmount(rowData.total_amount);
+  setNotes(rowData.notes);
+  setStatus(rowData.status);
+}, []);
+
+
+
   const handleChange = (index, field, value) => {
     const updatedItems = [...items];
     updatedItems[index][field] = value;
@@ -318,7 +361,7 @@ const Invoice_full = () => {
   const [interOpen, setInterOpen] = useState(false);
   const [selected, setSelected] = useState("Select Invoice Type");
 
-  console.log("selected", selected)
+  // console.log("selected", selected)
 
   const selectItem = (path) => {
     setSelected(path.join(" / "));
@@ -357,13 +400,13 @@ const Invoice_full = () => {
           <p className="text-sm text-gray-500" onClick={() => navigate("/invoice-details")}>Invoice List</p>
           <p>{">"}</p>
 
-          <p className="text-sm text-blue-500">Add Invoice</p>
+          <p className="text-sm text-blue-500">Edit Invoice</p>
         </div>
 
         <div className="">
           <div className="bg-white p-2 md:p-5 rounded-xl overflow-y-auto px-2 py-4 md:px-8 md:py-6">
             <div className="flex justify-between items-center gap-2 ">
-              <h2 className="text-xl font-semibold mb-4">Add Invoice</h2>
+              <h2 className="text-xl font-semibold mb-4">Edit Invoice</h2>
             </div>
             <div className="flex flex-wrap md:flex-nowrap">
               {/* left */}
@@ -682,6 +725,7 @@ const Invoice_full = () => {
                           <select
                             name="status"
                             id="status"
+                            value={status}
                             onChange={(e) => {
                               setStatus(e.target.value);
                               validateStatus(e.target.value);
@@ -879,4 +923,4 @@ const Invoice_full = () => {
     </div>
   );
 };
-export default Invoice_full;
+export default Invoice_edit;
