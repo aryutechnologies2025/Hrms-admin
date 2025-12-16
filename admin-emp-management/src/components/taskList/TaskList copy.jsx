@@ -34,12 +34,12 @@ const TaskList = () => {
   const employeemail = employeeDetails.email;
   const employeeId = employeeDetails._id;
   const employeeRole = employeeDetails?.department?.name;
-  console.log("employeeRole", employeeRole);
+  // console.log("employeeRole", employeeRole);
 
   const [isRestored, setIsRestored] = useState(false);
 
   const [data, setData] = useState(null);
-  console.log("data", data);
+  // console.log("data", data);
   const [error, setError] = useState("");
   const [projectfilter, setProjectfilter] = useState("");
   const [count, setCount] = useState([]);
@@ -76,10 +76,10 @@ const TaskList = () => {
       );
 
       setCount(response.data.counts);
-      console.log("apidata", response);
+      // console.log("apidata", response);
 
       const allTasks = response.data.data;
-      console.log("allTasks", allTasks);
+      // console.log("allTasks", allTasks);
       const pagination = response.data.pagination;
 
       const formattedData = {
@@ -133,7 +133,7 @@ const TaskList = () => {
             columns: { ...prevData.columns }, // Spread the columns to avoid direct mutation
           };
 
-          console.log("updated", updated);
+          // console.log("updated", updated);
 
           // Append new items only if not empty
           for (let key in formattedData.columns) {
@@ -266,7 +266,7 @@ const TaskList = () => {
 
     if (savedFilters) {
       const filters = JSON.parse(savedFilters);
-      console.log("savedfilters:", filters);
+      // console.log("savedfilters:", filters);
       setProjectfilter(filters?.projectfilter);
       setDateFilter(filters?.dateFilter);
       setSearchTerm(filters?.searchTerm);
@@ -295,7 +295,7 @@ const TaskList = () => {
       dateFilter: dateFilter,
       searchTerm: searchTerm,
     };
-    console.log("item", filters);
+    // console.log("item", filters);
     sessionStorage.setItem("taskListFilters", JSON.stringify(filters));
     navigate(`/tasklist-details/${item.taskId}`);
     // window.open(`/tasklist-details/${item.taskId}`);
@@ -503,7 +503,7 @@ const TaskList = () => {
         formData
       );
 
-      console.log("response", response);
+      // console.log("response", response);
       Swal.fire({
         icon: "success",
         title: "Task Created!",
@@ -594,7 +594,7 @@ const TaskList = () => {
           teamMembers: emp.teamMembers,
           projectManager: emp.projectManager,
         }));
-        console.log(project);
+        // console.log(project);
 
         setProject(project);
       } else {
@@ -620,7 +620,7 @@ const TaskList = () => {
   const assignedToList = (projectName) => {
     if (projectName.length > 0) {
       const filterproject = project.filter((data) => data.value == projectName);
-      console.log("hello", filterproject);
+      // console.log("hello", filterproject);
 
       // const teamMembers = filterproject[0].teamMembers || [];
       // const projectManager = filterproject[0].projectManager;
@@ -1060,7 +1060,7 @@ const TaskList = () => {
               <div className="flex gap-4 min-w-max ">
                 {data &&
                   data.columnOrder.map((columnId) => {
-                    console.log("columnId", data);
+                    // console.log("columnId", data);
 
                     const column = data.columns[columnId];
                     const apiCount =

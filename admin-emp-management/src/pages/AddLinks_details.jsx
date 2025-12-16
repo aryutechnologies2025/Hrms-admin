@@ -30,7 +30,7 @@ const AddLinks_details = () => {
   // const location = useLocation();
 
   const employeeIds = window.location.pathname.split("/")[2];
-  console.log("window.location.pathname", employeeIds);
+  // console.log("window.location.pathname", employeeIds);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -48,14 +48,14 @@ const AddLinks_details = () => {
   const [errors, setErrors] = useState({});
 
   const [clientdetails, setClientdetails] = useState([]);
-  console.log("clientdetails", clientdetails);
+  // console.log("clientdetails", clientdetails);
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/link/view-link`
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setClientdetails(response.data.data);
       } else {
@@ -93,7 +93,7 @@ const AddLinks_details = () => {
         `${API_URL}/api/link/create-link`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Link added successfully!",
@@ -128,10 +128,10 @@ const AddLinks_details = () => {
 
   const [editid, setEditid] = useState([]);
 
-  console.log("editid", editid);
+  // console.log("editid", editid);
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     setCategoryalledit(row.category);
@@ -159,7 +159,7 @@ const AddLinks_details = () => {
         `${API_URL}/api/link/edit-linkdetails/${editid}`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Link Update successfully!",
@@ -201,7 +201,7 @@ const AddLinks_details = () => {
           `${API_URL}/api/link/delete-link/${id}`
         );
         Swal.fire("Deleted!", "The link has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setClientdetails((prev) => prev.filter((item) => item._id !== id));
         // fetchProject();
       } catch (err) {
@@ -319,14 +319,14 @@ const AddLinks_details = () => {
     },
   ];
   const [category, setCategory] = useState([]);
-  console.log("category", category);
+  // console.log("category", category);
 
   const fetchProjectcat = async () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/link/get-title-from-category `
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setCategory(response.data.data);
       } else {

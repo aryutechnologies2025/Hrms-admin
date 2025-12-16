@@ -78,7 +78,7 @@ const Task_details = () => {
   //   }
   // };
   const fetchProjectlist = async (page = 1, limitValue = limit, type = "") => {
-    console.log("hello 1234");
+    // console.log("hello 1234");
     setButtonLoading(true);
 
     try {
@@ -320,7 +320,7 @@ const Task_details = () => {
   });
 
   const openEditModal = (row) => {
-    console.log("row", row);
+    // console.log("row", row);
     setTaskData({
       id: row._id,
       // currentDate: row.currentDate,
@@ -693,7 +693,7 @@ const Task_details = () => {
   ];
 
   const [projectManagerName, setProjectManagerName] = useState("");
-  console.log("projectManagerName",projectManagerName)
+  // console.log("projectManagerName",projectManagerName)
   const handleRoleChange = (name) => {
     // const selectedRoleName = e.target.value;
     setProjectName(name);

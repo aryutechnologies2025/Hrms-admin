@@ -1438,7 +1438,7 @@ const Close_details = () => {
   //   }
   // };
   const fetchProjectlist = async (page = 1, limitValue = limit, type = "") => {
-    console.log("hello 1234");
+    // console.log("hello 1234");
     setButtonLoading(true);
 
     try {

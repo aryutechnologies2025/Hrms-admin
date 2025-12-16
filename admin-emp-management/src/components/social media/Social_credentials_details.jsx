@@ -29,7 +29,7 @@ const Social_credentials_details = () => {
   // const location = useLocation();
 
   const employeeIds = window.location.pathname.split("/")[2];
-  console.log("window.location.pathname", employeeIds);
+  // console.log("window.location.pathname", employeeIds);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -106,7 +106,7 @@ const Social_credentials_details = () => {
     }
   };
 
-  console.log("accountdetails", accountdetails);
+  // console.log("accountdetails", accountdetails);
 
   //   const fetchProject = async () => {
   //     try {
@@ -201,7 +201,7 @@ const Social_credentials_details = () => {
         `${API_URL}/api/social-media/create-socialmedia-credential`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Status added successfully!",
@@ -249,10 +249,10 @@ const Social_credentials_details = () => {
 
   const [editid, setEditid] = useState([]);
 
-  console.log("editid", editid);
+  // console.log("editid", editid);
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     setAccountselectedit(row.account._id);
@@ -290,7 +290,7 @@ const Social_credentials_details = () => {
         `${API_URL}/api/social-media/edit-socialmedia-credential/${editid}`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Status Update successfully!",
@@ -332,7 +332,7 @@ const Social_credentials_details = () => {
           `${API_URL}/api/social-media/delete-socialmedia-credential/${id}`
         );
         Swal.fire("Deleted!", "The Status has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setAccountdetails((prev) => prev.filter((item) => item._id !== id));
         // fetchProject();
       } catch (err) {

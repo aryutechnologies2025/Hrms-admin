@@ -36,7 +36,7 @@ const WorkFromHome_Mainbar = () => {
   // console.log("approvedRejectedList", approvedRejectedList);
 
   const [pendingRequestList, setPendingRequestList] = useState([]);
-  console.log("pendingRequestList", pendingRequestList);
+  // console.log("pendingRequestList", pendingRequestList);
   const [loading, setLoading] = useState(true); // State to manage loading
   const [leaveRequestNotesToEmployee, setLeaveRequestNotesToEmployee] =
     useState("");
@@ -44,7 +44,7 @@ const WorkFromHome_Mainbar = () => {
   const [selectedLeaveType, setSelectedLeaveType] = useState("");
 
   const [selectedId, setSelectedId] = useState(null);
-  console.log("selectedId", selectedId);
+  // console.log("selectedId", selectedId);
 
   const [showModal, setShowModal] = useState(false);
   const [dropdownValue, setDropdownValue] = useState("");
@@ -60,7 +60,7 @@ const WorkFromHome_Mainbar = () => {
   const [subleavetype, setSubleavetype] = useState("");
 
   const handleEditClick = (rowData) => {
-    console.log("Clicked row ID:", rowData);
+    // console.log("Clicked row ID:", rowData);
     // setLeavetype(rowData.leaveType);
     setSubleavetype(rowData.subLeaveType);
     setSelectedId(rowData._id);
@@ -134,7 +134,7 @@ const WorkFromHome_Mainbar = () => {
           `${API_URL}/api/leave/delete-leave/${id}`
         );
         Swal.fire("Deleted!", "The leave has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setApprovedRejectedList((prev) =>
           prev.filter((item) => item._id !== id)
         );

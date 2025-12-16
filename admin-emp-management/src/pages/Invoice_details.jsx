@@ -46,7 +46,7 @@ const Invoice_details = () => {
     fetchProject();
   }, []);
 
-  console.log("roles", roles);
+  // console.log("roles", roles);
 
   const [projectname, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
@@ -64,7 +64,7 @@ const Invoice_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/invoice/view-invoice`);
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setClientdetails(response.data.data);
       } else {

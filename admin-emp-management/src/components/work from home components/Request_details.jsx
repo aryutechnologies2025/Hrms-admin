@@ -38,7 +38,7 @@ const Request_details = () => {
   // console.log("approvedRejectedList",approvedRejectedList)
 
   const [pendingRequestList, setPendingRequestList] = useState([]);
-  console.log("pendingRequestList", pendingRequestList);
+  // console.log("pendingRequestList", pendingRequestList);
 
   const [loading, setLoading] = useState(true); // State to manage loading
   const [leaveRequestNotesToEmployee, setLeaveRequestNotesToEmployee] =
@@ -428,7 +428,7 @@ const Request_details = () => {
   let navigate = useNavigate();
 
   const filteredData = approvedRejectedList.filter((item) => {
-    console.log("test", subjectFilter);
+    // console.log("test", subjectFilter);
 
     if (!subjectFilter || subjectFilter == "null") return true;
     return item.subject === subjectFilter;

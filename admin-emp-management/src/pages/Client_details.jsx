@@ -40,7 +40,7 @@ const Client_details = () => {
     fetchProject();
   }, []);
 
-  console.log("roles", roles);
+  // console.log("roles", roles);
 
   const [projectname, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
@@ -52,14 +52,14 @@ const Client_details = () => {
   const [errors, setErrors] = useState({});
 
   const [clientdetails, setClientdetails] = useState([]);
-  console.log("clientdetails", clientdetails);
+  // console.log("clientdetails", clientdetails);
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/client/view-clientdetails`
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setClientdetails(response.data.data);
       } else {
@@ -123,7 +123,7 @@ const Client_details = () => {
         `${API_URL}/api/client/create-clientdetails`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Client added successfully!",
@@ -247,7 +247,7 @@ const Client_details = () => {
         `${API_URL}/api/client/edit-clientdetails/${editid}`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Client Update successfully!",
@@ -281,7 +281,7 @@ const Client_details = () => {
   };
 
   const handleDelete = async (id) => {
-    console.log("editid", id);
+    // console.log("editid", id);
 
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -300,7 +300,7 @@ const Client_details = () => {
 
         Swal.fire("Deleted!", "The role has been deleted.", "success");
         fetchProject();
-        console.log("res", res);
+        // console.log("res", res);
         setClientdetails((prev) => prev.filter((item) => item._id !== id));
       } catch (err) {
         console.error("Failed to delete:", err);
