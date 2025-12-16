@@ -57,7 +57,7 @@ import Expense_icome_details from "./pages/Expense_icome_details";
 import Expense_income_main from "./pages/Expense_icome_main";
 import Income_main from "./pages/Income_main";
 import Notes_main from "./pages/Notes_main";
-import Invoice from "./pages/Invoice_download";
+import Invoice from "./components/invoice desgins/Invoice_download";
 import Leave_option_main from "./pages/Leave_option_main";
 import Close_home from "./components/taskList/Close_home";
 import Close_homeClient from "./components/taskList/Close_homeClient";
@@ -131,6 +131,9 @@ import Recurring_Mainbar from "./components/finance components/Recurring_Mainbar
 import Slack_details from "./components/Slack Componenet/Slack_details";
 import Slack_mainbar from "./components/Slack Componenet/Slack_mainbar";
 import Setting_invoice_main from "./pages/Settings_invoice_main";
+import Export_invoice from "./components/invoice desgins/Export_invoice";
+import Performa_invoice from "./components/invoice desgins/Performa_invoice";
+import Sales_invoice from "./components/invoice desgins/Sales_invoice";
 
 
 export const SettingsContext = createContext();
@@ -668,6 +671,37 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
           <Invoice />
+        </ProtectedRoute>
+      ),
+    },
+
+      {
+      path:"/invoice-export",
+      permissionTitle: "Clients",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Export_invoice />
+        </ProtectedRoute>
+      ),
+    },
+
+
+       {
+      path:"/invoice-performa",
+      permissionTitle: "Clients",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Performa_invoice />
+        </ProtectedRoute>
+      ),
+    },
+
+       {
+      path:"/invoice-sales",
+      permissionTitle: "Clients",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Sales_invoice />
         </ProtectedRoute>
       ),
     },

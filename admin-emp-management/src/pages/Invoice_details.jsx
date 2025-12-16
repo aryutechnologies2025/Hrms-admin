@@ -58,6 +58,7 @@ const Invoice_details = () => {
   const [errors, setErrors] = useState({});
 
   const [clientdetails, setClientdetails] = useState([]);
+  console.log("clientdetails", clientdetails);
   // console.log("errors::", errors);
 
   const fetchProject = async () => {
@@ -89,6 +90,16 @@ const Invoice_details = () => {
 
 
   //   console.log("edit modal", roleDetails);
+
+    const [isOpen, setIsOpen] = useState(false);
+
+ const items = [
+  { title: "Sales Invoice", path: "/invoice-sales" },
+  { title: "Performa Invoice", path: "/invoice-performa" },
+  { title: "Export Invoice", path: "/invoice-export" },
+  { title: "Invoice PDF", path: "/invoice-pdf" },
+];
+
 
   const columns = [
     {
@@ -155,7 +166,7 @@ const Invoice_details = () => {
               >
                 <div className="cursor-pointer">
                   <FaEye
-                    
+                    onClick={() => setIsOpen(true)}
                   />
                 </div>
                 <div
@@ -166,7 +177,7 @@ const Invoice_details = () => {
                 >
                   <TfiPencilAlt
                     className="cursor-pointer"
-                    onClick={() => openEditModal(row)}
+                    onClick={() => navigate("/invoice-full")}
                   />
                   <MdOutlineDeleteOutline
                     className="text-red-600 text-xl cursor-pointer"
@@ -244,7 +255,39 @@ const Invoice_details = () => {
             />
           </div>
         </div>
-    
+     {isOpen && (
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+        >
+          <div className="bg-white p-6 rounded-xl w-96 relative">
+            {/* Close button */}
+            <button
+              className="absolute top-3 right-3 text-gray-500"
+              onClick={() => setIsOpen(false)}
+            >
+              ✖
+            </button>
+
+            <h2 className="text-xl font-semibold mb-4">Details</h2>
+
+           <div className="space-y-3">
+  {items.map((item, index) => (
+    <div
+      key={index}
+      className="flex justify-between items-center border p-2 rounded-md"
+    >
+      <span>{item.title}</span>
+      <FaEye
+        className="cursor-pointer text-blue-600"
+        onClick={() => navigate(item.path)}
+      />
+    </div>
+  ))}
+</div>
+
+          </div>
+        </div>
+      )}
       </div>
 
       <Footer />

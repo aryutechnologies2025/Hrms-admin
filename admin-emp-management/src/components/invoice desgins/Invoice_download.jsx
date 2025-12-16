@@ -1,32 +1,32 @@
 import React, { useRef } from "react";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
-import Aryulogo from "../assets/Aryu_logo.png";
-import Sing from "../assets/sign.png";
-import Steal from "../assets/steal.png";
+import Aryulogo from "../../assets/aryu_logo.png";
+import Sing from "../../assets/sign.png";
+import Steal from "../../assets/steal.png";
 
 const Invoice = () => {
-const invoiceRef = useRef();
+  const invoiceRef = useRef();
 
-const downloadPDF = async () => {
-  const element = invoiceRef.current;
+  const downloadPDF = async () => {
+    const element = invoiceRef.current;
 
-  // Capture element
-  const canvas = await html2canvas(element, { scale: 1.5 }); 
-  const imgData = canvas.toDataURL("image/jpeg", 0.7); 
+    // Capture element
+    const canvas = await html2canvas(element, { scale: 1.5 });
+    const imgData = canvas.toDataURL("image/jpeg", 0.7);
 
-  // Create PDF
-  const pdf = new jsPDF("p", "mm", "a4");
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const imgProps = pdf.getImageProperties(imgData);
-  const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
+    // Create PDF
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const imgProps = pdf.getImageProperties(imgData);
+    const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
 
-  pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
+    pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
 
-  // Unique filename (timestamp-based)
-  const fileName = `invoice_${new Date().getTime()}.pdf`;
-  pdf.save(fileName);
-};
+    // Unique filename (timestamp-based)
+    const fileName = `invoice_${new Date().getTime()}.pdf`;
+    pdf.save(fileName);
+  };
 
 
   const data = [
@@ -66,8 +66,8 @@ const downloadPDF = async () => {
         <div className="border-b-2 border-l-2 border-r-2 border-black  border-t-2 flex justify-center text-[14px] text-black font-semibold p-1 uppercase">
           Tax Invoice
         </div>
-        <div className="flex justify-between  border-black items-start border-b-2 border-r-2 border-l-2">
-          <div className="border-r-2 border-black w-[50%]">
+        <div className="flex justify-between  h-full border-black items-start border-b-2 border-r-2 border-l-2">
+          <div className=" border-black w-[50%] ">
             <div className="border-b-2   border-black px-[5%]">
               <img src={Aryulogo} alt="Company Logo" className="h-18 mb-2" />
             </div>
@@ -84,7 +84,7 @@ const downloadPDF = async () => {
               </p>{" "}
             </div>
           </div>
-          <div className="w-[50%]  border-black">
+          <div className="w-[50%] border-l-2  border-black">
             <div className="text-left p-1 pt-4 border-b-2  border-black">
               <div className="pt-1">
                 <strong className=" w-[40%]  inline-block">Invoice No</strong>
@@ -124,7 +124,7 @@ const downloadPDF = async () => {
         </div>
         {/* table */}
 
-        <div className="">
+        <div className=" ">
           {" "}
           <table className="w-full   text-center ">
             <thead className="border-black">
@@ -151,7 +151,7 @@ const downloadPDF = async () => {
                   Amount
                 </th>
               </tr>
-            </thead>    
+            </thead>
             <tbody className="">
               {data.map((item, index) => (
                 <tr key={index} className="">
@@ -395,8 +395,8 @@ const downloadPDF = async () => {
         </div>
 
         {/* Footer */}
-        <div className="flex  ">
-          <div className="w-[62%] border-b-2  border-l-2 border-t-2  border-black">
+        <div className="flex w-full  ">
+          {/* <div className="w-[62%] border-b-2  border-l-2 border-t-2  border-black">
             <div className="border-b-2 p-1 border-black">
               {" "}
               <p className=" font-semibold  underline text-[16px]">
@@ -417,14 +417,17 @@ const downloadPDF = async () => {
                 service described and all particulars are true and correct.
               </p>
             </div>
-          </div>
-          <div className="w-[38%] border-b-2 border-black">
-            <div className="border-b-2  border-black border-l-2 -mt-4 border-t-2 ">
+          </div> */}
+          <div className="w-full  border-black">
+            <div className="border-b-2  border-black border-l-2  border-t-2 ">
               {" "}
               <p className="   underline text-[14px]  border-black border-r-2 pt-1 px-1">
                 Company's Bank Details
               </p>
               <div className=" border-black border-r-2 p-1">
+                   <p className=" text-black">
+                  <span className="w-[20%] inline-block">Ac Name</span>: ARYU ENTERPRISES PRIVATE LIMITED
+                </p>
                 <p className=" text-black">
                   <span className="w-[20%] inline-block">Bank Name</span>: HDFC
                   BANK Ltd
@@ -439,6 +442,29 @@ const downloadPDF = async () => {
                 </p>
               </div>
             </div>
+
+          </div>
+        </div>
+
+        {/* footer pss */}
+
+
+        <div className="flex w-full  ">
+          <div className="w-full border-b-2  border-l-2   border-black">
+
+
+            <div className="">
+              <p className="font-semibold border-b-2  border-black  underline text-[16px] p-1">
+                Declaration
+              </p>
+              <p className="pt-1 p-1">
+                We declare that this invoice shows the actual price of the
+                service described and all particulars are true and correct.
+              </p>
+            </div>
+          </div>
+          <div className="w-full border-b-2 border-black">
+
             <div className="border-x-2 border-black p-3">
               {/* Top Text */}
               <div className="text-right  text-sm">
@@ -472,12 +498,19 @@ const downloadPDF = async () => {
       </div>
 
       {/* Download Button */}
-      <div className="text-center mt-4">
+      <div className="text-center mt-4 flex gap-5 justify-center">
         <button
           onClick={downloadPDF}
           className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
           Download Invoice
+        </button>
+
+        <button
+          onClick={() => window.history.back()}
+          className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+        >
+          Back
         </button>
       </div>
     </div>
