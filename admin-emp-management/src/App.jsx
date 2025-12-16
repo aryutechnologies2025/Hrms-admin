@@ -134,6 +134,7 @@ import Setting_invoice_main from "./pages/Settings_invoice_main";
 import Export_invoice from "./components/invoice desgins/Export_invoice";
 import Performa_invoice from "./components/invoice desgins/Performa_invoice";
 import Sales_invoice from "./components/invoice desgins/Sales_invoice";
+import Invoice_edit_main from "./pages/Invoice_edit_main";
 
 
 export const SettingsContext = createContext();
@@ -660,6 +661,16 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
           <Invoice_full_main />
+        </ProtectedRoute>
+      ),
+    },
+
+    {
+      path:"/invoice-edit",
+      permissionTitle: "Clients",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Invoice_edit_main />
         </ProtectedRoute>
       ),
     },
