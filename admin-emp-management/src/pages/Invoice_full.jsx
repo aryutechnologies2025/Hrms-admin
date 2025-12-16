@@ -356,10 +356,10 @@ const Invoice_full = () => {
           </p>
           <p>{">"}</p>
 
-          <p className="text-sm text-gray-500" onClick={() => navigate("/invoice-details")}>Invoices List</p>
+          <p className="text-sm text-gray-500" onClick={() => navigate("/invoice-details")}>Invoice List</p>
           <p>{">"}</p>
 
-          <p className="text-sm text-blue-500">Invoice Details</p>
+          <p className="text-sm text-blue-500">Add Invoice</p>
         </div>
 
         <div className="">
@@ -734,7 +734,7 @@ const Invoice_full = () => {
                         options={currencyOptions}
                         optionLabel="name"
                         placeholder="Select a Currency"
-                        className="border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="border w-full border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   </div>
