@@ -5,7 +5,7 @@
 
 
 
-// export const API_URL = "https://hrms.aryutechnologies.com";
+export const API_URL = "https://hrms.aryutechnologies.com";
 
 
 
@@ -13,7 +13,7 @@
 
 
 // 
-export const API_URL = "http://localhost:5009"; //system        
+// export const API_URL = "http://localhost:5009"; //system        
 
 
 
