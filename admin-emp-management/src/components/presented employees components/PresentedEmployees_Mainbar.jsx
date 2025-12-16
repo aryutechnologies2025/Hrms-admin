@@ -216,7 +216,7 @@ const PresentedEmployees_Mainbar = () => {
     if (toDate) params.to_date = formatDate(toDate);
     if (employeeName) params.employee_name = employeeName;
 
-    console.log("params",params);
+    // console.log("params",params);
     
     try {
       setLoading(true);

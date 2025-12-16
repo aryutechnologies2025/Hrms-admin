@@ -30,7 +30,7 @@ const Notes_details = () => {
   // const location = useLocation();
 
   const employeeIds = window.location.pathname.split("/")[2];
-  console.log("window.location.pathname", employeeIds);
+  // console.log("window.location.pathname", employeeIds);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -44,7 +44,7 @@ const Notes_details = () => {
     fetchProject();
   }, []);
 
-  console.log("roles", roles);
+  // console.log("roles", roles);
 
   //   const [status, setStatus] = useState("");
   const storedDetatis = localStorage.getItem("hrmsuser");
@@ -53,14 +53,14 @@ const Notes_details = () => {
   const [errors, setErrors] = useState({});
 
   const [notedetails, setNotedetails] = useState([]);
-  console.log("notedetails", notedetails);
+  // console.log("notedetails", notedetails);
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/communication/get-communication/${employeeIds}`
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setNotedetails(response.data.data);
       } else {
@@ -101,7 +101,7 @@ const Notes_details = () => {
         `${API_URL}/api/communication/create-communication`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Notes added successfully!",
@@ -135,10 +135,10 @@ const Notes_details = () => {
 
   const [editid, setEditid] = useState([]);
 
-  console.log("editid", editid);
+  // console.log("editid", editid);
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
     setDateedit(row.date);
     setNotesedit(row.notes);
 
@@ -166,7 +166,7 @@ const Notes_details = () => {
         `${API_URL}/api/communication/edit-communication/${editid}`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Noted Update successfully!",
@@ -208,7 +208,7 @@ const Notes_details = () => {
           `${API_URL}/api/communication/delete-communication/${id}`
         );
         Swal.fire("Deleted!", "The Notes has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         // setNotedetails((prev) => prev.filter((item) => item._id !== _id));
         // fetchProject();
         fetchProject();

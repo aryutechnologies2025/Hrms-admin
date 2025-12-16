@@ -200,7 +200,7 @@ const WorkFromHomeEmployees_Mainbar = () => {
           params: { work_type: "WFH" },
         }
       );
-      console.log("response", response);
+      // console.log("response", response);
       setPresentedEmployeesList(response.data.employees || []);
     } catch (error) {
       console.error("Error fetching employees:", error.response?.data || error.message);
@@ -220,7 +220,7 @@ const WorkFromHomeEmployees_Mainbar = () => {
     if (toDate) params.to_date = formatDate(toDate);
     if (employeeName) params.employee_name = employeeName;
 
-    console.log("Filter Params:", params);
+    // console.log("Filter Params:", params);
 
     setLoading(true);
 
@@ -229,7 +229,7 @@ const WorkFromHomeEmployees_Mainbar = () => {
         `${API_URL}/api/emp-attendances/attendance-list-filter`,
         { params }
       );
-      console.log("filter", response);
+      // console.log("filter", response);
       setPresentedEmployeesList(response.data?.data.employees || []);
     } catch (error) {
       console.error("Error filtering employees:", error.response?.data || error.message);

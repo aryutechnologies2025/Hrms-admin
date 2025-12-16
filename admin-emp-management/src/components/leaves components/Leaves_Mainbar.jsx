@@ -127,7 +127,7 @@ const Leaves_Mainbar = () => {
           `${API_URL}/api/leave/delete-leave/${id}`
         );
         Swal.fire("Deleted!", "The leave has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setApprovedRejectedList((prev) =>
           prev.filter((item) => item._id !== id)
         );
@@ -338,7 +338,7 @@ const Leaves_Mainbar = () => {
   };
 
   const [allleavecount, setAllleavecount] = useState([]);
-  console.log("allleavecount", allleavecount);
+  // console.log("allleavecount", allleavecount);
 
   const fetchPendingRequestList = async () => {
     try {
@@ -354,7 +354,7 @@ const Leaves_Mainbar = () => {
           },
         }
       );
-      console.log("responseaaa", response)
+      // console.log("responseaaa", response)
       setPendingRequestList(response.data.data);
       setAllleavecount(response.data.leaveSettings[0]);
 
@@ -371,7 +371,7 @@ const Leaves_Mainbar = () => {
 
   const onCLickApprovedOrRejectButton = async (status, id, index) => {
     try {
-      console.log("test ", pendingRequestList);
+      // console.log("test ", pendingRequestList);
 
       let response = await axios.put(
         `${API_URL}/api/leave/update-status/${id}`,
@@ -442,14 +442,14 @@ const Leaves_Mainbar = () => {
   };
 
   const [leave, setLeaves] = useState([]);
-  console.log("leave", leave);
+  // console.log("leave", leave);
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/leaveType/get-leavetype `
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setLeaves(response.data.data);
       } else {
@@ -721,10 +721,10 @@ const Leaves_Mainbar = () => {
                           <select
                             value={data?.subLeaveType}
                             onChange={(e) => {
-                              console.log("subLeaveType", subleavetype);
+                              // console.log("subLeaveType", subleavetype);
                               const updated = [...subleavetype];
                               updated[lindex].subLeaveType = e.target.value;
-                              console.log("updated", updated);
+                              // console.log("updated", updated);
                               setSubleavetype(updated);
                             }}
                             className="border-2 rounded-xl px-4 text-sm border-gray-300 outline-none h-10 w-full "
@@ -887,7 +887,7 @@ const Leaves_Mainbar = () => {
                           {reason.employeeId.employeeId})
                         </span> */}
                           </h2>
-                          {console.log("data 123", subLeaveType)}
+                          {/* {console.log("data 123", subLeaveType)} */}
                           {subLeaveType &&
                             subLeaveType.map((value, index) => {
                               return (

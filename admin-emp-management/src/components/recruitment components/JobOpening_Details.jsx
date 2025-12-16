@@ -24,10 +24,10 @@ const JobOpening_Details = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [errors, setErrors] = useState({});
-  console.log("errors", errors)
+  // console.log("errors", errors)
   const [isAnimating, setIsAnimating] = useState(false);
   const [jobOpeningDetails, setJobOpeningDetails] = useState([]);
-  console.log("jobOpening", jobOpeningDetails);
+  // console.log("jobOpening", jobOpeningDetails);
   const [loading, setLoading] = useState(true); // State to manage loading
 
 
@@ -41,7 +41,7 @@ const JobOpening_Details = () => {
   }, []);
 
   const [dropDown, setDropDown] = useState("");
-  console.log("projectname:", dropDown);
+  // console.log("projectname:", dropDown);
 
 
   const fetchJobType = async () => {
@@ -73,7 +73,7 @@ const JobOpening_Details = () => {
       const response = await axios.get(
         `${API_URL}/api/job-type/view-jobopening`
       );
-      console.log("job opening Response:", response);
+      // console.log("job opening Response:", response);
 
       // Adjust based on your API response structure
 
@@ -116,7 +116,7 @@ const JobOpening_Details = () => {
   const [salaryPerMonth, setSalaryPerMonth] = useState("");
 
 
-  console.log("checking:", status, jobType, jobTitle, jobDescription, jobRequirement, startFrom, endingTo, note,)
+  // console.log("checking:", status, jobType, jobTitle, jobDescription, jobRequirement, startFrom, endingTo, note,)
 
   // Create
 
@@ -139,7 +139,7 @@ const JobOpening_Details = () => {
         formdata
       );
 
-      console.log("response:", response);
+      // console.log("response:", response);
 
       setIsAddModalOpen(false);
 
@@ -180,7 +180,7 @@ const JobOpening_Details = () => {
   const [editId, setEditid] = useState("");
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     setStatusEdit(row.status);
@@ -213,7 +213,7 @@ const JobOpening_Details = () => {
         `${API_URL}/api/job-type/edit-jobopening/${editId}`,
         formData
       );
-      console.log("response:", response);
+      // console.log("response:", response);
 
       setIsEditModalOpen(false);
       fetchJobOpening();
