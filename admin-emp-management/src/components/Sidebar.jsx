@@ -1548,11 +1548,17 @@ const Sidebar = () => {
                   )}
 
 
+
+                   {/* permission  */}
+                   {/* hasPermission("slack") && */}
+                   { (
+
                   
 
 
 
-                   {hasPermission("slack") && (
+                  //  {hasPermission("slack") && (
+
                     <div
                       onClick={() => onClickSidebarMenu("slack")}
                       className={`flex items-center w-full flex-grow ${

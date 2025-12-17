@@ -1310,6 +1310,7 @@ function Task_view_All_client() {
   // console.log("startTime", startTime);
 
   const [stopTime, setStopTime] = useState("");
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   // const handleStatusChange = (e) => {
   //   const newStatus = e.target.value;
@@ -1394,6 +1395,7 @@ function Task_view_All_client() {
   // console.log("alldata", alldata);
 
   const fetchProjectall = async () => {
+     setButtonLoading(true);
     try {
       const response = await axios.get(
         `${API_URL}/api/task/particular-task/${taskId}`,
@@ -1416,6 +1418,7 @@ function Task_view_All_client() {
         setProjectManager(response?.data?.data?.projectManagerId);
         setTester(response?.data?.data?.testerStatus || "-");
         setSubTasks(response?.data?.data?.subtasks || []);
+        setButtonLoading(false);
       } else {
         console.log("Failed to fetch roles.");
       }
@@ -1991,7 +1994,11 @@ function Task_view_All_client() {
   ];
   return (
     <>
-      {" "}
+     {buttonLoading ? (
+        <div className="flex justify-center items-center w-full h-screen">
+          <div className="w-12 h-12 border-4 border-blue-500 rounded-full animate-ping"></div>
+        </div>
+      ) : (
       <div className="h-full w-screen flex flex-col justify-between bg-gray-100 ">
         <div className="px-3 py-3 md:px-7 lg:px-10 xl:px-12 md:py-10 ">
           <Mobile_Sidebar />
@@ -2827,6 +2834,7 @@ function Task_view_All_client() {
         </div>
         <Footer />
       </div>
+       )}
     </>
   );
 }
