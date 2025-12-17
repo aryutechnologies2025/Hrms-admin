@@ -120,8 +120,8 @@ const EmployeeDetails_Mainbar = () => {
         {
           id: id,
           newPassword: newPassword,
-        },
-        {withCredentials: true}
+          withCredentials: true,
+        }
       );
       setNewPassword("");
       setChangePasswordModal(false);

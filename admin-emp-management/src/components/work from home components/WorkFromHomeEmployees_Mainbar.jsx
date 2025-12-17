@@ -198,7 +198,8 @@ const WorkFromHomeEmployees_Mainbar = () => {
         `${API_URL}/api/emp-attendances/attendance-list-filter`,
         {
           params: { work_type: "WFH" },
-        },{withCredentials: true}
+          withCredentials: true,
+        }
       );
       // console.log("response", response);
       setPresentedEmployeesList(response.data.employees || []);
@@ -227,7 +228,7 @@ const WorkFromHomeEmployees_Mainbar = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/emp-attendances/attendance-list-filter`,
-        { params },{withCredentials: true}
+        { params, withCredentials: true, }
       );
       // console.log("filter", response);
       setPresentedEmployeesList(response.data?.data.employees || []);

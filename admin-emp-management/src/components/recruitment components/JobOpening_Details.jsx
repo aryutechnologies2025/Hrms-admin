@@ -47,9 +47,7 @@ const JobOpening_Details = () => {
   const fetchJobType = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/job-type/view-job-Account-name`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        withCredentials: true,
 
       });
       // console.log("response:", response)

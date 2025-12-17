@@ -100,7 +100,8 @@ const Task_details = () => {
       const response = await axios.get(`${API_URL}/api/task/all-tasklist`, {
         // params: { page, limit: limitValue, type },
         params: payload,
-      },{withCredentials: true});
+        withCredentials: true,
+      });
 
       if (response.data.success) {
         setTaskdetails(response.data.data);
@@ -165,9 +166,7 @@ const Task_details = () => {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 

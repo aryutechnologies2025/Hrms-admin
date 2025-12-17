@@ -101,10 +101,8 @@ const Payment_type_details = () => {
   const fetchProjectListfilter = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/project/view-projects`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      },{withCredentials: true});
+       withCredentials: true,
+      });
 
       const projectName = response.data.data.map((emp) => ({
         label: emp.name,
@@ -158,9 +156,7 @@ const Payment_type_details = () => {
         const response = await axios.get(
           `${API_URL}/api/client/view-clientdetails`,
           {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+            withCredentials: true,
           }
         );
 
@@ -195,9 +191,7 @@ const Payment_type_details = () => {
           `${API_URL}/api/invoice/get-project-name-with-client`,
           {
             params: { project: selectedClient },
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+            withCredentials: true,
           }
         );
         // const projectName = response.data.data.map((emp) => emp.name);

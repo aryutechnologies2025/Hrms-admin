@@ -276,7 +276,8 @@ const EditEmployeeDetails_Mainbar = () => {
       const response = await axios.post(`${API_URL}/api/employees/customId`, {
         dateofjoining: date.toISOString().split("T")[0], // Format to YYYY-MM-DD
         empid: employee_id,
-      },{withCredentials: true});
+        withCredentials: true,
+      });
 
       // console.log('check data', response);
       // setEmployeeId(response.data.employeeid);
@@ -1156,8 +1157,8 @@ const EditEmployeeDetails_Mainbar = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        },
-        {withCredentials: true}
+          withCredentials: true,
+        }
       );
 
       // console.log("response", response);

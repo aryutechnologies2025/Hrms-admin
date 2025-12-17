@@ -72,7 +72,8 @@ const TaskList = () => {
             page: pageNum,
             limit: 10, // or whatever number backend expects
           },
-        },{withCredentials: true}
+          withCredentials: true,
+        }
       );
 
       setCount(response.data.counts);
@@ -558,9 +559,7 @@ const TaskList = () => {
       const response = await axios.get(
         `${API_URL}api/employees/all-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 

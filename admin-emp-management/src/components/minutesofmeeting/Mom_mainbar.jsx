@@ -121,7 +121,8 @@ const Mom_mainbar = () => {
         `${API_URL}/api/invoice/get-project-name-with-client`,
         {
           params: { project: formClient },
-        },{withCredentials: true}
+          withCredentials: true,
+        }
       );
       // console.log("response for project", response);
 
@@ -171,10 +172,9 @@ const Mom_mainbar = () => {
       setLoading(true);
       if(user?.type==="client"){
         resp = await axios.get(`${API_URL}/api/mom/get-mom/`,
-          {withCredentials: true},
-          {params: { clientId : user?._id}}, authHeaders);
+          {params: { clientId : user?._id}, withCredentials: true,}, authHeaders);
       }else if(user?.type==="subuser"){
-        resp = await axios.get(`${API_URL}/api/mom/get-mom/`, {withCredentials: true} ,{params: {clientId : user?.client?._id, subUserId : user?._id}}, authHeaders);
+        resp = await axios.get(`${API_URL}/api/mom/get-mom/`,{params: {clientId : user?.client?._id, subUserId : user?._id}, withCredentials: true}, authHeaders);
       }else{
         resp = await axios.get(`${API_URL}/api/mom/get-mom/`, {withCredentials: true}, authHeaders);
       }

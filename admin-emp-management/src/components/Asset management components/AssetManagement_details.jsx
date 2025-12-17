@@ -666,8 +666,9 @@ const AssetManagement_details = () => {
         try {
             const response = await axios.put(
                 `${API_URL}/api/asset-mannagement/edit-assetdetails/${editId}`,
-                formData, {withCredentials: true},
-                { headers: { "Content-Type": "multipart/form-data" } }
+                formData,
+                { headers: { "Content-Type": "multipart/form-data" },
+            withCredentials: true, }
             );
             // console.log("response:", response);
 
@@ -692,7 +693,7 @@ const AssetManagement_details = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 axios
-                    .delete(`${API_URL}/api/asset-mannagement/delete-asset/${editId}`)
+                    .delete(`${API_URL}/api/asset-mannagement/delete-asset/${editId}`,{withCredentials: true})
                     .then((response) => {
                         if (response.data) {
                             toast.success("Asset has been deleted.");

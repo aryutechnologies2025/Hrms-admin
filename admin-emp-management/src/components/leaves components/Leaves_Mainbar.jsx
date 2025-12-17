@@ -82,7 +82,8 @@ const Leaves_Mainbar = () => {
           endDate: endDate,
           startTime: permissionStartTime,
           endTime: permissionEndTime,
-        },{withCredentials: true}
+          withCredentials: true,
+        }
       );
 
       // console.log("Response:", response.data);
@@ -355,7 +356,8 @@ const Leaves_Mainbar = () => {
           params: {
             status: "pending",
           },
-        },{withCredentials: true}
+          withCredentials: true,
+        }
       );
       // console.log("responseaaa", response)
       setPendingRequestList(response.data.data);
@@ -382,7 +384,8 @@ const Leaves_Mainbar = () => {
           status: status,
           note: leaveRequestNotesToEmployee,
           subLeaveType: pendingRequestList[index].leaveDuration,
-        },{withCredentials: true}
+          withCredentials: true,
+        }
       );
       fetchPendingRequestList();
       fetchApproveRejectList();
@@ -397,9 +400,7 @@ const Leaves_Mainbar = () => {
       let response = await axios.get(
         `${API_URL}/api/emp-attendances/leave-filter`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
           params: {
             leave_type: e.target.value,
           },

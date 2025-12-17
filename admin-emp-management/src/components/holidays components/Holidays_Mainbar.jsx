@@ -156,7 +156,8 @@ const Holidays_Mainbar = () => {
         {
           reason: holidayReason,
           date: holidayDate,
-        },{withCredentials: true}
+          withCredentials: true,
+        }
       );
 
       setHolidayDate("");

@@ -408,9 +408,7 @@ function Task_view_all() {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 

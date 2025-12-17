@@ -283,9 +283,7 @@ const MonthlyAttendanceDetails_Mainbar = () => {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees-filterdate/${month}`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 
@@ -337,7 +335,7 @@ const MonthlyAttendanceDetails_Mainbar = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/attendance/particular-month-attendancelist`,
-        { params: payload }, {withCredentials: true}
+        { params: payload, withCredentials: true}
       );
 
       // console.log("response", response)

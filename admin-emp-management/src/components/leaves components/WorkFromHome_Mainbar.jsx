@@ -89,7 +89,8 @@ const WorkFromHome_Mainbar = () => {
           endDate: endDate,
           startTime: permissionStartTime,
           endTime: permissionEndTime,
-        },{withCredentials: true}
+          withCredentials: true,
+        }
       );
 
       // console.log("Response:", response.data);
@@ -370,9 +371,7 @@ const WorkFromHome_Mainbar = () => {
       let response = await axios.get(
         `${API_URL}/api/leave/all-wfh-pending-list`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
           params: {
             status: "pending",
           },
@@ -399,8 +398,8 @@ const WorkFromHome_Mainbar = () => {
         {
           status: status,
           note: leaveRequestNotesToEmployee,
-        },
-        {withCredentials: true}
+          withCredentials: true,
+        }
       );
       fetchPendingRequestList();
     } catch (error) {
@@ -413,9 +412,7 @@ const WorkFromHome_Mainbar = () => {
       let response = await axios.get(
         `${API_URL}/api/emp-attendances/leave-filter`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
           params: {
             leave_type: e.target.value,
           },
