@@ -26,7 +26,7 @@ import { useNavigate } from "react-router-dom";
 import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { use } from "react";
-import { useDateUtils  } from "../hooks/useDateUtils";
+import { useDateUtils } from "../hooks/useDateUtils";
 import { createRoot } from "react-dom/client";
 
 
@@ -58,17 +58,24 @@ const Invoice_details = () => {
   const [errors, setErrors] = useState({});
 
   const [clientdetails, setClientdetails] = useState([]);
-  console.log("clientdetails", clientdetails);
+  // console.log("clientdetails", clientdetails);
   // console.log("errors::", errors);
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/invoice/view-invoice`,
-        {withCredentials: true}
+        { withCredentials: true }
       );
       // console.log(response);
       if (response.data.success) {
-        setClientdetails(response.data.data);
+         const formattedData = response.data.data.map(item => ({
+        ...item,
+        invoice_date: item.invoice_date
+          ? formatDateTime(item.invoice_date)
+          : "-"
+      }));
+
+        setClientdetails(formattedData);
       } else {
         setErrors("Failed to fetch roles.");
       }
@@ -86,25 +93,28 @@ const Invoice_details = () => {
   };
 
 
-// edit page id passing
-const handleEdit = (row) => {
-  navigate("/invoice-edit", {
-    state: { rowData: row }
-  });
-};
+  // edit page id passing
+  const handleEdit = (row) => {
+    navigate("/invoice-edit", {
+      state: { rowData: row }
+    });
+  };
 
 
 
   //   console.log("edit modal", roleDetails);
 
-    const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState(null);
+  // console.log("selectedInvoiceId", selectedInvoiceId);
 
- const items = [
-  { title: "Sales Invoice", path: "/invoice-sales" },
-  { title: "Performa Invoice", path: "/invoice-performa" },
-  { title: "Export Invoice", path: "/invoice-export" },
-  { title: "Invoice PDF", path: "/invoice-pdf" },
-];
+
+  const items = [
+    { title: "Sales Invoice", path: "/invoice-sales" },
+    { title: "Performa Invoice", path: "/invoice-performa" },
+    { title: "Export Invoice", path: "/invoice-export" },
+    { title: "Tax Invoice", path: "/invoice-pdf" },
+  ];
 
 
   const columns = [
@@ -118,23 +128,32 @@ const handleEdit = (row) => {
 
     {
       title: "Client Name",
-      data: "client",
+      data: "clientId",
+      render: (data) => data?.client_name || "-"
     },
+
     {
       title: "Project",
       data: "project",
+      render: (data) => data?.name || "-"
+
     },
     {
       title: "Invoice Number",
       data: "invoice_number",
     },
 
+    // {
+    //   title: "Invoice Date",
+    //   data: "invoice_date",
+    //   render: function (data) {
+    //     return formatDateTime(data);
+    //   },
+    // },
     {
       title: "Invoice Date",
       data: "invoice_date",
-      render: function (data) {
-        return formatDateTime(data);
-      },
+      // render: (data) => data ? formatDateTime(data) : "-"
     },
 
     {
@@ -144,9 +163,8 @@ const handleEdit = (row) => {
         const textColor =
           data === "0" ? "text-green-600 border rounded-full border-green-600" : data === "1" ? "text-orange-600 border rounded-full border-orange-600" : "text-red-600 border rounded-full border-red-600";
         return `<div class="${textColor}" style="display: inline-block; padding: 2px 10px; text-align: center; font-size: 12px; font-weight:500">
-                  ${
-                    data === "0" ? "Paid" : data === "1" ? "Pending" : "OverDue"
-                  }
+                  ${data === "0" ? "Paid" : data === "1" ? "Pending" : "OverDue"
+          }
                 </div>`;
       },
     },
@@ -159,11 +177,11 @@ const handleEdit = (row) => {
         setTimeout(() => {
           const container = document.getElementById(id);
           if (container) {
-        if (!container._root) {
-          container._root = createRoot(container);
-        }
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
 
-        container._root.render(
+            container._root.render(
               <div
                 className="action-container"
                 style={{
@@ -174,9 +192,14 @@ const handleEdit = (row) => {
                 }}
               >
                 <div className="cursor-pointer">
-                  <FaEye
-                    onClick={() => setIsOpen(true)}
-                  />
+                <FaEye
+  className="cursor-pointer"
+  onClick={() => {
+    setSelectedInvoiceId(row._id);
+    setIsOpen(true);
+  }}
+/>
+
                 </div>
                 <div
                   className="modula-icon-edit  flex gap-2"
@@ -210,17 +233,48 @@ const handleEdit = (row) => {
       },
     },
   ];
+  const handleDelete = async (id) => {
+    // console.log("editid", id);
 
- 
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to delete this Invoice?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const res = await axios.post(
+          `${API_URL}/api/invoice/delete-invoice/${id}`,
+          {withCredentials: true}
+        );
+        Swal.fire("Deleted!", "The Invoice has been deleted.", "success");
+        // console.log("res", res);
+        // setNotedetails((prev) => prev.filter((item) => item._id !== _id));
+        // fetchProject();
+        fetchProject();
+
+      } catch (err) {
+        console.error("Failed to delete:", err);
+        Swal.fire("Error", "There was an error deleting the Invoice.", "error");
+      }
+    } else {
+      Swal.fire("Cancelled", "Your Invoice is safe :)", "info");
+    }
+  };
+
 
   return (
     <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
       <div>
-        
+
 
         <div className="cursor-pointer">
           <Mobile_Sidebar />
-          
+
         </div>
         <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
           <p
@@ -232,14 +286,14 @@ const handleEdit = (row) => {
           <p>{">"}</p>
 
           <p className="text-sm text-blue-500">Invoice List</p>
-          </div>
+        </div>
 
         {/* Add Button */}
         <div className="flex justify-between mt-1 md:mt-4 mb-2 md:mb-3">
           <h1 className="text-2xl md:text-3xl font-semibold">Invoice List</h1>
           <button
             // onClick={openAddModal}
-            onClick={()=> navigate("/invoice-full")}
+            onClick={() => navigate("/invoice-full")}
             className="px-3 py-2 text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
           >
             Add
@@ -264,39 +318,43 @@ const handleEdit = (row) => {
             />
           </div>
         </div>
-     {isOpen && (
-        <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-        >
-          <div className="bg-white p-6 rounded-xl w-96 relative">
-            {/* Close button */}
-            <button
-              className="absolute top-3 right-3 text-gray-500"
-              onClick={() => setIsOpen(false)}
-            >
-              ✖
-            </button>
+        {isOpen && (
+          <div
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+          >
+            <div className="bg-white p-6 rounded-xl w-96 relative">
+              {/* Close button */}
+              <button
+                className="absolute top-3 right-3 text-gray-500"
+                onClick={() => setIsOpen(false)}
+              >
+                ✖
+              </button>
 
-            <h2 className="text-xl font-semibold mb-4">Details</h2>
+              <h2 className="text-xl font-semibold mb-4">Details</h2>
 
-           <div className="space-y-3">
-  {items.map((item, index) => (
-    <div
-      key={index}
-      className="flex justify-between items-center border p-2 rounded-md"
-    >
-      <span>{item.title}</span>
-      <FaEye
-        className="cursor-pointer text-blue-600"
-        onClick={() => navigate(item.path)}
-      />
-    </div>
-  ))}
-</div>
+              <div className="space-y-3">
+                {items.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center border p-2 rounded-md"
+                  >
+                    <span>{item.title}</span>
+                    <FaEye
+                      className="cursor-pointer text-blue-600"
+                      onClick={() => {
+                navigate(item.path, {
+                  state: { invoiceId: selectedInvoiceId } 
+                });
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
 
+            </div>
           </div>
-        </div>
-      )}
+        )}
       </div>
 
       <Footer />

@@ -25,32 +25,8 @@ const Settings_invoice_details = () => {
     fetchSettings();
   }, []);
 
-  const [gst, setGst] = useState("");
-  const [payrollBasic, setPayrollBasic] = useState("");
-  const [payrollHra, setPayrollHra] = useState("");
-  const [payrollMedicalAllowance, setPayrollMedicalAllowance] = useState("");
-  const [payrollConveyanceAllowance, setPayrollConveyanceAllowance] =
-    useState("");
-  const [payrollEf, setPayrollEf] = useState("");
-  const [payrollEeesi, setPayrollEeesi] = useState("");
-  const [payrollEresi, setPayrollEresi] = useState("");
-  const [payrollErf, setPayrollErf] = useState("");
-  const [toggle, setToggle] = useState(false); // false = No, true = Yes
-  const [unhappy_leave_option, setUnhappyLeaveOption] = useState(""); // default = No
-  // console.log("unhappy_leave_option", unhappy_leave_option);
-  // password
-
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  // leave type
   const [loading, setLoading] = useState(true);
-  const [casualLeave, setCasualLeave] = useState("");
-  const [dateFormat, setDateFormat] = useState("");
 
-  const [wfh, setWfh] = useState("");
-  const [compensatoryLeave, setCompensatoryLeave] = useState("");
-  const [unhappyLeave, setUnhappyLeave] = useState("");
-  const [permission, setPermission] = useState("");
 
 
 
@@ -81,44 +57,49 @@ const [cgst, setCgst] = useState("");
 
 
  const fetchSettings = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get(`${API_URL}/api/setting/view-setting`,
+      const response = await axios.get(`${API_URL}/api/setting/view-invoice-setting`,
         {withCredentials: true}
       );
-      console.log("response", response);
-      // const response = await axios.get(`${API_URL}/api/setting/view-invoice-setting`);
       // console.log("response", response);
+    
       if (response.data.success) {
-        setGst(response.data.data[0]?.gst_percent);
-        setPayrollBasic(response.data.data[0]?.payroll_basic_percent);
-        setPayrollHra(response.data.data[0]?.payroll_hra_percent);
-        setPayrollMedicalAllowance(
-          response.data.data[0]?.payroll_medicalAllowance
-        );
-        setPayrollConveyanceAllowance(
-          response.data.data[0]?.payroll_conveyanceAllowance
-        );
-        setPayrollEeesi(response.data.data[0]?.payroll_eeesi_percent);
-        setPayrollEresi(response.data.data[0]?.payroll_eresi_percent);
-        setPayrollEf(response.data.data[0]?.payroll_eepf_percent);
-        setPayrollErf(response.data.data[0]?.payroll_erpf_percent);
-        setCasualLeave(response.data.data[0]?.casual_leave);
-        setDateFormat(response.data.data[0]?.date_format);
+
+          const data = response.data.data?.[0]; 
+
+          console.log("data",data)
+
+      // Invoice details
+      setInvoiceAddress(data.invoiceAddress || "");
+      setInvoiceState(data.invoiceState || "");
+      setInvoiceCity(data.invoiceCity || "");
+      setInvoiceGstin(data.invoiceGstin || "");
+      setInvoiceEmail(data.invoiceEmail || "");
+      setInvoicePhone(data.invoicePhone || "");
+
+      // Bank details
+      setAccountName(data.accountName || "");
+      setBankName(data.bankName || "");
+      setAccountNumber(data.accountNumber || "");
+      setIfscCode(data.ifscCode || "");
+      setBranchName(data.branchName || "");
+      setInvoiceTerms(data.invoiceTerms || "");
+
+      // GST details
+      setIgst(data.igst || "");
+      setSgst(data.sgst || "");
+      setCgst(data.cgst || "");
         
-        setCompensatoryLeave(response.data.data[0]?.complementary_leave);
-        setUnhappyLeave(response.data.data[0]?.unhappy_leave);
-        setPermission(response.data.data[0]?.permission);
-        setUnhappyLeaveOption(response.data.data[0]?.unhappy_leave_option);
-        setWfh(response.data.data[0]?.wfh_leave);
 
       // dynamic update date format in context
    
-        setLoading(false);
+       setLoading(false); 
       } else {
         setErrors("Failed to fetch roles.");
       }
     } catch (err) {
-      setErrors("Failed to fetch roles.");
+      // setErrors("Failed to fetch roles.");
       setLoading(false);
     }
   };
@@ -147,10 +128,9 @@ const [cgst, setCgst] = useState("");
       };
 
       const response = await axios.post(
-        `${API_URL}/api/setting/create-setting`,
-        formData, {withCredentials: true}
+      
         `${API_URL}/api/setting/create-invoice-setting`,
-        formData
+        formData,{withCredentials: true}
       );
       console.log("response:", response);
       toast.success("Settings updated successfully!");
