@@ -123,34 +123,34 @@ const [cgst, setCgst] = useState("");
     e.preventDefault();
     try {
       const formData = {
-        gst_percent: gst,
-        payroll_basic_percent: payrollBasic,
-        payroll_hra_percent: payrollHra,
-        payroll_medicalAllowance: payrollMedicalAllowance,
-        payroll_conveyanceAllowance: payrollConveyanceAllowance,
-        payroll_eepf_percent: payrollEf,
-        payroll_erpf_percent: payrollErf,
-        password: password,
-        unhappy_leave: unhappyLeave,
-        casual_leave: casualLeave,
-        complementary_leave: compensatoryLeave,
-        wfh_leave: wfh,
-        permission: permission,
-        unhappy_leave_option: unhappy_leave_option,
-        payroll_eeesi_percent: payrollEeesi,
-        payroll_eresi_percent: payrollEresi,
-        date_format: dateFormat,
+         invoiceAddress,
+      invoiceState,
+      invoiceCity,
+      invoiceGstin,
+      invoiceEmail,
+      invoicePhone,
+
+      accountName,
+      bankName,
+      accountNumber,
+      ifscCode,
+      branchName,
+      invoiceTerms,
+
+      igst,
+      sgst,
+      cgst,
       };
 
       const response = await axios.post(
         `${API_URL}/api/setting/create-invoice-setting`,
         formData
       );
-      // console.log("response:", response);
+      console.log("response:", response);
       toast.success("Settings updated successfully!");
 
       
-      setPassword("");
+      
       setErrors({});
     } catch (err) {
       setErrors(err.response.data.errors);
