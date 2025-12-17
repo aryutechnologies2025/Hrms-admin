@@ -66,12 +66,12 @@ function Task_view_all() {
   const [priority, setPriority] = useState("");
   const [assignToChange, setAssignToChange] = useState("");
   const [taskType, setTaskType] = useState("");
-<<<<<<< HEAD
+
   console.log("taskType", taskType);
     const [buttonLoading, setButtonLoading] = useState(false);
-=======
+
   // console.log("taskType", taskType);
->>>>>>> 7f68fc69bfb12f55d3962a81ef7d79021cef1fd9
+
 
   // const handleStatusChange = (e) => {
   //   const newStatus = e.target.value;

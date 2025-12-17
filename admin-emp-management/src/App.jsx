@@ -145,27 +145,28 @@ function App() {
   });
   const [dynamicDateFormat, setDynamicDateFormat] = useState("");
 
-<<<<<<< HEAD
+
   const settingsApi = async () => {
     const response = await axios.get(`${API_URL}/api/setting/view-setting`);
     const dateFormat = response.data.data[0]?.date_format;
     setDynamicDateFormat(dateFormat);
   };
+
   useEffect(() => {
     settingsApi();
   }, []);
-=======
-     const response = await axios.get(`${API_URL}/api/setting/view-setting`,
-      {withCredentials: true}
-     );
-     const dateFormat = response.data.data[0]?.date_format;
-     setDynamicDateFormat(dateFormat);
+
+    //  const response = await axios.get(`${API_URL}/api/setting/view-setting`,
+    //   {withCredentials: true}
+    //  );
+    //  const dateFormat = response.data.data[0]?.date_format;
+    //  setDynamicDateFormat(dateFormat);
      
-    }
-    useEffect(() => {
-      settingsApi();
-    },[]);
->>>>>>> 7f68fc69bfb12f55d3962a81ef7d79021cef1fd9
+    // }
+    // useEffect(() => {
+    //   settingsApi();
+    // },[]);
+
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -184,8 +185,8 @@ function App() {
 
   const fetchPermissionModule = async () => {
     const user = JSON.parse(localStorage.getItem("hrmsuser"));
-<<<<<<< HEAD
-     console.log("/hr-permission/get-employee-permission",user);
+
+   
     if(!user.superUser) {
   
       const response = await axios.get(
@@ -196,18 +197,14 @@ function App() {
         JSON.stringify(response?.data?.data[0]?.module || [])
       );
     }
-=======
-    const response = await axios.get(
-      `${API_URL}/api/hr-permission/get-employee-permission/${user?.employeeId}`,
-      {withCredentials: true}
-    );
 
+    
 
     localStorage.setItem(
       "module",
       JSON.stringify(response?.data?.data[0]?.module || [])
     );
->>>>>>> 7f68fc69bfb12f55d3962a81ef7d79021cef1fd9
+
   };
 
   useEffect(() => {
@@ -808,15 +805,11 @@ function App() {
     /* -------------------------------------------
       COMPLAINENCE
   --------------------------------------------*/
-<<<<<<< HEAD
-    {
-      path: "/complainence",
-      permissionTitle: "Complainence",
-=======
+
      {
       path: "/complaince",
       permissionTitle: "Complaince",
->>>>>>> 7f68fc69bfb12f55d3962a81ef7d79021cef1fd9
+
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
           <Complaince_Mainbar />
