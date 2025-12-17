@@ -48,7 +48,8 @@
     "save-as": "^0.1.8",
     "socket.io-client": "^4.8.1",
     "sweetalert2": "^11.22.2",
-    "swiper": "^11.1.15"
+    "swiper": "^11.1.15",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",

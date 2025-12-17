@@ -106,7 +106,6 @@ import SessionChecker from "./auth/SessionChecker";
 import DashboardClientSubUserMain from "./pages/DashboardSubUserClient";
 import Mom from "./pages/Mom";
 
-
 import Client_view_SubUser_details from "./pages/client_view_subUser_details";
 import Client_view_subuser from "./pages/client_subuser_view";
 import Client_login from "./pages/Client_login";
@@ -120,8 +119,8 @@ import Relieved_main from "./pages/Relieved_main";
 import Document_main from "./pages/Document_main";
 import Inter_card from "./pages/Inter_card";
 import Announcement from "./pages/Announcement";
-import 'quill/dist/quill.snow.css';
-import 'quill/dist/quill.core.css';
+import "quill/dist/quill.snow.css";
+import "quill/dist/quill.core.css";
 import AssectDocument from "./components/Assect Document/AssectDocument";
 import AssentDocumentPage from "./pages/AssentDocumentPage";
 import AssetSubCategory_mainbar from "./components/Asset management components/AssetSubCategory_mainbar";
@@ -131,29 +130,24 @@ import Recurring_Mainbar from "./components/finance components/Recurring_Mainbar
 import Slack_details from "./components/Slack Componenet/Slack_details";
 import Slack_mainbar from "./components/Slack Componenet/Slack_mainbar";
 
-
 export const SettingsContext = createContext();
 
 function App() {
-
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
-
     const userDetails = localStorage.getItem("hrmsuser");
 
     return userDetails ? true : false;
   });
   const [dynamicDateFormat, setDynamicDateFormat] = useState("");
-  
-  const settingsApi = async () => {
 
-     const response = await axios.get(`${API_URL}/api/setting/view-setting`);
-     const dateFormat = response.data.data[0]?.date_format;
-     setDynamicDateFormat(dateFormat);
-     
-    }
-    useEffect(() => {
-      settingsApi();
-    },[]);
+  const settingsApi = async () => {
+    const response = await axios.get(`${API_URL}/api/setting/view-setting`);
+    const dateFormat = response.data.data[0]?.date_format;
+    setDynamicDateFormat(dateFormat);
+  };
+  useEffect(() => {
+    settingsApi();
+  }, []);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -168,28 +162,26 @@ function App() {
     };
   }, []);
 
-const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
-
-
+  const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
 
   const fetchPermissionModule = async () => {
     const user = JSON.parse(localStorage.getItem("hrmsuser"));
-    const response = await axios.get(
-      `${API_URL}/api/hr-permission/get-employee-permission/${user?.employeeId}`
-    );
-
-
-    localStorage.setItem(
-      "module",
-      JSON.stringify(response?.data?.data[0]?.module || [])
-    );
+     console.log("/hr-permission/get-employee-permission",user);
+    if(!user.superUser) {
+  
+      const response = await axios.get(
+        `${API_URL}/api/hr-permission/get-employee-permission/${user?.employeeId}`
+      );
+      localStorage.setItem(
+        "module",
+        JSON.stringify(response?.data?.data[0]?.module || [])
+      );
+    }
   };
 
   useEffect(() => {
     fetchPermissionModule();
   }, []);
-
-
 
   const routesConfig = [
     /* -------------------------------------------
@@ -207,27 +199,24 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
         <Login setIsLoggedIn={setIsLoggedIn} />
       ),
     },
-    
+
     {
       path: "/client",
-      element: 
-        <Client_login setIsLoggedIn={setIsLoggedIn} />
+      element: <Client_login setIsLoggedIn={setIsLoggedIn} />,
     },
     {
       path: "/client-user",
-      element: 
-        <Client_subUser_login setIsLoggedIn={setIsLoggedIn} />
-      
+      element: <Client_subUser_login setIsLoggedIn={setIsLoggedIn} />,
     },
 
     {
-    path: "/dashboard",
-    element: (
-      <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
-        <Dashboard />
-      </ProtectedRoute>
-    ),
-  },
+      path: "/dashboard",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Dashboard />
+        </ProtectedRoute>
+      ),
+    },
 
     /* -------------------------------------------
           CLIENT ROUTES
@@ -267,24 +256,18 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
         </ProtectedRoute>
       ),
     },
-     {
+    {
       path: "/client-view",
       element: (
-        <ProtectedRoute
-          isLoggedIn={isLoggedIn}
-          requiredRole="client"
-        >
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="client">
           <Client_view />
         </ProtectedRoute>
       ),
     },
-     {
+    {
       path: "/client-view-subUser",
       element: (
-        <ProtectedRoute
-          isLoggedIn={isLoggedIn}
-          requiredRole="subuser"
-        >
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="subuser">
           <Client_view_subuser />
         </ProtectedRoute>
       ),
@@ -302,18 +285,15 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       ),
     },
 
-     {
+    {
       path: "/client-subuser",
       element: (
-        <ProtectedRoute
-          isLoggedIn={isLoggedIn}
-          requiredRole="client"
-        >
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="client">
           <DashboardClientSubUserMain />
         </ProtectedRoute>
       ),
     },
-  
+
     /* -------------------------------------------
      ADMIN MODULE: ON BOARDING
   --------------------------------------------*/
@@ -321,17 +301,17 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       path: "/employees",
       permissionTitle: "On Boarding",
       element: (
-        <ProtectedRoute isLoggedIn={isLoggedIn}  requiredRole="admin">
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
           <Employees />
         </ProtectedRoute>
       ),
     },
-      {
+    {
       path: "/inter",
       permissionTitle: "On Boarding",
       element: (
-        <ProtectedRoute isLoggedIn={isLoggedIn}  requiredRole="admin">
-          <Inter_card/>
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Inter_card />
         </ProtectedRoute>
       ),
     },
@@ -362,7 +342,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
         </ProtectedRoute>
       ),
     },
-     {
+    {
       path: "/note-details/:employeeId",
       permissionTitle: "On Boarding",
       element: (
@@ -399,7 +379,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       ),
     },
 
-     {
+    {
       path: "/Declaration-deatils",
       permissionTitle: "On Boarding",
       element: (
@@ -409,7 +389,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       ),
     },
 
-     {
+    {
       path: "/releiving-letter",
       permissionTitle: "On Boarding",
       element: (
@@ -419,7 +399,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       ),
     },
 
-     {
+    {
       path: "/letters-form",
       permissionTitle: "On Boarding",
       element: (
@@ -428,22 +408,22 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
         </ProtectedRoute>
       ),
     },
-     {
+    {
       path: "/reliving-list",
       permissionTitle: "On Boarding",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
-          <Reliving_list/>
+          <Reliving_list />
         </ProtectedRoute>
       ),
     },
 
-     {
+    {
       path: "/relieved-list",
       permissionTitle: "On Boarding",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
-          <Relieved_main/>
+          <Relieved_main />
         </ProtectedRoute>
       ),
     },
@@ -541,8 +521,8 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       ),
     },
 
-     {
-      path:"/requestdetails",
+    {
+      path: "/requestdetails",
       permissionTitle: "Employee",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
@@ -598,7 +578,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       path: "/tasklist-details/:taskId",
       permissionTitle: "Projects",
       element: (
-        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin"> 
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
           <Tasklist_main />
         </ProtectedRoute>
       ),
@@ -627,7 +607,6 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       ),
     },
 
-
     {
       path: "/project-note-details/:_id",
       permissionTitle: "Clients",
@@ -639,7 +618,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
     },
 
     {
-      path:"/invoice-details",
+      path: "/invoice-details",
       permissionTitle: "Clients",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
@@ -700,7 +679,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
         </ProtectedRoute>
       ),
     },
-    
+
     {
       path: "/bankstatement",
       permissionTitle: "Finance",
@@ -711,7 +690,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       ),
     },
 
-     {
+    {
       path: "/payment-type",
       permissionTitle: "Finance",
       element: (
@@ -730,11 +709,11 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
         </ProtectedRoute>
       ),
     },
-     
+
     /* -------------------------------------------
       COMPLAINENCE
   --------------------------------------------*/
-     {
+    {
       path: "/complainence",
       permissionTitle: "Complainence",
       element: (
@@ -790,7 +769,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       ),
     },
 
-     /* -------------------------------------------
+    /* -------------------------------------------
       ASSET MANAGEMENT
   --------------------------------------------*/
     {
@@ -803,7 +782,6 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       ),
     },
 
-     
     /* -------------------------------------------
       PAYROLL
   --------------------------------------------*/
@@ -865,7 +843,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
         </ProtectedRoute>
       ),
     },
-     {
+    {
       path: "/tech-bidding",
       permissionTitle: "Bidding",
       element: (
@@ -874,7 +852,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
         </ProtectedRoute>
       ),
     },
-     {
+    {
       path: "/bidding-details",
       permissionTitle: "Bidding",
       element: (
@@ -883,7 +861,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
         </ProtectedRoute>
       ),
     },
-     {
+    {
       path: "/connect-details",
       permissionTitle: "Bidding",
       element: (
@@ -901,7 +879,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
         </ProtectedRoute>
       ),
     },
-     {
+    {
       path: "/bidding-all-details/:row",
       permissionTitle: "Bidding",
       element: (
@@ -911,7 +889,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       ),
     },
 
-      /* -------------------------------------------
+    /* -------------------------------------------
       Recruitment
   --------------------------------------------*/
     {
@@ -919,11 +897,11 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       permissionTitle: "Recruitment",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
-          <DashBoard_Main />  
+          <DashBoard_Main />
         </ProtectedRoute>
       ),
     },
-     {
+    {
       path: "/jobtype-Recruitment",
       permissionTitle: "Recruitment",
       element: (
@@ -932,7 +910,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
         </ProtectedRoute>
       ),
     },
-      {
+    {
       path: "/jobopening-Recruitment",
       permissionTitle: "Recruitment",
       element: (
@@ -941,7 +919,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
         </ProtectedRoute>
       ),
     },
-     {
+    {
       path: "/interview-Recruitment",
       permissionTitle: "Recruitment",
       element: (
@@ -950,7 +928,7 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
         </ProtectedRoute>
       ),
     },
-     {
+    {
       path: "/technologies-Recruitment",
       permissionTitle: "Recruitment",
       element: (
@@ -964,11 +942,11 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
       permissionTitle: "Recruitment",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
-          < Platform_Details/>
+          <Platform_Details />
         </ProtectedRoute>
       ),
     },
-     {
+    {
       path: "/Candidate-Recruitment",
       permissionTitle: "Recruitment",
       element: (
@@ -984,23 +962,32 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
     {
       path: "/mom-details",
       element: (
-        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole={["client", "subuser","admin"]}>
+        <ProtectedRoute
+          isLoggedIn={isLoggedIn}
+          requiredRole={["client", "subuser", "admin"]}
+        >
           <Mom />
         </ProtectedRoute>
       ),
     },
-     {
+    {
       path: "/asset-document",
       element: (
-        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole={["client", "subuser","admin"]}>
+        <ProtectedRoute
+          isLoggedIn={isLoggedIn}
+          requiredRole={["client", "subuser", "admin"]}
+        >
           <AssentDocumentPage />
         </ProtectedRoute>
       ),
     },
-       {
+    {
       path: "/document-details",
       element: (
-        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole={["client", "subuser","admin"]}>
+        <ProtectedRoute
+          isLoggedIn={isLoggedIn}
+          requiredRole={["client", "subuser", "admin"]}
+        >
           <Document_main />
         </ProtectedRoute>
       ),
@@ -1020,24 +1007,23 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
     //   element: <Messages />,
     // },
 
-
     {
       path: "/assetcategory",
-      element: <AssetCategory_mainbar />
+      element: <AssetCategory_mainbar />,
     },
 
     {
       path: "/slack",
-      element: <Slack_mainbar />
+      element: <Slack_mainbar />,
     },
-    
+
     {
       path: "/assetsubcategory",
-      element: <AssetSubCategory_mainbar />
+      element: <AssetSubCategory_mainbar />,
     },
     {
       path: "/announcement",
-      element: <Announcement />
+      element: <Announcement />,
     },
 
     {
@@ -1058,20 +1044,18 @@ const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
     },
   ];
 
-
-
   return (
     <>
       <BrowserRouter>
-      <SettingsContext.Provider value={{ dynamicDateFormat,setDynamicDateFormat }}>
-        <SessionChecker />
-        <Routes>
-
-          {routesConfig.map((r, i) => (
-            <Route key={i} path={r.path} element={r.element} />
-          ))}
-
-        </Routes>
+        <SettingsContext.Provider
+          value={{ dynamicDateFormat, setDynamicDateFormat }}
+        >
+          <SessionChecker />
+          <Routes>
+            {routesConfig.map((r, i) => (
+              <Route key={i} path={r.path} element={r.element} />
+            ))}
+          </Routes>
         </SettingsContext.Provider>
       </BrowserRouter>
     </>

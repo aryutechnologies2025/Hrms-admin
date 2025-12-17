@@ -1531,8 +1531,9 @@ const Sidebar = () => {
                   )}
 
 
-
-                   {hasPermission("slack") && (
+                   {/* permission  */}
+                   {/* hasPermission("slack") && */}
+                   { (
                     <div
                       onClick={() => onClickSidebarMenu("slack")}
                       className={`flex items-center w-full flex-grow ${
