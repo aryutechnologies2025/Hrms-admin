@@ -82,6 +82,7 @@ const Leaves_Mainbar = () => {
           endDate: endDate,
           startTime: permissionStartTime,
           endTime: permissionEndTime,
+          withCredentials: true,
         }
       );
 
@@ -124,7 +125,8 @@ const Leaves_Mainbar = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/leave/delete-leave/${id}`
+          `${API_URL}/api/leave/delete-leave/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The leave has been deleted.", "success");
         // console.log("res", res);
@@ -328,7 +330,9 @@ const Leaves_Mainbar = () => {
 
   const fetchApproveRejectList = async () => {
     try {
-      let response = await axios.get(`${API_URL}/api/leave/all-approve-reject`);
+      let response = await axios.get(`${API_URL}/api/leave/all-approve-reject`,
+        {withCredentials: true}
+      );
       setApprovedRejectedList(response.data.data);
       setLoading(false);
     } catch (error) {
@@ -352,6 +356,7 @@ const Leaves_Mainbar = () => {
           params: {
             status: "pending",
           },
+          withCredentials: true,
         }
       );
       // console.log("responseaaa", response)
@@ -379,6 +384,7 @@ const Leaves_Mainbar = () => {
           status: status,
           note: leaveRequestNotesToEmployee,
           subLeaveType: pendingRequestList[index].leaveDuration,
+          withCredentials: true,
         }
       );
       fetchPendingRequestList();
@@ -394,9 +400,7 @@ const Leaves_Mainbar = () => {
       let response = await axios.get(
         `${API_URL}/api/emp-attendances/leave-filter`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
           params: {
             leave_type: e.target.value,
           },
@@ -447,7 +451,8 @@ const Leaves_Mainbar = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/leaveType/get-leavetype `
+        `${API_URL}/api/leaveType/get-leavetype `,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {

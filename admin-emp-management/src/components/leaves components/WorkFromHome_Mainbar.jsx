@@ -89,6 +89,7 @@ const WorkFromHome_Mainbar = () => {
           endDate: endDate,
           startTime: permissionStartTime,
           endTime: permissionEndTime,
+          withCredentials: true,
         }
       );
 
@@ -131,7 +132,8 @@ const WorkFromHome_Mainbar = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/leave/delete-leave/${id}`
+          `${API_URL}/api/leave/delete-leave/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The leave has been deleted.", "success");
         // console.log("res", res);
@@ -352,7 +354,8 @@ const WorkFromHome_Mainbar = () => {
   const fetchApproveRejectList = async () => {
     try {
       let response = await axios.get(
-        `${API_URL}/api/leave/all-wfh-approve-reject`
+        `${API_URL}/api/leave/all-wfh-approve-reject`,
+        {withCredentials: true}
       );
       setApprovedRejectedList(response.data.data);
       setLoading(false);
@@ -368,9 +371,7 @@ const WorkFromHome_Mainbar = () => {
       let response = await axios.get(
         `${API_URL}/api/leave/all-wfh-pending-list`,
         {
-          // headers: {
-          //   Authorization: `Bearer ${localStorage.getItem("token")}`,
-          // },
+          withCredentials: true,
           params: {
             status: "pending",
           },
@@ -397,6 +398,7 @@ const WorkFromHome_Mainbar = () => {
         {
           status: status,
           note: leaveRequestNotesToEmployee,
+          withCredentials: true,
         }
       );
       fetchPendingRequestList();
@@ -410,9 +412,7 @@ const WorkFromHome_Mainbar = () => {
       let response = await axios.get(
         `${API_URL}/api/emp-attendances/leave-filter`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
           params: {
             leave_type: e.target.value,
           },

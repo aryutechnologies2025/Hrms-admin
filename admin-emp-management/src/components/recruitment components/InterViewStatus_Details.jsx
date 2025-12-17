@@ -34,7 +34,8 @@ const InterViewStatus_Details = () => {
   const fetchInterViewStatus = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/job-type/view-jobinterview`
+        `${API_URL}/api/job-type/view-jobinterview`,
+        {withCredentials: true}
       );
       // console.log("Interview Status Response:", response);
 
@@ -80,7 +81,7 @@ const InterViewStatus_Details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/job-type/create-jobinterview`,
-        formdata
+        formdata, {withCredentials: true}
       );
 
       setIsAddModalOpen(false);
@@ -142,7 +143,7 @@ const InterViewStatus_Details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/job-type/edit-jobinterview/${editId}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
 
@@ -172,7 +173,9 @@ const InterViewStatus_Details = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/job-type/delete-jobinterview/${id}`)
+          .delete(`${API_URL}/api/job-type/delete-jobinterview/${id}`,
+            {withCredentials: true}
+          )
           .then((response) => {
             if (response.data) {
               toast.success("Interview status has been deleted.");

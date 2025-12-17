@@ -56,7 +56,8 @@ const Joining_list_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/joining/view-joininglist`
+        `${API_URL}/api/joining/view-joininglist`,
+        {withCredentials: true}
       );
       // console.log("re", response);
       if (response.data.success) {
@@ -116,7 +117,7 @@ const Joining_list_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/joining/create-joininglist`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -187,7 +188,7 @@ const Joining_list_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/joining/edit-joininglist/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -228,7 +229,8 @@ const Joining_list_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/joining/delete-joininglist/${id}`
+          `${API_URL}/api/joining/delete-joininglist/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Status has been deleted.", "success");
         // console.log("res", res);

@@ -77,7 +77,8 @@ const Account_bidding_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/bidder/view-account-bidder`
+        `${API_URL}/api/bidder/view-account-bidder`,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {
@@ -119,7 +120,7 @@ const Account_bidding_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/bidder/create-account-bidder`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -185,7 +186,7 @@ const Account_bidding_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/bidder/edit-account-bidder/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -226,7 +227,8 @@ const Account_bidding_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/bidder/delete-account-bidder/${id}`
+          `${API_URL}/api/bidder/delete-account-bidder/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Status has been deleted.", "success");
         // console.log("res", res);

@@ -128,7 +128,7 @@ const Sidebar = () => {
     try {
       const response = await axios.put(
         `${API_URL}/api/auth/change-password`,
-        payload
+        payload, {withCredentials: true}
       );
       setAdminPassword("");
       setChangePasswordIsOpen(false);
@@ -1622,11 +1622,17 @@ const Sidebar = () => {
                   )}
 
 
+
+                   {/* permission  */}
+                   {/* hasPermission("slack") && */}
+                   { (
+
                   
 
 
 
-                   {hasPermission("slack") && (
+                  //  {hasPermission("slack") && (
+
                     <div
                       onClick={() => onClickSidebarMenu("slack")}
                       className={`flex items-center w-full flex-grow ${

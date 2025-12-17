@@ -56,9 +56,7 @@ const Attendance_trackerdetails = () => {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true
         }
       );
 
@@ -206,7 +204,7 @@ const Attendance_trackerdetails = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/attendance/particular-month-attendancelist-details`,
-        { params: payload }
+        { params: payload, withCredentials: true }
       );
 
 

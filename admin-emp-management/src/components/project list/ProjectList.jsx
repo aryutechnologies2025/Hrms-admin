@@ -69,9 +69,7 @@ const ProjectList = () => {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 
@@ -90,12 +88,8 @@ const ProjectList = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/client/view-clientdetails`,
-        {params:{dropDown:true}},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+        {params:{dropDown:true}, withCredentials: true}
+        
       );
 
       // const employeeIds = response.data.data.map(emp => `${emp.employeeId} - ${emp.employeeName}`);
@@ -134,7 +128,9 @@ const ProjectList = () => {
 
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/project/view-projects`);
+      const response = await axios.get(`${API_URL}/api/project/view-projects`,
+        {withCredentials: true}
+      );
       if (response.data.success) {
         setRoles(response.data.data);
         setLoading(false);
@@ -310,6 +306,7 @@ const ProjectList = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          withCredentials: true
         }
       );
 
@@ -411,6 +408,7 @@ const ProjectList = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          withCredentials: true,
         }
       );
 
@@ -504,7 +502,7 @@ const ProjectList = () => {
         const res = await axios.delete(
           `${API_URL}/api/project/delete-project-file/${id}/${index}`,
           {
-            // backend should accept this
+            withCredentials: true
           }
         );
         setRoleDetails((prev) => ({
@@ -547,7 +545,7 @@ const ProjectList = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/project/delete-project/${roleId}`)
+          .delete(`${API_URL}/api/project/delete-project/${roleId}`,{withCredentials: true})
           .then((response) => {
             if (response.data.success) {
               Swal.fire("Deleted!", "Project has been deleted.", "success");

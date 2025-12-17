@@ -95,7 +95,9 @@ const AssectDocument = () => {
   const fetchClients = async () => {
     try {
       setLoading(true);
-      const resp = await axios.get(`${API_URL}/api/client/view-clientdetails`);
+      const resp = await axios.get(`${API_URL}/api/client/view-clientdetails`,
+        {withCredentials: true}
+      );
 
       // console.log("resp.data.data :", resp.data.data);
       const clientName = resp.data.data.map((emp) => ({
@@ -122,6 +124,7 @@ const AssectDocument = () => {
         `${API_URL}/api/invoice/get-project-name-with-client`,
         {
           params: { project: formClient },
+          withCredentials: true,
         }
       );
       // console.log("response for project", response);
@@ -141,7 +144,9 @@ const AssectDocument = () => {
   const fetchEmployee = async () => {
     try {
       setLoading(true);
-      const resp = await axios.get(`${API_URL}/api/employees/all-employees`);
+      const resp = await axios.get(`${API_URL}/api/employees/all-employees`,
+        {withCredentials: true}
+      );
       // map to primereact dropdown options
       // const opts = resp.data?.data?.map((c) => ({ label: c.client_name, value: c._id })) || [];
 
@@ -181,7 +186,9 @@ const AssectDocument = () => {
       //     authHeaders
       //   );
       // } else {
-      resp = await axios.get(`${API_URL}/api/mom/get-document/`, authHeaders);
+      resp = await axios.get(`${API_URL}/api/mom/get-document/`, authHeaders,
+        {withCredentials: true}
+      );
       // }
       setMomList(resp.data?.data || []);
     } catch (err) {
@@ -290,6 +297,7 @@ const AssectDocument = () => {
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
         }
       );
 
@@ -404,7 +412,8 @@ const AssectDocument = () => {
       const resp = await axios.put(
         `${API_URL}/api/mom/update-document/${editingId}`,
         formData,
-        authHeaders
+        authHeaders,
+        {withCredentials: true}
       );
       toast.success("MOM Updated Successfully!");
       setIsEditModalOpen(false);
@@ -442,7 +451,7 @@ const AssectDocument = () => {
           setLoading(true);
           await axios.delete(
             `${API_URL}/api/mom/delete-Document/${id}`,
-            authHeaders
+            authHeaders, {withCredentials: true}
           );
           toast.success("Document Deleted Successfully!");
           fetchMoms();

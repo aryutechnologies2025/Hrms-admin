@@ -138,9 +138,7 @@ const BankStatement_Detail = () => {
             const response = await axios.get(
                 `${API_URL}/api/income/view-financecompany`,
                 {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
+                   withCredentials: true,
                 }
             );
 
@@ -338,7 +336,8 @@ const handlesubmit = async (e) => {
       formData,
       { headers: { "Content-Type": "multipart/form-data" },
     // Add timeout for debugging
-        timeout: 30000
+        timeout: 30000,
+        withCredentials: true,
      }
     );
 
@@ -402,7 +401,7 @@ const rowErrors = err.response?.data?.rowErrors || [];
 
             await axios.put(
                 `${API_URL}/api/statement/editStatementDetails/${editId}`,
-                formData
+                formData, {withCredentials: true}
             );
 
             toast.success("Notes updated.");
@@ -431,7 +430,9 @@ const rowErrors = err.response?.data?.rowErrors || [];
         }).then((result) => {
             if (result.isConfirmed) {
                 axios
-                    .delete(`${API_URL}/api/statement/deleteStatementDetails/${editId}`)
+                    .delete(`${API_URL}/api/statement/deleteStatementDetails/${editId}`,
+                        {withCredentials: true}
+                    )
                     .then((response) => {
                         if (response.data) {
                             toast.success("Bank Statement has been deleted.");

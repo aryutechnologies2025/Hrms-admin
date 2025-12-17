@@ -44,7 +44,8 @@ const AssetSubCategory_details = () => {
   const fetchAssetSubCategory = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/sub-asset-category/subCategory`
+        `${API_URL}/api/sub-asset-category/subCategory`,
+        {withCredentials: true}
       );
       // console.log("response get check", response);
 
@@ -95,7 +96,7 @@ const AssetSubCategory_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/sub-asset-category/create-subCategory`,
-        formdata
+        formdata, {withCredentials: true}
       );
 
 
@@ -160,7 +161,7 @@ const AssetSubCategory_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/sub-asset-category/edit-subCategory/${editId}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
 
@@ -196,7 +197,9 @@ const AssetSubCategory_details = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/sub-asset-category/delete-subCategory/${editId}`)
+          .delete(`${API_URL}/api/sub-asset-category/delete-subCategory/${editId}`,
+            {withCredentials: true}
+          )
           .then((response) => {
             if (response.data) {
               toast.success("Asset subCategory has been deleted.");

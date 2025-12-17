@@ -118,9 +118,7 @@ const Leave_Report = () => {
       const response = await axios.get(
         `${API_URL}/api/emp-attendances/monthly-report`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
           params: {
             month: selectedMonth
               .toLocaleString("default", { month: "short" })
@@ -143,9 +141,7 @@ const Leave_Report = () => {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 
@@ -181,7 +177,8 @@ const Leave_Report = () => {
 
     try {
       const response = await axios.get(
-        `${API_URL}/api/leave/leave-report/${month}`
+        `${API_URL}/api/leave/leave-report/${month}`,
+        {withCredentials: true}
       );
 
       setEmployeeData(response.data.data);

@@ -78,6 +78,7 @@ const Inter_card_details = () => {
                         limit: 20,
                         type: "Intern",
                     },
+                    withCredentials: true,
                 }
             );
 

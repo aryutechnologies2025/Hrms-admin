@@ -280,7 +280,7 @@ const TaskList = () => {
       try {
         const response = await axios.patch(
           `${API_URL}/api/task/updated-status/${movedItem.taskId}`,
-          payload
+          payload, {withCredentials: true}
         );
         //       console.log("Dragged Task Object:", movedItem);
         // console.log("Calling PATCH on:", `${API_URL}api/task/updated-status/${movedItem.taskId}`);
@@ -405,9 +405,7 @@ const TaskList = () => {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 
@@ -459,7 +457,7 @@ const TaskList = () => {
 
       const response = await axios.post(
         `${API_URL}/api/task/create-task`,
-        formData
+        formData, {withCredentials: true}
       );
 
       // console.log("response", response);
@@ -497,7 +495,9 @@ const TaskList = () => {
 
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/project/view-projects`);
+      const response = await axios.get(`${API_URL}/api/project/view-projects`,
+        {withCredentials: true}
+      );
       // console.log(response);
       if (response.data.success) {
         const projectName = response.data.data.map((emp) => ({
@@ -766,7 +766,7 @@ const TaskList = () => {
 
       const response = await axios.get(
         `${API_URL}/api/task/particular-all-task-status`,
-        { params: payload }
+        { params: payload, withCredentials: true, }
       );
 
       const allTasks = response.data.data;

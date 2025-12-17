@@ -90,7 +90,8 @@ const Releiving_Mainbar = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/employees/reliving-list`
+        `${API_URL}/api/employees/reliving-list`,
+        {withCredentials: true}
       );
       // console.log("re", response);
       if (response.data.success) {
@@ -109,7 +110,8 @@ const Releiving_Mainbar = () => {
   const fetchletter = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/employees/reliving-list,${EmpolyeeId}`
+        `${API_URL}/api/employees/reliving-list,${EmpolyeeId}`,
+        {withCredentials: true}
       );
       // console.log("re", response);
       if (response.data.success) {
@@ -176,7 +178,7 @@ const Releiving_Mainbar = () => {
 
       const response = await axios.post(
         `${API_URL}/api/reliving-verify/create-relivinglist-verify`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -426,7 +428,8 @@ const Releiving_Mainbar = () => {
   const fetchReliving = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/reliving/view-relivinglist`
+        `${API_URL}/api/reliving/view-relivinglist`,
+        {withCredentials: true}
       );
       if (response.data.success) {
         // const list = response.data.data;

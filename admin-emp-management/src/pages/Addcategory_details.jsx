@@ -52,7 +52,9 @@ const Addcategory_details = () => {
 
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/category/view-category`);
+      const response = await axios.get(`${API_URL}/api/category/view-category`,
+        {withCredentials: true}
+      );
       // console.log(response);
       if (response.data.success) {
         setClientdetails(response.data.data);
@@ -90,7 +92,7 @@ const Addcategory_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/category/create-createCategory`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -160,7 +162,7 @@ const [ordersEdit, setOrdersEdit] = useState("");
 
       const response = await axios.put(
         `${API_URL}/api/category/edit-categorydetails/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -208,7 +210,8 @@ const [ordersEdit, setOrdersEdit] = useState("");
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/category/delete-categoryDelete/${id}`
+          `${API_URL}/api/category/delete-categoryDelete/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Category has been deleted.", "success");
         // console.log("res", res);

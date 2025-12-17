@@ -45,9 +45,7 @@ export const AdminPrivileges = () => {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 
@@ -69,9 +67,7 @@ export const AdminPrivileges = () => {
       const response = await axios.get(
         `${API_URL}/api/hr-permission/view-hr-permission`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
       setPrivilegesOption(response.data.data);
@@ -86,7 +82,8 @@ export const AdminPrivileges = () => {
   const fetchEmpPriviligiesList = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/hr-permission/get-hr-permission-list`
+        `${API_URL}/api/hr-permission/get-hr-permission-list`,
+        {withCredentials: true}
       );
 
       setEmpPriviligiesList(response.data.data);
@@ -107,7 +104,7 @@ export const AdminPrivileges = () => {
         {
           employeeId: selectedEmployee,
           module: selectedPrivileges,
-        }
+        },{withCredentials: true}
       );
       toast.success("Employee added to the admin section successfully.");
       closePrivilegesModal();
@@ -128,7 +125,7 @@ export const AdminPrivileges = () => {
         {
           employeeId: editPrivilegesRowdata.employeeName,
           module: editPrivilegesRowdata.module,
-        }
+        },{withCredentials: true}
       );
       toast.success("Employee Updated to the admin section successfully.");
       closeEditPrivilegesModal();
@@ -155,7 +152,8 @@ export const AdminPrivileges = () => {
     if (result.isConfirmed) {
       try {
         const response = await axios.delete(
-          `${API_URL}/api/hr-permission/delete-hr-permission-list/${id}`
+          `${API_URL}/api/hr-permission/delete-hr-permission-list/${id}`,
+          {withCredentials: true}
         );
 
         toast.success("Employee deleted successfully.");

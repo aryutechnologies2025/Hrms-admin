@@ -97,8 +97,8 @@ const Relieved_list_details = () => {
         `${API_URL}/api/employees/reliving-list`, {
         params: {
           type: "relieved",
-        }
-
+        },
+        withCredentials: true,
       }
       );
       // console.log("re", response);
@@ -118,7 +118,8 @@ const Relieved_list_details = () => {
   const fetchletter = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/employees/reliving-list,${EmpolyeeId}`
+        `${API_URL}/api/employees/reliving-list,${EmpolyeeId}`,
+        {withCredentials: true}
       );
       // console.log("re", response);
       if (response.data.success) {
@@ -185,7 +186,7 @@ const Relieved_list_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/reliving-verify/create-relivinglist-verify`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -454,7 +455,8 @@ const Relieved_list_details = () => {
   const fetchReliving = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/reliving/view-relivinglist`
+        `${API_URL}/api/reliving/view-relivinglist`,
+        {withCredentials: true}
       );
       if (response.data.success) {
         // const list = response.data.data;

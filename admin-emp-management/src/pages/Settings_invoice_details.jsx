@@ -82,7 +82,11 @@ const [cgst, setCgst] = useState("");
 
  const fetchSettings = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/setting/view-invoice-setting`);
+      const response = await axios.get(`${API_URL}/api/setting/view-setting`,
+        {withCredentials: true}
+      );
+      console.log("response", response);
+      // const response = await axios.get(`${API_URL}/api/setting/view-invoice-setting`);
       // console.log("response", response);
       if (response.data.success) {
         setGst(response.data.data[0]?.gst_percent);
@@ -143,6 +147,8 @@ const [cgst, setCgst] = useState("");
       };
 
       const response = await axios.post(
+        `${API_URL}/api/setting/create-setting`,
+        formData, {withCredentials: true}
         `${API_URL}/api/setting/create-invoice-setting`,
         formData
       );

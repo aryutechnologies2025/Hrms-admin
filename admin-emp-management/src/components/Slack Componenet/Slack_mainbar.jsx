@@ -1,6 +1,7 @@
 import React from 'react'
 import Sidebar from '../Sidebar'
 import Slack_details from './Slack_details'
+import Slack from './Slack'
 
 const Slack_mainbar = () => {
   return (
@@ -8,7 +9,8 @@ const Slack_mainbar = () => {
       <div className="bg-gray-100 md:bg-white">
         <Sidebar />
       </div>
-    <Slack_details/>
+    {/* <Slack_details/> */}
+    <Slack/>
     </div>
   )
 }

@@ -42,7 +42,8 @@ const Departments_Mainbar = () => {
   const fetchRoles = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/department/view-employeedepartment`
+        `${API_URL}/api/department/view-employeedepartment`,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {
@@ -100,7 +101,7 @@ const Departments_Mainbar = () => {
 
       const response = await axios.post(
         `${API_URL}/api/department/create-employeedepartment`,
-        formdata
+        formdata, {withCredentials: true}
       );
       setIsAddModalOpen(false);
       fetchRoles(); // Refresh the table after adding a role
@@ -135,6 +136,7 @@ const Departments_Mainbar = () => {
         {
           name,
           status,
+          withCredentials: true,
           // created_by: userid,
         }
       );
@@ -192,7 +194,8 @@ const Departments_Mainbar = () => {
       // if (isConfirmed) {
       try {
         const response = await axios.delete(
-          `${API_URL}/api/roles/delete/${roleId}?created_by=${userid}`
+          `${API_URL}/api/roles/delete/${roleId}?created_by=${userid}`,
+          {withCredentials: true}
         );
 
         setRoles(roles.filter((role) => role.id !== roleId));
@@ -222,7 +225,8 @@ const Departments_Mainbar = () => {
       if (result.isConfirmed) {
         axios
           .delete(
-            `${API_URL}/api/department/delete-employeedepartment/${roleId}`
+            `${API_URL}/api/department/delete-employeedepartment/${roleId}`,
+            {withCredentials: true}
           )
           .then((response) => {
             if (response.data.success) {

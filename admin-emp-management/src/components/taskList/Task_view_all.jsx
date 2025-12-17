@@ -66,7 +66,12 @@ function Task_view_all() {
   const [priority, setPriority] = useState("");
   const [assignToChange, setAssignToChange] = useState("");
   const [taskType, setTaskType] = useState("");
+
+  console.log("taskType", taskType);
+    const [buttonLoading, setButtonLoading] = useState(false);
+
   // console.log("taskType", taskType);
+
 
   // const handleStatusChange = (e) => {
   //   const newStatus = e.target.value;
@@ -153,9 +158,11 @@ function Task_view_all() {
   // console.log("alldata", alldata);
 
   const fetchProjectall = async () => {
+      setButtonLoading(true);
     try {
       const response = await axios.get(
-        `${API_URL}/api/task/particular-task/${taskId}`
+        `${API_URL}/api/task/particular-task/${taskId}`,
+        {withCredentials: true}
       );
       // console.log("response", response);
       if (response.data.success) {
@@ -176,6 +183,7 @@ function Task_view_all() {
         setAssignToChange(response?.data?.data?.assignedTo?._id || "");
         setTaskType(response?.data?.data?.taskType);
         setMessage(response?.data?.data?.comments || "");
+          setButtonLoading(false);
       } else {
         console.log("Failed to fetch roles.");
       }
@@ -255,7 +263,7 @@ function Task_view_all() {
     try {
       const response = await axios.patch(
         `${API_URL}/api/task/updated-status/${taskId}`,
-        payload
+        payload, {withCredentials: true}
       );
 
       // console.log("Status updated:", response.data);
@@ -300,7 +308,7 @@ function Task_view_all() {
     try {
       const response = await axios.patch(
         `${API_URL}/api/task/updated-status/${taskId}`,
-        payload
+        payload, {withCredentials: true}
       );
 
       // console.log("Assigned updated:", response.data);
@@ -345,7 +353,7 @@ function Task_view_all() {
     try {
       const response = await axios.patch(
         `${API_URL}/api/task/updated-status/${taskId}`,
-        payload
+        payload, {withCredentials: true}
       );
 
       // console.log("Assigned updated:", response.data);
@@ -368,7 +376,9 @@ function Task_view_all() {
 
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/project/view-projects`);
+      const response = await axios.get(`${API_URL}/api/project/view-projects`,
+        {withCredentials: true}
+      );
       // console.log(response);
       if (response.data.success) {
         const projectName = response.data.data.map((emp) => ({
@@ -405,9 +415,7 @@ function Task_view_all() {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 
@@ -441,7 +449,7 @@ function Task_view_all() {
     try {
       const response = await axios.post(
         `${API_URL}/api/task/task-comments`,
-        formData
+        formData, {withCredentials: true}
       );
 
       // console.log("Upload success:", response.data);
@@ -555,7 +563,7 @@ function Task_view_all() {
     // console.log("selectedRole", selectedRole);
 
     return (
-      selectedRole &&
+      selectedRole && employeeOption && employeeOption.length>0 &&
       employeeOption.filter(
         (emp) =>
           selectedRole.teamMembers?.includes(emp.value) ||
@@ -640,7 +648,7 @@ function Task_view_all() {
       try {
         const response = await axios.put(
           `${API_URL}/api/task/task-pasusecondition/${taskId}`,
-          payload
+          payload, {withCredentials: true}
         );
 
         // console.log("Status updated:", response.data);
@@ -687,7 +695,8 @@ function Task_view_all() {
   const fetchProjectlogs = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/task/tasklogs/${taskId}`
+        `${API_URL}/api/task/tasklogs/${taskId}`,
+        {withCredentials: true}
       );
       // console.log(response.data);
       if (response.data.success) {
@@ -756,7 +765,7 @@ function Task_view_all() {
       try {
         const response = await axios.put(
           `${API_URL}/api/task/updated-tester-status`,
-          payload
+          payload, {withCredentials: true}
         );
         // console.log(response);
 
@@ -908,7 +917,7 @@ function Task_view_all() {
         priority,
       };
 
-      await axios.post(`${API_URL}/api/subtasks/create-subtask`, payload);
+      await axios.post(`${API_URL}/api/subtasks/create-subtask`,{withCredentials: true}, payload);
 
       await fetchProjectall();
 
@@ -943,7 +952,7 @@ function Task_view_all() {
       };
       const response = axios.put(
         `${API_URL}/api/subtasks/update-subtask/${id}`,
-        payload
+        payload, {withCredentials: true}
       );
       fetchProjectall();
       toast.success("SubTask status updated successfully");
@@ -958,7 +967,8 @@ function Task_view_all() {
   const handleDeleteSubTask = (id) => {
     try {
       const response = axios.delete(
-        `${API_URL}/api/subtasks/delete-subtask/${id}`
+        `${API_URL}/api/subtasks/delete-subtask/${id}`,
+        {withCredentials: true}
       );
       fetchProjectall();
       toast.success("SubTask deleted successfully");
@@ -1072,8 +1082,15 @@ function Task_view_all() {
   };
   return (
     <>
-      {" "}
+     {buttonLoading ? (
+        <div className="flex justify-center items-center w-full h-screen">
+          <div className="w-12 h-12 border-4 border-blue-500 rounded-full animate-ping"></div>
+        </div>
+      ) : (
+
+     
       <div className="h-full w-screen flex flex-col justify-between bg-gray-100 ">
+       
         <div className="px-3 py-3 md:px-7 lg:px-10 xl:px-12 md:py-10 ">
           <Mobile_Sidebar />
 
@@ -1082,7 +1099,7 @@ function Task_view_all() {
               className="text-sm text-gray-500"
               onClick={() => navigate("/dashboard")}
             >
-              Dashboard
+              Dashboard 
             </p>
             <p>{">"}</p>
             <p
@@ -1984,6 +2001,7 @@ function Task_view_all() {
         </div>
         <Footer />
       </div>
+      )}
     </>
   );
 }

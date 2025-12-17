@@ -43,7 +43,8 @@ const AssetCategory_details = () => {
   const fetchAssetType = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/asset-mannagement-category/assetCategory`
+        `${API_URL}/api/asset-mannagement-category/assetCategory`,
+        {withCredentials: true}
       );
       // console.log("response get check", response);
 
@@ -93,7 +94,7 @@ const AssetCategory_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/asset-mannagement-category/create-assetCategory`,
-        formdata
+        formdata, {withCredentials: true}
       );
 
 
@@ -157,7 +158,7 @@ const AssetCategory_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/asset-mannagement-category/edit-assetCategorydetails/${editId}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
 
@@ -193,7 +194,7 @@ const AssetCategory_details = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/asset-mannagement-category/delete-assetCategoryDelete/${editId}`)
+          .delete(`${API_URL}/api/asset-mannagement-category/delete-assetCategoryDelete/${editId}`,{withCredentials: true})
           .then((response) => {
             if (response.data) {
               toast.success("Asset Category has been deleted.");

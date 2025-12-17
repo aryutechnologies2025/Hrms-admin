@@ -39,7 +39,8 @@ const EmployeeDetails_Mainbar = () => {
 
     try {
       const response = await axios.get(
-        `${API_URL}/api/employees/view-employee/${employeeIds}`
+        `${API_URL}/api/employees/view-employee/${employeeIds}`,
+        {withCredentials: true}
       );
       setData(response.data.data);
       // console.log(response);
@@ -87,7 +88,9 @@ const EmployeeDetails_Mainbar = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/employees/delete-employees/${roleId}`)
+          .delete(`${API_URL}/api/employees/delete-employees/${roleId}`,
+            {withCredentials: true}
+          )
           .then((response) => {
             if (response.data.success) {
               Swal.fire("Deleted!", "Employee has been deleted.", "success");
@@ -117,6 +120,7 @@ const EmployeeDetails_Mainbar = () => {
         {
           id: id,
           newPassword: newPassword,
+          withCredentials: true,
         }
       );
       setNewPassword("");

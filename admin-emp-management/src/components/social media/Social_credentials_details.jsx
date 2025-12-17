@@ -89,7 +89,8 @@ const Social_credentials_details = () => {
   const fetchAccount = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/social-media/view-socialmedia-name`
+        `${API_URL}/api/social-media/view-socialmedia-name`,
+        {withCredentials: true}
       );
       //   console.log(response);
       if (response.data.success) {
@@ -148,7 +149,7 @@ const Social_credentials_details = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/social-media/view-socialmedia-credential`,
-        { params: { password: passwordInput } }
+        { params: { password: passwordInput }, withCredentials: true, }
       );
 
       if (response.data.success) {
@@ -199,7 +200,7 @@ const Social_credentials_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/social-media/create-socialmedia-credential`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -288,7 +289,7 @@ const Social_credentials_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/social-media/edit-socialmedia-credential/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -329,7 +330,8 @@ const Social_credentials_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/social-media/delete-socialmedia-credential/${id}`
+          `${API_URL}/api/social-media/delete-socialmedia-credential/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Status has been deleted.", "success");
         // console.log("res", res);

@@ -23,7 +23,8 @@ function Link_details() {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/link/get-link-by-category`
+        `${API_URL}/api/link/get-link-by-category`,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {

@@ -92,7 +92,9 @@ const Mom_mainbar = () => {
   const fetchClients = async () => {
     try {
       setLoading(true);
-      const resp = await axios.get(`${API_URL}/api/client/view-clientdetails`);
+      const resp = await axios.get(`${API_URL}/api/client/view-clientdetails`,
+        {withCredentials: true}
+      );
      
       // console.log("resp.data.data :", resp.data.data);
       const clientName = resp.data.data.map((emp) => ({
@@ -119,6 +121,7 @@ const Mom_mainbar = () => {
         `${API_URL}/api/invoice/get-project-name-with-client`,
         {
           params: { project: formClient },
+          withCredentials: true,
         }
       );
       // console.log("response for project", response);
@@ -138,7 +141,9 @@ const Mom_mainbar = () => {
   const fetchEmployee = async () => {
     try {
       setLoading(true);
-      const resp = await axios.get(`${API_URL}/api/employees/all-employees`);
+      const resp = await axios.get(`${API_URL}/api/employees/all-employees`,
+        {withCredentials: true}
+      );
       // map to primereact dropdown options
       // const opts = resp.data?.data?.map((c) => ({ label: c.client_name, value: c._id })) || [];
 
@@ -167,11 +172,11 @@ const Mom_mainbar = () => {
       setLoading(true);
       if(user?.type==="client"){
         resp = await axios.get(`${API_URL}/api/mom/get-mom/`,
-          {params: { clientId : user?._id}}, authHeaders);
+          {params: { clientId : user?._id}, withCredentials: true,}, authHeaders);
       }else if(user?.type==="subuser"){
-        resp = await axios.get(`${API_URL}/api/mom/get-mom/`, {params: {clientId : user?.client?._id, subUserId : user?._id}}, authHeaders);
+        resp = await axios.get(`${API_URL}/api/mom/get-mom/`,{params: {clientId : user?.client?._id, subUserId : user?._id}, withCredentials: true}, authHeaders);
       }else{
-        resp = await axios.get(`${API_URL}/api/mom/get-mom/`, authHeaders);
+        resp = await axios.get(`${API_URL}/api/mom/get-mom/`, {withCredentials: true}, authHeaders);
       }
       setMomList(resp.data?.data || []);
     } catch (err) {
@@ -220,7 +225,9 @@ const Mom_mainbar = () => {
         formData.append("document[]", file);
       });
 
-      const resp = await axios.post(`${API_URL}/api/mom/create-mom`, formData);
+      const resp = await axios.post(`${API_URL}/api/mom/create-mom`, formData,
+        {withCredentials: true}
+      );
       // console.log("create res", resp);
       toast.success("MOM Created Successfully!");
       setIsAddModalOpen(false);
@@ -327,7 +334,7 @@ const Mom_mainbar = () => {
 
       const resp = await axios.put(
         `${API_URL}/api/mom/update-mom/${editingId}`,
-        formData,
+        formData,{withCredentials: true},
         authHeaders
       );
       toast.success("MOM Updated Successfully!");
@@ -364,7 +371,8 @@ const Mom_mainbar = () => {
       if (result.isConfirmed) {
         try {
           setLoading(true);
-          await axios.delete(`${API_URL}/api/mom/delete-mom/${id}`, authHeaders);
+          await axios.delete(`${API_URL}/api/mom/delete-mom/${id}`,
+            {withCredentials: true}, authHeaders);
           toast.success("MOM Deleted Successfully!");
           fetchMoms();
         } catch (err) {

@@ -85,7 +85,8 @@ const Declaration_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/declaration/view-declarationlist`
+        `${API_URL}/api/declaration/view-declarationlist`,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {
@@ -127,9 +128,7 @@ const Declaration_details = () => {
       const response = await axios.get(
         `${API_URL}/api/employees/all-active-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
       // console.log("response", response.data.data);
@@ -229,9 +228,7 @@ const Declaration_details = () => {
         `${API_URL}/api/declaration/create-declarationlist`,
         formData,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+         withCredentials: true,
         }
       );
 
@@ -351,7 +348,7 @@ const Declaration_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/declaration/edit-declarationlist/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -392,7 +389,8 @@ const Declaration_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/declaration/delete-declarationlist/${id}`
+          `${API_URL}/api/declaration/delete-declarationlist/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Declaration has been deleted.", "success");
         // console.log("res", res);

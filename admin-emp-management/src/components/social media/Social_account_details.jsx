@@ -76,7 +76,8 @@ const Social_account_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/social-media/view-socialmedia`
+        `${API_URL}/api/social-media/view-socialmedia`,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {
@@ -117,7 +118,7 @@ const Social_account_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/social-media/create-socialmedia`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -183,7 +184,7 @@ const Social_account_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/social-media/edit-socialmedia/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -224,7 +225,8 @@ const Social_account_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/social-media/delete-socialmedia/${id}`
+          `${API_URL}/api/social-media/delete-socialmedia/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Status has been deleted.", "success");
         // console.log("res", res);

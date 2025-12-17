@@ -77,7 +77,8 @@ const Connect_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/bidder/view-connect-purchased`
+        `${API_URL}/api/bidder/view-connect-purchased`,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {
@@ -113,9 +114,7 @@ const Connect_details = () => {
       const response = await axios.get(
         `${API_URL}/api/bidder/view-account-technology-bidder`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+         withCredentials: true,
         }
       );
       // console.log("response", response.data.data);
@@ -150,7 +149,7 @@ const Connect_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/bidder/create-connect-purchased`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -221,7 +220,7 @@ const Connect_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/bidder/edit-connect-purchased/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -262,7 +261,8 @@ const Connect_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/bidder/delete-connect-purchased/${id}`
+          `${API_URL}/api/bidder/delete-connect-purchased/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Status has been deleted.", "success");
         // console.log("res", res);

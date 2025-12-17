@@ -325,7 +325,8 @@ const CreateEmployee_Mainbar = () => {
   const fetchRoles = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/roles/view-employeerole`
+        `${API_URL}/api/roles/view-employeerole`,
+        {withCredentials: true}
       );
 
       if (response.data.success) {
@@ -360,6 +361,7 @@ const CreateEmployee_Mainbar = () => {
         {
           dateofjoining: formatDate(date), // Format to YYYY-MM-DD
           empid: "",
+          withCredentials: true,
         }
       );
 
@@ -1180,6 +1182,7 @@ const CreateEmployee_Mainbar = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          withCredentials: true,
         }
       );
 

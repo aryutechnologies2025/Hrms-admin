@@ -57,7 +57,8 @@ const Client_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/client/view-clientdetails`
+        `${API_URL}/api/client/view-clientdetails`,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {
@@ -121,7 +122,7 @@ const Client_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/client/create-clientdetails`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -245,7 +246,7 @@ const Client_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/client/edit-clientdetails/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
       Swal.fire({
@@ -295,7 +296,8 @@ const Client_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/client/delete-clientdetails/${id}`
+          `${API_URL}/api/client/delete-clientdetails/${id}`,
+          {withCredentials: true}
         );
 
         Swal.fire("Deleted!", "The role has been deleted.", "success");

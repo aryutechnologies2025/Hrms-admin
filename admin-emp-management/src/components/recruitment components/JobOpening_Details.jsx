@@ -47,9 +47,7 @@ const JobOpening_Details = () => {
   const fetchJobType = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/job-type/view-job-Account-name`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        withCredentials: true,
 
       });
       // console.log("response:", response)
@@ -71,7 +69,8 @@ const JobOpening_Details = () => {
   const fetchJobOpening = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/job-type/view-jobopening`
+        `${API_URL}/api/job-type/view-jobopening`,
+        {withCredentials: true}
       );
       // console.log("job opening Response:", response);
 
@@ -136,7 +135,7 @@ const JobOpening_Details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/job-type/create-jobopening`,
-        formdata
+        formdata, {withCredentials: true}
       );
 
       // console.log("response:", response);
@@ -211,7 +210,7 @@ const JobOpening_Details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/job-type/edit-jobopening/${editId}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
 
@@ -241,7 +240,9 @@ const JobOpening_Details = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/job-type/delete-jobopening/${id}`)
+          .delete(`${API_URL}/api/job-type/delete-jobopening/${id}`,
+            {withCredentials: true}
+          )
           .then((response) => {
             if (response.data) {
               toast.success("Job Opening has been deleted.");
