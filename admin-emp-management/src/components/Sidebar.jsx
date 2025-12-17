@@ -1513,7 +1513,7 @@ const Sidebar = () => {
                     </div>
                   )}
 
-                  {hasPermission("Settings") && (
+                  {/* {hasPermission("Settings") && (
                     <>
                     <div
                       onClick={() => onClickSidebarMenu("settings")}
@@ -1544,6 +1544,80 @@ const Sidebar = () => {
 
                       {!arrowClicked && <p className="text-sm">Invoice Settings</p>}
                     </div>
+                    </>
+                  )} */}
+
+
+                    {hasPermission("Settings") && (
+                    <>
+                      <div
+                        // onClick={() => setClientOpen(!clientOpen)}
+                        onClick={() => toggleMenu("settings")}
+                        className={`flex items-center h-10 w-full flex-grow ${
+                          arrowClicked ? "justify-center  " : "justify-normal"
+                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${
+                          ["/settings", "/settings-invoice"].includes(
+                            currentPath
+                          )
+                            ? "bg-blue-100 text-[#4F46E5]"
+                            : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
+                        }`}
+                      >
+                        <IoSettings />{" "}
+                        {!arrowClicked && (
+                          <p className="text-sm flex items-center gap-2">
+                            Settings
+                            <span>
+                              {currentOpen === "settings" ||
+                              [
+                                "/settings",
+                                "/settings-invoice",
+                              ].includes(currentPath) ? (
+                                <IoIosArrowUp />
+                              ) : (
+                                <IoIosArrowDown />
+                              )}
+                            </span>
+                          </p>
+                        )}
+                      </div>
+                      {/*  */}
+                      <div
+                        className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${
+                          currentOpen === "settings" ||
+                          ["/settings", "/settings-invoice"].includes(
+                            currentPath
+                          )
+                            ? "max-h-52 opacity-100"
+                            : "max-h-0 opacity-0"
+                        }`}
+                      >
+                        <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
+                          <button
+                            onClick={() => navigate("/settings")}
+                            className={`px-2 py-1 rounded-full 
+    ${
+      currentPath === "/settings"
+        ? " text-[#4F46E5]"
+        : "hover:bg-blue-100 text-gray-500"
+    }`}
+                          >
+                           General Settings
+                          </button>
+
+                          <button
+                            onClick={() => navigate("/settings-invoice")}
+                            className={`px-2 py-1 rounded-full 
+    ${
+      currentPath === "/settings-invoice"
+        ? " text-[#4F46E5]"
+        : "hover:bg-blue-100 text-gray-500"
+    }`}
+                          >
+                            Invoice Settings
+                          </button>
+                        </div>
+                      </div>
                     </>
                   )}
 
