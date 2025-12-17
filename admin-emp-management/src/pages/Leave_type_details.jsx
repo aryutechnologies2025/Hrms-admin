@@ -224,7 +224,8 @@ const Leave_type_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/leaveType/delete-leavetype/${id}`
+          `${API_URL}/api/leaveType/delete-leavetype/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Leave has been deleted.", "success");
         // console.log("res", res);

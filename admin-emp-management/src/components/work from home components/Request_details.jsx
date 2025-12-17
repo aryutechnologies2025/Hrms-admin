@@ -295,7 +295,8 @@ const Request_details = () => {
           params: {
             type: "pending",
           },
-        },{withCredentials: true}
+          withCredentials: true,
+        }
       );
       setPendingRequestList(response.data.data);
       setLoading(false);
@@ -331,9 +332,7 @@ const Request_details = () => {
       let response = await axios.get(
         `${API_URL}/api/emp-attendances/leave-filter`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
           params: {
             leave_type: e.target.value,
           },

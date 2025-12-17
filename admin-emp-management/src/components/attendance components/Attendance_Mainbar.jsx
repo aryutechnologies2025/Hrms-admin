@@ -470,9 +470,7 @@ const Attendance_Mainbar = () => {
       let response = await axios.get(
         `${API_URL}/api/employees/today-logs/${date} `,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true
         }
       );
       setAttendanceData(response?.data?.data);

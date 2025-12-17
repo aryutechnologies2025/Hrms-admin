@@ -405,9 +405,7 @@ const TaskList = () => {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 
@@ -768,7 +766,7 @@ const TaskList = () => {
 
       const response = await axios.get(
         `${API_URL}/api/task/particular-all-task-status`,
-        { params: payload },{withCredentials: true}
+        { params: payload, withCredentials: true, }
       );
 
       const allTasks = response.data.data;

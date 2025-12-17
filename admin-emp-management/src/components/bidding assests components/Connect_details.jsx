@@ -114,9 +114,7 @@ const Connect_details = () => {
       const response = await axios.get(
         `${API_URL}/api/bidder/view-account-technology-bidder`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+         withCredentials: true,
         }
       );
       // console.log("response", response.data.data);

@@ -69,9 +69,7 @@ const ProjectList = () => {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 
@@ -90,12 +88,8 @@ const ProjectList = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/client/view-clientdetails`,
-        {params:{dropDown:true}},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+        {params:{dropDown:true}, withCredentials: true}
+        
       );
 
       // const employeeIds = response.data.data.map(emp => `${emp.employeeId} - ${emp.employeeName}`);
@@ -308,11 +302,11 @@ const ProjectList = () => {
       const response = await axios.post(
         `${API_URL}/api/project/create-project`,
         formData,
-        {withCredentials: true},
         {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          withCredentials: true
         }
       );
 
@@ -410,11 +404,11 @@ const ProjectList = () => {
       await axios.put(
         `${API_URL}/api/project/update-project/${roleId}`,
         formData,
-        {withCredentials: true},
         {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          withCredentials: true,
         }
       );
 
@@ -551,7 +545,7 @@ const ProjectList = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/project/delete-project/${roleId}`)
+          .delete(`${API_URL}/api/project/delete-project/${roleId}`,{withCredentials: true})
           .then((response) => {
             if (response.data.success) {
               Swal.fire("Deleted!", "Project has been deleted.", "success");

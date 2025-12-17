@@ -128,9 +128,7 @@ const Declaration_details = () => {
       const response = await axios.get(
         `${API_URL}/api/employees/all-active-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
       // console.log("response", response.data.data);
@@ -230,9 +228,7 @@ const Declaration_details = () => {
         `${API_URL}/api/declaration/create-declarationlist`,
         formData,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+         withCredentials: true,
         }
       );
 

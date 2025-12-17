@@ -1521,7 +1521,8 @@ const Task_details_client = () => {
        const response = await axios.get(`${API_URL}/api/task/all-tasklist-id`, {
      
         params: payload,
-      },{withCredentials: true});
+        withCredentials: true,
+      });
 
       if (response.data.success) {
         setTaskdetails(response.data.data);
@@ -1582,10 +1583,7 @@ const Task_details_client = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+        {withCredentials: true,
         }
       );
 
@@ -1670,7 +1668,8 @@ const Task_details_client = () => {
           `${API_URL}/api/project/clientsubuser`,
           {
             params: { clientId: employeeemail, subUserId: employeeDetails._id },
-          },{withCredentials: true}
+            withCredentials: true,
+          }
         );
         // console.log("55555", response);
         if (response.data.success) {
@@ -1690,7 +1689,8 @@ const Task_details_client = () => {
           `${API_URL}/api/project/view-projects-id`,
           {
             params: { clientId: employeeemail },
-          },{withCredentials: true}
+            withCredentials: true,
+          }
         );
         // console.log(response);
         if (response.data.success) {

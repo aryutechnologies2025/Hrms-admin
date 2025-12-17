@@ -194,7 +194,7 @@ const AssetCategory_details = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/asset-mannagement-category/delete-assetCategoryDelete/${editId}`)
+          .delete(`${API_URL}/api/asset-mannagement-category/delete-assetCategoryDelete/${editId}`,{withCredentials: true})
           .then((response) => {
             if (response.data) {
               toast.success("Asset Category has been deleted.");

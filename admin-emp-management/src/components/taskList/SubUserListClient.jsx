@@ -77,7 +77,8 @@ const SubUserListClient = () => {
         `${API_URL}/api/clientsubuser/all-subusers/${employeeemail}`,
         {
           params: payload,
-        },{withCredentials: true}
+          withCredentials: true,
+        }
       );
 
       if (response.data.success) {
@@ -126,9 +127,7 @@ const SubUserListClient = () => {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 
@@ -166,7 +165,8 @@ const SubUserListClient = () => {
         `${API_URL}/api/project/view-projects-id`,
         {
           params: { clientId: employeeemail },
-        },{withCredentials: true}
+          withCredentials: true,
+        }
       );
       // console.log("clientID", employeeemail);
       // console.log(response);

@@ -1268,10 +1268,7 @@ const TaskList = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+        {withCredentials: true,
         }
       );
 
@@ -1370,8 +1367,8 @@ const TaskList = () => {
           `${API_URL}/api/project/clientsubuser`,
           {
             params: { clientId: employeeemail, subUserId: employeeDetails._id },
-          },
-          {withCredentials: true}
+            withCredentials: true
+          }
         );
         // console.log("55555", response);
         if (response.data.success) {

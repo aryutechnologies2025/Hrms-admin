@@ -62,9 +62,7 @@ const Candidate_Details = () => {
       const response = await axios.get(
         `${API_URL}/api/job-type/view-job-name`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
           params: {
             type: "interview",
           },
@@ -86,9 +84,7 @@ const Candidate_Details = () => {
       const response = await axios.get(
         `${API_URL}/api/job-type/view-job-name`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
           params: {
             type: "source",
           },
@@ -110,10 +106,7 @@ const Candidate_Details = () => {
       const response = await axios.get(
         `${API_URL}/api/job-type/view-source`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          
+          withCredentials: true,
         }
       );
       // console.log("response:", response)
@@ -136,7 +129,8 @@ const Candidate_Details = () => {
             type: "candidate",
             id: candidateid,
           },
-        },{withCredentials: true}
+          withCredentials: true,
+        }
       );
       // console.log("candidate response", response);
 

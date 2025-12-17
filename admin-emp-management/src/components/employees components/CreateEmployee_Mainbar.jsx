@@ -361,8 +361,8 @@ const CreateEmployee_Mainbar = () => {
         {
           dateofjoining: formatDate(date), // Format to YYYY-MM-DD
           empid: "",
-        },
-        {withCredentials: true}
+          withCredentials: true,
+        }
       );
 
       setEmployeeId(response.data.employeeid);
@@ -1182,8 +1182,8 @@ const CreateEmployee_Mainbar = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        },
-        {withCredentials: true}
+          withCredentials: true,
+        }
       );
 
       if (response.data.success) {

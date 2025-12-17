@@ -149,8 +149,7 @@ const Social_credentials_details = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/social-media/view-socialmedia-credential`,
-        { params: { password: passwordInput } },
-        {withCredentials: true}
+        { params: { password: passwordInput }, withCredentials: true, }
       );
 
       if (response.data.success) {

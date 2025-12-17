@@ -117,7 +117,7 @@ const Announcement_Details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/announcement/create-announcement`,
-        formdata
+        formdata, {withCredentials: true}
       );
 
 
@@ -219,7 +219,7 @@ const Announcement_Details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/announcement/edit-announcement/${editId}`,
-        formData
+        formData, {withCredentials: true}
       );
       // console.log("response:", response);
 
@@ -255,7 +255,9 @@ const Announcement_Details = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/announcement/delete-announcement/${editId}`)
+          .delete(`${API_URL}/api/announcement/delete-announcement/${editId}`,
+            {withCredentials: true}
+          )
           .then((response) => {
             if (response.data) {
               toast.success("Announce has been deleted.");

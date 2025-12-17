@@ -97,9 +97,9 @@ const Relieved_list_details = () => {
         `${API_URL}/api/employees/reliving-list`, {
         params: {
           type: "relieved",
-        }
-
-      },{withCredentials: true}
+        },
+        withCredentials: true,
+      }
       );
       // console.log("re", response);
       if (response.data.success) {

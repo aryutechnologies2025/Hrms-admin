@@ -90,9 +90,7 @@ const Demo_invoice = () => {
       const response = await axios.get(
         `${API_URL}/api/client/view-clientdetails`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 
@@ -109,9 +107,7 @@ const Demo_invoice = () => {
       const response = await axios.get(
         `${API_URL}/api/invoice/get-project-name`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 

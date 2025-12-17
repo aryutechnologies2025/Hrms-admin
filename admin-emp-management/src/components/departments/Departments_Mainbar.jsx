@@ -136,8 +136,9 @@ const Departments_Mainbar = () => {
         {
           name,
           status,
+          withCredentials: true,
           // created_by: userid,
-        },{withCredentials: true}
+        }
       );
 
       // Close the modal after successful update

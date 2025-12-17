@@ -45,9 +45,7 @@ export const AdminPrivileges = () => {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 
@@ -69,9 +67,7 @@ export const AdminPrivileges = () => {
       const response = await axios.get(
         `${API_URL}/api/hr-permission/view-hr-permission`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
       setPrivilegesOption(response.data.data);

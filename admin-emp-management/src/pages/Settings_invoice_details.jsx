@@ -86,7 +86,7 @@ const [cgst, setCgst] = useState("");
         {withCredentials: true}
       );
       console.log("response", response);
-      const response = await axios.get(`${API_URL}/api/setting/view-invoice-setting`);
+      // const response = await axios.get(`${API_URL}/api/setting/view-invoice-setting`);
       // console.log("response", response);
       if (response.data.success) {
         setGst(response.data.data[0]?.gst_percent);

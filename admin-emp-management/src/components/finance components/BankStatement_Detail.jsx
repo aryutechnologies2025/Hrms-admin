@@ -138,11 +138,8 @@ const BankStatement_Detail = () => {
             const response = await axios.get(
                 `${API_URL}/api/income/view-financecompany`,
                 {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                },
-                {withCredentials: true}
+                   withCredentials: true,
+                }
             );
 
             setAccountOption(response.data.data);
@@ -339,8 +336,9 @@ const handlesubmit = async (e) => {
       formData,
       { headers: { "Content-Type": "multipart/form-data" },
     // Add timeout for debugging
-        timeout: 30000
-     },{withCredentials: true}
+        timeout: 30000,
+        withCredentials: true,
+     }
     );
 
     // console.log("response:", response.data);
