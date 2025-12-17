@@ -39,7 +39,7 @@ const Declaration_details = () => {
   // const location = useLocation();
 
   const employeeIds = window.location.pathname.split("/")[2];
-  console.log("window.location.pathname", employeeIds);
+  // console.log("window.location.pathname", employeeIds);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -71,7 +71,7 @@ const Declaration_details = () => {
     fetchProject();
   }, []);
 
-  console.log("roles", roles);
+  // console.log("roles", roles);
 
   //   const [status, setStatus] = useState("");
   const storedDetatis = localStorage.getItem("hrmsuser");
@@ -80,14 +80,15 @@ const Declaration_details = () => {
   const [errors, setErrors] = useState({});
 
   const [notedetails, setNotedetails] = useState([]);
-  console.log("notedetails", notedetails);
+  // console.log("notedetails", notedetails);
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/declaration/view-declarationlist`
+        `${API_URL}/api/declaration/view-declarationlist`,
+        {withCredentials: true}
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setNotedetails(response.data.data);
         setLoading(false);
@@ -113,7 +114,7 @@ const Declaration_details = () => {
 
   const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null);
   const [employeeOption, setEmployeeOption] = useState(null);
-  console.log("employeeOption", employeeOption)
+  // console.log("employeeOption", employeeOption)
   const [empId, setEmpId] = useState("");
   const [designation, setDesignation] = useState("");
   const [certificateName, setCertificateName] = useState("");
@@ -127,12 +128,10 @@ const Declaration_details = () => {
       const response = await axios.get(
         `${API_URL}/api/employees/all-active-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
-      console.log("response", response.data.data);
+      // console.log("response", response.data.data);
 
       const employeeemail = response.data.data.map((emp) => ({
         label: emp.employeeName,
@@ -155,7 +154,7 @@ const Declaration_details = () => {
     )?.data;
 
     if (selectedEmp) {
-      console.log("selectedEmp", selectedEmp)
+      // console.log("selectedEmp", selectedEmp)
       setEmpId(selectedEmp.employeeId || "");
       setDesignation(selectedEmp.role?.name || "");
       setSelectedEmpData(selectedEmp);
@@ -223,19 +222,17 @@ const Declaration_details = () => {
         formData.append("document[]", file);
       });
 
-      console.log("Payload:", formData);
+      // console.log("Payload:", formData);
 
       const response = await axios.post(
         `${API_URL}/api/declaration/create-declarationlist`,
         formData,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+         withCredentials: true,
         }
       );
 
-      console.log("response:", response.data);
+      // console.log("response:", response.data);
 
       Swal.fire({
         icon: "success",
@@ -283,7 +280,7 @@ const Declaration_details = () => {
 
   const [editid, setEditid] = useState([]);
 
-  console.log("editid", editid);
+  // console.log("editid", editid);
 
   const openEditModal = (data) => {
     // console.log("data", data)
@@ -351,9 +348,9 @@ const Declaration_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/declaration/edit-declarationlist/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Declaration Update successfully!",
@@ -392,10 +389,11 @@ const Declaration_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/declaration/delete-declarationlist/${id}`
+          `${API_URL}/api/declaration/delete-declarationlist/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Declaration has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         // setNotedetails((prev) => prev.filter((item) => item._id !== _id));
         // fetchProject();
         fetchProject();
@@ -848,7 +846,7 @@ const handledownloadDocument = (documents) => {
                           <div className="mt-4 space-y-2">
                             {uploadedFiles.map((file, index) => (
 
-                            console.log("uploadedFiles",uploadedFiles),
+                            // console.log("uploadedFiles",uploadedFiles),
                               <div
                                 key={index}
                                 className="flex justify-between items-center rounded-full border p-2 w-[80%] px-3"

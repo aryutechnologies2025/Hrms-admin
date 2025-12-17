@@ -33,7 +33,7 @@ const Account_bidding_details = () => {
   // const location = useLocation();
 
   const employeeIds = window.location.pathname.split("/")[2];
-  console.log("window.location.pathname", employeeIds);
+  // console.log("window.location.pathname", employeeIds);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -72,14 +72,15 @@ const Account_bidding_details = () => {
   
 
   const [accountdetails, setAccountdetails] = useState([]);
-  console.log("accountdetails", accountdetails);
+  // console.log("accountdetails", accountdetails);
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/bidder/view-account-bidder`
+        `${API_URL}/api/bidder/view-account-bidder`,
+        {withCredentials: true}
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setAccountdetails(response.data.data);
                 setLoading(false);
@@ -119,9 +120,9 @@ const Account_bidding_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/bidder/create-account-bidder`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Status added successfully!",
@@ -156,10 +157,10 @@ const Account_bidding_details = () => {
 
   const [editid, setEditid] = useState([]);
 
-  console.log("editid", editid);
+  // console.log("editid", editid);
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     SetNameedit(row.name);
@@ -185,9 +186,9 @@ const Account_bidding_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/bidder/edit-account-bidder/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Status Update successfully!",
@@ -226,10 +227,11 @@ const Account_bidding_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/bidder/delete-account-bidder/${id}`
+          `${API_URL}/api/bidder/delete-account-bidder/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Status has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setAccountdetails((prev) => prev.filter((item) => item._id !== id));
         // fetchProject();
       } catch (err) {

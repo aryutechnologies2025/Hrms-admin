@@ -115,7 +115,7 @@ const WorkingDays_Mainbar = () => {
 
   const fetchWorkingDaysList = async () => {
     try {
-      let response = await axios.get(`${API_URL}/api/month`);
+      let response = await axios.get(`${API_URL}/api/month`,{withCredentials: true});
       setWorkingDaysList(response.data.data);
       setTableLoading(false);
     } catch (error) {
@@ -133,7 +133,7 @@ const WorkingDays_Mainbar = () => {
       let response = await axios.post(`${API_URL}/api/month/create `, {
         month_year: month,
         days: workingDays,
-      });
+      },{withCredentials: true});
       setMonth("");
       setWorkingDays("");
       setNoOfDaysInMonth("");
@@ -161,7 +161,8 @@ const WorkingDays_Mainbar = () => {
   const handleDeleteCLick = async (rowData) => {
     try {
       let response = await axios.delete(
-        `${API_URL}/api/month/delete/${rowData.id}`
+        `${API_URL}/api/month/delete/${rowData.id}`,
+        {withCredentials: true}
       );
       fetchWorkingDaysList();
     } catch (error) {
@@ -201,7 +202,7 @@ const WorkingDays_Mainbar = () => {
         {
           month_year: editMonth,
           days: editWorkingDays,
-        }
+        },{withCredentials: true}
       );
       setEditMonth("");
       setEditWorkingDays("");

@@ -43,7 +43,7 @@ const Invoice_full = () => {
     fetchProject();
   }, []);
 
-  console.log("roles", roles);
+  // console.log("roles", roles);
 
   const [projectname, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
@@ -55,12 +55,14 @@ const Invoice_full = () => {
   const [errors, setErrors] = useState({});
 
   const [clientdetails, setClientdetails] = useState([]);
-  console.log("errors::", errors);
+  // console.log("errors::", errors);
 
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/invoice/view-invoice`);
-      console.log(response);
+      const response = await axios.get(`${API_URL}/api/invoice/view-invoice`,
+        {withCredentials: true}
+      );
+      // console.log(response);
       if (response.data.success) {
         setClientdetails(response.data.data);
       } else {
@@ -79,7 +81,7 @@ const Invoice_full = () => {
   const [clientOption, setClientOption] = useState(null);
   const [projectOption, setProjectOption] = useState(null);
 
-  console.log("clientOption", clientOption);
+  // console.log("clientOption", clientOption);
 
   const fetchClientList = async () => {
     try {
@@ -93,7 +95,7 @@ const Invoice_full = () => {
       );
 
       const clientName = response.data.data.map((emp) => emp.client_name);
-      console.log("client name", clientName);
+      // console.log("client name", clientName);
       setClientOption(clientName);
     } catch (error) {
       console.log(error);
@@ -112,7 +114,7 @@ const Invoice_full = () => {
       );
 
       const clientName = response.data.data.map((emp) => emp.name);
-      console.log("client name", clientName);
+      // console.log("client name", clientName);
       setProjectOption(clientName);
     } catch (error) {
       console.log(error);
@@ -232,64 +234,7 @@ const Invoice_full = () => {
     setItems(updatedItems);
   };
 
-  // const handlesubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     const formData = {
-  //       client: selectedClient,
-  //       project: selectedProject,
-  //       invoice_date: invoiceDate,
-  //       due_date: dueDate,
-  //       currency: currency.name,
-  //       items: items.map((item) => ({
-  //         description: item.description,
-  //         quantity: item.qty,
-  //         rate: item.rate,
-  //         amount: item.total,
-  //       })),
-  //       sub_total: subTotal,
-  //       tax: tax,
-  //       total_amount: totalAmount,
-  //       status: status,
-  //       notes: notes,
-  //     };
-
-  //     const response = await axios.post(
-  //       `${API_URL}/api/invoice/create-invoice`,
-  //       formData
-  //     );
-  //     console.log("response:", response);
-
-  //     setSelectedClient("");
-  //     selectedProject("");
-  //     setInvoiceDate("");
-  //     setDueDate("");
-  //     setCurreny("");
-  //     setSubTotal("");
-  //     setTax("");
-  //     setTotalAmount("");
-  //     setNotes("");
-
-  //     setIsAddModalOpen(false);
-  //     fetchProject();
-  //     Swal.fire({
-  //       icon: "success",
-  //       title: "Client added successfully!",
-  //       showConfirmButton: true,
-  //       timer: 1500,
-  //     });
-  //     //   fetchProject();
-  //     setErrors({});
-  //   } catch (err) {
-  //     if (err.response?.data?.errors) {
-  //       setErrors(err.response.data.errors);
-  //     } else {
-  //       console.error("Error submitting form:", err);
-  //     }
-  //   }
-  // };
-
-  // edit invoice
+ 
 
   const handlesubmit = async (e) => {
     e.preventDefault();
@@ -316,10 +261,10 @@ const Invoice_full = () => {
 
       const response = await axios.post(
         `${API_URL}/api/invoice/create-invoice`,
-        formData
+        formData, {withCredentials: true}
       );
 
-      console.log("response:", response);
+      // console.log("response:", response);
 
       setIsAddModalOpen(false);
 
@@ -329,8 +274,8 @@ const Invoice_full = () => {
         showConfirmButton: true,
         timer: 1500,
       }).then(() => {
-      navigate("/invoice-details");   
-    });
+        navigate("/invoice-details");
+      });
 
       setSelectedClient("");
       setSelectedProject("");
@@ -369,6 +314,34 @@ const Invoice_full = () => {
     }
   };
 
+  const [open, setOpen] = useState(false);
+  const [taxOpen, setTaxOpen] = useState(false);
+  const [intraOpen, setIntraOpen] = useState(false);
+  const [interOpen, setInterOpen] = useState(false);
+  const [selected, setSelected] = useState("Select Invoice Type");
+
+  console.log("selected", selected)
+
+  const selectItem = (path) => {
+    setSelected(path.join(" / "));
+    setOpen(false);
+    setTaxOpen(false);
+    setIntraOpen(false);
+    setInterOpen(false);
+  };
+  const [cgst, setCgst] = useState("");
+  const [sgst, setSgst] = useState("");
+  const [igst, setIgst] = useState("");
+
+
+  const isIntraInvoice =
+    selected.includes("Tax Invoice") && selected.includes("Intra");
+
+
+  const isInterInvoice =
+    selected.includes("Tax Invoice") && selected.includes("Inter");
+
+
   return (
     <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
       <div>
@@ -383,7 +356,10 @@ const Invoice_full = () => {
           </p>
           <p>{">"}</p>
 
-          <p className="text-sm text-blue-500">Invoice List</p>
+          <p className="text-sm text-gray-500" onClick={() => navigate("/invoice-details")}>Invoice List</p>
+          <p>{">"}</p>
+
+          <p className="text-sm text-blue-500">Add Invoice</p>
         </div>
 
         <div className="">
@@ -620,7 +596,7 @@ const Invoice_full = () => {
                           </span>
                         </div>
 
-                        <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
+                        {/* <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
                           <label
                             htmlFor="roleName"
                             className="block text-sm font-medium mb-2 w-[50%]"
@@ -633,7 +609,54 @@ const Invoice_full = () => {
                             onChange={(e) => setTax(e.target.value)}
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                           />
-                        </div>
+                        </div> */}
+                        {isIntraInvoice && (
+                          <div className="w-full mt-4 space-y-3">
+
+                            {/* CGST */}
+                            <div className="flex flex-wrap md:flex-nowrap items-center">
+                              <label className="block text-sm font-medium w-[50%]">
+                                CGST (%)
+                              </label>
+                              <input
+                                type="number"
+                                value={cgst}
+                                onChange={(e) => setCgst(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                              />
+                            </div>
+
+                            {/* SGST */}
+                            <div className="flex flex-wrap md:flex-nowrap items-center">
+                              <label className="block text-sm font-medium w-[50%]">
+                                SGST (%)
+                              </label>
+                              <input
+                                type="number"
+                                value={sgst}
+                                onChange={(e) => setSgst(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                              />
+                            </div>
+
+                          </div>
+                        )}
+
+                        {isInterInvoice && (
+                          <div className="flex items-center mt-4">
+                            <label className="block text-sm font-medium w-[50%]">
+                              IGST (%)
+                            </label>
+                            <input
+                              type="number"
+                              value={igst}
+                              onChange={(e) => setIgst(e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                            />
+                          </div>
+                        )}
+
+
 
                         <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
                           <label
@@ -686,7 +709,7 @@ const Invoice_full = () => {
 
               {/* right */}
 
-              <div className="w-full md:w-[20%] md:border-l-4 p-3">
+              <div className="w-full md:w-[30%] md:border-l-4 p-3">
                 <button
                   className="bg-blue-600 hover:bg-blue-700 text-white px-4 min-w-full h-10 font-semibold rounded"
                   onClick={handlesubmit}
@@ -711,10 +734,142 @@ const Invoice_full = () => {
                         options={currencyOptions}
                         optionLabel="name"
                         placeholder="Select a Currency"
-                        className="border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="border w-full border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   </div>
+
+                  <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3 p-2">
+
+                    <div className="w-[100%]">
+                      <label className="block text-sm font-medium text-gray-500 mb-2">
+                        Invoice Type
+                      </label>
+
+                      {/* Trigger */}
+                      <div
+                        onClick={() => setOpen(!open)}
+                        className="flex justify-between items-center border border-gray-300 rounded-xl px-4 py-3 cursor-pointer bg-white"
+                      >
+                        <span className="text-gray-700 truncate">{selected}</span>
+                        <span className="text-gray-400">▾</span>
+                      </div>
+
+                      {/* Dropdown (DOWN-WISE) */}
+                      {open && (
+                        <div className="mt-2 border rounded-xl bg-white shadow-md">
+
+                          {/* WITHOUT GST */}
+                          <div
+                            onClick={() => selectItem(["Without GST"])}
+                            className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
+                          >
+                            Without GST
+                          </div>
+
+                          {/* TAX INVOICE */}
+                          <div className="px-4 py-2">
+                            <div
+                              onClick={() => setTaxOpen(!taxOpen)}
+                              className="flex justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
+                            >
+                              <span>Tax Invoice</span>
+                              <span>{taxOpen ? "▲" : "▼"}</span>
+                            </div>
+
+                            {/* INTRA / INTER */}
+                            {taxOpen && (
+                              <div className="ml-4 mt-2 space-y-1">
+
+                                {/* INTRA */}
+                                <div>
+                                  <div
+                                    onClick={() => {
+                                      setIntraOpen(!intraOpen);
+                                      setInterOpen(false);
+                                    }}
+                                    className="flex justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
+                                  >
+                                    <span>Intra</span>
+                                    <span>{intraOpen ? "▲" : "▼"}</span>
+                                  </div>
+
+                                  {intraOpen && (
+                                    <div className=" mt-2 space-y-1">
+                                      <div
+                                        onClick={() =>
+                                          selectItem(["Tax Invoice", "Intra", "Proforma Invoice"])
+                                        }
+                                        className=" py-2 hover:bg-green-50 rounded cursor-pointer"
+                                      >
+                                        Proforma Invoice
+                                      </div>
+                                      <div
+                                        onClick={() =>
+                                          selectItem(["Tax Invoice", "Intra", "Tax Invoice"])
+                                        }
+                                        className=" py-2 hover:bg-green-50 rounded cursor-pointer"
+                                      >
+                                        Tax Invoice
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* INTER */}
+                                <div>
+                                  <div
+                                    onClick={() => {
+                                      setInterOpen(!interOpen);
+                                      setIntraOpen(false);
+                                    }}
+
+                                    className="flex justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
+                                  >
+                                    <span>Inter</span>
+                                    <span>{interOpen ? "▲" : "▼"}</span>
+                                  </div>
+
+                                  {interOpen && (
+                                    <div className=" mt-2 space-y-2">
+                                      <div
+                                        onClick={() =>
+                                          selectItem(["Tax Invoice", "Inter", "Proforma Invoice"])
+                                        }
+                                        className=" py-2 hover:bg-green-50 rounded cursor-pointer"
+                                      >
+                                        Proforma Invoice
+                                      </div>
+                                      <div
+                                        onClick={() =>
+                                          selectItem(["Tax Invoice", "Inter", "Tax Invoice"])
+                                        }
+                                        className="py-2  hover:bg-green-50 rounded cursor-pointer"
+                                      >
+                                        Tax Invoice
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+
+                              </div>
+                            )}
+                          </div>
+
+                          {/* EXPORT */}
+                          <div
+                            onClick={() => selectItem(["Export"])}
+                            className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
+                          >
+                            Export
+                          </div>
+
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+
                 </div>
               </div>
             </div>

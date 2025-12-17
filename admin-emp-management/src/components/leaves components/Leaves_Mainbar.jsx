@@ -28,9 +28,9 @@ const Leaves_Mainbar = () => {
 
   const [globalFilter, setGlobalFilter] = useState("");
   const [approvedRejectedList, setApprovedRejectedList] = useState([]);
-  console.log("approvedRejectedList", approvedRejectedList);
+  // console.log("approvedRejectedList", approvedRejectedList);
   const [pendingRequestList, setPendingRequestList] = useState([]);
-  console.log("pendingRequestList", pendingRequestList);
+  // console.log("pendingRequestList", pendingRequestList);
 
   const [loading, setLoading] = useState(true); // State to manage loading
   const [leaveRequestNotesToEmployee, setLeaveRequestNotesToEmployee] =
@@ -38,7 +38,7 @@ const Leaves_Mainbar = () => {
   const [selectedLeaveType, setSelectedLeaveType] = useState([]);
 
   const [selectedId, setSelectedId] = useState(null);
-  console.log("selectedId", selectedId);
+  // console.log("selectedId", selectedId);
 
   const [showModal, setShowModal] = useState(false);
   const [dropdownValue, setDropdownValue] = useState("");
@@ -53,7 +53,7 @@ const Leaves_Mainbar = () => {
   const [subleavetype, setSubleavetype] = useState([]);
   let navigate = useNavigate();
   const handleEditClick = (rowData) => {
-    console.log("Clicked row ID:", rowData);
+    // console.log("Clicked row ID:", rowData);
     setLeavetype(rowData.leaveType);
     setSubleavetype(rowData.leaveDuration);
     setSelectedId(rowData._id);
@@ -82,6 +82,7 @@ const Leaves_Mainbar = () => {
           endDate: endDate,
           startTime: permissionStartTime,
           endTime: permissionEndTime,
+          withCredentials: true,
         }
       );
 
@@ -124,10 +125,11 @@ const Leaves_Mainbar = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/leave/delete-leave/${id}`
+          `${API_URL}/api/leave/delete-leave/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The leave has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setApprovedRejectedList((prev) =>
           prev.filter((item) => item._id !== id)
         );
@@ -328,7 +330,9 @@ const Leaves_Mainbar = () => {
 
   const fetchApproveRejectList = async () => {
     try {
-      let response = await axios.get(`${API_URL}/api/leave/all-approve-reject`);
+      let response = await axios.get(`${API_URL}/api/leave/all-approve-reject`,
+        {withCredentials: true}
+      );
       setApprovedRejectedList(response.data.data);
       setLoading(false);
     } catch (error) {
@@ -338,7 +342,7 @@ const Leaves_Mainbar = () => {
   };
 
   const [allleavecount, setAllleavecount] = useState([]);
-  console.log("allleavecount", allleavecount);
+  // console.log("allleavecount", allleavecount);
 
   const fetchPendingRequestList = async () => {
     try {
@@ -352,9 +356,10 @@ const Leaves_Mainbar = () => {
           params: {
             status: "pending",
           },
+          withCredentials: true,
         }
       );
-      console.log("responseaaa", response)
+      // console.log("responseaaa", response)
       setPendingRequestList(response.data.data);
       setAllleavecount(response.data.leaveSettings[0]);
 
@@ -371,7 +376,7 @@ const Leaves_Mainbar = () => {
 
   const onCLickApprovedOrRejectButton = async (status, id, index) => {
     try {
-      console.log("test ", pendingRequestList);
+      // console.log("test ", pendingRequestList);
 
       let response = await axios.put(
         `${API_URL}/api/leave/update-status/${id}`,
@@ -379,6 +384,7 @@ const Leaves_Mainbar = () => {
           status: status,
           note: leaveRequestNotesToEmployee,
           subLeaveType: pendingRequestList[index].leaveDuration,
+          withCredentials: true,
         }
       );
       fetchPendingRequestList();
@@ -394,9 +400,7 @@ const Leaves_Mainbar = () => {
       let response = await axios.get(
         `${API_URL}/api/emp-attendances/leave-filter`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
           params: {
             leave_type: e.target.value,
           },
@@ -442,14 +446,15 @@ const Leaves_Mainbar = () => {
   };
 
   const [leave, setLeaves] = useState([]);
-  console.log("leave", leave);
+  // console.log("leave", leave);
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/leaveType/get-leavetype `
+        `${API_URL}/api/leaveType/get-leavetype `,
+        {withCredentials: true}
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setLeaves(response.data.data);
       } else {
@@ -721,10 +726,10 @@ const Leaves_Mainbar = () => {
                           <select
                             value={data?.subLeaveType}
                             onChange={(e) => {
-                              console.log("subLeaveType", subleavetype);
+                              // console.log("subLeaveType", subleavetype);
                               const updated = [...subleavetype];
                               updated[lindex].subLeaveType = e.target.value;
-                              console.log("updated", updated);
+                              // console.log("updated", updated);
                               setSubleavetype(updated);
                             }}
                             className="border-2 rounded-xl px-4 text-sm border-gray-300 outline-none h-10 w-full "
@@ -887,7 +892,7 @@ const Leaves_Mainbar = () => {
                           {reason.employeeId.employeeId})
                         </span> */}
                           </h2>
-                          {console.log("data 123", subLeaveType)}
+                          {/* {console.log("data 123", subLeaveType)} */}
                           {subLeaveType &&
                             subLeaveType.map((value, index) => {
                               return (

@@ -89,7 +89,7 @@ const Relieved_list_details = () => {
   // const [employeeid ,setEmployeeid] =useState([]);
 
   const [letterlistdetails, setLetterlistdetails] = useState([]);
-  console.log("letterlistdetails", letterlistdetails);
+  // console.log("letterlistdetails", letterlistdetails);
 
   const fetchProject = async () => {
     try {
@@ -97,11 +97,11 @@ const Relieved_list_details = () => {
         `${API_URL}/api/employees/reliving-list`, {
         params: {
           type: "relieved",
-        }
-
+        },
+        withCredentials: true,
       }
       );
-      console.log("re", response);
+      // console.log("re", response);
       if (response.data.success) {
         setClientdetails(response.data.data);
         setLoading(false);
@@ -118,7 +118,8 @@ const Relieved_list_details = () => {
   const fetchletter = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/employees/reliving-list,${EmpolyeeId}`
+        `${API_URL}/api/employees/reliving-list,${EmpolyeeId}`,
+        {withCredentials: true}
       );
       // console.log("re", response);
       if (response.data.success) {
@@ -181,13 +182,13 @@ const Relieved_list_details = () => {
         verification,
         status: alldatarow.status,
       };
-      console.log("formData", formData);
+      // console.log("formData", formData);
 
       const response = await axios.post(
         `${API_URL}/api/reliving-verify/create-relivinglist-verify`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Status added successfully!",
@@ -454,7 +455,8 @@ const Relieved_list_details = () => {
   const fetchReliving = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/reliving/view-relivinglist`
+        `${API_URL}/api/reliving/view-relivinglist`,
+        {withCredentials: true}
       );
       if (response.data.success) {
         // const list = response.data.data;
@@ -997,7 +999,7 @@ const Relieved_list_details = () => {
                                 <div className="w-[50%] flex gap-3 flex-wrap ">
                                   {f.options.map(
                                     (opt) => (
-                                      console.log("opt", opt),
+                                      // console.log("opt", opt),
                                       (
                                         <label
                                           key={opt}

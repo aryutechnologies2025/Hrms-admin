@@ -24,10 +24,10 @@ const JobOpening_Details = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [errors, setErrors] = useState({});
-  console.log("errors", errors)
+  // console.log("errors", errors)
   const [isAnimating, setIsAnimating] = useState(false);
   const [jobOpeningDetails, setJobOpeningDetails] = useState([]);
-  console.log("jobOpening", jobOpeningDetails);
+  // console.log("jobOpening", jobOpeningDetails);
   const [loading, setLoading] = useState(true); // State to manage loading
 
 
@@ -41,15 +41,13 @@ const JobOpening_Details = () => {
   }, []);
 
   const [dropDown, setDropDown] = useState("");
-  console.log("projectname:", dropDown);
+  // console.log("projectname:", dropDown);
 
 
   const fetchJobType = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/job-type/view-job-Account-name`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        withCredentials: true,
 
       });
       // console.log("response:", response)
@@ -71,9 +69,10 @@ const JobOpening_Details = () => {
   const fetchJobOpening = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/job-type/view-jobopening`
+        `${API_URL}/api/job-type/view-jobopening`,
+        {withCredentials: true}
       );
-      console.log("job opening Response:", response);
+      // console.log("job opening Response:", response);
 
       // Adjust based on your API response structure
 
@@ -116,7 +115,7 @@ const JobOpening_Details = () => {
   const [salaryPerMonth, setSalaryPerMonth] = useState("");
 
 
-  console.log("checking:", status, jobType, jobTitle, jobDescription, jobRequirement, startFrom, endingTo, note,)
+  // console.log("checking:", status, jobType, jobTitle, jobDescription, jobRequirement, startFrom, endingTo, note,)
 
   // Create
 
@@ -136,10 +135,10 @@ const JobOpening_Details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/job-type/create-jobopening`,
-        formdata
+        formdata, {withCredentials: true}
       );
 
-      console.log("response:", response);
+      // console.log("response:", response);
 
       setIsAddModalOpen(false);
 
@@ -180,7 +179,7 @@ const JobOpening_Details = () => {
   const [editId, setEditid] = useState("");
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     setStatusEdit(row.status);
@@ -211,9 +210,9 @@ const JobOpening_Details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/job-type/edit-jobopening/${editId}`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
 
       setIsEditModalOpen(false);
       fetchJobOpening();
@@ -241,7 +240,9 @@ const JobOpening_Details = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/job-type/delete-jobopening/${id}`)
+          .delete(`${API_URL}/api/job-type/delete-jobopening/${id}`,
+            {withCredentials: true}
+          )
           .then((response) => {
             if (response.data) {
               toast.success("Job Opening has been deleted.");

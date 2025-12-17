@@ -26,12 +26,12 @@ const EmployeeDetails_Mainbar = () => {
 
 
   const employeeIds = window.location.pathname.split("/")[2];
-  console.log("window.location.pathname", employeeIds);
+  // console.log("window.location.pathname", employeeIds);
 
   // const { employeeId } = location.state || {};
   // console.log("employeeId",employeeId)
   const [employee, setData] = useState([]);
-  console.log("employee", employee);
+  // console.log("employee", employee);
   const [employeeDocuments, setEmployeeDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -39,10 +39,11 @@ const EmployeeDetails_Mainbar = () => {
 
     try {
       const response = await axios.get(
-        `${API_URL}/api/employees/view-employee/${employeeIds}`
+        `${API_URL}/api/employees/view-employee/${employeeIds}`,
+        {withCredentials: true}
       );
       setData(response.data.data);
-      console.log(response);
+      // console.log(response);
 
       const employeeDocuments = response.data?.data?.document;
 
@@ -70,7 +71,7 @@ const EmployeeDetails_Mainbar = () => {
   useEffect(() => {
     fetchData();
   }, []);
-  console.log(employee);
+  // console.log(employee);
   const openDocument = (fileName) => {
     const url = `${API_URL}/api/uploads/documents/${fileName}`;
     window.open(url, "_blank");
@@ -87,7 +88,9 @@ const EmployeeDetails_Mainbar = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/employees/delete-employees/${roleId}`)
+          .delete(`${API_URL}/api/employees/delete-employees/${roleId}`,
+            {withCredentials: true}
+          )
           .then((response) => {
             if (response.data.success) {
               Swal.fire("Deleted!", "Employee has been deleted.", "success");
@@ -117,6 +120,7 @@ const EmployeeDetails_Mainbar = () => {
         {
           id: id,
           newPassword: newPassword,
+          withCredentials: true,
         }
       );
       setNewPassword("");

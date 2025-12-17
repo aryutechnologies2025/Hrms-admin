@@ -77,7 +77,8 @@ const Attendance_add_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/attendance/view-mark-by-admin`
+        `${API_URL}/api/attendance/view-mark-by-admin`,
+        {withCredentials: true}
       );
 
       setClientdetails(response.data);
@@ -105,9 +106,7 @@ const Attendance_add_details = () => {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true
         }
       );
       // console.log("response", response.data.data);
@@ -143,7 +142,7 @@ const Attendance_add_details = () => {
     try {
       const loginDateObj = new Date(`${date}T${loginTime}`);
       const logoutDateObj = new Date(`${date}T${logoutTime}`);
-      console.log("dates", loginDateObj, logoutDateObj);
+      // console.log("dates", loginDateObj, logoutDateObj);
 
       const formData = {
         employeeId: selectedEmployeeDetails,
@@ -157,9 +156,9 @@ const Attendance_add_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/attendance/mark-by-admin`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Attendance added successfully!",
@@ -197,10 +196,10 @@ const Attendance_add_details = () => {
 
   const [editid, setEditid] = useState([]);
 
-  console.log("editid", editid);
+  // console.log("editid", editid);
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     setLeaveTypeEdit(row.type);
@@ -227,9 +226,9 @@ const Attendance_add_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/leaveType/edit-leavetype/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Leave Update successfully!",
@@ -268,10 +267,11 @@ const Attendance_add_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/leaveType/delete-leavetype/${id}`
+          `${API_URL}/api/leaveType/delete-leavetype/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Leave has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setClientdetails((prev) => prev.filter((item) => item._id !== id));
         // fetchProject();
       } catch (err) {

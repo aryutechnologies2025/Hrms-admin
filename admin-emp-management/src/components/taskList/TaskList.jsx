@@ -63,7 +63,7 @@ import { SettingsContext } from "../../App";
 
 const TaskList = () => {
   const { dynamicDateFormat } = useContext(SettingsContext);
-console.log("Current date format:", dynamicDateFormat);
+// console.log("Current date format:", dynamicDateFormat);
 
   const formatDateTime = useDateUtils();
 
@@ -280,12 +280,12 @@ console.log("Current date format:", dynamicDateFormat);
       try {
         const response = await axios.patch(
           `${API_URL}/api/task/updated-status/${movedItem.taskId}`,
-          payload
+          payload, {withCredentials: true}
         );
         //       console.log("Dragged Task Object:", movedItem);
         // console.log("Calling PATCH on:", `${API_URL}api/task/updated-status/${movedItem.taskId}`);
         toast.success("Task status updated successfully");
-        console.log("Status updated via drag:", response.data);
+        // console.log("Status updated via drag:", response.data);
       } catch (error) {
         console.error("Error updating status via drag:", error);
         toast.error(
@@ -346,7 +346,7 @@ console.log("Current date format:", dynamicDateFormat);
 
     if (savedFilters) {
       const filters = JSON.parse(savedFilters);
-      console.log(filters);
+      // console.log(filters);
       setAssignTo(filters.assignee);
       // setProjectName(filters.project);
       // handleRoleChange(filters.project.name);
@@ -405,9 +405,7 @@ console.log("Current date format:", dynamicDateFormat);
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 
@@ -459,10 +457,10 @@ console.log("Current date format:", dynamicDateFormat);
 
       const response = await axios.post(
         `${API_URL}/api/task/create-task`,
-        formData
+        formData, {withCredentials: true}
       );
 
-      console.log("response", response);
+      // console.log("response", response);
       Swal.fire({
         icon: "success",
         title: "Task Created!",
@@ -493,11 +491,13 @@ console.log("Current date format:", dynamicDateFormat);
     }
   };
   const [project, setProject] = useState([]);
-  console.log("roles", project);
+  // console.log("roles", project);
 
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/project/view-projects`);
+      const response = await axios.get(`${API_URL}/api/project/view-projects`,
+        {withCredentials: true}
+      );
       // console.log(response);
       if (response.data.success) {
         const projectName = response.data.data.map((emp) => ({
@@ -762,11 +762,11 @@ console.log("Current date format:", dynamicDateFormat);
         };
       }
 
-      console.log("Payload sent:", payload);
+      // console.log("Payload sent:", payload);
 
       const response = await axios.get(
         `${API_URL}/api/task/particular-all-task-status`,
-        { params: payload }
+        { params: payload, withCredentials: true, }
       );
 
       const allTasks = response.data.data;
@@ -1307,7 +1307,7 @@ console.log("Current date format:", dynamicDateFormat);
                 <div className="flex gap-4 min-w-max rounded-md ">
                   {data &&
                     data.columnOrder.map((columnId) => {
-                      console.log("columnId", data);
+                      // console.log("columnId", data);
 
                       const column = data.columns[columnId];
                       const apiCount =

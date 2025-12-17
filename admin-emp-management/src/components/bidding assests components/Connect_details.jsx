@@ -77,9 +77,10 @@ const Connect_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/bidder/view-connect-purchased`
+        `${API_URL}/api/bidder/view-connect-purchased`,
+        {withCredentials: true}
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setAccountdetails(response.data.data);
         setLoading(false);
@@ -113,12 +114,10 @@ const Connect_details = () => {
       const response = await axios.get(
         `${API_URL}/api/bidder/view-account-technology-bidder`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+         withCredentials: true,
         }
       );
-      console.log("response", response.data.data);
+      // console.log("response", response.data.data);
 
       const employeeemail = response.data.data.accountBidder.map((emp) => ({
         label: emp.name,
@@ -150,9 +149,9 @@ const Connect_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/bidder/create-connect-purchased`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Status added successfully!",
@@ -191,7 +190,7 @@ const Connect_details = () => {
   //   console.log("editid", editid);
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     setDateedit(row.date);
@@ -221,9 +220,9 @@ const Connect_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/bidder/edit-connect-purchased/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Status Update successfully!",
@@ -262,10 +261,11 @@ const Connect_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/bidder/delete-connect-purchased/${id}`
+          `${API_URL}/api/bidder/delete-connect-purchased/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Status has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setAccountdetails((prev) => prev.filter((item) => item._id !== id));
         // fetchProject();
       } catch (err) {

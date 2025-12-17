@@ -45,7 +45,7 @@ const Demo_invoice = () => {
     fetchProject();
   }, []);
 
-  console.log("roles", roles);
+  // console.log("roles", roles);
 
   const [projectname, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
@@ -61,8 +61,10 @@ const Demo_invoice = () => {
 
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/invoice/view-invoice`);
-      console.log(response);
+      const response = await axios.get(`${API_URL}/api/invoice/view-invoice`,
+        {withCredentials: true}
+      );
+      // console.log(response);
       if (response.data.success) {
         setClientdetails(response.data.data);
       } else {
@@ -81,21 +83,19 @@ const Demo_invoice = () => {
   const [clientOption, setClientOption] = useState(null);
   const [projectOption, setProjectOption] = useState(null);
 
-  console.log("clientOption", clientOption);
+  // console.log("clientOption", clientOption);
 
   const fetchClientList = async () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/client/view-clientdetails`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 
       const clientName = response.data.data.map((emp) => emp.client_name);
-      console.log("client name", clientName);
+      // console.log("client name", clientName);
       setClientOption(clientName);
     } catch (error) {
       console.log(error);
@@ -107,14 +107,12 @@ const Demo_invoice = () => {
       const response = await axios.get(
         `${API_URL}/api/invoice/get-project-name`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 
       const clientName = response.data.data.map((emp) => emp.name);
-      console.log("client name", clientName);
+      // console.log("client name", clientName);
       setProjectOption(clientName);
     } catch (error) {
       console.log(error);
@@ -318,10 +316,10 @@ const Demo_invoice = () => {
 
       const response = await axios.post(
         `${API_URL}/api/invoice/create-invoice`,
-        formData
+        formData, {withCredentials: true}
       );
 
-      console.log("response:", response);
+      // console.log("response:", response);
 
       setIsAddModalOpen(false);
 

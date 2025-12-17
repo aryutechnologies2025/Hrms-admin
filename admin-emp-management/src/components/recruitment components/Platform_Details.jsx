@@ -24,7 +24,7 @@ const Platform_Details = () => {
   const [errors, setErrors] = useState({});
   const [isAnimating, setIsAnimating] = useState(false);
   const [sourceDetails, setSourceDetails] = useState([]);
-  console.log("source", sourceDetails);
+  // console.log("source", sourceDetails);
   const [loading, setLoading] = useState(true);
 
   // View
@@ -36,9 +36,10 @@ const Platform_Details = () => {
   const fetchSource = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/job-type/view-source`
+        `${API_URL}/api/job-type/view-source`,
+        {withCredentials: true}
       );
-      console.log("Source Response:", response);
+      // console.log("Source Response:", response);
 
       // Adjust based on your API response structure
     
@@ -83,7 +84,7 @@ const Platform_Details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/job-type/create-source`,
-        formdata
+        formdata, {withCredentials: true}
       );
 
       setIsAddModalOpen(false);
@@ -109,7 +110,7 @@ const Platform_Details = () => {
   const [editId, setEditid] = useState("");
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     setNameEdit(row.name);
@@ -146,9 +147,9 @@ const Platform_Details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/job-type/edit-source/${editId}`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
 
       setIsEditModalOpen(false);
       fetchSource();
@@ -176,7 +177,9 @@ const Platform_Details = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/job-type/delete-source/${id}`)
+          .delete(`${API_URL}/api/job-type/delete-source/${id}`,
+            {withCredentials: true}
+          )
           .then((response) => {
             if (response.data) {
               toast.success("Platform has been deleted.");

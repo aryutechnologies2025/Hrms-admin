@@ -35,10 +35,10 @@ const AssetManagement_details = () => {
     const parsedDetails = JSON.parse(storedDetatis || "{}");
     const userid = parsedDetails ? parsedDetails.id : null;
     const [errors, setErrors] = useState({});
-    console.log("errors checking:", errors);
+    // console.log("errors checking:", errors);
     const [isAnimating, setIsAnimating] = useState(false);
     const [assetManageDetails, setAssetManageDetails] = useState([])
-    console.log("assetManageDetails check", assetManageDetails)
+    // console.log("assetManageDetails check", assetManageDetails)
     const [loading, setLoading] = useState(true); // State to manage loading
     const [isInvoiceViewModalOpen, setIsInvoiceViewModalOpen] = useState(false);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
@@ -63,9 +63,10 @@ const AssetManagement_details = () => {
     const fetchAssetManagement = async () => {
         try {
             const response = await axios.get(
-                `${API_URL}/api/asset-mannagement/view-asset`
+                `${API_URL}/api/asset-mannagement/view-asset`,
+                {withCredentials: true}
             );
-            console.log("asset get response", response);
+            // console.log("asset get response", response);
 
 
             setAssetManageDetails(response?.data?.data)
@@ -84,9 +85,10 @@ const AssetManagement_details = () => {
         const fetchCategories = async () => {
             try {
                 const res = await axios.get(
-                    `${API_URL}/api/asset-mannagement-category/assetCategory`
+                    `${API_URL}/api/asset-mannagement-category/assetCategory`,
+                    {withCredentials: true}
                 );
-                console.log("asset category get response", res);
+                // console.log("asset category get response", res);
                 const formatted = res.data?.data?.map((item) => ({
                     label: item?.name,
                     value: item?._id
@@ -106,9 +108,10 @@ const AssetManagement_details = () => {
         const fetchSubCategories = async () => {
             try {
                 const res = await axios.get(
-                    `${API_URL}/api/sub-asset-category/subCategory`
+                    `${API_URL}/api/sub-asset-category/subCategory`,
+                    {withCredentials: true}
                 );
-                console.log("asset subCategory get response", res);
+                // console.log("asset subCategory get response", res);
                 const formatted = res.data?.data?.map((item) => ({
                     label: item?.name,
                     value: item?._id
@@ -126,7 +129,9 @@ const AssetManagement_details = () => {
     // When you fetch asset data for editing
     const fetchAssetForEdit = async (id) => {
         try {
-            const response = await axios.get(`${API_URL}/api/asset-mannagement/view-asset/${id}`);
+            const response = await axios.get(`${API_URL}/api/asset-mannagement/view-asset/${id}`,
+                {withCredentials: true}
+            );
             const asset = response.data;
 
             // Handle existing files
@@ -278,7 +283,7 @@ const AssetManagement_details = () => {
     };
 
     const openInvoiceViewModal = (row) => {
-        console.log("Invoice row data :", row)
+        // console.log("Invoice row data :", row)
 
         setSelectedInvoice(row)
         setIsInvoiceViewModalOpen(true)
@@ -289,7 +294,7 @@ const AssetManagement_details = () => {
     }
 
     const openInvoiceEditModal = (row) => {
-        console.log("Invoice row data :", row)
+        // console.log("Invoice row data :", row)
         setSelectedInvoice(row)
         setIsInvoiceEditModalOpen(true)
     }
@@ -299,11 +304,11 @@ const AssetManagement_details = () => {
     }
 
     const [assetCategory, setAssetCategory] = useState("");
-    console.log("assetCategory", assetCategory)
+    // console.log("assetCategory", assetCategory)
     const [accountoption, setAccountoption] = useState([]);
-    console.log("accountoption", accountoption)
+    // console.log("accountoption", accountoption)
     const [assetSubCategory, setAssetSubCategory] = useState("");
-    console.log("assetSubCategory", assetSubCategory)
+    // console.log("assetSubCategory", assetSubCategory)
     const [assetSubCategoryOption, setAssetSubCategoryOption] = useState([]);
     const [ledger, setLedger] = useState("");
     const [title, setTitle] = useState("");
@@ -362,7 +367,7 @@ const AssetManagement_details = () => {
     // create
     const handlesubmit = async (e) => {
         e.preventDefault();
-        console.log("attachments", attachments);
+        // console.log("attachments", attachments);
 
 
         //form validation
@@ -441,7 +446,7 @@ const AssetManagement_details = () => {
         try {
             const response = await axios.post(
                 `${API_URL}/api/asset-mannagement/create-asset`,
-                formData,
+                formData,{withCredentials: true}
                 // {
                 //     headers: {
                 //         "Content-Type": "multipart/form-data",
@@ -528,7 +533,7 @@ const AssetManagement_details = () => {
                 isExisting: true,
                 type: 'url'
             }));
-console.log("existingFileObjects",existingFileObjects);
+// console.log("existingFileObjects",existingFileObjects);
             setAttachments(existingFileObjects);
             setExistingFiles(row.fileUpload); // Store as separate array too
         } else {
@@ -662,9 +667,10 @@ console.log("existingFileObjects",existingFileObjects);
             const response = await axios.put(
                 `${API_URL}/api/asset-mannagement/edit-assetdetails/${editId}`,
                 formData,
-                { headers: { "Content-Type": "multipart/form-data" } }
+                { headers: { "Content-Type": "multipart/form-data" },
+            withCredentials: true, }
             );
-            console.log("response:", response);
+            // console.log("response:", response);
 
 
             toast.success("Asset Updated Successfully");
@@ -687,7 +693,7 @@ console.log("existingFileObjects",existingFileObjects);
         }).then((result) => {
             if (result.isConfirmed) {
                 axios
-                    .delete(`${API_URL}/api/asset-mannagement/delete-asset/${editId}`)
+                    .delete(`${API_URL}/api/asset-mannagement/delete-asset/${editId}`,{withCredentials: true})
                     .then((response) => {
                         if (response.data) {
                             toast.success("Asset has been deleted.");
@@ -946,7 +952,7 @@ console.log("existingFileObjects",existingFileObjects);
 
 
 
-    console.log("fileIattachmentsInputRef 123", attachments);
+    // console.log("fileIattachmentsInputRef 123", attachments);
     return (
         <div className="flex flex-col justify-between bg-gray-100 w-full min-h-screen px-3 md:px-5 pt-2 md:pt-10 overflow-x-auto">
             {loading ? (

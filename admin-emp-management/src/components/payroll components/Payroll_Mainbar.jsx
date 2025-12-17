@@ -21,12 +21,12 @@ import { useNavigate } from "react-router-dom";
 const Payroll_Mainbar = () => {
   const [globalFilter, setGlobalFilter] = useState("");
   const [payrollList, setPayrollList] = useState([]);
-  console.log("payrollList", payrollList);
+  // console.log("payrollList", payrollList);
 
   const [loading, setLoading] = useState(true);
   const [selectedRows, setSelectedRows] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
-  console.log("selectedRows", selectedRows);
+  // console.log("selectedRows", selectedRows);
 
   const [openUpdateStatusModal, setOpenUpdateStatusModal] = useState(false);
   const [currentDate, setCurrentDate] = useState(
@@ -363,9 +363,7 @@ const Payroll_Mainbar = () => {
       let response = await axios.get(
         `${API_URL}/api/employees/calculate-salary`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
           params: {
             month,
           },
@@ -374,7 +372,7 @@ const Payroll_Mainbar = () => {
 
       setPayrollList(response.data.data);
       setLoading(false);
-      console.log("response", response.data.data);
+      // console.log("response", response.data.data);
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -401,9 +399,7 @@ const Payroll_Mainbar = () => {
               note: notes,
             },
             {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
+              withCredentials: true,
             }
           );
           setOpenUpdateStatusModal(false);
@@ -429,9 +425,7 @@ const Payroll_Mainbar = () => {
               note: notes,
             },
             {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
+              withCredentials: true,
             }
           );
 
@@ -461,9 +455,7 @@ const Payroll_Mainbar = () => {
       let response = await axios.get(
         `${API_URL}/api/employees/calculate-salary`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+         withCredentials: true,
           params: {
             month,
           },

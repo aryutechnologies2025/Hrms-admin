@@ -23,7 +23,7 @@ const InterViewStatus_Details = () => {
   const [errors, setErrors] = useState({});
   const [isAnimating, setIsAnimating] = useState(false);
   const [interViewStatusDetails, setInterViewStatusDetails] = useState([]);
-  console.log("interViewStatusDetails", interViewStatusDetails);
+  // console.log("interViewStatusDetails", interViewStatusDetails);
   const [loading, setLoading] = useState(true);
 
   // View
@@ -34,9 +34,10 @@ const InterViewStatus_Details = () => {
   const fetchInterViewStatus = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/job-type/view-jobinterview`
+        `${API_URL}/api/job-type/view-jobinterview`,
+        {withCredentials: true}
       );
-      console.log("Interview Status Response:", response);
+      // console.log("Interview Status Response:", response);
 
       // Adjust based on your API response structure
     
@@ -80,7 +81,7 @@ const InterViewStatus_Details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/job-type/create-jobinterview`,
-        formdata
+        formdata, {withCredentials: true}
       );
 
       setIsAddModalOpen(false);
@@ -106,7 +107,7 @@ const InterViewStatus_Details = () => {
   const [editId, setEditid] = useState("");
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     setNameEdit(row.name);
@@ -142,9 +143,9 @@ const InterViewStatus_Details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/job-type/edit-jobinterview/${editId}`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
 
       setIsEditModalOpen(false);
       fetchInterViewStatus();
@@ -172,7 +173,9 @@ const InterViewStatus_Details = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/job-type/delete-jobinterview/${id}`)
+          .delete(`${API_URL}/api/job-type/delete-jobinterview/${id}`,
+            {withCredentials: true}
+          )
           .then((response) => {
             if (response.data) {
               toast.success("Interview status has been deleted.");

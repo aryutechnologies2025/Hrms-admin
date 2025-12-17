@@ -85,14 +85,15 @@ const Releiving_Mainbar = () => {
   // const [employeeid ,setEmployeeid] =useState([]);
 
   const [letterlistdetails, setLetterlistdetails] = useState([]);
-  console.log("letterlistdetails", letterlistdetails);
+  // console.log("letterlistdetails", letterlistdetails);
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/employees/reliving-list`
+        `${API_URL}/api/employees/reliving-list`,
+        {withCredentials: true}
       );
-      console.log("re", response);
+      // console.log("re", response);
       if (response.data.success) {
         setClientdetails(response.data.data);
         setLoading(false);
@@ -109,7 +110,8 @@ const Releiving_Mainbar = () => {
   const fetchletter = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/employees/reliving-list,${EmpolyeeId}`
+        `${API_URL}/api/employees/reliving-list,${EmpolyeeId}`,
+        {withCredentials: true}
       );
       // console.log("re", response);
       if (response.data.success) {
@@ -172,13 +174,13 @@ const Releiving_Mainbar = () => {
         verification,
         status: alldatarow.status,
       };
-      console.log("formData", formData);
+      // console.log("formData", formData);
 
       const response = await axios.post(
         `${API_URL}/api/reliving-verify/create-relivinglist-verify`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Status added successfully!",
@@ -426,7 +428,8 @@ const Releiving_Mainbar = () => {
   const fetchReliving = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/reliving/view-relivinglist`
+        `${API_URL}/api/reliving/view-relivinglist`,
+        {withCredentials: true}
       );
       if (response.data.success) {
         // const list = response.data.data;
@@ -962,7 +965,7 @@ const Releiving_Mainbar = () => {
                             <div className="w-[50%] flex gap-3 flex-wrap ">
                               {f.options.map(
                                 (opt) => (
-                                  console.log("opt", opt),
+                                  // console.log("opt", opt),
                                   (
                                     <label
                                       key={opt}

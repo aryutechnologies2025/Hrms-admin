@@ -194,7 +194,8 @@ const PresentedEmployees_Mainbar = () => {
   const fetchPresentedEmployees = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/emp-attendances/attendance-list-filter`
+        `${API_URL}/api/emp-attendances/attendance-list-filter`,
+        {withCredentials: true}
       );
       
       setPresentedEmployeesList(response.data.employees);
@@ -216,13 +217,13 @@ const PresentedEmployees_Mainbar = () => {
     if (toDate) params.to_date = formatDate(toDate);
     if (employeeName) params.employee_name = employeeName;
 
-    console.log("params",params);
+    // console.log("params",params);
     
     try {
       setLoading(true);
       const response = await axios.get(
         `${API_URL}/api/emp-attendances/attendance-list-filter`,
-        { params }
+        { params, withCredentials: true }
       );
       setPresentedEmployeesList(response.data?.data?.employees || []);
       setLoading(false);

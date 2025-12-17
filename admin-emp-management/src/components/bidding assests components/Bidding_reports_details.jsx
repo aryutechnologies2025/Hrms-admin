@@ -35,7 +35,7 @@ const Bidding_reports_details = () => {
   // const location = useLocation();
 
   const employeeIds = window.location.pathname.split("/")[2];
-  console.log("window.location.pathname", employeeIds);
+  // console.log("window.location.pathname", employeeIds);
 
   //   const [status, setStatus] = useState("");
   const storedDetatis = localStorage.getItem("hrmsuser");
@@ -44,7 +44,7 @@ const Bidding_reports_details = () => {
   const [errors, setErrors] = useState({});
 
   const [accounts, setAccounts] = useState([]);
-  console.log("accounts", accounts);
+  // console.log("accounts", accounts);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -66,7 +66,8 @@ const Bidding_reports_details = () => {
     const fetchData = async () => {
       try {
         const { data } = await axios.get(
-          `${API_URL}/api/bidder/get-account-bidder-wise`
+          `${API_URL}/api/bidder/get-account-bidder-wise`,
+          {withCredentials: true}
         );
         if (data.success) {
           setAccounts(data.data);

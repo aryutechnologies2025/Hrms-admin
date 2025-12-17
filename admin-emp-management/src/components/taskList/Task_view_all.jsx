@@ -51,7 +51,7 @@ function Task_view_all() {
   const employeeeId = employeeDetails?._id;
   const { taskId } = useParams();
 
-  console.log("Task ID:", taskId);
+  // console.log("Task ID:", taskId);
 
   const navigate = useNavigate();
 
@@ -66,8 +66,12 @@ function Task_view_all() {
   const [priority, setPriority] = useState("");
   const [assignToChange, setAssignToChange] = useState("");
   const [taskType, setTaskType] = useState("");
+<<<<<<< HEAD
   console.log("taskType", taskType);
     const [buttonLoading, setButtonLoading] = useState(false);
+=======
+  // console.log("taskType", taskType);
+>>>>>>> 7f68fc69bfb12f55d3962a81ef7d79021cef1fd9
 
   // const handleStatusChange = (e) => {
   //   const newStatus = e.target.value;
@@ -151,15 +155,16 @@ function Task_view_all() {
 
   // console.log("holddata", holddata);
 
-  console.log("alldata", alldata);
+  // console.log("alldata", alldata);
 
   const fetchProjectall = async () => {
       setButtonLoading(true);
     try {
       const response = await axios.get(
-        `${API_URL}/api/task/particular-task/${taskId}`
+        `${API_URL}/api/task/particular-task/${taskId}`,
+        {withCredentials: true}
       );
-      console.log("response", response);
+      // console.log("response", response);
       if (response.data.success) {
         setAlldata(response?.data?.data);
         setStatus(response?.data?.data?.status);
@@ -196,7 +201,7 @@ function Task_view_all() {
     if (!str) return "";
     return str.replace(/<[^>]*>/g, "");
   }
-  console.log("assignToChange 123", assignToChange);
+  // console.log("assignToChange 123", assignToChange);
   // download image to see
 
   const handleCommonFileDownload = (filePath) => {
@@ -258,10 +263,10 @@ function Task_view_all() {
     try {
       const response = await axios.patch(
         `${API_URL}/api/task/updated-status/${taskId}`,
-        payload
+        payload, {withCredentials: true}
       );
 
-      console.log("Status updated:", response.data);
+      // console.log("Status updated:", response.data);
 
       toast.success("Task status updated successfully");
       fetchProjectlogs();
@@ -274,9 +279,9 @@ function Task_view_all() {
     }
   };
   const handleAssignedtoChange = async (e) => {
-    console.log("coming asss");
+    // console.log("coming asss");
     const newAssignedTo = e.value;
-    console.log("newAssignedTo", newAssignedTo);
+    // console.log("newAssignedTo", newAssignedTo);
     setAssignToChange(newAssignedTo);
 
     const now = new Date().toISOString();
@@ -290,7 +295,7 @@ function Task_view_all() {
     //   updatedStopTime = now;
     //   setStopTime(now);
     // }
-    console.log("coming asss 1");
+    // console.log("coming asss 1");
     const payload = {
       assignedTo: newAssignedTo,
       // startTime: updatedStartTime,
@@ -299,14 +304,14 @@ function Task_view_all() {
       updatedBy: employeeeId,
     };
 
-    console.log("coming asss 2,", payload);
+    // console.log("coming asss 2,", payload);
     try {
       const response = await axios.patch(
         `${API_URL}/api/task/updated-status/${taskId}`,
-        payload
+        payload, {withCredentials: true}
       );
 
-      console.log("Assigned updated:", response.data);
+      // console.log("Assigned updated:", response.data);
       fetchProjectall()
 
       toast.success("Task assigned updated successfully");
@@ -321,7 +326,7 @@ function Task_view_all() {
   };
   const handleTaskTypetoChange = async (e) => {
     const newAssignedTo = e.taskType;
-    console.log("newAssignedTo", newAssignedTo);
+    // console.log("newAssignedTo", newAssignedTo);
     setTaskType(newAssignedTo);
 
     const now = new Date().toISOString();
@@ -344,14 +349,14 @@ function Task_view_all() {
       updatedBy: employeeeId,
     };
 
-    console.log("coming asss 2,", payload);
+    // console.log("coming asss 2,", payload);
     try {
       const response = await axios.patch(
         `${API_URL}/api/task/updated-status/${taskId}`,
-        payload
+        payload, {withCredentials: true}
       );
 
-      console.log("Assigned updated:", response.data);
+      // console.log("Assigned updated:", response.data);
 
       toast.success("Task assigned updated successfully");
       // window.location.reload();
@@ -371,7 +376,9 @@ function Task_view_all() {
 
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/project/view-projects`);
+      const response = await axios.get(`${API_URL}/api/project/view-projects`,
+        {withCredentials: true}
+      );
       // console.log(response);
       if (response.data.success) {
         const projectName = response.data.data.map((emp) => ({
@@ -408,9 +415,7 @@ function Task_view_all() {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 
@@ -444,10 +449,10 @@ function Task_view_all() {
     try {
       const response = await axios.post(
         `${API_URL}/api/task/task-comments`,
-        formData
+        formData, {withCredentials: true}
       );
 
-      console.log("Upload success:", response.data);
+      // console.log("Upload success:", response.data);
       // alert("Submitted successfully!");
       setEditorContent("");
       setUploadedFiles([]);
@@ -512,7 +517,7 @@ function Task_view_all() {
   //   fetchProject();
   // }, []);
 
-  console.log("alldata?.projectIdFilter", alldata?.projectIdFilter);
+  // console.log("alldata?.projectIdFilter", alldata?.projectIdFilter);
   // const filteredEmployees = (() => {
   //   const selectedRole = project.find(
   //     (proj) =>console.log( proj.value) proj.value === alldata?.projectIdFilter
@@ -549,13 +554,13 @@ function Task_view_all() {
   //   }
   // };
   const filteredEmployees = (() => {
-    console.log("project", project);
+    // console.log("project", project);
     const selectedRole = project.find((proj) => {
       // console.log("hhhhh", proj.value);
       return proj.value === alldata?.projectIdFilter;
     });
 
-    console.log("selectedRole", selectedRole);
+    // console.log("selectedRole", selectedRole);
 
     return (
       selectedRole && employeeOption && employeeOption.length>0 &&
@@ -638,15 +643,15 @@ function Task_view_all() {
         updatedBy: employeeeId,
       };
 
-      console.log("Submitted payload:", payload);
+      // console.log("Submitted payload:", payload);
 
       try {
         const response = await axios.put(
           `${API_URL}/api/task/task-pasusecondition/${taskId}`,
-          payload
+          payload, {withCredentials: true}
         );
 
-        console.log("Status updated:", response.data);
+        // console.log("Status updated:", response.data);
 
         toast.success(
           `Project ${pauseProject === "hold" ? "held" : "restarted"
@@ -685,14 +690,15 @@ function Task_view_all() {
   };
 
   const [logs, setLogs] = useState([]);
-  console.log("logs", logs);
+  // console.log("logs", logs);
 
   const fetchProjectlogs = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/task/tasklogs/${taskId}`
+        `${API_URL}/api/task/tasklogs/${taskId}`,
+        {withCredentials: true}
       );
-      console.log(response.data);
+      // console.log(response.data);
       if (response.data.success) {
         setLogs(response.data.data);
       } else {
@@ -759,9 +765,9 @@ function Task_view_all() {
       try {
         const response = await axios.put(
           `${API_URL}/api/task/updated-tester-status`,
-          payload
+          payload, {withCredentials: true}
         );
-        console.log(response);
+        // console.log(response);
 
         Swal.fire({
           icon: "success",
@@ -800,7 +806,7 @@ function Task_view_all() {
 
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
-    console.log(selectedFiles);
+    // console.log(selectedFiles);
     setUploadedFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
   };
 
@@ -911,7 +917,7 @@ function Task_view_all() {
         priority,
       };
 
-      await axios.post(`${API_URL}/api/subtasks/create-subtask`, payload);
+      await axios.post(`${API_URL}/api/subtasks/create-subtask`,{withCredentials: true}, payload);
 
       await fetchProjectall();
 
@@ -946,7 +952,7 @@ function Task_view_all() {
       };
       const response = axios.put(
         `${API_URL}/api/subtasks/update-subtask/${id}`,
-        payload
+        payload, {withCredentials: true}
       );
       fetchProjectall();
       toast.success("SubTask status updated successfully");
@@ -961,7 +967,8 @@ function Task_view_all() {
   const handleDeleteSubTask = (id) => {
     try {
       const response = axios.delete(
-        `${API_URL}/api/subtasks/delete-subtask/${id}`
+        `${API_URL}/api/subtasks/delete-subtask/${id}`,
+        {withCredentials: true}
       );
       fetchProjectall();
       toast.success("SubTask deleted successfully");

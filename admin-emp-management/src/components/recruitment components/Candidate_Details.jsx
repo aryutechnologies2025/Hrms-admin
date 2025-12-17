@@ -31,7 +31,7 @@ const Candidate_Details = () => {
   // console.log("errors:", errors);
   const [isAnimating, setIsAnimating] = useState(false);
   const [candidateDetails, setCandidateDetails] = useState([]);
-  console.log("candidateDetails:", candidateDetails);
+  // console.log("candidateDetails:", candidateDetails);
   const [loading, setLoading] = useState(true);
 
   const location = useLocation();
@@ -62,9 +62,7 @@ const Candidate_Details = () => {
       const response = await axios.get(
         `${API_URL}/api/job-type/view-job-name`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
           params: {
             type: "interview",
           },
@@ -86,9 +84,7 @@ const Candidate_Details = () => {
       const response = await axios.get(
         `${API_URL}/api/job-type/view-job-name`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
           params: {
             type: "source",
           },
@@ -110,10 +106,7 @@ const Candidate_Details = () => {
       const response = await axios.get(
         `${API_URL}/api/job-type/view-source`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          
+          withCredentials: true,
         }
       );
       // console.log("response:", response)
@@ -136,6 +129,7 @@ const Candidate_Details = () => {
             type: "candidate",
             id: candidateid,
           },
+          withCredentials: true,
         }
       );
       // console.log("candidate response", response);
@@ -208,7 +202,7 @@ const Candidate_Details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/job-type/create-candidate`,
-        formdata
+        formdata, {withCredentials: true}
       );
 
       // const validationErrors = validateForm(formValues);
@@ -268,7 +262,7 @@ const Candidate_Details = () => {
   const [editId, setEditid] = useState("");
 
   const openEditModal = (row) => {
-    console.log("candidate row", row);
+    // console.log("candidate row", row);
 
     setEditid(row._id);
     setFirstNameEdit(row.firstName);
@@ -310,9 +304,9 @@ const Candidate_Details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/job-type/edit-candidate/${editId}`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("candidate edit response:", response);
+      // console.log("candidate edit response:", response);
 
       setIsEditModalOpen(false);
       fetchCandidate();
@@ -346,7 +340,7 @@ const Candidate_Details = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/job-type/delete-candidate/${id}`)
+          .delete(`${API_URL}/api/job-type/delete-candidate/${id}`,{withCredentials: true})
           .then((response) => {
             if (response.data) {
               toast.success("candidate has been deleted.");

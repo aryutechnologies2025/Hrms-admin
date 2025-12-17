@@ -283,9 +283,7 @@ const MonthlyAttendanceDetails_Mainbar = () => {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees-filterdate/${month}`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 
@@ -319,7 +317,7 @@ const MonthlyAttendanceDetails_Mainbar = () => {
 
   const [employeeName, setEmployeeName] = useState([]);
 
-  console.log("employeeName", employeeName);
+  // console.log("employeeName", employeeName);
 
   // console.log("summary", summary);
 
@@ -332,21 +330,21 @@ const MonthlyAttendanceDetails_Mainbar = () => {
       month: `${monthDate.getMonth() + 1}-${monthDate.getFullYear()}`,
       employeeId: selectedEmployeeDeatils.split(" - ")[0],
     };
-    console.log(payload);
+    // console.log(payload);
 
     try {
       const response = await axios.get(
         `${API_URL}/api/attendance/particular-month-attendancelist`,
-        { params: payload }
+        { params: payload, withCredentials: true}
       );
 
-      console.log("response", response)
+      // console.log("response", response)
 
       setEmployeeData(response.data.data);
       setSummary(response.data.summary);
       setEmployeeName(response.data.employee)
 
-      console.log(response.data.data);
+      // console.log(response.data.data);
     } catch (error) {
       console.log(error);
       setEmployeeData("");

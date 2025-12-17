@@ -14,8 +14,8 @@ import aryufoot from "../assets/aryufoot.svg";
 const Declaration_pdf = ({ row, download }) => {
   //      const { state } = useLocation();
   //   const row = state?.row;
-  console.log("download :", download);
-  console.log("row :", row);
+  // console.log("download :", download);
+  // console.log("row :", row);
 
   const invoiceRef = useRef();
 
@@ -41,7 +41,7 @@ const Declaration_pdf = ({ row, download }) => {
 
   useEffect(() => {
     if (download) {
-      console.log("Triggering PDF download", download);
+      // console.log("Triggering PDF download", download);
       downloadPDF();
     }
   }, [download]);

@@ -28,10 +28,10 @@ const AssetCategory_details = () => {
   const parsedDetails = JSON.parse(null);
   const userid = parsedDetails ? parsedDetails.id : null;
   const [errors, setErrors] = useState({});
-  console.log("errors:", errors);
+  // console.log("errors:", errors);
   const [isAnimating, setIsAnimating] = useState(false);
   const [assetDetails, setAssetDetails] = useState([])
-  console.log("assetDetails", assetDetails)
+  // console.log("assetDetails", assetDetails)
   const [loading, setLoading] = useState(true); // State to manage loading
   let navigate = useNavigate();
 
@@ -43,9 +43,10 @@ const AssetCategory_details = () => {
   const fetchAssetType = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/asset-mannagement-category/assetCategory`
+        `${API_URL}/api/asset-mannagement-category/assetCategory`,
+        {withCredentials: true}
       );
-      console.log("response get check", response);
+      // console.log("response get check", response);
 
       setAssetDetails(response?.data?.data)
       setLoading(false);
@@ -93,7 +94,7 @@ const AssetCategory_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/asset-mannagement-category/create-assetCategory`,
-        formdata
+        formdata, {withCredentials: true}
       );
 
 
@@ -120,7 +121,7 @@ const AssetCategory_details = () => {
   const [editId, setEditid] = useState("");
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     setNameEdit(row.name);
@@ -157,9 +158,9 @@ const AssetCategory_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/asset-mannagement-category/edit-assetCategorydetails/${editId}`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
 
 
       setIsEditModalOpen(false);
@@ -193,7 +194,7 @@ const AssetCategory_details = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/asset-mannagement-category/delete-assetCategoryDelete/${editId}`)
+          .delete(`${API_URL}/api/asset-mannagement-category/delete-assetCategoryDelete/${editId}`,{withCredentials: true})
           .then((response) => {
             if (response.data) {
               toast.success("Asset Category has been deleted.");

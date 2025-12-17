@@ -33,7 +33,7 @@ const Bidding_all_details = () => {
 
   // const location = useLocation();
   const ids = window.location.pathname.split("/")[2]
-  console.log("rowdeatsils",ids);
+  // console.log("rowdeatsils",ids);
   const navigate = useNavigate();
 
     // const [ids, setIds] = useState([]);
@@ -53,7 +53,7 @@ const Bidding_all_details = () => {
   // const location = useLocation();
 
   const employeeIds = window.location.pathname.split("/")[2];
-  console.log("window.location.pathname", employeeIds);
+  // console.log("window.location.pathname", employeeIds);
 
   // Fetch roles from the API
   useEffect(() => {
@@ -68,10 +68,10 @@ const Bidding_all_details = () => {
   
 
   const [accountdetails, setAccountdetails] = useState([]);
-  console.log("accountdetails", accountdetails);
+  // console.log("accountdetails", accountdetails);
   const [loading, setLoading] = useState(true);
   const [carddata, setCarddata] = useState([]);
-  console.log("carddata", carddata);
+  // console.log("carddata", carddata);
 
   const fetchProject = async () => {
     try {
@@ -80,10 +80,11 @@ const Bidding_all_details = () => {
             params:{
                 ids:ids,
                 bidder:"bidder",
-            }
+            },
+            withCredentials: true,
         }
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setAccountdetails(response.data.data);
         setCarddata(response.data);
@@ -112,10 +113,11 @@ const Bidding_all_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/bidder/delete-employee-bidder/${id}`
+          `${API_URL}/api/bidder/delete-employee-bidder/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Status has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setAccountdetails((prev) => prev.filter((item) => item._id !== id));
         // fetchProject();
       } catch (err) {

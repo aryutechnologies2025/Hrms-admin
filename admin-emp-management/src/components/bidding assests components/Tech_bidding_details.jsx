@@ -32,7 +32,7 @@ const Tech_bidding_details = () => {
   // const location = useLocation();
 
   const employeeIds = window.location.pathname.split("/")[2];
-  console.log("window.location.pathname", employeeIds);
+  // console.log("window.location.pathname", employeeIds);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -69,15 +69,16 @@ const Tech_bidding_details = () => {
   const [errors, setErrors] = useState({});
 
   const [accountdetails, setAccountdetails] = useState([]);
-  console.log("accountdetails", accountdetails);
+  // console.log("accountdetails", accountdetails);
   const [loading, setLoading] = useState(true);
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/bidder/view-technology-bidder`
+        `${API_URL}/api/bidder/view-technology-bidder`,
+        {withCredentials: true}
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setAccountdetails(response.data.data);
         setLoading(false);
@@ -115,9 +116,10 @@ const Tech_bidding_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/bidder/create-technology-bidder`,
-        formData
+        formData,
+        {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Status added successfully!",
@@ -151,10 +153,10 @@ const Tech_bidding_details = () => {
 
   const [editid, setEditid] = useState([]);
 
-  console.log("editid", editid);
+  // console.log("editid", editid);
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     SetNameedit(row.name);
@@ -180,9 +182,9 @@ const Tech_bidding_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/bidder/edit-technology-bidder/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Status Update successfully!",
@@ -221,10 +223,11 @@ const Tech_bidding_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/bidder/delete-technology-bidder/${id}`
+          `${API_URL}/api/bidder/delete-technology-bidder/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Status has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setAccountdetails((prev) => prev.filter((item) => item._id !== id));
         // fetchProject();
       } catch (err) {

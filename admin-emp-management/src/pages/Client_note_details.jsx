@@ -36,7 +36,7 @@ import { FaEye } from "react-icons/fa";
 const Client_note_details = () => {
 
     const { _id } = useParams();
-    console.log("id", _id)
+    // console.log("id", _id)
     const location = useLocation();
     const row = location.state?.row;
 
@@ -76,8 +76,8 @@ const Client_note_details = () => {
                 projectId: _id,
             };
 
-            const response = await axios.post(`${API_URL}/api/projectNotes/create-projectNotes`, formData,);
-            console.log("response", response)
+            const response = await axios.post(`${API_URL}/api/projectNotes/create-projectNotes`, formData, {withCredentials: true});
+            // console.log("response", response)
             toast.success("Notes Created Successfully!");
             fetchNotes();
 
@@ -99,9 +99,11 @@ const Client_note_details = () => {
     const fetchNotes = async () => {
         try {
             setLoading(true);
-            const resp = await axios.get(`${API_URL}/api/projectNotes/projectNotes/${_id}`);
+            const resp = await axios.get(`${API_URL}/api/projectNotes/projectNotes/${_id}`,
+                {withCredentials: true}
+            );
 
-            console.log("resp.data.data :", resp.data.data);
+            // console.log("resp.data.data :", resp.data.data);
             setNotes(resp.data.data);
 
         } catch (err) {
@@ -119,7 +121,7 @@ const Client_note_details = () => {
 
     const handleEdit = (row) => {
 
-        console.log("row", row)
+        // console.log("row", row)
         setEditid(row._id);
         setTitleedit(row.title);
         setDescedit(row?.description);
@@ -137,8 +139,8 @@ const Client_note_details = () => {
                 // projectId: _id,
             };
 
-            const response = await axios.put(`${API_URL}/api/projectNotes/edit-projectNotesdetails/${editid}`, formData,);
-            console.log("response", response)
+            const response = await axios.put(`${API_URL}/api/projectNotes/edit-projectNotesdetails/${editid}`, formData, {withCredentials: true});
+            // console.log("response", response)
             toast.success("Notes Edit Successfully!");
             fetchNotes();
 
@@ -211,7 +213,9 @@ const Client_note_details = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 axios
-                    .delete(`${API_URL}/api/projectNotes/delete-projectNotesDelete/${roleId}`)
+                    .delete(`${API_URL}/api/projectNotes/delete-projectNotesDelete/${roleId}`,
+                        {withCredentials: true}
+                    )
                     .then((response) => {
                         if (response.data.success) {
                             Swal.fire("Deleted!", "Project Notes has been deleted.", "success");

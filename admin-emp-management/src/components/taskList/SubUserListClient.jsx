@@ -77,6 +77,7 @@ const SubUserListClient = () => {
         `${API_URL}/api/clientsubuser/all-subusers/${employeeemail}`,
         {
           params: payload,
+          withCredentials: true,
         }
       );
 
@@ -126,9 +127,7 @@ const SubUserListClient = () => {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true,
         }
       );
 
@@ -166,9 +165,10 @@ const SubUserListClient = () => {
         `${API_URL}/api/project/view-projects-id`,
         {
           params: { clientId: employeeemail },
+          withCredentials: true,
         }
       );
-      console.log("clientID", employeeemail);
+      // console.log("clientID", employeeemail);
       // console.log(response);
       if (response.data.success) {
         const projectName = response.data.data.map((emp) => ({
@@ -194,7 +194,7 @@ const SubUserListClient = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("employeeemail in subuser:");
+    // console.log("employeeemail in subuser:");
 
     try {
       const newErrors = {};
@@ -231,7 +231,7 @@ const SubUserListClient = () => {
         setErrors(newErrors);
         return;
       }
-      console.log("projectname selected:", projectname);
+      // console.log("projectname selected:", projectname);
       // Multi-select project list
       // const projectIds = projectname.map((item) => item.value);
 
@@ -248,10 +248,10 @@ const SubUserListClient = () => {
 
       const response = await axios.post(
         `${API_URL}/api/clientsubuser/create-subuser`,
-        payload
+        payload, {withCredentials: true}
       );
 
-      console.log("response subuser:", response);
+      // console.log("response subuser:", response);
 
       if (response.data.success) {
         Swal.fire({
@@ -298,10 +298,10 @@ const SubUserListClient = () => {
   });
 
   const openEditModal = (row) => {
-    console.log("row", row);
+    // console.log("row", row);
     const ArrayofProjectId=row?.projectId?.map((item)=>item?._id);
-    console.log("ArrayofProjectId", ArrayofProjectId);
-    console.log("row.projectId", row.projectId);
+    // console.log("ArrayofProjectId", ArrayofProjectId);
+    // console.log("row.projectId", row.projectId);
     setUserData({
       id: row._id,
       projectId:ArrayofProjectId || [],
@@ -352,7 +352,7 @@ const SubUserListClient = () => {
         setEditErrors(newErrors);
         return;
       }
-      console.log("aaa");
+      // console.log("aaa");
       
       const payload = {
         name: userData.name,
@@ -365,10 +365,10 @@ const SubUserListClient = () => {
 
       const response = await axios.put(
         `${API_URL}/api/clientsubuser/update-subuser/${userData.id}`,
-        payload
+        payload, {withCredentials: true}
       );
 
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Client Update successfully!",
@@ -417,7 +417,8 @@ const SubUserListClient = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/clientsubuser/delete-subuser/${id}`
+          `${API_URL}/api/clientsubuser/delete-subuser/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Success", "The role has been deleted Successfully!");
         fetchProjectlist();

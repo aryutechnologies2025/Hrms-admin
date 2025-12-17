@@ -84,7 +84,7 @@ const Mobile_Sidebar = () => {
     try {
       const response = await axios.put(
         `${API_URL}/api/auth/change-password`,
-        payload
+        payload, {withCredentials: true}
       );
       setAdminPassword("");
       setChangePasswordIsOpen(false);
@@ -257,15 +257,15 @@ const Mobile_Sidebar = () => {
                         </div>
                         <p>Links</p>
                       </div>
-                      {/*complainence*/}
+                      {/*complaince*/}
                       <div
-                        onClick={() => onClickSidebarMenu("complainence")}
+                        onClick={() => onClickSidebarMenu("complaince")}
                         className="flex items-center w-full hover:bg-blue-100 hover:text-[#4F46E5] px-3 py-2 rounded-lg gap-2 text-gray-500 text-sm font-medium cursor-pointer"
                       >
                         <div className="flex items-center justify-center h-5 w-5">
                           <GiDiscussion />
                         </div>
-                        <p>Complainence</p>
+                        <p>Complaince</p>
                       </div>
                        {/* onboarding */}
                       <div

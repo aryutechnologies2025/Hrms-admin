@@ -43,9 +43,9 @@ export default function JoiningVerifyPage() {
       try {
         setLoading(true);
         const [resTitles, resJoining, resVerify] = await Promise.all([
-          axios.get(`${API_URL}/api/joining-verify/get-title-joininglist`),
-          axios.get(`${API_URL}/api/joining/view-joininglist`),
-          axios.get(`${API_URL}/api/joining-verify/view-joininglistVerify`),
+          axios.get(`${API_URL}/api/joining-verify/get-title-joininglist`,{withCredentials: true}),
+          axios.get(`${API_URL}/api/joining/view-joininglist`,{withCredentials: true}),
+          axios.get(`${API_URL}/api/joining-verify/view-joininglistVerify`,{withCredentials: true}),
         ]);
 
         setTitles(resTitles.data.data || []);
@@ -97,14 +97,15 @@ export default function JoiningVerifyPage() {
 
       await axios.post(
         `${API_URL}/api/joining-verify/create-joininglistVerify`,
-        payload
+        payload, {withCredentials: true}
       );
       setIsAddModalOpen(false);
       showNotification("All permissions saved successfully!");
 
       // Refresh verify list
       const resVerify = await axios.get(
-        `${API_URL}/api/joining-verify/view-joininglistVerify`
+        `${API_URL}/api/joining-verify/view-joininglistVerify`,
+        {withCredentials: true}
       );
       setVerifyList(resVerify.data.data || []);
     } catch (err) {

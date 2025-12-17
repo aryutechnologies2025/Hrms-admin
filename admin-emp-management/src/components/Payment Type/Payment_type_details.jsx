@@ -39,7 +39,7 @@ const Payment_type_details = () => {
   // const location = useLocation();
 
   const employeeIds = window.location.pathname.split("/")[2];
-  console.log("window.location.pathname", employeeIds);
+  // console.log("window.location.pathname", employeeIds);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -76,7 +76,7 @@ const Payment_type_details = () => {
   const [errors, setErrors] = useState({});
 
   const [clientdetails, setClientdetails] = useState([]);
-  console.log("clientdetails", clientdetails);
+  // console.log("clientdetails", clientdetails);
 
   const [projectOptionfilter, setProjectOptionfilter] = useState([]);
   // console.log("projectOptionfilter", projectOptionfilter);
@@ -84,9 +84,10 @@ const Payment_type_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/payment-type/view-paymenttype`
+        `${API_URL}/api/payment-type/view-paymenttype`,
+        {withCredentials: true}
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setClientdetails(response.data.data);
       } else {
@@ -100,9 +101,7 @@ const Payment_type_details = () => {
   const fetchProjectListfilter = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/project/view-projects`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+       withCredentials: true,
       });
 
       const projectName = response.data.data.map((emp) => ({
@@ -135,7 +134,7 @@ const Payment_type_details = () => {
   const [selectedClient, setSelectedClient] = useState(null);
 
   const [selectedProject, setSelectedProject] = useState(null);
-  console.log("selectedProject", selectedProject);
+  // console.log("selectedProject", selectedProject);
 
   const [budget, setBudget] = useState("0");
 
@@ -157,9 +156,7 @@ const Payment_type_details = () => {
         const response = await axios.get(
           `${API_URL}/api/client/view-clientdetails`,
           {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+            withCredentials: true,
           }
         );
 
@@ -194,9 +191,7 @@ const Payment_type_details = () => {
           `${API_URL}/api/invoice/get-project-name-with-client`,
           {
             params: { project: selectedClient },
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+            withCredentials: true,
           }
         );
         // const projectName = response.data.data.map((emp) => emp.name);
@@ -344,9 +339,9 @@ const Payment_type_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/payment-type/create-paymenttype`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Payment  added successfully!",
@@ -410,7 +405,7 @@ const Payment_type_details = () => {
   const [allrow, setAllrow] = useState([]);
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
     setAllrow(row);
     setEditid(row._id);
     setSelectedClientedit(row.client_name);
@@ -563,9 +558,9 @@ const Payment_type_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/payment-type/edit-paymenttype/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Payment Update successfully!",
@@ -604,10 +599,11 @@ const Payment_type_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/payment-type/delete-paymenttype/${id}`
+          `${API_URL}/api/payment-type/delete-paymenttype/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Payment has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setClientdetails((prev) => prev.filter((item) => item._id !== id));
         // fetchProject();
       } catch (err) {

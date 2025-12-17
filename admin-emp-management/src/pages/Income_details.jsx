@@ -66,7 +66,7 @@ const Income_details = () => {
     fetchAccount();
   }, []);
 
-  console.log("roles", roles);
+  // console.log("roles", roles);
 
   //   const [status, setStatus] = useState("");
   const storedDetatis = localStorage.getItem("hrmsuser");
@@ -81,8 +81,8 @@ const Income_details = () => {
   // console.log("accountOption", accountOption);
   const fetchAccount = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/income/finance-name`);
-      console.log("response", response);
+      const response = await axios.get(`${API_URL}/api/income/finance-name`,{withCredentials: true});
+      // console.log("response", response);
 
       const projectName = response.data.getFinanceName?.map((emp) => ({
         label: emp.name,
@@ -96,8 +96,10 @@ const Income_details = () => {
 
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/income/view-income`);
-      console.log(response);
+      const response = await axios.get(`${API_URL}/api/income/view-income`,
+        {withCredentials: true}
+      );
+      // console.log(response);
       if (response.data.success) {
         setExpensedetails(response.data.data);
       } else {
@@ -142,9 +144,9 @@ const Income_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/income/create-income`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Income added successfully!",
@@ -187,7 +189,7 @@ const Income_details = () => {
   // console.log("editid", editid);
 
   const openEditModal = (row) => {
-    console.log("rowData", row);
+    // console.log("rowData", row);
     setAccountselectedit(row.financeName._id);
     setEditid(row._id);
     setDateedit(row.date || "");
@@ -213,9 +215,9 @@ const Income_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/income/edit-income/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Income Update successfully!",
@@ -251,7 +253,7 @@ const Income_details = () => {
   };
 
   const handleDelete = async (id) => {
-    console.log("editid", id);
+    // console.log("editid", id);
 
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -265,10 +267,10 @@ const Income_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/income/delete-income/${id}`
+          `${API_URL}/api/income/delete-income/${id}`,{withCredentials: true}
         );
         Swal.fire("Deleted!", "The Income has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setExpensedetails((prev) => prev.filter((item) => item._id !== id));
         fetchExpenses();
         fetchExpensesyear();
@@ -469,7 +471,7 @@ const Income_details = () => {
   const fetchExpenses = async () => {
     try {
       const res = await axios.get(
-        `${API_URL}/api/income/get-monthly-total-credit`
+        `${API_URL}/api/income/get-monthly-total-credit`,{withCredentials: true}
       );
 
       const labels = res?.data?.data?.map((item) => item.month);
@@ -545,9 +547,9 @@ const Income_details = () => {
   const fetchExpensesyear = async () => {
     try {
       const res = await axios.get(
-        `${API_URL}/api/income/get-yearly-total-credit`
+        `${API_URL}/api/income/get-yearly-total-credit`, {withCredentials: true}
       );
-      console.log("res", res.data.data);
+      // console.log("res", res.data.data);
 
       // sort by month id
       // const sorted = res.data.data.sort((a, b) => a._id - b._id);

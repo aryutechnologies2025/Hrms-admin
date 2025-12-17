@@ -32,7 +32,7 @@ const Reliving_list_details = () => {
   // const location = useLocation();
 
   const employeeIds = window.location.pathname.split("/")[2];
-  console.log("window.location.pathname", employeeIds);
+  // console.log("window.location.pathname", employeeIds);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -71,14 +71,15 @@ const Reliving_list_details = () => {
   const [errors, setErrors] = useState({});
 
   const [clientdetails, setClientdetails] = useState([]);
-  console.log("clientdetails", clientdetails);
+  // console.log("clientdetails", clientdetails);
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/reliving/view-relivinglist`
+        `${API_URL}/api/reliving/view-relivinglist`,
+        {withCredentials: true}
       );
-      console.log("re", response);
+      // console.log("re", response);
       if (response.data.success) {
         setClientdetails(response.data.data);
       } else {
@@ -129,9 +130,9 @@ const Reliving_list_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/reliving/create-relivinglist`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Status added successfully!",
@@ -210,9 +211,9 @@ const Reliving_list_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/reliving/edit-relivinglist/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Status Update successfully!",
@@ -251,10 +252,11 @@ const Reliving_list_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/reliving/delete-relivinglist/${id}`
+          `${API_URL}/api/reliving/delete-relivinglist/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Status has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setClientdetails((prev) => prev.filter((item) => item._id !== id));
         // fetchProject();
       } catch (err) {

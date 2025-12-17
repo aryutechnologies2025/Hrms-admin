@@ -27,7 +27,7 @@ const EditEmployeeDetails_Mainbar = () => {
   const location = useLocation();
   const { employee_id } = location.state || {};
   const [data, setData] = useState([]);
-  console.log("data", data);
+  // console.log("data", data);
   const [formData, setFormData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isButtonLoading, setIsButtonLoading] = useState(false);
@@ -222,7 +222,8 @@ const EditEmployeeDetails_Mainbar = () => {
   const fetchRoles = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/roles/view-employeerole`
+        `${API_URL}/api/roles/view-employeerole`,
+        {withCredentials: true}
       );
 
       if (response.data.success) {
@@ -239,7 +240,8 @@ const EditEmployeeDetails_Mainbar = () => {
     //abcd
     try {
       const response = await axios.get(
-        `${API_URL}/api/department/view-employeedepartment`
+        `${API_URL}/api/department/view-employeedepartment`,
+        {withCredentials: true}
       );
 
       if (response.data.success) {
@@ -274,6 +276,7 @@ const EditEmployeeDetails_Mainbar = () => {
       const response = await axios.post(`${API_URL}/api/employees/customId`, {
         dateofjoining: date.toISOString().split("T")[0], // Format to YYYY-MM-DD
         empid: employee_id,
+        withCredentials: true,
       });
 
       // console.log('check data', response);
@@ -485,7 +488,7 @@ const EditEmployeeDetails_Mainbar = () => {
     const newEducationInfo = educationInfo.filter(
       (_, index) => index !== deleteIndex
     );
-    console.log("helloqwerrr", newEducationInfo);
+    // console.log("helloqwerrr", newEducationInfo);
 
     setEducationInfo(newEducationInfo);
     setFormData({
@@ -611,7 +614,7 @@ const EditEmployeeDetails_Mainbar = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
 
-  console.log("uploadedDocuments1111:", uploadedDocuments);
+  // console.log("uploadedDocuments1111:", uploadedDocuments);
 
   const [getuploadedDocuments, getUploadedDocuments] = useState([]);
   const [docTitle, setDocTitle] = useState(true);
@@ -766,7 +769,8 @@ const EditEmployeeDetails_Mainbar = () => {
         );
         try {
           await axios.delete(
-            `${API_URL}/api/employees/delete-employee-file/${employee_id}/${clicked_index}`
+            `${API_URL}/api/employees/delete-employee-file/${employee_id}/${clicked_index}`,
+            {withCredentials: true}
           );
         } catch (error) {
           console.error("Error deleting document:", error);
@@ -912,7 +916,8 @@ const EditEmployeeDetails_Mainbar = () => {
 
     try {
       const response = await axios.get(
-        `${API_URL}/api/employees/view-employee/${employee_id}`
+        `${API_URL}/api/employees/view-employee/${employee_id}`,
+        {withCredentials: true}
       );
       const employee = response.data.data;
       setData(employee);
@@ -1123,7 +1128,7 @@ const EditEmployeeDetails_Mainbar = () => {
     try {
       // Assuming you're sending a PUT request to update the role
 
-      console.log("employee details", formData);
+      // console.log("employee details", formData);
 
       const updatedFormData = {
         ...formData,
@@ -1137,9 +1142,9 @@ const EditEmployeeDetails_Mainbar = () => {
         // },
       };
 
-      console.log("updatedFormData:", updatedFormData);
+      // console.log("updatedFormData:", updatedFormData);
       const educationData = formData;
-      console.log(educationData.education);
+      // console.log(educationData.education);
       // educationData.education.length>0 ? educationData.education : [];
       //     setFormData({
       //        educationData
@@ -1152,10 +1157,11 @@ const EditEmployeeDetails_Mainbar = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          withCredentials: true,
         }
       );
 
-      console.log("response", response);
+      // console.log("response", response);
 
       if (response.data) {
         setErrorMessage("");
@@ -1225,7 +1231,7 @@ const EditEmployeeDetails_Mainbar = () => {
   const [durationIsOpen, setDurationIsOpen] = useState(false);
   const [last_working_date, setLastWorkdate] = useState("");
   const [resignation_email_date, setRelieveemaildate] = useState("");
-  console.log("resignation_email_date", resignation_email_date);
+  // console.log("resignation_email_date", resignation_email_date);
 
   // Filtered duration options for search
   const filteredDurationOptions = durationOptions.filter((option) =>
@@ -1309,7 +1315,7 @@ const handleLastworkdate = (date) => {
         last_working_date: formattedNoticeDate || "-",
       }));
 
-      console.log("Calculated Last Working Date:", formattedNoticeDate);
+      // console.log("Calculated Last Working Date:", formattedNoticeDate);
     }
   };
 

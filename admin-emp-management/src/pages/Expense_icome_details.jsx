@@ -66,7 +66,7 @@ const Expense_icome_details = () => {
     fetchAccount();
   }, []);
 
-  console.log("roles", roles);
+  // console.log("roles", roles);
 
   const [projectname, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
@@ -84,8 +84,8 @@ const Expense_icome_details = () => {
   // console.log("accountOption", accountOption);
   const fetchAccount = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/income/finance-name`);
-      console.log("response", response);
+      const response = await axios.get(`${API_URL}/api/income/finance-name`,{withCredentials: true});
+      // console.log("response", response);
 
       const projectName = response.data.getFinanceName?.map((emp) => ({
         label: emp.name,
@@ -99,8 +99,10 @@ const Expense_icome_details = () => {
 
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/expense/view-expense`);
-      console.log(response);
+      const response = await axios.get(`${API_URL}/api/expense/view-expense`,
+        {withCredentials: true}
+      );
+      // console.log(response);
       if (response.data.success) {
         setExpensedetails(response.data.data);
       } else {
@@ -145,9 +147,9 @@ const Expense_icome_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/expense/create-expense`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Expense added successfully!",
@@ -221,9 +223,9 @@ const Expense_icome_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/expense/edit-expense/${editid}`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
       Swal.fire({
         icon: "success",
         title: "Expense Update successfully!",
@@ -259,7 +261,7 @@ const Expense_icome_details = () => {
   };
 
   const handleDelete = async (id) => {
-    console.log("editid", id);
+    // console.log("editid", id);
 
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -273,10 +275,11 @@ const Expense_icome_details = () => {
     if (result.isConfirmed) {
       try {
         const res = await axios.delete(
-          `${API_URL}/api/expense/delete-enpense/${id}`
+          `${API_URL}/api/expense/delete-enpense/${id}`,
+          {withCredentials: true}
         );
         Swal.fire("Deleted!", "The Expense has been deleted.", "success");
-        console.log("res", res);
+        // console.log("res", res);
         setExpensedetails((prev) => prev.filter((item) => item._id !== id));
         fetchExpenses();
         fetchExpensesyear();
@@ -469,7 +472,8 @@ const Expense_icome_details = () => {
   const fetchExpenses = async () => {
     try {
       const res = await axios.get(
-        `${API_URL}/api/expense/get-monthly-total-expense`
+        `${API_URL}/api/expense/get-monthly-total-expense`,
+        {withCredentials: true}
       );
 
       const labels = res?.data?.data?.map((item) => item.month);
@@ -545,7 +549,8 @@ const Expense_icome_details = () => {
   const fetchExpensesyear = async () => {
     try {
       const res = await axios.get(
-        `${API_URL}/api/expense/get-yearly-total-expense`
+        `${API_URL}/api/expense/get-yearly-total-expense`,
+        {withCredentials: true}
       );
 
       // sort by month id

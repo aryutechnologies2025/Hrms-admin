@@ -1301,7 +1301,7 @@ function Task_view_All_client() {
   const employeeeId = employeeDetails?._id;
   const { taskId } = useParams();
 
-  console.log("Task ID:", taskId);
+  // console.log("Task ID:", taskId);
 
   const navigate = useNavigate();
 
@@ -1392,15 +1392,16 @@ function Task_view_All_client() {
 
   // console.log("holddata", holddata);
 
-  console.log("alldata", alldata);
+  // console.log("alldata", alldata);
 
   const fetchProjectall = async () => {
      setButtonLoading(true);
     try {
       const response = await axios.get(
-        `${API_URL}/api/task/particular-task/${taskId}`
+        `${API_URL}/api/task/particular-task/${taskId}`,
+        {withCredentials: true}
       );
-      console.log(response);
+      // console.log(response);
       if (response.data.success) {
         setAlldata(response?.data?.data);
         setStatus(response?.data?.data?.status);
@@ -1492,15 +1493,15 @@ function Task_view_All_client() {
       updatedBy: employeeeId,
     };
 
-    console.log("payload", payload);
+    // console.log("payload", payload);
 
     try {
       const response = await axios.patch(
         `${API_URL}/api/task/updated-status/${taskId}`,
-        payload
+        payload, {withCredentials: true}
       );
 
-      console.log("Status updated:", response.data);
+      // console.log("Status updated:", response.data);
 
       toast.success("Task status updated successfully");
       fetchProjectlogs();
@@ -1535,10 +1536,10 @@ function Task_view_All_client() {
     try {
       const response = await axios.post(
         `${API_URL}/api/task/task-comments`,
-        formData
+        formData, {withCredentials: true}
       );
 
-      console.log("Upload success:", response.data);
+      // console.log("Upload success:", response.data);
       // alert("Submitted successfully!");
       setEditorContent("");
       setUploadedFiles([]);
@@ -1555,7 +1556,8 @@ function Task_view_All_client() {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/task/particular-task-comment/${taskId}`
+        `${API_URL}/api/task/particular-task-comment/${taskId}`,
+        {withCredentials: true}
       );
       // console.log(response);
       if (response.data.success) {
@@ -1687,15 +1689,15 @@ function Task_view_All_client() {
         updatedBy: employeeeId,
       };
 
-      console.log("Submitted payload:", payload);
+      // console.log("Submitted payload:", payload);
 
       try {
         const response = await axios.put(
           `${API_URL}/api/task/task-pasusecondition/${taskId}`,
-          payload
+          payload, {withCredentials: true}
         );
 
-        console.log("Status updated:", response.data);
+        // console.log("Status updated:", response.data);
 
         toast.success(
 
@@ -1737,14 +1739,15 @@ function Task_view_All_client() {
   };
 
   const [logs, setLogs] = useState([]);
-  console.log("logs", logs);
+  // console.log("logs", logs);
 
   const fetchProjectlogs = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/task/tasklogs/${taskId}`
+        `${API_URL}/api/task/tasklogs/${taskId}`,
+        {withCredentials: true}
       );
-      console.log(response.data);
+      // console.log(response.data);
       if (response.data.success) {
         setLogs(response.data.data);
       } else {
@@ -1811,9 +1814,9 @@ function Task_view_All_client() {
       try {
         const response = await axios.put(
           `${API_URL}/api/task/updated-tester-status`,
-          payload
+          payload, {withCredentials: true}
         );
-        console.log(response);
+        // console.log(response);
 
         Swal.fire({
           icon: "success",
@@ -1852,7 +1855,7 @@ function Task_view_All_client() {
 
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
-    console.log(selectedFiles);
+    // console.log(selectedFiles);
     setUploadedFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
   };
 
@@ -1871,7 +1874,7 @@ function Task_view_All_client() {
       };
       const response = axios.post(
         `${API_URL}/api/subtasks/create-subtask`,
-        payload
+        payload, {withCredentials: true}
       );
       fetchProjectall();
     } catch (error) {
@@ -1889,7 +1892,7 @@ function Task_view_All_client() {
       };
       const response = axios.put(
         `${API_URL}/api/subtasks/update-subtask/${id}`,
-        payload
+        payload, {withCredentials: true}
       );
       fetchProjectall();
       toast.success("SubTask status updated successfully");
@@ -1904,7 +1907,8 @@ function Task_view_All_client() {
   const handleDeleteSubTask = (id) => {
     try {
       const response = axios.delete(
-        `${API_URL}/api/subtasks/delete-subtask/${id}`
+        `${API_URL}/api/subtasks/delete-subtask/${id}`,
+        {withCredentials: true}
       );
       fetchProjectall();
       toast.success("SubTask deleted successfully");

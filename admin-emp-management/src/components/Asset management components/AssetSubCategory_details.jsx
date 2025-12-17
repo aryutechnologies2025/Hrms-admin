@@ -29,10 +29,10 @@ const AssetSubCategory_details = () => {
   const parsedDetails = storedDetatis ? JSON.parse(storedDetatis) : null;
   const userid = parsedDetails ? parsedDetails.id : null;
   const [errors, setErrors] = useState({});
-  console.log("errors:", errors);
+  // console.log("errors:", errors);
   const [isAnimating, setIsAnimating] = useState(false);
   const [assetSubCategoryDetails, setAssetSubCategoryDetails] = useState([])
-  console.log("assetSubCategoryDetails", assetSubCategoryDetails)
+  // console.log("assetSubCategoryDetails", assetSubCategoryDetails)
   const [loading, setLoading] = useState(true); // State to manage loading
   let navigate = useNavigate();
 
@@ -44,9 +44,10 @@ const AssetSubCategory_details = () => {
   const fetchAssetSubCategory = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/sub-asset-category/subCategory`
+        `${API_URL}/api/sub-asset-category/subCategory`,
+        {withCredentials: true}
       );
-      console.log("response get check", response);
+      // console.log("response get check", response);
 
 
       setAssetSubCategoryDetails(response?.data?.data)
@@ -95,7 +96,7 @@ const AssetSubCategory_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/sub-asset-category/create-subCategory`,
-        formdata
+        formdata, {withCredentials: true}
       );
 
 
@@ -123,7 +124,7 @@ const AssetSubCategory_details = () => {
 
   const openEditModal = (row) => {
 
-    console.log("rowData", row);
+    // console.log("rowData", row);
 
     setEditid(row._id);
     setNameEdit(row.name);
@@ -160,9 +161,9 @@ const AssetSubCategory_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/sub-asset-category/edit-subCategory/${editId}`,
-        formData
+        formData, {withCredentials: true}
       );
-      console.log("response:", response);
+      // console.log("response:", response);
 
 
       setIsEditModalOpen(false);
@@ -196,7 +197,9 @@ const AssetSubCategory_details = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/sub-asset-category/delete-subCategory/${editId}`)
+          .delete(`${API_URL}/api/sub-asset-category/delete-subCategory/${editId}`,
+            {withCredentials: true}
+          )
           .then((response) => {
             if (response.data) {
               toast.success("Asset subCategory has been deleted.");

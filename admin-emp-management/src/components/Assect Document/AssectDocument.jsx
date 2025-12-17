@@ -39,24 +39,24 @@ const AssectDocument = () => {
 
   // --- lists & options ---
   const [momList, setMomList] = useState([]);
-  console.log("momList", momList); // list of MOM records
+  // console.log("momList", momList); // list of MOM records
   const [clientOptions, setClientOptions] = useState([]);
-  console.log("clientOptions", clientOptions); // { label, value }
+  // console.log("clientOptions", clientOptions); // { label, value }
   const [projectOptions, setProjectOptions] = useState([]);
-  console.log("projectOptions", projectOptions); // project objects or {name, _id}
+  // console.log("projectOptions", projectOptions); // project objects or {name, _id}
 
   // --- form state (used for both add & edit) ---
   const [formDate, setFormDate] = useState("");
   const [formTitle, setFormTitle] = useState("");
   const [formClient, setFormClient] = useState(null); // client id
-  console.log("formClient", formClient);
+  // console.log("formClient", formClient);
   const [formProject, setFormProject] = useState(null);
   const [formAttendees, setFormAttendees] = useState(null);
   const [formDescription, setFormDescription] = useState("");
   const [formEmployee, setFormEmployee] = useState([]);
   const [employeeOption, setEmployeeOptions] = useState(null);
   const [formStatus, setFormStatus] = useState("");
-  console.log("employee", employeeOption);
+  // console.log("employee", employeeOption);
   // --- edit-specific ---
   const [editingId, setEditingId] = useState(null);
 
@@ -95,9 +95,11 @@ const AssectDocument = () => {
   const fetchClients = async () => {
     try {
       setLoading(true);
-      const resp = await axios.get(`${API_URL}/api/client/view-clientdetails`);
+      const resp = await axios.get(`${API_URL}/api/client/view-clientdetails`,
+        {withCredentials: true}
+      );
 
-      console.log("resp.data.data :", resp.data.data);
+      // console.log("resp.data.data :", resp.data.data);
       const clientName = resp.data.data.map((emp) => ({
         label: emp.client_name,
         value: emp._id,
@@ -114,7 +116,7 @@ const AssectDocument = () => {
 
   // fetch projects for a given client id (used for add/edit when client selected)
   const fetchProjectsByClient = async () => {
-    console.log("fetchProject");
+    // console.log("fetchProject");
     try {
       setLoading(true);
       // you used a route earlier: /api/invoice/get-project-name-with-client with params.project = client
@@ -122,13 +124,14 @@ const AssectDocument = () => {
         `${API_URL}/api/invoice/get-project-name-with-client`,
         {
           params: { project: formClient },
+          withCredentials: true,
         }
       );
-      console.log("response for project", response);
+      // console.log("response for project", response);
 
       // adapt: server returns array of projects with name and _id
       const projects = response.data?.data || [];
-      console.log("projects", projects);
+      // console.log("projects", projects);
       setProjectOptions(projects);
     } catch (err) {
       console.error("Error fetching projects:", err);
@@ -141,14 +144,16 @@ const AssectDocument = () => {
   const fetchEmployee = async () => {
     try {
       setLoading(true);
-      const resp = await axios.get(`${API_URL}/api/employees/all-employees`);
+      const resp = await axios.get(`${API_URL}/api/employees/all-employees`,
+        {withCredentials: true}
+      );
       // map to primereact dropdown options
       // const opts = resp.data?.data?.map((c) => ({ label: c.client_name, value: c._id })) || [];
 
       // // console.log("response1",resp)
       // console.log("response",opts)
       // setClientOptions(opts);
-      console.log("resp.data.data :", resp.data.data);
+      // console.log("resp.data.data :", resp.data.data);
 
       const response = resp.data.data.map((emp) => ({
         label: emp.employeeName,
@@ -181,7 +186,9 @@ const AssectDocument = () => {
       //     authHeaders
       //   );
       // } else {
-      resp = await axios.get(`${API_URL}/api/mom/get-document/`, authHeaders);
+      resp = await axios.get(`${API_URL}/api/mom/get-document/`, authHeaders,
+        {withCredentials: true}
+      );
       // }
       setMomList(resp.data?.data || []);
     } catch (err) {
@@ -290,6 +297,7 @@ const AssectDocument = () => {
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
         }
       );
 
@@ -312,7 +320,7 @@ const AssectDocument = () => {
   // -------------------------
   const openEditModalWith = async (mom) => {
     // mom: record from momList
-    console.log("openEditModalWith mom:", mom);
+    // console.log("openEditModalWith mom:", mom);
     setEditingId(mom?._id);
     setFormDate(mom?.date ? mom.date.split("T")[0] : ""); // assume iso string
     setFormClient(mom?.client?._id);
@@ -404,7 +412,8 @@ const AssectDocument = () => {
       const resp = await axios.put(
         `${API_URL}/api/mom/update-document/${editingId}`,
         formData,
-        authHeaders
+        authHeaders,
+        {withCredentials: true}
       );
       toast.success("MOM Updated Successfully!");
       setIsEditModalOpen(false);
@@ -442,7 +451,7 @@ const AssectDocument = () => {
           setLoading(true);
           await axios.delete(
             `${API_URL}/api/mom/delete-Document/${id}`,
-            authHeaders
+            authHeaders, {withCredentials: true}
           );
           toast.success("Document Deleted Successfully!");
           fetchMoms();
@@ -470,7 +479,7 @@ const AssectDocument = () => {
       // using passed mom object:
 
       setViewData(mom);
-      console.log("viewData ", mom);
+      // console.log("viewData ", mom);
 
       setIsViewModalOpen(true);
       setTimeout(() => setIsAnimating(true), 10);
@@ -499,7 +508,7 @@ const AssectDocument = () => {
   // When client changes in the add/edit form, load projects
   useEffect(() => {
     if (formClient) {
-      console.log("forClint :", formClient);
+      // console.log("forClint :", formClient);
       fetchProjectsByClient(formClient);
     } else {
       setProjectOptions([]);

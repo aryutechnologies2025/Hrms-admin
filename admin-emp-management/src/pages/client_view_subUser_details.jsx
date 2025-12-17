@@ -20,7 +20,7 @@ const Client_view_SubUser_details = () =>{
   const navigate = useNavigate();
   const location = useLocation();
   const id = location?.state?.id || "";
-  console.log("idempok", id);
+  // console.log("idempok", id);
 
   useEffect(() => {
     fetchProject();
@@ -34,8 +34,10 @@ const Client_view_SubUser_details = () =>{
   const [website, setWebsite] = useState("");
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/clientsubuser/particular-subuser/${id}`);
-      console.log("response client subuser", response);
+      const response = await axios.get(`${API_URL}/api/clientsubuser/particular-subuser/${id}`,
+        {withCredentials: true}
+      );
+      // console.log("response client subuser", response);
       if (response.data.success) {
         setName(response.data.data?.clientId?.client_name || "");
         setCompanyName(response.data.data?.clientId?.company_name

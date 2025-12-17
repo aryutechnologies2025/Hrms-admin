@@ -57,7 +57,7 @@ import Expense_icome_details from "./pages/Expense_icome_details";
 import Expense_income_main from "./pages/Expense_icome_main";
 import Income_main from "./pages/Income_main";
 import Notes_main from "./pages/Notes_main";
-import Invoice from "./pages/Invoice_download";
+import Invoice from "./components/invoice desgins/Invoice_download";
 import Leave_option_main from "./pages/Leave_option_main";
 import Close_home from "./components/taskList/Close_home";
 import Close_homeClient from "./components/taskList/Close_homeClient";
@@ -125,10 +125,15 @@ import AssectDocument from "./components/Assect Document/AssectDocument";
 import AssentDocumentPage from "./pages/AssentDocumentPage";
 import AssetSubCategory_mainbar from "./components/Asset management components/AssetSubCategory_mainbar";
 import Clients_note_main from "./pages/Clients_note_main";
-import Complainence_Mainbar from "./components/complainence/Complainence_Mainbar";
+import Complaince_Mainbar from "./components/complaince/Complaince_Mainbar";
 import Recurring_Mainbar from "./components/finance components/Recurring_Mainbar";
 import Slack_details from "./components/Slack Componenet/Slack_details";
 import Slack_mainbar from "./components/Slack Componenet/Slack_mainbar";
+import Setting_invoice_main from "./pages/Settings_invoice_main";
+import Export_invoice from "./components/invoice desgins/Export_invoice";
+import Performa_invoice from "./components/invoice desgins/Performa_invoice";
+import Sales_invoice from "./components/invoice desgins/Sales_invoice";
+import Invoice_edit_main from "./pages/Invoice_edit_main";
 
 export const SettingsContext = createContext();
 
@@ -140,6 +145,7 @@ function App() {
   });
   const [dynamicDateFormat, setDynamicDateFormat] = useState("");
 
+<<<<<<< HEAD
   const settingsApi = async () => {
     const response = await axios.get(`${API_URL}/api/setting/view-setting`);
     const dateFormat = response.data.data[0]?.date_format;
@@ -148,6 +154,18 @@ function App() {
   useEffect(() => {
     settingsApi();
   }, []);
+=======
+     const response = await axios.get(`${API_URL}/api/setting/view-setting`,
+      {withCredentials: true}
+     );
+     const dateFormat = response.data.data[0]?.date_format;
+     setDynamicDateFormat(dateFormat);
+     
+    }
+    useEffect(() => {
+      settingsApi();
+    },[]);
+>>>>>>> 7f68fc69bfb12f55d3962a81ef7d79021cef1fd9
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -166,6 +184,7 @@ function App() {
 
   const fetchPermissionModule = async () => {
     const user = JSON.parse(localStorage.getItem("hrmsuser"));
+<<<<<<< HEAD
      console.log("/hr-permission/get-employee-permission",user);
     if(!user.superUser) {
   
@@ -177,6 +196,18 @@ function App() {
         JSON.stringify(response?.data?.data[0]?.module || [])
       );
     }
+=======
+    const response = await axios.get(
+      `${API_URL}/api/hr-permission/get-employee-permission/${user?.employeeId}`,
+      {withCredentials: true}
+    );
+
+
+    localStorage.setItem(
+      "module",
+      JSON.stringify(response?.data?.data[0]?.module || [])
+    );
+>>>>>>> 7f68fc69bfb12f55d3962a81ef7d79021cef1fd9
   };
 
   useEffect(() => {
@@ -627,6 +658,70 @@ function App() {
       ),
     },
 
+
+    
+    {
+      path:"/invoice-full",
+      permissionTitle: "Clients",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Invoice_full_main />
+        </ProtectedRoute>
+      ),
+    },
+
+    {
+      path:"/invoice-edit",
+      permissionTitle: "Clients",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Invoice_edit_main />
+        </ProtectedRoute>
+      ),
+    },
+
+
+    {
+      path:"/invoice-pdf",
+      permissionTitle: "Clients",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Invoice />
+        </ProtectedRoute>
+      ),
+    },
+
+      {
+      path:"/invoice-export",
+      permissionTitle: "Clients",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Export_invoice />
+        </ProtectedRoute>
+      ),
+    },
+
+
+       {
+      path:"/invoice-performa",
+      permissionTitle: "Clients",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Performa_invoice />
+        </ProtectedRoute>
+      ),
+    },
+
+       {
+      path:"/invoice-sales",
+      permissionTitle: "Clients",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Sales_invoice />
+        </ProtectedRoute>
+      ),
+    },
+
     /* -------------------------------------------
       FINANCE
   --------------------------------------------*/
@@ -713,12 +808,18 @@ function App() {
     /* -------------------------------------------
       COMPLAINENCE
   --------------------------------------------*/
+<<<<<<< HEAD
     {
       path: "/complainence",
       permissionTitle: "Complainence",
+=======
+     {
+      path: "/complaince",
+      permissionTitle: "Complaince",
+>>>>>>> 7f68fc69bfb12f55d3962a81ef7d79021cef1fd9
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
-          <Complainence_Mainbar />
+          <Complaince_Mainbar />
         </ProtectedRoute>
       ),
     },
@@ -996,8 +1097,18 @@ function App() {
     {
       path: "/settings",
       element: (
-        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="">
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
           <Setting_main />
+        </ProtectedRoute>
+      ),
+    },
+
+
+      {
+      path: "/settings-invoice",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Setting_invoice_main />
         </ProtectedRoute>
       ),
     },
