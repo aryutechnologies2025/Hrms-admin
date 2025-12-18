@@ -7,6 +7,7 @@ import Steal from "../../assets/steal.png";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../../config";
+import NumberFormat from "../../utils/NumberFormat";
 
 const Sales_invoice = () => {
   const invoiceRef = useRef();
@@ -25,8 +26,8 @@ const Sales_invoice = () => {
   const[allinvoiceDetails,setAllinvoiceDetails]=useState([]);
   const[settingData,setSettingData]=useState([]);
 
-  console.log("allinvoiceDetails",allinvoiceDetails);
-  console.log("settingData",settingData);
+  // console.log("allinvoiceDetails",allinvoiceDetails);
+  // console.log("settingData",settingData);
   const[errors,setErrors]=useState("");
 
   const fetchInvoiceDetails = async () => {
@@ -79,54 +80,75 @@ useEffect(() => {
 
 
 
+  // const downloadPDF = async () => {
+  //   const element = invoiceRef.current;
+
+  //   // Capture element
+  //   const canvas = await html2canvas(element, { scale: 1.5 });
+  //   const imgData = canvas.toDataURL("image/jpeg", 0.7);
+
+  //   // Create PDF
+  //   const pdf = new jsPDF("p", "mm", "a4");
+  //   const pageWidth = pdf.internal.pageSize.getWidth();
+  //   const imgProps = pdf.getImageProperties(imgData);
+  //   const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
+
+  //   pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
+
+  //   // Unique filename (timestamp-based)
+  //   const fileName = `invoice_${new Date().getTime()}.pdf`;
+  //   pdf.save(fileName);
+  // };
+
   const downloadPDF = async () => {
-    const element = invoiceRef.current;
+  const element = invoiceRef.current;
 
-    // Capture element
-    const canvas = await html2canvas(element, { scale: 1.5 });
-    const imgData = canvas.toDataURL("image/jpeg", 0.7);
+  // 1️⃣ Capture HTML
+  const canvas = await html2canvas(element, { scale: 1.5 });
+  const imgData = canvas.toDataURL("image/jpeg", 0.7);
 
-    // Create PDF
-    const pdf = new jsPDF("p", "mm", "a4");
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const imgProps = pdf.getImageProperties(imgData);
-    const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
+  // 2️⃣ Create PDF
+  const pdf = new jsPDF("p", "mm", "a4");
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const imgProps = pdf.getImageProperties(imgData);
+  const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
 
-    pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
+  pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
 
-    // Unique filename (timestamp-based)
-    const fileName = `invoice_${new Date().getTime()}.pdf`;
-    pdf.save(fileName);
-  };
+ const invoiceNumber =
+    allinvoiceDetails?.invoice_number || `invoice_${Date.now()}`;
+
+  const pdfBlob = pdf.output("blob");
+
+  
+  const formData = new FormData();
+  formData.append("clientInvoice", pdfBlob, `${invoiceNumber}.pdf`);
+  formData.append("id", invoiceId);        
+  formData.append("invoice_type", "Sales Invoice");    
+
+  
+  try {
+    const response = await axios.post(
+      `${API_URL}/api/invoice/upload-client-invoice`,
+      formData,
+      { withCredentials: true } ,{
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    console.log("PDF uploaded successfully:", response.data);
+  } catch (error) {
+    console.error("PDF upload failed:", error);
+  }
+
+  // Optional: download locally also
+  pdf.save(`${invoiceNumber}.pdf`);
+};
 
 
-  const data = [
-    {
-      title: "Bug Fixing enhancement Website",
-      link: "https://mytechnicaljobs.occdesign.link/",
-      code: "998314",
-      qty: "1 Nos",
-      rate: "18,000.00",
-      total: "18,000.00",
-    },
-    {
-      title: "E-commerce Website Development",
-      link: "https://myecommerce.occdesign.link/",
-      code: "998315",
-      qty: "1 Nos",
-      rate: "35,000.00",
-      total: "35,000.00",
-    },
-    {
-      title: "Mobile App UI Design",
-      link: "https://myappui.occdesign.link/",
-      code: "998316",
-      qty: "1 Nos",
-      rate: "25,000.00",
-      total: "25,000.00",
-    },
-  ];
-
+  
 
   const amountInWords = (num) => {
   if (!num) return "Zero Rupees Only";
@@ -168,10 +190,20 @@ useEffect(() => {
         </div>
         <div className="flex justify-between  h-full border-black items-start border-b-2 border-r-2 border-l-2">
           <div className=" border-black w-[50%] border-r-2 ">
-            <div className="border-b-2   border-black px-[5%]">
-              <img src={Aryulogo} alt="Company Logo" className="h-18 mb-2" />
+            <div className="border-b-2   border-black px-[1%] pt-5 pb-2 ">
+              {/* <img src={Aryulogo} alt="Company Logo" className="h-18 mb-2" /> */}
+              <div className="pt-1">
+                <strong className=" w-[40%]  inline-block">Invoice No</strong>
+                <strong className="font-bold">:</strong> {allinvoiceDetails?.invoice_number}
+              </div>
+              <div className="pt-1">
+                <strong className=" w-[40%]  inline-block">Dated</strong>
+                <strong className="font-bold">:</strong> {new Date(allinvoiceDetails?.invoice_date).toLocaleDateString()}
+              </div>
             </div>
-            <div className="p-1  text-[13px]   border-black">
+            <div className="p-1  text-[13px]   border-black pb-1">
+                            <p className="font-bold pt-2 pb-3">Seller (Bill To)</p>
+
               <p>{line1}</p>
               <p className="pt-1">{line2}</p>
               <p className="pt-2">State Name - {settingData?.invoiceState}, Code - 33</p>
@@ -186,21 +218,23 @@ useEffect(() => {
           </div>
           <div className="w-[50%]   border-black">
             <div className="text-left p-1 pt-4 border-b-2  border-black">
-              <div className="pt-1">
-                <strong className=" w-[40%]  inline-block">Invoice No</strong>
-                <strong className="font-bold">:</strong> {allinvoiceDetails?.invoice_number}
-              </div>
-              <div className="pt-1">
-                <strong className=" w-[40%]  inline-block">Dated</strong>
-                <strong className="font-bold">:</strong> {new Date(allinvoiceDetails?.invoice_date).toLocaleDateString()}
-              </div>
-              <div className="pt-1">
+              
+              <div className="pt-1 pb-1">
                 <strong className=" w-[40%]  inline-block">
-                  Place of Supply
+                  Payment Terms
                 </strong>
                 <strong className="font-bold">:</strong> within 30 days
               </div>
+
+              <div className="pt-1 pb-1">
+                <strong className=" w-[40%]  inline-block">
+                  Place of Supply
+                </strong>
+                <strong className="font-bold">:</strong> Chennai
+              </div>
             </div>
+
+            
 
             <div className="p-1 text-[12px]   border-black">
               <p className="font-bold pt-2">Buyer (Bill To)</p>
@@ -255,10 +289,10 @@ useEffect(() => {
             <tbody className="">
               {allinvoiceDetails?.items?.map((item, index) => (
                 <tr key={index} className="">
-                  <td className="no-line-bot p-1 border-r-2 border-l-2   border-black">
+                  <td className="no-line-bot p-1 border-r-2 border-l-2  align-middle border-black">
                     {index + 1}
                   </td>
-                  <td className="no-line-bot p-1 border-r-2    border-black text-left">
+                  <td className="no-line-bot p-1 border-r-2  align-middle  border-black text-left">
                     {item.description} <br />
                     <a
                       href={item.link}
@@ -269,38 +303,38 @@ useEffect(() => {
                       {item.link}
                     </a>
                   </td>
-                  <td className="no-line-bot p-1 border-r-2    border-black">
+                  <td className="no-line-bot p-1 border-r-2 align-middle   border-black">
                     {item.code || "998314"}
                   </td>
-                  <td className="no-line-bot p-1 border-r-2    border-black">
+                  <td className="no-line-bot p-1 border-r-2  align-middle  border-black">
                     {item.quantity}
                   </td>
-                  <td className="no-line-bot p-1 border-r-2    border-black">
+                  <td className="no-line-bot p-1 border-r-2 align-middle   border-black">
                     {item.rate}
                   </td>
-                  <td className="no-line-bot p-1 border-r-2    border-black">
+                  <td className="no-line-bot p-1 border-r-2  align-middle  border-black">
                     Nos
                   </td>
-                  <td className="no-line-bot p-1 border-r-2    border-black">
-                    ₹ {item.amount}
+                  <td className="no-line-bot p-1 border-r-2   align-middle border-black">
+                    {NumberFormat(item.amount)}
                   </td>
                 </tr>
               ))}
             </tbody>
-            <tfoot className="border-b-2  border-black text-[14px]">
+            <tfoot className="border-b-2  border-black text-[14px] ">
            
               {/* value */}
-              <tr className="border-t-2  border-black">
-                <td className="no-line-bot p-1 border-r-2  border-l-2   border-black"></td>
-                <td className="no-line-bot p-1 border-r-2    border-black text-right font-bold">
+              <tr className="border-t-2  border-black  ">
+                <td className="no-line-bot p-1 border-r-2  border-l-2 align-middle  border-black"></td>
+                <td className="no-line-bot p-2  border-r-2  align-middle  border-black text-right font-bold">
                   Invoice Value
                 </td>
-                <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                <td className="no-line-bot p-1 border-r-2    border-black font-bold">
-                  ₹ {totalAmount}
+                <td className="no-line-bot p-1 border-r-2  align-middle  border-black"></td>
+                <td className="no-line-bot p-1 border-r-2  align-middle  border-black"></td>
+                <td className="no-line-bot p-1 border-r-2 align-middle   border-black"></td>
+                <td className="no-line-bot p-1 border-r-2 align-middle   border-black"></td>
+                <td className="no-line-bot p-1 border-r-2  align-middle  border-black font-bold">
+                  ₹ {NumberFormat(totalAmount)}
                 </td>
               </tr>
             </tfoot>
@@ -310,7 +344,7 @@ useEffect(() => {
         {/* Amount in Words */}
         <div className="border-b-2 border-r-2 border-l-2 p-1 border-black">
           <p className="">Amount Chargeable (in Words)</p>
-          <p className="font-semibold">
+          <p className="font-semibold pb-1">
             {" "}
             {amountInWords(totalAmount)}
           </p>
@@ -358,7 +392,7 @@ useEffect(() => {
                 <p className="pt-1 text-black">
                   <span className="w-[20%] inline-block">A/c No</span>: {settingData?.accountNumber}
                 </p>
-                <p className="pt-1 text-black">
+                <p className="pt-1 text-black pb-1">
                   <span className="w-[20%] inline-block">IFSC / BR</span>: {settingData?.ifscCode}
                 </p>
               </div>
@@ -375,7 +409,7 @@ useEffect(() => {
 
 
             <div className="">
-              <p className="font-semibold border-b-2  border-black  underline text-[16px] p-1">
+              <p className="font-semibold border-b-2  border-black  underline text-[16px] p-1 pb-2">
                 Declaration
               </p>
               <p className="pt-1 p-1">

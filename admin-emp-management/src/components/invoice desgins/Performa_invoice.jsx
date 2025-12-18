@@ -1,21 +1,114 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import Aryulogo from "../../assets/aryu_logo.png";
 import Sing from "../../assets/sign.png";
 import Steal from "../../assets/steal.png";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
+import { API_URL } from "../../config";
+import NumberFormat from "../../utils/NumberFormat";
+
+
 
 const Performa_invoice = () => {
     const invoiceRef = useRef();
 
+    const location = useLocation();
+    const { invoiceId } = location.state || {};
+
+    // console.log("invoiceId in Sales_invoice:", invoiceId);
+
+    useEffect(() => {
+        if (invoiceId) {
+            fetchInvoiceDetails(invoiceId);
+        }
+    }, [invoiceId]);
+
+    const [allinvoiceDetails, setAllinvoiceDetails] = useState([]);
+    const [settingData, setSettingData] = useState([]);
+
+    // console.log("allinvoiceDetails", allinvoiceDetails);
+    // console.log("settingData", settingData);
+    const [errors, setErrors] = useState("");
+
+    const fetchInvoiceDetails = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/api/invoice/client-invoice`,
+                {
+                    params: { id: invoiceId },
+                },
+                { withCredentials: true }
+            );
+            // console.log(response);
+
+            setAllinvoiceDetails(response.data?.data);
+            setSettingData(response.data?.setting);
+
+
+
+        } catch (err) {
+            console.log("error")
+            // setErrors("Failed to fetch roles.");
+        }
+    };
+
+
+    const invoiceAddress = settingData?.invoiceAddress || "";
+
+    const parts = invoiceAddress.split(", ");
+
+    const line1 = parts.slice(0, 4).join(", ");
+    const line2 = parts.slice(4).join(", ");
+
+    // console.log("line1", line1);
+    // console.log("line2", line2);
+
+    const [totalAmount, setTotalAmount] = useState(0);
+
+
+    useEffect(() => {
+        const total =
+            allinvoiceDetails?.items?.reduce(
+                (sum, item) => sum + Number(item.amount || 0),
+                0
+            ) || 0;
+
+        setTotalAmount(total);
+    }, [allinvoiceDetails?.items]);
+
+    // console.log("totalAmount", totalAmount);
+
+
+
+
+
+    // const downloadPDF = async () => {
+    //   const element = invoiceRef.current;
+
+    //   // Capture element
+    //   const canvas = await html2canvas(element, { scale: 1.5 });
+    //   const imgData = canvas.toDataURL("image/jpeg", 0.7);
+
+    //   // Create PDF
+    //   const pdf = new jsPDF("p", "mm", "a4");
+    //   const pageWidth = pdf.internal.pageSize.getWidth();
+    //   const imgProps = pdf.getImageProperties(imgData);
+    //   const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
+
+    //   pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
+
+    //   // Unique filename (timestamp-based)
+    //   const fileName = `invoice_${new Date().getTime()}.pdf`;
+    //   pdf.save(fileName);
+    // };
+
     const downloadPDF = async () => {
         const element = invoiceRef.current;
 
-        // Capture element
         const canvas = await html2canvas(element, { scale: 1.5 });
         const imgData = canvas.toDataURL("image/jpeg", 0.7);
 
-        // Create PDF
         const pdf = new jsPDF("p", "mm", "a4");
         const pageWidth = pdf.internal.pageSize.getWidth();
         const imgProps = pdf.getImageProperties(imgData);
@@ -23,38 +116,69 @@ const Performa_invoice = () => {
 
         pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
 
-        // Unique filename (timestamp-based)
-        const fileName = `invoice_${new Date().getTime()}.pdf`;
-        pdf.save(fileName);
+        const invoiceNumber =
+            allinvoiceDetails?.invoice_number || `invoice_${Date.now()}`;
+
+        const pdfBlob = pdf.output("blob");
+
+
+        const formData = new FormData();
+        formData.append("clientInvoice", pdfBlob, `${invoiceNumber}.pdf`);
+        formData.append("id", invoiceId);
+        formData.append("invoice_type", "Sales Invoice");
+
+
+        try {
+            const response = await axios.post(
+                `${API_URL}/api/invoice/upload-client-invoice`,
+                formData,
+                { withCredentials: true }, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+            );
+
+            console.log("PDF uploaded successfully:", response.data);
+        } catch (error) {
+            console.error("PDF upload failed:", error);
+        }
+
+        // Optional: download locally also
+        pdf.save(`${invoiceNumber}.pdf`);
     };
 
 
-    const data = [
-        {
-            title: "Bug Fixing enhancement Website",
-            link: "https://mytechnicaljobs.occdesign.link/",
-            code: "998314",
-            qty: "1 Nos",
-            rate: "18,000.00",
-            total: "18,000.00",
-        },
-        {
-            title: "E-commerce Website Development",
-            link: "https://myecommerce.occdesign.link/",
-            code: "998315",
-            qty: "1 Nos",
-            rate: "35,000.00",
-            total: "35,000.00",
-        },
-        {
-            title: "Mobile App UI Design",
-            link: "https://myappui.occdesign.link/",
-            code: "998316",
-            qty: "1 Nos",
-            rate: "25,000.00",
-            total: "25,000.00",
-        },
-    ];
+
+
+    const amountInWords = (num) => {
+        if (!num) return "Zero Rupees Only";
+
+        const a = [
+            "", "One", "Two", "Three", "Four", "Five", "Six",
+            "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve",
+            "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+            "Seventeen", "Eighteen", "Nineteen"
+        ];
+
+        const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+
+        const convert = (n) => {
+            if (n < 20) return a[n];
+            if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
+            if (n < 1000)
+                return a[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " " + convert(n % 100) : "");
+            if (n < 100000)
+                return convert(Math.floor(n / 1000)) + " Thousand" + (n % 1000 ? " " + convert(n % 1000) : "");
+            if (n < 10000000)
+                return convert(Math.floor(n / 100000)) + " Lakh" + (n % 100000 ? " " + convert(n % 100000) : "");
+            return convert(Math.floor(n / 10000000)) + " Crore" + (n % 10000000 ? " " + convert(n % 10000000) : "");
+        };
+
+        return convert(num) + " Rupees Only";
+    };
+
+
 
     return (
         <div className="p-6">
@@ -63,38 +187,38 @@ const Performa_invoice = () => {
                 className="bg-white   max-w-4xl mx-auto text-xs leading-tight p-6"
             >
                 {/* Header */}
-                <div className="border-b-2 border-l-2 border-r-2 border-black  border-t-2 flex justify-center text-[14px] text-black font-semibold p-1 uppercase">
+                <div className="border-b-2 border-l-2 border-r-2 pb-2 border-black  border-t-2 flex justify-center text-[14px] text-black font-semibold p-1 uppercase">
                     Proforma Invoice / Sales Order
                 </div>
-                <div className="flex justify-between  h-full border-black items-start border-b-2 border-r-2 border-l-2">
-                    <div className=" border-black w-[50%] ">
+                <div className="flex justify-between pb-2 h-full border-black items-start border-b-2 border-r-2 border-l-2">
+                    <div className=" border-black w-[50%] border-r-2 ">
                         <div className="border-b-2   border-black px-[5%]">
                             <img src={Aryulogo} alt="Company Logo" className="h-18 mb-2" />
                         </div>
                         <div className="p-1  text-[13px]   border-black">
-                            <p>No 33/14, Ground floor, Jayammal St, Ayyavoo Colony,</p>
-                            <p className="pt-1">Aminjikarai, Chennai, Tamil Nadu 600029</p>
-                            <p className="pt-2">State Name - Tamil Nadu, Code - 33</p>
+                            <p>{line1}</p>
+                            <p className="pt-1">{line2}</p>
+                            <p className="pt-2">State Name - {settingData?.invoiceState}, Code - 33</p>
                             <p className="pt-2">
                                 <strong>GSTIN/UIN</strong>: 33AAPCA1407R1ZE
                             </p>
-                            <p className="pt-1">
-                                <strong>Email</strong>- aruna@aryuenterprises.com /{" "}
-                                <strong>PH</strong> - 7502149013
+                            <p className="pt-2">
+                                <strong>Email</strong>- {settingData?.invoiceEmail}/{" "}
+                                <strong>PH</strong> - {settingData?.invoicePhone}
                             </p>{" "}
                         </div>
                     </div>
-                    <div className="w-[50%] border-l-2  border-black">
+                    <div className="w-[50%]   border-black">
                         <div className="text-left p-1 pt-4 border-b-2  border-black">
                             <div className="pt-1">
-                                <strong className=" w-[40%]  inline-block">Invoice No</strong>
-                                <strong className="font-bold">:</strong> AY250608
+                                <strong className=" w-[40%]  inline-block">PI/SO NO</strong>
+                                <strong className="font-bold">:</strong> {allinvoiceDetails?.invoice_number}
                             </div>
                             <div className="pt-1">
                                 <strong className=" w-[40%]  inline-block">Dated</strong>
-                                <strong className="font-bold">:</strong> 30-06-2025
+                                <strong className="font-bold">:</strong> {new Date(allinvoiceDetails?.invoice_date).toLocaleDateString()}
                             </div>
-                            <div className="pt-1">
+                            <div className="pt-1 pb-1">
                                 <strong className=" w-[40%]  inline-block">
                                     Place of Supply
                                 </strong>
@@ -104,20 +228,20 @@ const Performa_invoice = () => {
 
                         <div className="p-1 text-[12px]   border-black">
                             <p className="font-bold pt-2">Buyer (Bill To)</p>
-                            <p className="font-bold pt-3">OCCD PRIVATE LIMITED</p>
+                            <p className="font-bold pt-3">{allinvoiceDetails?.clientId?.client_name}</p>
                             <p className="pt-1">
-                                T-4, GOKUL UDDHAV APARTMENT, Midori ku, Tokaichibacho 838-4
+                                {allinvoiceDetails?.clientId?.address}
                             </p>
-                            <p>
-                                MANGAL MURTI SQUARE, Ragado Building, TRIMURTI NAGAR, NAGPUR MH
-                                440022
+                            {/* <p >
+                              MANGAL MURTI SQUARE, Ragado Building, TRIMURTI NAGAR, NAGPUR MH
+                              440022
+                            </p> */}
+                            <p className="pt-1">
+                                <strong>GSTIN/UIN</strong>: {allinvoiceDetails?.clientId?.gst}
                             </p>
                             <p className="pt-1">
-                                <strong>GSTIN/UIN</strong>: 27AACCO7458F1Z8
-                            </p>
-                            <p className="pt-1">
-                                <strong>Email</strong>- occd@gmail.com.com / <strong>PH</strong>{" "}
-                                - 7502149013
+                                <strong>Email</strong>- {allinvoiceDetails?.clientId?.email} / <strong>PH</strong>{" "}
+                                - {allinvoiceDetails?.clientId?.phone_number}
                             </p>{" "}
                         </div>
                     </div>
@@ -153,13 +277,13 @@ const Performa_invoice = () => {
                             </tr>
                         </thead>
                         <tbody className="">
-                            {data.map((item, index) => (
+                            {allinvoiceDetails?.items?.map((item, index) => (
                                 <tr key={index} className="">
-                                    <td className="no-line-bot p-1 border-r-2 border-l-2   border-black">
+                                    <td className="no-line-bot p-1 border-r-2 border-l-2  align-middle border-black">
                                         {index + 1}
                                     </td>
-                                    <td className="no-line-bot p-1 border-r-2    border-black text-left">
-                                        {item.title} <br />
+                                    <td className="no-line-bot p-1 border-r-2  align-middle  border-black text-left">
+                                        {item.description} <br />
                                         <a
                                             href={item.link}
                                             className="text-blue-600 underline"
@@ -169,20 +293,20 @@ const Performa_invoice = () => {
                                             {item.link}
                                         </a>
                                     </td>
-                                    <td className="no-line-bot p-1 border-r-2    border-black">
-                                        {item.code}
+                                    <td className="no-line-bot p-1 border-r-2 align-middle   border-black">
+                                        {item.code || "998314"}
                                     </td>
-                                    <td className="no-line-bot p-1 border-r-2    border-black">
-                                        {item.qty}
+                                    <td className="no-line-bot p-1 border-r-2  align-middle  border-black">
+                                        {item.quantity}
                                     </td>
-                                    <td className="no-line-bot p-1 border-r-2    border-black">
+                                    <td className="no-line-bot p-1 border-r-2 align-middle   border-black">
                                         {item.rate}
                                     </td>
-                                    <td className="no-line-bot p-1 border-r-2    border-black">
+                                    <td className="no-line-bot p-1 border-r-2  align-middle  border-black">
                                         Nos
                                     </td>
-                                    <td className="no-line-bot p-1 border-r-2    border-black">
-                                        ₹ {item.total}
+                                    <td className="no-line-bot p-1 border-r-2   align-middle border-black">
+                                        {NumberFormat(item.amount)}
                                     </td>
                                 </tr>
                             ))}
@@ -199,69 +323,55 @@ const Performa_invoice = () => {
                                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
                                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
                                 <td className="no-line-bot p-1 border-r-2  border-t-2  border-black">
-                                    18,000.00
+                                     {NumberFormat(totalAmount)}
                                 </td>
                             </tr>
                             {/* cgst */}
-                            <tr className="">
-                                <td className="no-line-bot p-1 border-r-2  border-l-2   border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black text-right font-bold">
-                                    Output CGST 9%
-                                </td>
-                                <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black">
-                                    9 %
-                                </td>
-                                <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black font-bold">
-                                    1,620.00
-                                </td>
-                            </tr>
-                            {/* sgst */}
-                            <tr className="">
-                                <td className="no-line-bot p-1 border-r-2 border-l-2    border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black text-right font-bold">
-                                    Output SGST 9%
-                                </td>
-                                <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black">
-                                    9 %
-                                </td>
-                                <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black font-bold">
-                                    1,620.00
-                                </td>
-                            </tr>
-                            {/* 1gst */}
-                            {/* <tr className="">
-                                <td className="no-line-bot p-1 border-r-2  border-l-2   border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black text-right font-bold">
-                                    Output IGST Export 0%
-                                </td>
-                                <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black">
-                                    0 %
-                                </td>
-                                <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black font-bold">
-                                    -
-                                </td>
-                            </tr> */}
+                           <tr className="">
+                <td className="no-line-bot p-1 border-r-2  border-l-2   border-black"></td>
+                <td className="no-line-bot p-1 border-r-2    border-black text-right font-bold">
+                  Output CGST {settingData?.cgst}%
+                </td>
+                <td className="no-line-bot p-1 border-r-2    border-black"></td>
+                <td className="no-line-bot p-1 border-r-2    border-black"></td>
+                <td className="no-line-bot p-1 border-r-2    border-black">
+                  {settingData?.cgst} %
+                </td>
+                <td className="no-line-bot p-1 border-r-2    border-black"></td>
+                <td className="no-line-bot p-1 border-r-2    border-black font-bold">
+                  {(
+                    (Number(totalAmount || 0) * Number(settingData?.cgst || 0)) / 100).toFixed(2)}
+                </td>
+              </tr>
+              {/* sgst */}
+              <tr className="">
+                <td className="no-line-bot p-1 border-r-2 border-l-2    border-black"></td>
+                <td className="no-line-bot p-1 border-r-2    border-black text-right font-bold">
+                  Output SGST {settingData?.sgst}%
+                </td>
+                <td className="no-line-bot p-1 border-r-2    border-black"></td>
+                <td className="no-line-bot p-1 border-r-2    border-black"></td>
+                <td className="no-line-bot p-1 border-r-2    border-black">
+                  {settingData?.sgst} %
+                </td>
+                <td className="no-line-bot p-1 border-r-2    border-black"></td>
+                <td className="no-line-bot p-1 border-r-2    border-black font-bold">
+                  {((Number(totalAmount || 0) * Number(settingData?.sgst || 0)) / 100).toFixed(2)}
+                </td>
+              </tr>
+
                             {/* value */}
-                            <tr className="border-t-2  border-black">
-                                <td className="no-line-bot p-1 border-r-2  border-l-2   border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black text-right font-bold">
+                            <tr className="border-t-2  border-black  ">
+                                <td className="no-line-bot p-1 border-r-2  border-l-2 align-middle  border-black"></td>
+                                <td className="no-line-bot p-2  border-r-2  align-middle  border-black text-right font-bold">
                                     Invoice Value
                                 </td>
-                                <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black font-bold">
-                                    ₹ 21,240.00
+                                <td className="no-line-bot p-1 border-r-2  align-middle  border-black"></td>
+                                <td className="no-line-bot p-1 border-r-2  align-middle  border-black"></td>
+                                <td className="no-line-bot p-1 border-r-2 align-middle   border-black"></td>
+                                <td className="no-line-bot p-1 border-r-2 align-middle   border-black"></td>
+                                <td className="no-line-bot p-1 border-r-2  align-middle  border-black font-bold">
+                                    ₹ {NumberFormat(allinvoiceDetails?.total_amount)}
                                 </td>
                             </tr>
                         </tfoot>
@@ -271,36 +381,33 @@ const Performa_invoice = () => {
                 {/* Amount in Words */}
                 <div className="border-b-2 border-r-2 border-l-2 p-1 border-black">
                     <p className="">Amount Chargeable (in Words)</p>
-                    <p className="font-semibold">
+                    <p className="font-semibold pb-1">
                         {" "}
-                        Twenty-one thousand two hundred forty.
+                        {amountInWords(allinvoiceDetails?.total_amount)}
                     </p>
 
 
                     <div>
                         <div className="font-semibold mt-4">Terms & Conditions :</div>
                         <div className="list-decimal list-inside text-sm">
-                            <ol className="list-decimal list-inside text-sm mx-4">
-                                <li>Payment Terms: Within 30 days from the date of invoice.</li>
-                                <li>Bank Details: As mentioned below.</li>
-                                <li>Late Payment: Subject to a late fee of 1.5% per month.</li>
+                            <div className="list-decimal list-inside text-sm mx-4">
+                                <div>{settingData?.invoiceTerms}</div>
 
-                            </ol>
+                            </div>
 
                         </div>
 
                     </div>
 
 
-                      <div>
+                    <div>
                         <div className="font-semibold mt-4">Note :</div>
                         <div className="list-decimal list-inside text-sm">
-                            <ol className="list-decimal list-inside text-sm mx-4">
-                                <li>Payment Terms: Within 30 days from the date of invoice.</li>
-                                <li>Bank Details: As mentioned below.</li>
-                                <li>Late Payment: Subject to a late fee of 1.5% per month.</li>
+                            <div className="list-decimal list-inside text-sm mx-4">
+                                <div>{settingData?.invoiceTerms}</div>
 
-                            </ol>
+
+                            </div>
 
                         </div>
 
@@ -321,21 +428,18 @@ const Performa_invoice = () => {
                         <p className="   underline text-[14px]  border-black  pt-1 px-1">
                             Company's Bank Details
                         </p>
-                        <div className=" border-black  p-1 ">
+                        <div className=" border-black  p-1">
                             <p className=" text-black">
-                                <span className="w-[20%] inline-block">Ac Name</span>: ARYU ENTERPRISES PRIVATE LIMITED
+                                <span className="w-[20%] inline-block ">Ac Name</span>: {settingData?.accountName}
                             </p>
                             <p className=" text-black">
-                                <span className="w-[20%] inline-block">Bank Name</span>: HDFC
-                                BANK Ltd
+                                <span className="w-[20%] inline-block">Bank Name</span>: {settingData?.bankName}
                             </p>
                             <p className="pt-1 text-black">
-                                <span className="w-[20%] inline-block">A/c No</span>:
-                                50200064135746
+                                <span className="w-[20%] inline-block">A/c No</span>: {settingData?.accountNumber}
                             </p>
-                            <p className="pt-1 text-black">
-                                <span className="w-[20%] inline-block">IFSC / BR</span>:
-                                HDFC0001861
+                            <p className="pt-1 text-black pb-1">
+                                <span className="w-[20%] inline-block">IFSC / BR</span>: {settingData?.ifscCode}
                             </p>
                         </div>
                     </div>

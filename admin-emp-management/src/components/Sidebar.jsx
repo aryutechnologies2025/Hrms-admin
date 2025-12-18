@@ -318,6 +318,20 @@ const Sidebar = () => {
                     <FaBusinessTime />
                     {!arrowClicked && <p className="text-sm">MOM</p>}
                   </div>
+
+                   <div
+                    onClick={() => onClickSidebarMenu("invoice_clients")}
+                    className={`flex items-center h-10 w-full flex-grow ${
+                      arrowClicked ? "justify-center  " : "justify-normal"
+                    } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
+                      currentPath === "/invoice_clients"
+                        ? "bg-blue-100 text-[#4F46E5]"
+                        : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
+                    }`}
+                  >
+                    <FaBusinessTime />
+                    {!arrowClicked && <p className="text-sm">Invoice Details</p>}
+                  </div>
                 </>
               )}
               {user.type === "client" && !user.subType && (
