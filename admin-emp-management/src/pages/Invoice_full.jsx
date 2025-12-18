@@ -366,6 +366,7 @@ useEffect(() => {
         sgst,
 
       };
+    
 
       const response = await axios.post(
         `${API_URL}/api/invoice/create-invoice`,
@@ -868,7 +869,7 @@ useEffect(() => {
                                       setIntraOpen(!intraOpen);
                                       setInterOpen(false);
                                     }}
-                                    className="flex justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
+                                    className="flex text-[16px] justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
                                   >
                                     <span>Intra</span>
                                     <span>{intraOpen ? "▲" : "▼"}</span>
@@ -880,7 +881,7 @@ useEffect(() => {
                                         onClick={() =>
                                           selectItem(["Tax Invoice", "Intra", "Proforma Invoice"])
                                         }
-                                        className=" py-2 hover:bg-green-50 rounded cursor-pointer"
+                                        className=" py-2 text-[14px] hover:bg-green-50 rounded cursor-pointer"
                                       >
                                         Proforma Invoice
                                       </div>
@@ -888,7 +889,7 @@ useEffect(() => {
                                         onClick={() =>
                                           selectItem(["Tax Invoice", "Intra", "Tax Invoice"])
                                         }
-                                        className=" py-2 hover:bg-green-50 rounded cursor-pointer"
+                                        className=" py-2 text-[14px] hover:bg-green-50 rounded cursor-pointer"
                                       >
                                         Tax Invoice
                                       </div>
@@ -904,7 +905,7 @@ useEffect(() => {
                                       setIntraOpen(false);
                                     }}
 
-                                    className="flex justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
+                                    className="flex text-[16px] justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
                                   >
                                     <span>Inter</span>
                                     <span>{interOpen ? "▲" : "▼"}</span>
@@ -916,7 +917,7 @@ useEffect(() => {
                                         onClick={() =>
                                           selectItem(["Tax Invoice", "Inter", "Proforma Invoice"])
                                         }
-                                        className=" py-2 hover:bg-green-50 rounded cursor-pointer"
+                                        className=" py-2 text-[14px] hover:bg-green-50 rounded cursor-pointer"
                                       >
                                         Proforma Invoice
                                       </div>
@@ -924,7 +925,7 @@ useEffect(() => {
                                         onClick={() =>
                                           selectItem(["Tax Invoice", "Inter", "Tax Invoice"])
                                         }
-                                        className="py-2  hover:bg-green-50 rounded cursor-pointer"
+                                        className="py-2 text-[14px] hover:bg-green-50 rounded cursor-pointer"
                                       >
                                         Tax Invoice
                                       </div>

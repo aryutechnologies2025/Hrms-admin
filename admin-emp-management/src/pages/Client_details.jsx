@@ -24,6 +24,7 @@ import { IoMdClose } from "react-icons/io";
 import { Dropdown } from "primereact/dropdown";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { createRoot } from "react-dom/client";
 
 const Client_details = () => {
   const navigate = useNavigate();
@@ -362,8 +363,12 @@ const Client_details = () => {
         const id = `actions-${row.sno || Math.random()}`;
         setTimeout(() => {
           const container = document.getElementById(id);
-          if (container && !container.hasChildNodes()) {
-            ReactDOM.render(
+                    if (container) {
+                      if (!container._root) {
+                        container._root = createRoot(container);
+                      }
+          
+                      container._root.render(
               <div
                 className="action-container"
                 style={{
@@ -402,7 +407,7 @@ const Client_details = () => {
                   />
                 </div> */}
               </div>,
-              container
+              // container
             );
           }
         }, 0);
@@ -513,7 +518,6 @@ const Client_details = () => {
         {isAddModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             {/* Overlay */}
-                <div className="absolute inset-0 " onClick={closeAddModal}></div>
             <div className="bg-white p-5 rounded-xl w-[500px] h-[380px] md:w-[700px] md:h-[580px] overflow-y-auto px-8 py-6">
               <div className="flex flex-wrap md:flex-nowrap justify-between items-center gap-2 ">
                 <h2 className="text-xl font-semibold mb-4">Add Client</h2>

@@ -58,7 +58,7 @@ const Invoice_details = () => {
   const [errors, setErrors] = useState({});
 
   const [clientdetails, setClientdetails] = useState([]);
-  // console.log("clientdetails", clientdetails);
+  console.log("clientdetails", clientdetails);
   // console.log("errors::", errors);
 
   const fetchProject = async () => {
@@ -68,12 +68,12 @@ const Invoice_details = () => {
       );
       // console.log(response);
       if (response.data.success) {
-         const formattedData = response.data.data.map(item => ({
-        ...item,
-        invoice_date: item.invoice_date
-          ? formatDateTime(item.invoice_date)
-          : "-"
-      }));
+        const formattedData = response.data.data.map(item => ({
+          ...item,
+          invoice_date: item.invoice_date
+            ? formatDateTime(item.invoice_date)
+            : "-"
+        }));
 
         setClientdetails(formattedData);
       } else {
@@ -106,7 +106,7 @@ const Invoice_details = () => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState(null);
-  // console.log("selectedInvoiceId", selectedInvoiceId);
+  console.log("selectedInvoiceId", selectedInvoiceId);
 
 
   const items = [
@@ -157,6 +157,18 @@ const Invoice_details = () => {
     },
 
     {
+      title: "Due Date",
+      data: "due_date",
+      render: (data) => data ? formatDateTime(data) : "-"
+    },
+
+    {
+      title: "Paid Date",
+      data: "paid_date",
+      render: (data) => data ? formatDateTime(data) : "-"
+    },
+
+    {
       title: "Status",
       data: "status",
       render: (data, type, row) => {
@@ -192,13 +204,13 @@ const Invoice_details = () => {
                 }}
               >
                 <div className="cursor-pointer">
-                <FaEye
-  className="cursor-pointer"
-  onClick={() => {
-    setSelectedInvoiceId(row._id);
-    setIsOpen(true);
-  }}
-/>
+                  <FaEye
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setSelectedInvoiceId(row);
+                      setIsOpen(true);
+                    }}
+                  />
 
                 </div>
                 <div
@@ -249,7 +261,7 @@ const Invoice_details = () => {
       try {
         const res = await axios.post(
           `${API_URL}/api/invoice/delete-invoice/${id}`,
-          {withCredentials: true}
+          { withCredentials: true }
         );
         Swal.fire("Deleted!", "The Invoice has been deleted.", "success");
         // console.log("res", res);
@@ -318,12 +330,11 @@ const Invoice_details = () => {
             />
           </div>
         </div>
-        {isOpen && (
+        {/* {isOpen && (
           <div
             className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
           >
             <div className="bg-white p-6 rounded-xl w-96 relative">
-              {/* Close button */}
               <button
                 className="absolute top-3 right-3 text-gray-500"
                 onClick={() => setIsOpen(false)}
@@ -344,7 +355,7 @@ const Invoice_details = () => {
                       className="cursor-pointer text-blue-600"
                       onClick={() => {
                 navigate(item.path, {
-                  state: { invoiceId: selectedInvoiceId } 
+                  state: { invoiceId: selectedInvoiceId._id } 
                 });
                       }}
                     />
@@ -354,7 +365,81 @@ const Invoice_details = () => {
 
             </div>
           </div>
+        )} */}
+        {isOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-[50%] p-6 relative overflow-y-auto max-h-[90vh]">
+
+              {/* Close button */}
+              <button
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl transition"
+                onClick={() => setIsOpen(false)}
+              >
+                ✖
+              </button>
+
+              {/* Header */}
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">Invoice Summary</h2>
+                {/* <p className="text-gray-500 mt-1 text-sm">Quick overview of invoice details</p> */}
+              </div>
+
+              {/* Key Details */}
+              <div className="grid grid-cols-2 gap-6 mb-6">
+                <div className="flex flex-col">
+                  <span className="text-gray-500 text-sm">Client</span>
+                  <span className="text-gray-900 font-semibold">{selectedInvoiceId.clientId.client_name}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-gray-500 text-sm">Project</span>
+                  <span className="text-gray-900 font-semibold">{selectedInvoiceId.project.name}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-gray-500 text-sm">Invoice #</span>
+                  <span className="text-gray-900 font-semibold">{selectedInvoiceId.invoice_number}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-gray-500 text-sm">Status</span>
+                  <span className={`font-semibold ${selectedInvoiceId.status === "0" ? "text-green-600" : selectedInvoiceId.status === "1" ? "text-yellow-600" : "text-red-600"}`}>
+                    {selectedInvoiceId.status === "0" ? "Paid" : selectedInvoiceId.status === "1" ? "Pending" : "OverDue"}
+                  </span>
+
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-gray-500 text-sm">Invoice Date</span>
+                  <span className="text-gray-900 font-semibold">{selectedInvoiceId.invoice_date}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-gray-500 text-sm">Due Date</span>
+                  <span className="text-gray-900 font-semibold">{formatDateTime(selectedInvoiceId.due_date)}</span>
+                </div>
+              </div>
+
+              {/* Items List */}
+              <h3 className="text-gray-700 font-semibold mb-3">Invoice Types</h3>
+              <div className="flex flex-wrap gap-2">
+                {items.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium cursor-pointer hover:bg-blue-200 transition"
+                    onClick={() =>
+                      navigate(item.path, { state: { invoiceId: selectedInvoiceId._id } })
+                    }
+                  >
+                    {item.title}
+                    <FaEye className="text-blue-500 text-xs" />
+                  </div>
+                ))}
+              </div>
+
+            </div>
+          </div>
         )}
+
+
+
+
+
       </div>
 
       <Footer />
