@@ -10,7 +10,7 @@ import { API_URL } from "../config";
 import { capitalizeFirstLetter } from "../utils/StringCaps";
 
 import { TfiPencilAlt } from "react-icons/tfi";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import Swal from "sweetalert2";
 import Footer from "../components/Footer";
 import Mobile_Sidebar from "../components/Mobile_Sidebar";
@@ -50,8 +50,8 @@ const Relieved_list_details = () => {
 
   // console.log("EmpolyeeId",EmpolyeeId);
   window.onClickCard = function (id) {
-  navigate(`/employeedetails/${id}`);
-};
+    navigate(`/employeedetails/${id}`);
+  };
 
 
   const openAddModal = (row) => {
@@ -119,7 +119,7 @@ const Relieved_list_details = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/employees/reliving-list,${EmpolyeeId}`,
-        {withCredentials: true}
+        { withCredentials: true }
       );
       // console.log("re", response);
       if (response.data.success) {
@@ -186,7 +186,7 @@ const Relieved_list_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/reliving-verify/create-relivinglist-verify`,
-        formData, {withCredentials: true}
+        formData, { withCredentials: true }
       );
       // console.log("response:", response);
       Swal.fire({
@@ -234,12 +234,12 @@ const Relieved_list_details = () => {
     },
 
     {
-  title: "Employee",
-  data: null,
-  render: function (data, type, row) {
-    if (!row.employeeId) return "-";
+      title: "Employee",
+      data: null,
+      render: function (data, type, row) {
+        if (!row.employeeId) return "-";
 
-    return `
+        return `
       <div class="cursor-pointer" onclick="onClickCard('${row.employeeId._id}')">
         ${row.employeeName}
         <br/>
@@ -248,8 +248,8 @@ const Relieved_list_details = () => {
         </span>
       </div>
     `;
-  }
-},
+      }
+    },
 
     {
       title: "Joining Date",
@@ -293,8 +293,11 @@ const Relieved_list_details = () => {
 
         setTimeout(() => {
           const container = document.getElementById(id);
-          if (container && !container.hasChildNodes()) {
-            ReactDOM.render(
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+            container._root.render(
               <div
                 style={{
                   display: "flex",
@@ -328,8 +331,11 @@ const Relieved_list_details = () => {
 
         setTimeout(() => {
           const container = document.getElementById(id);
-          if (container && !container.hasChildNodes()) {
-            ReactDOM.render(
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+            container._root.render(
               <div
                 style={{
                   display: "flex",
@@ -456,7 +462,7 @@ const Relieved_list_details = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/reliving/view-relivinglist`,
-        {withCredentials: true}
+        { withCredentials: true }
       );
       if (response.data.success) {
         // const list = response.data.data;
@@ -567,13 +573,12 @@ const Relieved_list_details = () => {
     document.body.appendChild(container);
 
     await new Promise((resolve) => {
-      ReactDOM.render(
+      root.render(
         <Letters_download
           letterTitle={letterTitle._id}
           employeeId={employeeId.id}
-          onReady={resolve} // called after Letters_download mounts
-        />,
-        container
+          onReady={resolve} // called after mount
+        />
       );
     });
 
@@ -589,7 +594,7 @@ const Relieved_list_details = () => {
     pdf.save(`${employeeId.employeeName || "Employee"}-${letterTitle.title}.pdf`);
 
     // clean up
-    ReactDOM.unmountComponentAtNode(container);
+    root.unmount();
     document.body.removeChild(container);
   };
 
@@ -709,14 +714,14 @@ const Relieved_list_details = () => {
     document.body.appendChild(container);
 
     // Wait for component to finish loading
+
     await new Promise((resolve) => {
-      ReactDOM.render(
+      root.render(
         <Letters_download
           letterTitle={letterTitle._id}
           employeeId={employeeId.id}
-          onReady={resolve} // will resolve when data is loaded
-        />,
-        container
+          onReady={resolve} // called after mount
+        />
       );
     });
 
@@ -744,7 +749,7 @@ const Relieved_list_details = () => {
       const cleanUp = () => {
         URL.revokeObjectURL(url);
         document.body.removeChild(iframe);
-        ReactDOM.unmountComponentAtNode(container);
+        root.unmount();
         document.body.removeChild(container);
         win.removeEventListener("afterprint", cleanUp);
       };

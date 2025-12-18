@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import DataTable from "datatables.net-react";
 import DT from "datatables.net-dt";
 import "datatables.net-responsive-dt/css/responsive.dataTables.css";
@@ -324,8 +324,11 @@ const Inter_card_details = () => {
 
                 setTimeout(() => {
                     const container = document.getElementById(id);
-                    if (container && !container.hasChildNodes()) {
-                        ReactDOM.render(
+                    if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+            container._root.render(
                             <div
                                 className="flex gap-3 justify-center items-center"
                                 style={{ fontSize: "18px" }}

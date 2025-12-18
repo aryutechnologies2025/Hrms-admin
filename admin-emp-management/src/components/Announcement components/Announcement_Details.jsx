@@ -7,7 +7,7 @@ DataTable.use(DT);
 import axios from "../../api/axiosConfig";
 import { API_URL } from "../../config";
 import { TfiPencilAlt } from "react-icons/tfi";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import Swal from "sweetalert2";
 import Footer from "../Footer";
 import Mobile_Sidebar from "../Mobile_Sidebar";
@@ -25,8 +25,8 @@ import { Editor } from "primereact/editor";
 
 
 const Announcement_Details = () => {
-      const formDateTime = useDateUtils();
-  
+  const formDateTime = useDateUtils();
+
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const storedDetatis = localStorage.getItem("hrmsuser");
@@ -52,8 +52,8 @@ const Announcement_Details = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/announcement/view-announcement`,
-        {withCredentials: true}
-      
+        { withCredentials: true }
+
       );
       // console.log("announce response", response);
 
@@ -69,9 +69,9 @@ const Announcement_Details = () => {
     }
   };
 
-     const getTodayDate = () => {
-        return new Date().toISOString().split("T")[0];   // "2025-11-27"
-    };
+  const getTodayDate = () => {
+    return new Date().toISOString().split("T")[0];   // "2025-11-27"
+  };
 
   const openAddModal = () => {
     setIsAddModalOpen(true);
@@ -117,7 +117,7 @@ const Announcement_Details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/announcement/create-announcement`,
-        formdata, {withCredentials: true}
+        formdata, { withCredentials: true }
       );
 
 
@@ -162,9 +162,9 @@ const Announcement_Details = () => {
     setDisplayEdit(row._display);
 
     // convert ISO date to yyyy-mm-dd
-  setDateEdit(row.date ? row.date.substring(0, 10) : "");
+    setDateEdit(row.date ? row.date.substring(0, 10) : "");
 
-  setExpiryDateEdit(row.expiryDate ? row.expiryDate.substring(0, 10) : "");
+    setExpiryDateEdit(row.expiryDate ? row.expiryDate.substring(0, 10) : "");
     // setDateEdit(row.date);
     // setExpiryDateEdit(row.expiryDate);
     setMessageEdit(row.message);
@@ -219,7 +219,7 @@ const Announcement_Details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/announcement/edit-announcement/${editId}`,
-        formData, {withCredentials: true}
+        formData, { withCredentials: true }
       );
       // console.log("response:", response);
 
@@ -256,7 +256,7 @@ const Announcement_Details = () => {
       if (result.isConfirmed) {
         axios
           .delete(`${API_URL}/api/announcement/delete-announcement/${editId}`,
-            {withCredentials: true}
+            { withCredentials: true }
           )
           .then((response) => {
             if (response.data) {
@@ -285,13 +285,13 @@ const Announcement_Details = () => {
     {
       title: "Date",
       data: "date",
-      render:(data)=> data?formDateTime(data):"-"
+      render: (data) => data ? formDateTime(data) : "-"
     },
 
     {
       title: "Expiry Date",
       data: "expiryDate",
-      render:(data)=> data?formDateTime(data):"-",
+      render: (data) => data ? formDateTime(data) : "-",
     },
 
     {
@@ -319,9 +319,11 @@ const Announcement_Details = () => {
       render: (data, type, row) => {
         const id = `actions-${row.sno || Math.random()}`;
         setTimeout(() => {
-          const container = document.getElementById(id);
-          if (container && !container.hasChildNodes()) {
-            ReactDOM.render(
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+            container._root.render(
               <div
                 className="action-container"
                 style={{
@@ -375,25 +377,25 @@ const Announcement_Details = () => {
       ) : (
         <>
           <div>
-           
+
 
             <div className="">
-              
-                 <Mobile_Sidebar />
+
+              <Mobile_Sidebar />
 
             </div>
 
             <div className="flex justify-end gap-1 mt-2 md:mt-0 items-center">
-                <p className="text-sm text-blue-500">Announcement</p>
-                <p>{">"}</p>
-                <p
-                  className="text-sm text-gray-500"
-                  onClick={() => navigate("/dashboard-Recruitment")}
-                >
-                  Dashboard
-                </p>
-              </div>
-     
+              <p className="text-sm text-blue-500">Announcement</p>
+              <p>{">"}</p>
+              <p
+                className="text-sm text-gray-500"
+                onClick={() => navigate("/dashboard-Recruitment")}
+              >
+                Dashboard
+              </p>
+            </div>
+
 
             {/* Add Button */}
             <div className="flex justify-between mt-1 md:mt-4">
@@ -475,7 +477,7 @@ const Announcement_Details = () => {
                           type="date"
                           value={date}
                           onChange={(e) => setDate(e.target.value)}
-                          
+
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors?.date && (
@@ -524,27 +526,27 @@ const Announcement_Details = () => {
                     </div> */}
 
                     <div className="mt-8 flex justify-between">
-                                        <div>
-                                          <label className="block text-md font-medium mb-2 mt-3">
-                                            Message <span className="text-red-500">*</span>
-                                          </label>
-                                        </div>
-                                        <div className="w-[60%] md:w-[70%] rounded-lg">
-                                          <Editor
-                                            onTextChange={(e) => setMessage(e.htmlValue)}
-                                            style={{ height: "220px" }}
-                                            id="message"
-                                            name="message"
-                                            text={message}
-                                            className="w-full border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          />
-                                          {errors.message && (
-                                            <p className="text-red-500 text-sm">
-                                              {errors.message}
-                                            </p>
-                                          )}
-                                        </div>
-                                      </div>
+                      <div>
+                        <label className="block text-md font-medium mb-2 mt-3">
+                          Message <span className="text-red-500">*</span>
+                        </label>
+                      </div>
+                      <div className="w-[60%] md:w-[70%] rounded-lg">
+                        <Editor
+                          onTextChange={(e) => setMessage(e.htmlValue)}
+                          style={{ height: "220px" }}
+                          id="message"
+                          name="message"
+                          text={message}
+                          className="w-full border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        {errors.message && (
+                          <p className="text-red-500 text-sm">
+                            {errors.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
 
 
                     <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
@@ -684,7 +686,7 @@ const Announcement_Details = () => {
 
                   <div className="p-2 md:p-5">
                     <p className="text-2xl md:text-3xl font-medium">Announcement Edit</p>
-                
+
 
                     <div className="mt-5 flex justify-between items-center">
                       <label className="block text-md font-medium mb-2">
@@ -721,7 +723,7 @@ const Announcement_Details = () => {
                         )}
                       </div>
                     </div>
-{/* 
+                    {/* 
                         <div className="mt-5 flex justify-between items-center">
                       <label className="block text-md font-medium mb-2">
                         Message <span className="text-red-500">*</span>
@@ -744,27 +746,27 @@ const Announcement_Details = () => {
                     </div> */}
 
                     <div className="mt-8 flex justify-between">
-                                        <div>
-                                          <label className="block text-md font-medium mb-2 mt-3">
-                                            Message <span className="text-red-500">*</span>
-                                          </label>
-                                        </div>
-                                        <div className="w-[60%] md:w-[70%] rounded-lg">
-                                          <Editor
-                                            onTextChange={(e) => setMessageEdit(e.htmlValue)}
-                                            style={{ height: "220px" }}
-                                            id="message"
-                                            name="message"
-                                            value={messageEdit}
-                                            className="w-full border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          />
-                                          {errors.messageEdit && (
-                                            <p className="text-red-500 text-sm">
-                                              {errors.messageEdit}
-                                            </p>
-                                          )}
-                                        </div>
-                                      </div>
+                      <div>
+                        <label className="block text-md font-medium mb-2 mt-3">
+                          Message <span className="text-red-500">*</span>
+                        </label>
+                      </div>
+                      <div className="w-[60%] md:w-[70%] rounded-lg">
+                        <Editor
+                          onTextChange={(e) => setMessageEdit(e.htmlValue)}
+                          style={{ height: "220px" }}
+                          id="message"
+                          name="message"
+                          value={messageEdit}
+                          className="w-full border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        {errors.messageEdit && (
+                          <p className="text-red-500 text-sm">
+                            {errors.messageEdit}
+                          </p>
+                        )}
+                      </div>
+                    </div>
 
                     <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="block text-md font-medium mb-2">

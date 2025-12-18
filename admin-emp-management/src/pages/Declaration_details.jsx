@@ -10,7 +10,7 @@ import { API_URL } from "../config";
 // import { capitalizeFirstLetter } from "../../StringCaps";
 import { TfiPencilAlt } from "react-icons/tfi";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import Swal from "sweetalert2";
 import Footer from "../components/Footer";
 import Mobile_Sidebar from "../components/Mobile_Sidebar";
@@ -417,8 +417,8 @@ const Declaration_details = () => {
     container.style.left = "-9999px";
     document.body.appendChild(container);
 
-    // Render your component
-    ReactDOM.render(<Declaration_pdf row={row} />, container);
+     const root = createRoot(container);
+  root.render(<Declaration_pdf row={row} />);
 
     // Wait for DOM to render
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -437,7 +437,7 @@ const Declaration_details = () => {
     pdf.save(fileName);
 
     // Clean up
-    ReactDOM.unmountComponentAtNode(container);
+    root.unmount();
     document.body.removeChild(container);
   };
 
@@ -454,7 +454,8 @@ const Declaration_details = () => {
     container.style.position = "absolute";
     container.style.left = "-9999px";
     document.body.appendChild(container);
-    ReactDOM.render(<Declaration_pdf row={row} />, container);
+    const root = createRoot(container);
+  root.render(<Declaration_pdf row={row} />);
 
     // give React time to paint
     await new Promise((r) => setTimeout(r, 100));
@@ -485,7 +486,7 @@ const Declaration_details = () => {
       const cleanUp = () => {
         URL.revokeObjectURL(url);
         document.body.removeChild(iframe);
-        ReactDOM.unmountComponentAtNode(container);
+        root.unmount();
         document.body.removeChild(container);
         win.removeEventListener("afterprint", cleanUp);
       };
@@ -571,8 +572,11 @@ const handledownloadDocument = (documents) => {
 
     setTimeout(() => {
       const container = document.getElementById(id);
-      if (container && !container.hasChildNodes()) {
-        ReactDOM.render(
+      if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+            container._root.render(
           <div
             className="action-container"
             style={{
@@ -614,8 +618,11 @@ const handledownloadDocument = (documents) => {
         const id = `actions-${row.sno || Math.random()}`;
         setTimeout(() => {
           const container = document.getElementById(id);
-          if (container && !container.hasChildNodes()) {
-            ReactDOM.render(
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+            container._root.render(
               <div
                 className="action-container"
                 style={{
