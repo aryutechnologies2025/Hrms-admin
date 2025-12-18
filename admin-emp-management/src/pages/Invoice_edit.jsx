@@ -30,68 +30,47 @@ import { MdClose } from "react-icons/md"; // nice rounded X icon
 
 const Invoice_edit = () => {
 
-    const { state } = useLocation();
+  const { state } = useLocation();
   const rowData = state?.rowData;
 
 
-  // console.log("rowdata",rowData)
+  console.log("rowdata", rowData)
 
   const navigate = useNavigate();
 
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-
-  const [roles, setRoles] = useState([]);
-  const [uploadedFiles, setUploadedFiles] = useState([]);
-
-  // Fetch roles from the API
-  useEffect(() => {
-    fetchProject();
-  }, []);
+  
 
 
 
 
-  // console.log("roles", roles);
 
-  const [projectname, setProjectName] = useState("");
-  const [projectDescription, setProjectDescription] = useState("");
-
-  //   const [status, setStatus] = useState("");
-  const storedDetatis = localStorage.getItem("hrmsuser");
-  const parsedDetails = JSON.parse(null);
-  const userid = parsedDetails ? parsedDetails.id : null;
   const [errors, setErrors] = useState({});
 
-  const [clientdetails, setClientdetails] = useState([]);
-  // console.log("errors::", errors);
 
-  const fetchProject = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/api/invoice/view-invoice`);
-      // console.log(response);
-      if (response.data.success) {
-        setClientdetails(response.data.data);
-      } else {
-        setErrors("Failed to fetch roles.");
-      }
-    } catch (err) {
-      setErrors("Failed to fetch roles.");
-    }
-  };
 
-  // Open and close modals
 
-  // client name deatails
+
 
   //
   const [clientOption, setClientOption] = useState(null);
   const [projectOption, setProjectOption] = useState(null);
 
+    const [selectedClient, setSelectedClient] = useState(null);
+  const [selectedProject, setSelectedProject] = useState(null);
+
   // console.log("clientOption", clientOption);
 
-  const fetchClientList = async () => {
+ useEffect(() => {
+  fetchClientList(); 
+}, []);
+
+useEffect(() => {
+  if (selectedClient) {
+    fetchaProjectList(selectedClient);
+  }
+}, [selectedClient]);
+
+const fetchClientList = async () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/client/view-clientdetails`,
@@ -102,9 +81,14 @@ const Invoice_edit = () => {
         }
       );
 
-      const clientName = response.data.data.map((emp) => emp.client_name);
-      // console.log("client name", clientName);
-      setClientOption(clientName);
+      const clientOptions = response.data.data.map(emp => ({
+
+        label: emp.client_name,
+        value: emp._id,
+      }));
+
+      setClientOption(clientOptions);
+
     } catch (error) {
       console.log(error);
     }
@@ -113,30 +97,36 @@ const Invoice_edit = () => {
   const fetchaProjectList = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/invoice/get-project-name`,
+        `${API_URL}/api/invoice/get-project-name-with-client`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+           params: {
+            project : selectedClient,
           },
+          // headers: {
+          //   Authorization: `Bearer ${localStorage.getItem("token")}`,
+          // },
+         
         }
       );
 
-      const clientName = response.data.data.map((emp) => emp.name);
-      // console.log("client name", clientName);
-      setProjectOption(clientName);
+      console.log("response",response)
+
+        const ProjectOptions = response.data.data.map(emp => ({
+
+        label: emp.name,
+        value: emp._id,
+      }));
+
+      setProjectOption(ProjectOptions);
+
+      // const clientName = response.data.data.map((emp) => emp.name);
+      // // console.log("client name", clientName);
+      // setProjectOption(clientName);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const [status, setStatus] = useState("");
-
-  useEffect(() => {
-    // fetchData();
-    // fetchEmployeeList();
-    fetchaProjectList();
-    fetchClientList();
-  }, []);
 
   // Validate Status dynamically
   const validateStatus = (value) => {
@@ -149,28 +139,7 @@ const Invoice_edit = () => {
     setErrors(newErrors);
   };
 
-  //   console.log("edit modal", roleDetails);
-
-  const priorityOption = ["Low", "Medium", "High", "Critical"];
-
-  // conutry list
-
-  //   const [selectedCountry, setSelectedCountry] = useState(null);
-
-  const countryOptions = [
-    { name: "United States", code: "US" },
-    { name: "India", code: "IN" },
-    { name: "China", code: "CN" },
-    { name: "Brazil", code: "BR" },
-    { name: "Indonesia", code: "ID" },
-    { name: "Pakistan", code: "PK" },
-    { name: "Nigeria", code: "NG" },
-    { name: "Bangladesh", code: "BD" },
-    { name: "Russia", code: "RU" },
-    { name: "Mexico", code: "MX" },
-    { name: "United Kingdom", code: "UK" },
-  ];
-
+ 
   //   currency
 
   const currencyOptions = [
@@ -192,46 +161,113 @@ const Invoice_edit = () => {
     { description: "", qty: "", rate: "", total: "" },
   ]);
 
-  const [selectedClient, setSelectedClient] = useState(null);
-  const [selectedProject, setSelectedProject] = useState(null);
+  const [status, setStatus] = useState("");
+
   const [invoiceDate, setInvoiceDate] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [currency, setCurreny] = useState("");
   const [subTotal, setSubTotal] = useState("");
   const [tax, setTax] = useState("");
   const [totalAmount, setTotalAmount] = useState("");
+
   const [notes, setNotes] = useState("");
 
 
-  
+  const [open, setOpen] = useState(false);
+  const [taxOpen, setTaxOpen] = useState(false);
+  const [intraOpen, setIntraOpen] = useState(false);
+  const [interOpen, setInterOpen] = useState(false);
+  const [selected, setSelected] = useState("Select Invoice Type");
+
+  // console.log("selected", selected)
+
+  const selectItem = (path) => {
+    setSelected(path.join(" / "));
+    setOpen(false);
+    setTaxOpen(false);
+    setIntraOpen(false);
+    setInterOpen(false);
+  };
+  const [cgst, setCgst] = useState("");
+  const [sgst, setSgst] = useState("");
+  const [igst, setIgst] = useState("");
+
+
+  const isIntraInvoice =
+    selected.includes("Tax Invoice") && selected.includes("Intra");
+
+
+  const isInterInvoice =
+    selected.includes("Tax Invoice") && selected.includes("Inter");
+
   useEffect(() => {
-  setSelectedClient(rowData.client);
-  setSelectedProject(rowData.project);
+  const subtotal = parseFloat(subTotal) || 0;
 
-  setInvoiceDate(rowData.invoice_date.split("T")[0]);
-  setDueDate(rowData.due_date.split("T")[0]);
+  const cgstPercent = parseFloat(cgst) || 0;
+  const sgstPercent = parseFloat(sgst) || 0;
+  const igstPercent = parseFloat(igst) || 0;
 
-  const formattedItems = rowData?.items.map(item => ({
-    description: item.description,
-    qty: item.quantity,
-    rate: item.rate,
-    total: item.amount
-  }));
-  const selectedCurrency = currencyOptions.find(
-  (c) => c.name === rowData.currency
-);
+  let total = subtotal;
 
-setCurreny(selectedCurrency || null);
+  // Inter-state → IGST
+  if (isInterInvoice && igstPercent > 0) {
+    total = subtotal + (subtotal * igstPercent) / 100;
+  }
 
-  setItems(formattedItems)
+  // Intra-state → CGST + SGST
+  if (isIntraInvoice && (cgstPercent > 0 || sgstPercent > 0)) {
+    total =
+      subtotal +
+      (subtotal * cgstPercent) / 100 +
+      (subtotal * sgstPercent) / 100;
+  }
 
-  // setCurreny(rowData.currency);
-  setSubTotal(rowData.sub_total);
-  setTax(rowData.tax);
-  setTotalAmount(rowData.total_amount);
-  setNotes(rowData.notes);
-  setStatus(rowData.status);
-}, []);
+  // setTotalAmount(total.toFixed(2));
+}, [subTotal, cgst, sgst, igst, isInterInvoice, isIntraInvoice]);
+
+
+
+  useEffect(() => {
+
+    // console.log("rowsss",rowData)
+    if (!rowData) return;
+
+    setTotalAmount(rowData?.total_amount || "");
+
+    setSelectedClient(rowData.clientId?._id);
+    setSelectedProject(rowData?.project?._id);
+
+    setInvoiceDate(rowData.invoice_date?.split("T")[0]);
+    setDueDate(rowData.due_date?.split("T")[0]);
+
+    const formattedItems = rowData?.items?.map(item => ({
+      description: item.description,
+      qty: item.quantity,
+      rate: item.rate,
+      total: item.amount
+    }));
+
+    const selectedCurrency = currencyOptions.find(
+      (c) => c.name === rowData.currency
+    );
+
+    setCurreny(selectedCurrency || null);
+    setItems(formattedItems || []);
+
+    setSubTotal(rowData.sub_total || "");
+    setTax(rowData.tax || "");
+    setNotes(rowData.notes || "");
+    setStatus(rowData.status);
+    setSelected(rowData.invoice_type);
+    setIgst(rowData.igst);
+    setCgst(rowData.cgst);
+    setSgst(rowData.sgst);
+  }, [rowData]);
+
+
+
+  // console.log("totalAmount", totalAmount);
+
 
 
 
@@ -257,13 +293,13 @@ setCurreny(selectedCurrency || null);
   };
 
   // subtaotal to tax
-  useEffect(() => {
-    const subtotal = parseFloat(subTotal) || 0;
-    const taxPercent = parseFloat(tax) || 0;
-    const taxAmount = (subtotal * taxPercent) / 100;
-    const total = subtotal + taxAmount;
-    setTotalAmount(total.toFixed(2));
-  }, [subTotal, tax]);
+  // useEffect(() => {
+  //   const subtotal = parseFloat(subTotal) || 0;
+  //   const taxPercent = parseFloat(tax) || 0;
+  //   const taxAmount = (subtotal * taxPercent) / 100;
+  //   const total = subtotal + taxAmount;
+  //   // setTotalAmount(total);
+  // }, [subTotal, tax]);
 
   const addItem = () => {
     setItems([...items, { description: "", qty: "", rate: "", total: "" }]);
@@ -275,7 +311,7 @@ setCurreny(selectedCurrency || null);
     setItems(updatedItems);
   };
 
- 
+
 
   const handlesubmit = async (e) => {
     e.preventDefault();
@@ -355,32 +391,6 @@ setCurreny(selectedCurrency || null);
     }
   };
 
-  const [open, setOpen] = useState(false);
-  const [taxOpen, setTaxOpen] = useState(false);
-  const [intraOpen, setIntraOpen] = useState(false);
-  const [interOpen, setInterOpen] = useState(false);
-  const [selected, setSelected] = useState("Select Invoice Type");
-
-  // console.log("selected", selected)
-
-  const selectItem = (path) => {
-    setSelected(path.join(" / "));
-    setOpen(false);
-    setTaxOpen(false);
-    setIntraOpen(false);
-    setInterOpen(false);
-  };
-  const [cgst, setCgst] = useState("");
-  const [sgst, setSgst] = useState("");
-  const [igst, setIgst] = useState("");
-
-
-  const isIntraInvoice =
-    selected.includes("Tax Invoice") && selected.includes("Intra");
-
-
-  const isInterInvoice =
-    selected.includes("Tax Invoice") && selected.includes("Inter");
 
 
   return (
@@ -425,7 +435,7 @@ setCurreny(selectedCurrency || null);
                       value={selectedClient}
                       onChange={(e) => setSelectedClient(e.value)}
                       options={clientOption}
-                      optionLabel="name"
+                      optionLabel="label"
                       placeholder="Select a Client"
                       className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -447,7 +457,7 @@ setCurreny(selectedCurrency || null);
                       value={selectedProject}
                       onChange={(e) => setSelectedProject(e.value)}
                       options={projectOption}
-                      optionLabel="name"
+                      optionLabel="label"
                       placeholder="Select a Project"
                       className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
