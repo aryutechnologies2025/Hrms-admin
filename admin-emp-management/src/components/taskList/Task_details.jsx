@@ -10,7 +10,7 @@ import { API_URL } from "../../config";
 // import { capitalizeFirstLetter } from "../../StringCaps";
 import { TfiPencilAlt } from "react-icons/tfi";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import Swal from "sweetalert2";
 import Footer from "../../components/Footer";
 import Mobile_Sidebar from "../../components/Mobile_Sidebar";
@@ -101,7 +101,9 @@ const Task_details = () => {
         // params: { page, limit: limitValue, type },
         params: payload,
         withCredentials: true,
+
       });
+      // console.log("check", response);
 
       if (response.data.success) {
         setTaskdetails(response.data.data);
@@ -169,6 +171,7 @@ const Task_details = () => {
           withCredentials: true,
         }
       );
+      // console.log("check 2",response)
 
       // const employeeIds = response.data.data.map(emp => `${emp.employeeId} - ${emp.employeeName}`);
       // const employeeemail = response.data.data.map((emp) => emp.email);
@@ -201,7 +204,7 @@ const Task_details = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/project/view-projects`,{withCredentials: true});
-      // console.log(response);
+      // console.log("check 3",response);
       if (response.data.success) {
         const projectName = response.data.data.map((emp) => ({
           label: emp.name,
@@ -312,7 +315,7 @@ const Task_details = () => {
     startDate: "",
     dueDate: "",
 
-    taskId:"",
+    taskId: "",
 
     taskType: "",
 
@@ -323,7 +326,7 @@ const Task_details = () => {
     setTaskData({
       id: row._id,
       // currentDate: row.currentDate,
-      taskId:row.taskId,
+      taskId: row.taskId,
       project: row.projectId?._id,
       taskTitle: row.title,
       description: row.description,
@@ -528,7 +531,8 @@ const Task_details = () => {
             (value) => value && value.trim()
           ) || "N/A";
 
-        ReactDOM.render(
+        const root = createRoot(td);
+        root.render(
           <span
             style={{ cursor: "pointer", color: "black" }}
             onMouseOver={(e) => (e.target.style.color = "blue")}
@@ -546,6 +550,20 @@ const Task_details = () => {
       title: "Title",
       data: "title",
     },
+    {
+      title: "Task Type",
+      data: "taskType",
+      defaultContent: "-",
+      render: (data) => data ? data.charAt(0).toUpperCase() + data.slice(1) : "-",
+    },
+
+    {
+      title: "Created By",
+      data: "createdByName",
+      defaultContent: "-",
+      render: (data) => data ? data.charAt(0).toUpperCase() + data.slice(1) : "-",
+    },
+
     {
       title: "Status",
       data: "status",
@@ -594,8 +612,11 @@ const Task_details = () => {
         const id = `actions-${row.sno || Math.random()}`;
         setTimeout(() => {
           const container = document.getElementById(id);
-          if (container && !container.hasChildNodes()) {
-            ReactDOM.render(
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+            container._root.render(
               <div
                 className="action-container"
                 style={{
@@ -923,6 +944,18 @@ const Task_details = () => {
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
+              </select>
+
+              {/* task type Dropdown */}
+              <select
+                className="w-full md:w-[180px] border border-gray-300 rounded-md text-gray-700 text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={priority}
+                onChange={(e) => setPriority(e.target.value)}
+              >
+                <option value="">Select Task Type</option>
+                <option value="new">New</option>
+                <option value="bug">Bug</option>
+                <option value="maintenance">Maintenance</option>
               </select>
 
               {/* Search Box */}

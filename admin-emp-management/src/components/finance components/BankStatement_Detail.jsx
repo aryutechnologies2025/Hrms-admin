@@ -6,7 +6,7 @@ DataTable.use(DT);
 import axios from "../../api/axiosConfig";
 import { API_URL } from "../../config";
 import { TfiPencilAlt } from "react-icons/tfi";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import Swal from "sweetalert2";
 import Footer from "../Footer";
 import Mobile_Sidebar from "../Mobile_Sidebar";
@@ -27,7 +27,7 @@ import { useDateUtils } from "../../hooks/useDateUtils";
 
 
 const BankStatement_Detail = () => {
-    const formDateTime=useDateUtils();
+    const formDateTime = useDateUtils();
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const storedDetatis = localStorage.getItem("hrmsuser");
@@ -35,10 +35,10 @@ const BankStatement_Detail = () => {
 
     const userid = parsedDetails ? parsedDetails.id : null;
     const [errors, setErrors] = useState({
-         file: "",
-  date: "",
-  account: "",
-  import: []
+        file: "",
+        date: "",
+        account: "",
+        import: []
     });
     const [importResult, setImportResult] = useState(null);
     // console.log("errors:", errors);
@@ -78,10 +78,10 @@ const BankStatement_Detail = () => {
     // Set filters EMPTY by default
     const [filterType, setFilterType] = useState("");
     const [filterAccount, setFilterAccount] = useState("");
-    const [filterStartDate, setFilterStartDate] = useState(()=>{
+    const [filterStartDate, setFilterStartDate] = useState(() => {
         return new Date().toISOString().split("T")[0];
     });
-    const [filterEndDate, setFilterEndDate] = useState(()=>{
+    const [filterEndDate, setFilterEndDate] = useState(() => {
         return new Date().toISOString().split("T")[0];
     });
 
@@ -138,7 +138,7 @@ const BankStatement_Detail = () => {
             const response = await axios.get(
                 `${API_URL}/api/income/view-financecompany`,
                 {
-                   withCredentials: true,
+                    withCredentials: true,
                 }
             );
 
@@ -161,54 +161,54 @@ const BankStatement_Detail = () => {
     };
 
     const resetImportForm = () => {
-    setSelectedAccount(null);
-    setSelectedFile(null);
-    setAttachment(null);
-    setSelectedDate(new Date().toISOString().split("T")[0]);
-    setErrors({ file: "", date: "", account: "", import: [] });
+        setSelectedAccount(null);
+        setSelectedFile(null);
+        setAttachment(null);
+        setSelectedDate(new Date().toISOString().split("T")[0]);
+        setErrors({ file: "", date: "", account: "", import: [] });
 
-    // Clear input fields manually
-    if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-    }
-    if (fileInputRefedit.current) {
-        fileInputRefedit.current.value = "";
-    }
-};
+        // Clear input fields manually
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+        if (fileInputRefedit.current) {
+            fileInputRefedit.current.value = "";
+        }
+    };
 
     const handleFileChange = (e) => {
         // if (e.target.files[0]) {
         //     setSelectedFile(e.target.files[0]);
         // }
         const file = e.target.files[0];
-  if (!file) return;
+        if (!file) return;
 
-  // Validate file type
-  const allowedTypes = [
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'application/vnd.ms-excel',
-    '.xlsx',
-    '.xls'
-  ];
-  
-  const fileExtension = file.name.split('.').pop().toLowerCase();
-  
-  if (!allowedTypes.includes(file.type) && !['xlsx', 'xls'].includes(fileExtension)) {
-    toast.error("Please upload an Excel file (.xlsx or .xls)");
-     e.target.value = ''; // Clear the input
-    return;
-     }
-  
-  setSelectedFile(file);
-  setAttachment(file);
+        // Validate file type
+        const allowedTypes = [
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-excel',
+            '.xlsx',
+            '.xls'
+        ];
 
-   // clear previous errors
-  setErrors(prev => ({ ...prev, file: "" }));
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+
+        if (!allowedTypes.includes(file.type) && !['xlsx', 'xls'].includes(fileExtension)) {
+            toast.error("Please upload an Excel file (.xlsx or .xls)");
+            e.target.value = ''; // Clear the input
+            return;
+        }
+
+        setSelectedFile(file);
+        setAttachment(file);
+
+        // clear previous errors
+        setErrors(prev => ({ ...prev, file: "" }));
     };
 
     const handleDateChange = (e) => {
-  setDate(e.target.value);
-};
+        setDate(e.target.value);
+    };
 
     const handleFileChangeedit = (e) => {
         if (e.target.files[0]) {
@@ -269,114 +269,115 @@ const BankStatement_Detail = () => {
 
 
     // create
-const handlesubmit = async (e) => {
-    // console.log("selectedAccount:1");
-  e.preventDefault();
+    const handlesubmit = async (e) => {
+        // console.log("selectedAccount:1");
+        e.preventDefault();
 
-  // Reset errors
-  setErrors({ file: "", date: "", account: "", import: [] });
-  setImportResult(null);
+        // Reset errors
+        setErrors({ file: "", date: "", account: "", import: [] });
+        setImportResult(null);
 
-  // Frontend validation
-  const newErrors = {};
-  let hasError = false;
+        // Frontend validation
+        const newErrors = {};
+        let hasError = false;
 
-    if (!selectedDate) {
-      newErrors.date = "Please select a date";
-    hasError = true;
-    }
-    // console.log("selectedAccount:2");
+        if (!selectedDate) {
+            newErrors.date = "Please select a date";
+            hasError = true;
+        }
+        // console.log("selectedAccount:2");
 
-      if (!selectedFile) {
-    newErrors.file = "Please select a file";
-    hasError = true;
-  } else {
-    // Validate file type
-    const allowedExtensions = ['.xlsx', '.xls'];
-    const fileExtension = selectedFile.name.split('.').pop().toLowerCase();
-    if (!allowedExtensions.includes(`.${fileExtension}`)) {
-      newErrors.file = "Please upload only Excel files (.xlsx, .xls)";
-      hasError = true;
-    }
-  }
+        if (!selectedFile) {
+            newErrors.file = "Please select a file";
+            hasError = true;
+        } else {
+            // Validate file type
+            const allowedExtensions = ['.xlsx', '.xls'];
+            const fileExtension = selectedFile.name.split('.').pop().toLowerCase();
+            if (!allowedExtensions.includes(`.${fileExtension}`)) {
+                newErrors.file = "Please upload only Excel files (.xlsx, .xls)";
+                hasError = true;
+            }
+        }
 
-   if (!selectedAccount) {
-    newErrors.account = "Please select a company";
-    hasError = true;
-  }
+        if (!selectedAccount) {
+            newErrors.account = "Please select a company";
+            hasError = true;
+        }
 
-  if (hasError) {
-    setErrors(prev => ({ ...prev, ...newErrors }));
-     // Scroll to first error
-    setTimeout(() => {
-      const errorField = Object.keys(newErrors)[0];
-      const element = document.querySelector(`[data-field="${errorField}"]`);
-      if (element) element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 100);
-    
-    return;
-  }
+        if (hasError) {
+            setErrors(prev => ({ ...prev, ...newErrors }));
+            // Scroll to first error
+            setTimeout(() => {
+                const errorField = Object.keys(newErrors)[0];
+                const element = document.querySelector(`[data-field="${errorField}"]`);
+                if (element) element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
 
-  try {
-    const formData = new FormData();
+            return;
+        }
 
-    formData.append("file", selectedFile);          // Excel file
-    formData.append("account", selectedAccount._id); // Company ID
-    formData.append("date", selectedDate);
-// console.log("selectedAccount:3",formData);
+        try {
+            const formData = new FormData();
 
-// Debug: Check FormData contents
-    console.log("FormData entries:");
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
+            formData.append("file", selectedFile);          // Excel file
+            formData.append("account", selectedAccount._id); // Company ID
+            formData.append("date", selectedDate);
+            // console.log("selectedAccount:3",formData);
 
-    const response = await axios.post(
-      `${API_URL}/api/statement/import`,
-      formData,
-      { headers: { "Content-Type": "multipart/form-data" },
-    // Add timeout for debugging
-        timeout: 30000,
-        withCredentials: true,
-     }
-    );
+            // Debug: Check FormData contents
+            console.log("FormData entries:");
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
 
-    // console.log("response:", response.data);
-   if (response.data.success) {
-    toast.success(response.data.message || "Excel imported successfully!");
+            const response = await axios.post(
+                `${API_URL}/api/statement/import`,
+                formData,
+                {
+                    headers: { "Content-Type": "multipart/form-data" },
+                    // Add timeout for debugging
+                    timeout: 30000,
+                    withCredentials: true,
+                }
+            );
 
-    if (response.data.total !== undefined) {
-        toast.success(`Imported: ${response.data.total} records`);
-    }
-}
+            // console.log("response:", response.data);
+            if (response.data.success) {
+                toast.success(response.data.message || "Excel imported successfully!");
 
-    
-    // Reset fields
-    handleDeleteFile();
-    setSelectedDate(new Date().toISOString().split("T")[0]);
-    setSelectedAccount(null);
+                if (response.data.total !== undefined) {
+                    toast.success(`Imported: ${response.data.total} records`);
+                }
+            }
 
 
-  } catch (err) {
-  console.error("Import error:", err);
+            // Reset fields
+            handleDeleteFile();
+            setSelectedDate(new Date().toISOString().split("T")[0]);
+            setSelectedAccount(null);
 
-  const message =
-    err.response?.data?.error ||
-    err.response?.data?.message ||
-    "Upload failed";
-const rowErrors = err.response?.data?.rowErrors || [];
 
-    setErrors(prev => ({
-    ...prev,
-    import: rowErrors.length ? rowErrors : message
-  }));
-   if (rowErrors.length) {
-      toast.error(`Validation failed in ${rowErrors.length} rows`);
-    } else {
-      toast.error(message);
-    }
-  }
-};
+        } catch (err) {
+            console.error("Import error:", err);
+
+            const message =
+                err.response?.data?.error ||
+                err.response?.data?.message ||
+                "Upload failed";
+            const rowErrors = err.response?.data?.rowErrors || [];
+
+            setErrors(prev => ({
+                ...prev,
+                import: rowErrors.length ? rowErrors : message
+            }));
+            if (rowErrors.length) {
+                toast.error(`Validation failed in ${rowErrors.length} rows`);
+            } else {
+                toast.error(message);
+            }
+        }
+    };
 
 
 
@@ -401,7 +402,7 @@ const rowErrors = err.response?.data?.rowErrors || [];
 
             await axios.put(
                 `${API_URL}/api/statement/editStatementDetails/${editId}`,
-                formData, {withCredentials: true}
+                formData, { withCredentials: true }
             );
 
             toast.success("Notes updated.");
@@ -431,7 +432,7 @@ const rowErrors = err.response?.data?.rowErrors || [];
             if (result.isConfirmed) {
                 axios
                     .delete(`${API_URL}/api/statement/deleteStatementDetails/${editId}`,
-                        {withCredentials: true}
+                        { withCredentials: true }
                     )
                     .then((response) => {
                         if (response.data) {
@@ -482,8 +483,11 @@ const rowErrors = err.response?.data?.rowErrors || [];
                 const id = `amt-${row._id}`;
                 setTimeout(() => {
                     const container = document.getElementById(id);
-                    if (container && !container.hasChildNodes()) {
-                        ReactDOM.render(
+                    if (container) {
+                        if (!container._root) {
+                            container._root = createRoot(container);
+                        }
+                        container._root.render(
                             <div className="flex items-center justify-center gap-2">
 
                                 <FaEye
@@ -493,7 +497,7 @@ const rowErrors = err.response?.data?.rowErrors || [];
                                         setOpenViewPopup(true);
                                     }}
                                 />
-                                
+
                             </div>,
                             container
                         );
@@ -521,8 +525,11 @@ const rowErrors = err.response?.data?.rowErrors || [];
                 const id = `actions-${row.sno || Math.random()}`;
                 setTimeout(() => {
                     const container = document.getElementById(id);
-                    if (container && !container.hasChildNodes()) {
-                        ReactDOM.render(
+                    if (container) {
+                        if (!container._root) {
+                            container._root = createRoot(container);
+                        }
+                        container._root.render(
                             <div
                                 className="action-container"
                                 style={{
@@ -570,11 +577,11 @@ const rowErrors = err.response?.data?.rowErrors || [];
             ) : (
                 <>
                     <div>
-                        
+
 
                         <div className="">
                             <Mobile_Sidebar />
-                         
+
                         </div>
                         <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
                             <p className="text-xs md:text-sm text-blue-500">Bank Statement</p>
@@ -585,62 +592,62 @@ const rowErrors = err.response?.data?.rowErrors || [];
                             >
                                 Dashboard
                             </p>
-                            </div>
+                        </div>
                         <div className="">
-                                <h1 className="text-xl md:text-3xl font-semibold">Bank Statement</h1>
-                            </div>
+                            <h1 className="text-xl md:text-3xl font-semibold">Bank Statement</h1>
+                        </div>
 
                         {/* Add Button */}
                         <div className="flex flex-wrap justify-between mt-2 md:mt-8">
-                            
+
                             <div className='flex flex-wrap items-end mb-1 md:mb-0 gap-3'>
                                 <div className="flex gap-1 ">
-                                <Dropdown
-                                    value={filterType}
-                                    onChange={(e) => setFilterType(e.value)}
-                                    options={[
-                                        { label: "Credit", value: "credit" },
-                                        { label: "Debit", value: "debit" }
-                                    ]}
-                                    placeholder="Select Type"
-                                    className="w-full md:w-[150px]"
-                                />
+                                    <Dropdown
+                                        value={filterType}
+                                        onChange={(e) => setFilterType(e.value)}
+                                        options={[
+                                            { label: "Credit", value: "credit" },
+                                            { label: "Debit", value: "debit" }
+                                        ]}
+                                        placeholder="Select Type"
+                                        className="w-full md:w-[150px]"
+                                    />
 
-                                <Dropdown
-                                    value={filterAccount}
-                                    onChange={(e) => setFilterAccount(e.value)}
-                                    options={accountOption}
-                                    optionLabel="name"
-                                    optionValue="_id"
-                                    placeholder="Select Account"
-                                    className="w-full md:w-[150px]"
-                                />
+                                    <Dropdown
+                                        value={filterAccount}
+                                        onChange={(e) => setFilterAccount(e.value)}
+                                        options={accountOption}
+                                        optionLabel="name"
+                                        optionValue="_id"
+                                        placeholder="Select Account"
+                                        className="w-full md:w-[150px]"
+                                    />
                                 </div>
                                 <div className="flex gap-1 " >
-                                 <div className="flex flex-col  ">
-                                <lable>Start Date:</lable>
-                                <input
-                                    type="date"
-                                    value={filterStartDate}
-                                    onChange={(e) => {
-                                        setFilterStartDate(e.target.value);
-                                    }}
-                                    className="w-[130px] md:w-[160px] border px-1 md:px-3 py-1 rounded"
-                                />
-                               </div>
-                               <div className="flex flex-col  ">
-                                <lable>End Date:</lable>
-                                <input
-                                    type="date"
-                                    value={filterEndDate}
-                                    onChange={(e) => {
-                                        setFilterEndDate(e.target.value);
-                                    }}
-                                    className="w-[130px] md:w-[160px] border px-1 md:px-3 py-1 rounded"
-                                />
+                                    <div className="flex flex-col  ">
+                                        <lable>Start Date:</lable>
+                                        <input
+                                            type="date"
+                                            value={filterStartDate}
+                                            onChange={(e) => {
+                                                setFilterStartDate(e.target.value);
+                                            }}
+                                            className="w-[130px] md:w-[160px] border px-1 md:px-3 py-1 rounded"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col  ">
+                                        <lable>End Date:</lable>
+                                        <input
+                                            type="date"
+                                            value={filterEndDate}
+                                            onChange={(e) => {
+                                                setFilterEndDate(e.target.value);
+                                            }}
+                                            className="w-[130px] md:w-[160px] border px-1 md:px-3 py-1 rounded"
+                                        />
+                                    </div>
                                 </div>
-                                </div>
-                                
+
                                 <button
                                     onClick={() => {
                                         fetchBank(); // Apply filters
@@ -667,12 +674,12 @@ const rowErrors = err.response?.data?.rowErrors || [];
 
                             </div>
                             <div className="flex items-center">
-                            <button
-                                onClick={openAddModal}
-                                className="px-2 md:px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
-                            >
-                                Import
-                            </button>
+                                <button
+                                    onClick={openAddModal}
+                                    className="px-2 md:px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
+                                >
+                                    Import
+                                </button>
                             </div>
                         </div>
 
@@ -702,10 +709,10 @@ const rowErrors = err.response?.data?.rowErrors || [];
                         {isAddModalOpen && (
                             <div className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
                                 {/* Overlay */}
-                                <div className="absolute inset-0 "  onClick={()=>{
-                                                    closeAddModal();
-                                                    resetImportForm();
-                                                }}></div>
+                                <div className="absolute inset-0 " onClick={() => {
+                                    closeAddModal();
+                                    resetImportForm();
+                                }}></div>
 
                                 <div
                                     className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
@@ -714,10 +721,10 @@ const rowErrors = err.response?.data?.rowErrors || [];
                                     <div
                                         className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
                                         title="Toggle Sidebar"
-                                         onClick={()=>{
-                                                    closeAddModal();
-                                                    resetImportForm();
-                                                }}
+                                        onClick={() => {
+                                            closeAddModal();
+                                            resetImportForm();
+                                        }}
                                     >
                                         <IoIosArrowForward className="w-3 h-3" />
                                     </div>
@@ -741,7 +748,7 @@ const rowErrors = err.response?.data?.rowErrors || [];
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg 
                focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />
- {errors.date && <p className="text-red-500 text-sm mt-1">{errors.date}</p>}
+                                                {errors.date && <p className="text-red-500 text-sm mt-1">{errors.date}</p>}
                                             </div>
                                         </div>
 
@@ -790,32 +797,32 @@ const rowErrors = err.response?.data?.rowErrors || [];
                                                         </button>
                                                     </div>
                                                 )}
-                                                 {errors.file && <p className="text-red-500 text-sm mt-1">{errors.file}</p>}
+                                                {errors.file && <p className="text-red-500 text-sm mt-1">{errors.file}</p>}
                                             </div>
-                                            
+
                                         </div>
- {/* IMPORT ERRORS */}
-  {errors.import?.length > 0 && (
-    // <div className="mt-4 bg-red-50 border border-red-300 p-3 rounded-lg max-h-48 overflow-auto">
-    <div className="mt-4">
-      <p className="text-red-700 font-semibold mb-2"></p>
-      
-      {Array.isArray(errors.import) ? (
-        errors.import.map((item, idx) => (
-          <p key={idx} className="text-sm text-red-600">
-            Row {item.row}: {item.errors.join(", ")}
-          </p>
-        ))
-      ) : (
-        <p className="text-red-600">{errors.import}</p>
-      )}
-    </div>
-  )}
+                                        {/* IMPORT ERRORS */}
+                                        {errors.import?.length > 0 && (
+                                            // <div className="mt-4 bg-red-50 border border-red-300 p-3 rounded-lg max-h-48 overflow-auto">
+                                            <div className="mt-4">
+                                                <p className="text-red-700 font-semibold mb-2"></p>
+
+                                                {Array.isArray(errors.import) ? (
+                                                    errors.import.map((item, idx) => (
+                                                        <p key={idx} className="text-sm text-red-600">
+                                                            Row {item.row}: {item.errors.join(", ")}
+                                                        </p>
+                                                    ))
+                                                ) : (
+                                                    <p className="text-red-600">{errors.import}</p>
+                                                )}
+                                            </div>
+                                        )}
 
 
                                         <div className="flex  justify-end gap-2 mt-6 md:mt-14">
                                             <button
-                                                onClick={()=>{
+                                                onClick={() => {
                                                     closeAddModal();
                                                     resetImportForm();
                                                 }}

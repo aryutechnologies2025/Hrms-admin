@@ -10,7 +10,7 @@ import { API_URL } from "../../config";
 // import { capitalizeFirstLetter } from "../../StringCaps";
 import { TfiPencilAlt } from "react-icons/tfi";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import Swal from "sweetalert2";
 import Footer from "../../components/Footer";
 import Mobile_Sidebar from "../Mobile_Sidebar";
@@ -352,8 +352,11 @@ const Attendance_add_details = () => {
 
         setTimeout(() => {
           const container = document.getElementById(id);
-          if (container && !container.hasChildNodes()) {
-            ReactDOM.render(
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+            container._root.render(
               <div
                 style={{
                   display: "flex",

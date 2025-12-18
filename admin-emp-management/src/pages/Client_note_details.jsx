@@ -12,7 +12,7 @@ import Mobile_Sidebar from "../components/Mobile_Sidebar";
 
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Editor } from "primereact/editor";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 
 
 import axios from "../api/axiosConfig";
@@ -252,8 +252,11 @@ const Client_note_details = () => {
                 const id = `actions-${row.sno || Math.random()}`;
                 setTimeout(() => {
                     const container = document.getElementById(id);
-                    if (container && !container.hasChildNodes()) {
-                        ReactDOM.render(
+                    if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+            container._root.render(
                             <div
                                 className="action-container"
                                 style={{
@@ -306,8 +309,11 @@ const Client_note_details = () => {
                 const id = `actions-${row.sno || Math.random()}`;
                 setTimeout(() => {
                     const container = document.getElementById(id);
-                    if (container && !container.hasChildNodes()) {
-                        ReactDOM.render(
+                    if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+            container._root.render(
                             <div
                                 className="action-container"
                                 style={{

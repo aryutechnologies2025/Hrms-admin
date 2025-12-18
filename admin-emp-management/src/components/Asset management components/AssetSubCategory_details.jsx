@@ -6,7 +6,7 @@ DataTable.use(DT);
 import axios from "../../api/axiosConfig";
 import { API_URL } from "../../config";
 import { TfiPencilAlt } from "react-icons/tfi";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import Swal from "sweetalert2";
 import Footer from "../Footer";
 import Mobile_Sidebar from "../Mobile_Sidebar";
@@ -250,8 +250,11 @@ const AssetSubCategory_details = () => {
         const id = `actions-${row.sno || Math.random()}`;
         setTimeout(() => {
           const container = document.getElementById(id);
-          if (container && !container.hasChildNodes()) {
-            ReactDOM.render(
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+            container._root.render(
               <div
                 className="action-container"
                 style={{
