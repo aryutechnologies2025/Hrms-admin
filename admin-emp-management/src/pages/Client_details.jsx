@@ -24,7 +24,7 @@ import { IoMdClose } from "react-icons/io";
 import { Dropdown } from "primereact/dropdown";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { createRoot } from "react-dom/client";
+// import { createRoot } from "react-dom/client";
 
 const Client_details = () => {
   const navigate = useNavigate();
