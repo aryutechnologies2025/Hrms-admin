@@ -127,7 +127,7 @@ const Invoice_full = () => {
   //   add items
 
   const [items, setItems] = useState([
-    { description: "", qty: "", rate: "", total: "" },
+    { description: "", hsn:"", qty: "", rate: "", total: "" },
   ]);
 
   const [selectedClient, setSelectedClient] = useState(null);
@@ -351,6 +351,7 @@ useEffect(() => {
         currency: currency.name,
         items: items.map((item) => ({
           description: item.description,
+          hsn:item.hsn,
           quantity: item.qty,
           rate: item.rate,
           amount: item.total,
@@ -551,12 +552,14 @@ useEffect(() => {
                     <div className="text-lg font-medium  ">Items</div>
                   </div>
                   <div className="mb-4 bg-[#132144] border-b border-gray-800 text-white py-2 mt-2 rounded  flex  gap-1 p-2">
-                    <div className="flex flex-wrap w-full ">
+                    <div className="flex flex-wrap w-[65%] ">
                       <label className="text-sm font-medium mb-1">
                         Description
                       </label>
                     </div>
-
+ <div className="flex flex-col w-[30%] ">
+                      <label className="text-sm font-medium mb-1">HSN/SAC</label>
+                    </div>
                     <div className="flex flex-col w-[30%] ">
                       <label className="text-sm font-medium mb-1">Qty</label>
                     </div>
@@ -582,6 +585,18 @@ useEffect(() => {
                           value={item.description}
                           onChange={(e) =>
                             handleChange(index, "description", e.target.value)
+                          }
+                        />
+                      </div>
+
+                      <div className="flex flex-col w-full md:w-[15%]">
+                        <input
+                          type="text"
+                          placeholder="Hsn"
+                          className="border p-2 rounded"
+                          value={item.hsn}
+                          onChange={(e) =>
+                            handleChange(index, "hsn", e.target.value)
                           }
                         />
                       </div>
