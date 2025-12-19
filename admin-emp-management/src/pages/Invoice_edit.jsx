@@ -158,8 +158,10 @@ const fetchClientList = async () => {
   //   add items
 
   const [items, setItems] = useState([
-    { description: "", qty: "", rate: "", total: "" },
+    { description: "",hsn: "", qty: "", rate: "", total: "" },
   ]);
+
+  // console.log("items",items)
 
   const [status, setStatus] = useState("");
 
@@ -188,6 +190,7 @@ const fetchClientList = async () => {
     setIntraOpen(false);
     setInterOpen(false);
   };
+
   const [cgst, setCgst] = useState("");
   const [sgst, setSgst] = useState("");
   const [igst, setIgst] = useState("");
@@ -222,7 +225,7 @@ const fetchClientList = async () => {
       (subtotal * sgstPercent) / 100;
   }
 
-  // setTotalAmount(total.toFixed(2));
+  setTotalAmount(total.toFixed(2));
 }, [subTotal, cgst, sgst, igst, isInterInvoice, isIntraInvoice]);
 
 
@@ -301,6 +304,15 @@ const fetchClientList = async () => {
   //   // setTotalAmount(total);
   // }, [subTotal, tax]);
 
+ useEffect(() => {
+  const sum = items.reduce(
+    (acc, item) => acc + Number(item.total || 0),
+    0
+  );
+  setSubTotal(sum.toFixed(2));
+}, [items]);
+
+
   const addItem = () => {
     setItems([...items, { description: "", qty: "", rate: "", total: "" }]);
   };
@@ -325,9 +337,11 @@ const fetchClientList = async () => {
         currency: currency.name,
         items: items.map((item) => ({
           description: item.description,
+          hsn: item.hsn,
           quantity: item.qty,
           rate: item.rate,
           amount: item.total,
+
         })),
         sub_total: subTotal,
         tax: tax,
@@ -336,42 +350,24 @@ const fetchClientList = async () => {
         notes: notes,
       };
 
-      const response = await axios.post(
-        `${API_URL}/api/invoice/create-invoice`,
+      const response = await axios.put(
+        `${API_URL}/api/invoice/edit-invoice/${rowData._id}`,
         formData
       );
 
       // console.log("response:", response);
 
-      setIsAddModalOpen(false);
 
       Swal.fire({
         icon: "success",
-        title: "Invoice added successfully!",
+        title: "Invoice Edit successfully!",
         showConfirmButton: true,
         timer: 1500,
       }).then(() => {
         navigate("/invoice-details");
       });
 
-      setSelectedClient("");
-      setSelectedProject("");
-      setInvoiceDate("");
-      setDueDate("");
-      setCurreny({});
-      setItems([
-        {
-          description: "",
-          qty: "",
-          rate: "",
-          total: "",
-        },
-      ]);
-      setSubTotal(0);
-      setTax(18);
-      setTotalAmount(0);
-      setNotes("");
-      setStatus("Draft");
+     
 
       fetchProject();
 
@@ -520,90 +516,104 @@ const fetchClientList = async () => {
                   <div className="flex justify-between">
                     <div className="text-lg font-medium  ">Items</div>
                   </div>
-                  <div className="mb-4 bg-[#132144] border-b border-gray-800 text-white py-2 mt-2 rounded  flex  gap-1 p-2">
-                    <div className="flex flex-wrap w-full ">
-                      <label className="text-sm font-medium mb-1">
-                        Description
-                      </label>
-                    </div>
-
-                    <div className="flex flex-col w-[30%] ">
-                      <label className="text-sm font-medium mb-1">Qty</label>
-                    </div>
-
-                    <div className="flex flex-col w-[30%]  ">
-                      <label className="text-sm font-medium mb-1">Rate</label>
-                    </div>
-
-                    <div className="flex flex-col w-[30%]">
-                      <label className="text-sm font-medium mb-1">Total</label>
-                    </div>
-                  </div>
-                  {items.map((item, index) => (
-                    <div
-                      key={index}
-                      className="group items-start mb-4 border-b border-gray-800 pb-4 flex flex-wrap md:flex-nowrap gap-1"
-                    >
-                      <div className="flex flex-col w-full">
-                        <input
-                          type="text"
-                          placeholder="Description"
-                          className="border p-2 rounded w-full"
-                          value={item.description}
-                          onChange={(e) =>
-                            handleChange(index, "description", e.target.value)
-                          }
-                        />
-                      </div>
-
-                      <div className="flex flex-col w-full md:w-[15%] ">
-                        <input
-                          type="number"
-                          placeholder="Qty"
-                          className="border p-2 rounded"
-                          value={item.qty}
-                          onChange={(e) =>
-                            handleChange(index, "qty", e.target.value)
-                          }
-                        />
-                      </div>
-
-                      <div className="flex flex-col w-full md:w-[15%]  ">
-                        <input
-                          type="number"
-                          placeholder="Rate"
-                          className="border p-2 rounded"
-                          value={item.rate}
-                          onChange={(e) =>
-                            handleChange(index, "rate", e.target.value)
-                          }
-                        />
-                      </div>
-
-                      <div className="flex flex-col w-full md:w-[15%]">
-                        <input
-                          type="text"
-                          placeholder="Total"
-                          className="border p-2 rounded bg-gray-100"
-                          value={`${currency?.symbol || ""}${parseFloat(
-                            item.total || 0
-                          ).toFixed(2)}`}
-                          readOnly
-                        />
-                      </div>
-
-                      <div className="flex items-end">
-                        <button
-                          onClick={() => deleteItem(index)}
-                          className="flex items-center justify-center w-8 h-8 rounded-full 
-                 text-white group-hover:text-[#1c8369]
-                 transition-colors duration-200"
-                        >
-                          <MdClose className="w-5 h-6 mt-1" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                   <div className="mb-4 bg-[#132144] border-b border-gray-800 text-white py-2 mt-2 rounded  flex  gap-1 p-2">
+                                     <div className="flex flex-wrap w-[65%] ">
+                                       <label className="text-sm font-medium mb-1">
+                                         Description
+                                       </label>
+                                     </div>
+                  <div className="flex flex-col w-[30%] ">
+                                       <label className="text-sm font-medium mb-1">HSN/SAC</label>
+                                     </div>
+                                     <div className="flex flex-col w-[30%] ">
+                                       <label className="text-sm font-medium mb-1">Qty</label>
+                                     </div>
+                 
+                                     <div className="flex flex-col w-[30%]  ">
+                                       <label className="text-sm font-medium mb-1">Rate</label>
+                                     </div>
+                 
+                                     <div className="flex flex-col w-[30%]">
+                                       <label className="text-sm font-medium mb-1">Total</label>
+                                     </div>
+                                   </div>
+                                   {items.map((item, index) => (
+                                     <div
+                                       key={index}
+                                       className="group items-start mb-4 border-b border-gray-800 pb-4 flex flex-wrap md:flex-nowrap gap-1"
+                                     >
+                                       <div className="flex flex-col w-full">
+                                         <input
+                                           type="text"
+                                           placeholder="Description"
+                                           className="border p-2 rounded w-full"
+                                           value={item.description}
+                                           onChange={(e) =>
+                                             handleChange(index, "description", e.target.value)
+                                           }
+                                         />
+                                       </div>
+                 
+                                       <div className="flex flex-col w-full md:w-[15%]">
+                                         <input
+                                           type="text"
+                                           placeholder="Hsn"
+                                           className="border p-2 rounded"
+                                           value={item.hsn}
+                                           onChange={(e) =>
+                                             handleChange(index, "hsn", e.target.value)
+                                           }
+                                         />
+                                       </div>
+                 
+                                       <div className="flex flex-col w-full md:w-[15%] ">
+                                         <input
+                                           type="number"
+                                           placeholder="Qty"
+                                           className="border p-2 rounded"
+                                           value={item.qty}
+                                           onChange={(e) =>
+                                             handleChange(index, "qty", e.target.value)
+                                           }
+                                         />
+                                       </div>
+                 
+                                       <div className="flex flex-col w-full md:w-[15%]  ">
+                                         <input
+                                           type="number"
+                                           placeholder="Rate"
+                                           className="border p-2 rounded"
+                                           value={item.rate}
+                                           onChange={(e) =>
+                                             handleChange(index, "rate", e.target.value)
+                                           }
+                                         />
+                                       </div>
+                 
+                                       <div className="flex flex-col w-full md:w-[15%]">
+                                         <input
+                                           type="text"
+                                           placeholder="Total"
+                                           className="border p-2 rounded bg-gray-100"
+                                           value={`${currency?.symbol || ""}${parseFloat(
+                                             item.total || 0
+                                           ).toFixed(2)}`}
+                                           readOnly
+                                         />
+                                       </div>
+                 
+                                       <div className="flex items-end">
+                                         <button
+                                           onClick={() => deleteItem(index)}
+                                           className="flex items-center justify-center w-8 h-8 rounded-full 
+                                  text-white group-hover:text-[#1c8369]
+                                  transition-colors duration-200"
+                                         >
+                                           <MdClose className="w-5 h-6 mt-1" />
+                                         </button>
+                                       </div>
+                                     </div>
+                                   ))}
                   <button
                     onClick={addItem}
                     className="flex items-center justify-center gap-1 w-28 text-[13px] rounded border-2 border-[#6fc8b1] text-[#6fc8b1] hover:bg-[#6fc8b1] hover:text-white px-3 py-2"
