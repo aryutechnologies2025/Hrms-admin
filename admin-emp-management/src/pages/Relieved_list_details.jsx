@@ -25,7 +25,7 @@ import { FaEye } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import { FaClipboardList } from "react-icons/fa";
 import Letters_download from "../components/releiving components/Letters_download";
-import { createRoot } from "react-dom/client";
+// import { createRoot } from "react-dom/client";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import Loader from "../components/Loader";
