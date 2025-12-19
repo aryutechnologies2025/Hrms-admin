@@ -23,17 +23,32 @@ import {
 } from "react-icons/io";
 import Loading from "../Loader";
 import { Dropdown } from "primereact/dropdown";
+import { useDateUtils } from "../../hooks/useDateUtils";
 
 const Candidate_Details = () => {
+  const formDateTime = useDateUtils();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [errors, setErrors] = useState({});
   // console.log("errors:", errors);
   const [isAnimating, setIsAnimating] = useState(false);
   const [candidateDetails, setCandidateDetails] = useState([]);
-  // console.log("candidateDetails:", candidateDetails);
+  console.log("candidateDetails:", candidateDetails);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [filterStartDate, setFilterStartDate] = useState(() => {
+    return new Date().toISOString().split("T")[0];
+  });
+  const [filterEndDate, setFilterEndDate] = useState(() => {
+    return new Date().toISOString().split("T")[0];
+  });
+  const [filterInterviewStatus, setFilterInterviewStatus] = useState("");
+  const [filterTechnology, setFilterTechnology] = useState("");
+  const [filterPlatform, setFilterPlatform] = useState("");
 
+  const [accountOption, setAccountOption] = useState([]);
   const location = useLocation();
   const type = location.state || {};
 
@@ -55,6 +70,9 @@ const Candidate_Details = () => {
   const [interviewDropDown, setInterviewDropDown] = useState("");
   const [sourceDropDown, setSourceDropDown] = useState("");
   const [platformDropDown, setPlatformDropDown] = useState("");
+
+  console.log(interviewDropDown, sourceDropDown, platformDropDown);
+
 
 
   const fetchInterviewName = async () => {
@@ -128,11 +146,19 @@ const Candidate_Details = () => {
           params: {
             type: "candidate",
             id: candidateid,
+            interviewStatus: filterInterviewStatus || "",
+            technology: filterTechnology || "",
+            platform: filterPlatform || "",
+            search: search || "",
+            fromDate: filterStartDate || "",
+            toDate: filterEndDate || "",
+            page: 1,
+            limit:10,
           },
           withCredentials: true,
         }
       );
-      // console.log("candidate response", response);
+      console.log("candidate response", response);
 
       setCandidateDetails(response.data.data);
       setLoading(false);
@@ -143,6 +169,24 @@ const Candidate_Details = () => {
       setCandidateDetails([]);
     }
   };
+
+ 
+  const handleReset = () => {
+    setFilterInterviewStatus("");
+    setFilterTechnology("");
+    setFilterPlatform("");
+    setFilterStartDate("");
+    setFilterEndDate("");
+    setSearch("");
+    setPage(1);
+
+    setTimeout(() => {
+    fetchCandidate();
+  }, 0);
+  };
+
+
+
 
   // Open and close modals
   const openAddModal = () => {
@@ -202,7 +246,7 @@ const Candidate_Details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/job-type/create-candidate`,
-        formdata, {withCredentials: true}
+        formdata, { withCredentials: true }
       );
 
       // const validationErrors = validateForm(formValues);
@@ -304,7 +348,7 @@ const Candidate_Details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/job-type/edit-candidate/${editId}`,
-        formData, {withCredentials: true}
+        formData, { withCredentials: true }
       );
       // console.log("candidate edit response:", response);
 
@@ -340,7 +384,7 @@ const Candidate_Details = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/api/job-type/delete-candidate/${id}`,{withCredentials: true})
+          .delete(`${API_URL}/api/job-type/delete-candidate/${id}`, { withCredentials: true })
           .then((response) => {
             if (response.data) {
               toast.success("candidate has been deleted.");
@@ -369,6 +413,11 @@ const Candidate_Details = () => {
         return meta.row + 1;
       },
     },
+    // {
+    //   title: "Date",
+    //   data: "date",
+    //   render: (data) => data ? formDateTime(data) : "-",
+    // },
     {
       title: "FirstName",
       data: null,
@@ -400,7 +449,7 @@ const Candidate_Details = () => {
       render: (row) => row.interviewStatus?.name || "-",
     },
     {
-      title: "Technologie",
+      title: "Technology",
       data: null,
       render: (row) => row.platform?.name || "-",
     },
@@ -412,9 +461,8 @@ const Candidate_Details = () => {
     {
       title: "Created By",
       data: null,
-      render: (row) => row?.createdBy?.name || "-" ,
+      render: (row) => row?.createdBy?.name || "-",
     },
-
     {
       title: "Notes",
       data: null,
@@ -531,11 +579,11 @@ const Candidate_Details = () => {
       ) : (
         <>
           <div>
-            
+
 
             <div className="">
               <Mobile_Sidebar />
-              
+
             </div>
             <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
               <p
@@ -547,21 +595,103 @@ const Candidate_Details = () => {
               <p>{">"}</p>
 
               <p className="text-sm text-blue-500">Candidate</p>
-              </div>
+            </div>
 
             {/* Add Button */}
-            <div className="flex justify-between mt-2 md:mt-4">
+            <div className="flex flex-wrap justify-between mt-2 md:mt-4">
               <div className="">
                 <h1 className="text-xl md:text-3xl  font-semibold">Candidate</h1>
               </div>
+              <div className="flex flex-wrap justify-between mt-2 md:mt-8">
+                <button
+                  onClick={openAddModal}
+                  className=" px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-end mb-1 md:mb-0 gap-2">
+
+              {/* Dropdowns */}
+              <div className="flex gap-1">
+                <div className="flex flex-col">
+                  <label>Interview Status</label>
+                  <Dropdown
+                    value={filterInterviewStatus}
+                    onChange={(e) => setFilterInterviewStatus(e.value)}
+                    options={interviewDropDown}
+                    placeholder="Select Interview Status"
+                    className="w-full md:w-[100%]"
+                  />
+
+                </div>
+
+                <div className="flex flex-col">
+                  <label>Technology</label>
+                  <Dropdown
+                    value={filterTechnology}
+                    onChange={(e) => setFilterTechnology(e.value)}
+                    options={sourceDropDown}
+                    placeholder="Select Technology"
+                    className="w-full md:w-[100%]"
+                  />
+
+                </div>
+
+                <div className="flex flex-col">
+                  <label>Platform</label>
+                  <Dropdown
+                    value={filterPlatform}
+                    onChange={(e) => setFilterPlatform(e.value)}
+                    options={platformDropDown}
+                    placeholder="Select Platform"
+                    className="w-full md:w-[100%]"
+                  />
+
+                </div>
+              </div>
+
+              {/* Date Filters */}
+              <div className="flex gap-1">
+                <div className="flex flex-col">
+                  <label>Start Date</label>
+                  <input
+                    type="date"
+                    value={filterStartDate}
+                    onChange={(e) => setFilterStartDate(e.target.value)}
+                    className="w-full md:w-[100%] border px-3 py-1.5 rounded"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label>End Date</label>
+                  <input
+                    type="date"
+                    value={filterEndDate}
+                    onChange={(e) => setFilterEndDate(e.target.value)}
+                    className="w-full md:w-[100%] border px-3 py-1.5 rounded"
+                  />
+                </div>
+              </div>
+
+              {/* Buttons */}
+              <button
+                onClick={fetchCandidate}
+                className="px-3 py-2 text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
+              >
+                Submit
+              </button>
 
               <button
-                onClick={openAddModal}
-                className=" px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
+                onClick={handleReset}
+                className="bg-gray-300 text-gray-800 px-3 py-2 font-medium w-20 rounded-2xl"
               >
-                Add
+                Reset
               </button>
+
             </div>
+
 
             <div className="datatable-container">
               {/* Responsive wrapper for the table */}
@@ -571,7 +701,7 @@ const Candidate_Details = () => {
                   columns={columns}
                   options={{
                     paging: true,
-                    searching: true,
+                    searching: false,
                     ordering: true,
                     scrollX: true,
                     scrollY: true,
@@ -624,9 +754,8 @@ const Candidate_Details = () => {
                 ></div>
 
                 <div
-                  className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${
-                    isAnimating ? "translate-x-0" : "translate-x-full"
-                  }`}
+                  className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                    }`}
                 >
                   <div
                     className="w-6 h-6 rounded-full  mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
@@ -793,7 +922,7 @@ const Candidate_Details = () => {
                     {/* employee */}
                     <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <label className="block text-md font-medium mb-2">
-                         Employee{" "} <span className="text-red-500">*</span>
+                        Employee{" "} <span className="text-red-500">*</span>
                       </label>
                       <div className="flex items-center w-full md:w-[50%] gap-5 mb-2 md:b-4">
                         <label className="flex items-center gap-2 cursor-pointer">
@@ -821,9 +950,9 @@ const Candidate_Details = () => {
                         </label>
                       </div>
                       {errors.employeeType && (
-                          <p className="flex justify-start text-red-500 text-sm ">
-                            {errors.employeeType}
-                          </p>
+                        <p className="flex justify-start text-red-500 text-sm ">
+                          {errors.employeeType}
+                        </p>
                       )}
                     </div>
                     {employee === "Experience" && (
@@ -987,13 +1116,13 @@ const Candidate_Details = () => {
                     {/* notes */}
 
                     <div className="mt-2 md:mt-5 flex flex-wrap md:flex-nowrap justify-between ">
-                       <label
-                          htmlFor="Platform"
-                          className="block text-md font-medium mb-2 "
-                        >
-                          Notes
-                          
-                        </label>
+                      <label
+                        htmlFor="Platform"
+                        className="block text-md font-medium mb-2 "
+                      >
+                        Notes
+
+                      </label>
                       <div className="w-full md:w-[50%]">
                         <textarea
                           type="text"
@@ -1035,9 +1164,8 @@ const Candidate_Details = () => {
                 ></div>
 
                 <div
-                  className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${
-                    isAnimating ? "translate-x-0" : "translate-x-full"
-                  }`}
+                  className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[45vw] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out ${isAnimating ? "translate-x-0" : "translate-x-full"
+                    }`}
                 >
                   <div
                     className="w-6 h-6 rounded-full mt-2 ms-2  border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
@@ -1364,7 +1492,7 @@ const Candidate_Details = () => {
                           placeholder="Select a Technologies"
                           className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                         {errors.platform && (
+                        {errors.platform && (
                           <p className="text-red-500 text-sm mb-4">
                             {errors.platform}
                           </p>
@@ -1372,7 +1500,7 @@ const Candidate_Details = () => {
                       </div>
                     </div>
 
-                      {/* Platform */}
+                    {/* Platform */}
 
                     <div className="mt-5 flex flex-wrap md:flex-nowrap justify-between items-center">
                       <div className="">
@@ -1395,7 +1523,7 @@ const Candidate_Details = () => {
                           placeholder="Select a platform "
                           className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                         {errors.platform && (
+                        {errors.platform && (
                           <p className="text-red-500 text-sm mb-4">
                             {errors.platform}
                           </p>
