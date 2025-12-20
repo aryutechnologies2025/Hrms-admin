@@ -13,7 +13,7 @@ import Loader from "../Loader";
 import { FiDownload } from "react-icons/fi"; // Import the download icon
 import PayslipContent from "./PayslipContent";
 import Swal from "sweetalert2";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import html2pdf from "html2pdf.js";
 import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";

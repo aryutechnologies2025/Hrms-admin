@@ -7,20 +7,12 @@ DataTable.use(DT);
 
 import axios from ".././api/axiosConfig";
 import { API_URL } from "../config";
-// import { capitalizeFirstLetter } from "../../StringCaps";
 import { TfiPencilAlt } from "react-icons/tfi";
-import { RiDeleteBin6Line } from "react-icons/ri";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import Swal from "sweetalert2";
 import Footer from "../components/Footer";
 import Mobile_Sidebar from "../components/Mobile_Sidebar";
 import { MdOutlineDeleteOutline } from "react-icons/md";
-import { FileUpload } from "primereact/fileupload";
-import { MultiSelect } from "primereact/multiselect";
-import { FaEye } from "react-icons/fa";
-import { Editor } from "primereact/editor";
-import { FaTrash } from "react-icons/fa6";
-import { IoMdClose } from "react-icons/io";
 import { Dropdown } from "primereact/dropdown";
 import { useNavigate } from "react-router-dom";
 import { BsDownload } from "react-icons/bs";
@@ -35,8 +27,6 @@ import Loader from "../components/Loader";
 
 const Declaration_details = () => {
   const navigate = useNavigate();
-
-  // const location = useLocation();
 
   const employeeIds = window.location.pathname.split("/")[2];
   // console.log("window.location.pathname", employeeIds);
@@ -64,7 +54,7 @@ const Declaration_details = () => {
   };
 
   const [roles, setRoles] = useState([]);
-  // const [uploadedFiles, setUploadedFiles] = useState([]);
+
 
   // Fetch roles from the API
   useEffect(() => {
@@ -86,9 +76,9 @@ const Declaration_details = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/declaration/view-declarationlist`,
-        {withCredentials: true}
+        { withCredentials: true }
       );
-      // console.log(response);
+      // console.log("declarationlist",response);
       if (response.data.success) {
         setNotedetails(response.data.data);
         setLoading(false);
@@ -120,7 +110,7 @@ const Declaration_details = () => {
   const [certificateName, setCertificateName] = useState("");
   const [certificateNo, setCertificateNo] = useState("");
   const [selectedEmpData, setSelectedEmpData] = useState(null);
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+  // const [uploadedFiles, setUploadedFiles] = useState([]);
 
 
   const fetchEmployeeList = async () => {
@@ -171,95 +161,52 @@ const Declaration_details = () => {
   //   const [errors, setErrors] = useState({});
 
 
-  const handleFileChange = (event) => {
-    const selectedFiles = Array.from(event.target.files);
-    setUploadedFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
-  };
+  // const handleFileChange = (event) => {
+  //   const selectedFiles = Array.from(event.target.files);
+  //   setUploadedFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+  // };
 
-  const handleRemoveFile = (indexToRemove) => {
-    setUploadedFiles((prevFiles) =>
-      prevFiles.filter((_, index) => index !== indexToRemove)
-    );
-  };
+  // const handleRemoveFile = (indexToRemove) => {
+  //   setUploadedFiles((prevFiles) =>
+  //     prevFiles.filter((_, index) => index !== indexToRemove)
+  //   );
+  // };
 
 
   const handlesubmit = async (e) => {
     e.preventDefault();
 
-    if (!selectedEmpData) {
-      Swal.fire({
-        icon: "warning",
-        title: "Please select an employee!",
-        timer: 1500,
-      });
-      return;
-    }
+    const formData = new FormData();
 
-    try {
-      // const formData = {
-      //   empId: selectedEmpData._id,
-      //   employeeName: selectedEmpData.employeeName,
+    formData.append("empId", selectedEmpData._id);
+    formData.append("employeeName", selectedEmpData.employeeName);
+    formData.append("employeeId", selectedEmpData.employeeId);
+    formData.append("designation", selectedEmpData.role?.name);
+    formData.append("certificateName", certificateName);
+    formData.append("certificateNo", certificateNo);
 
-      //   employeeId: selectedEmpData.employeeId,
-      //   designation: selectedEmpData.role?.name,
-      //   certificateName: certificateName,
-      //   certificateNo: certificateNo,
+    declarationFiles.forEach((file) => {
+      formData.append("documents", file);
+    });
 
-      // };
+    originalFiles.forEach((file) => {
+      formData.append("originalDocuments", file);
+    });
 
-      const formData = new FormData();
+    await axios.post(
+      `${API_URL}/api/declaration/create-declarationlist`,
+      formData,
+      { withCredentials: true }
+    );
 
-      formData.append("empId", selectedEmpData._id);
-      formData.append("employeeName", selectedEmpData.employeeName);
-      formData.append("employeeId", selectedEmpData.employeeId);
-      formData.append("designation", selectedEmpData.role?.name);
-
-      formData.append("certificateName", certificateName);
-      formData.append("certificateNo", certificateNo);
-
-      // Attach files
-      uploadedFiles.forEach((file) => {
-        formData.append("document[]", file);
-      });
-
-      // console.log("Payload:", formData);
-
-      const response = await axios.post(
-        `${API_URL}/api/declaration/create-declarationlist`,
-        formData,
-        {
-         withCredentials: true,
-        }
-      );
-
-      // console.log("response:", response.data);
-
-      Swal.fire({
-        icon: "success",
-        title: "Declaration added successfully!",
-        showConfirmButton: true,
-        timer: 1500,
-      });
-
-      setIsAddModalOpen(false);
-      fetchProject();
-      setCertificateName("");
-      setCertificateNo("");
-      setSelectedEmployeeDetails(null);
-      setEmpId("");
-      setDesignation("");
-    } catch (err) {
-      console.error("Error:", err);
-      if (err.response?.data?.errors) {
-        setErrors(err.response.data.errors);
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Something went wrong!",
-        });
-      }
-    }
+    setDeclarationFiles([]);
+    setOriginalFiles([]);
+    closeAddModal();
+    fetchProject();
   };
+
+
+
 
   //   edit
 
@@ -271,10 +218,15 @@ const Declaration_details = () => {
   const [editCertificateNo, setEditCertificateNo] = useState("");
   const [editEmployeeData, setEditEmployeeData] = useState(null);
 
-  const [attachment, setAttachment] = useState(null);
+  // NEW files
+  const [declarationFiles, setDeclarationFiles] = useState([]);
+  const [originalFiles, setOriginalFiles] = useState([]);
 
-  // console.log("attachment",attachment)
-  const [existingAttachment, setExistingAttachment] = useState(null);
+
+  // EXISTING files (from backend)
+  const [existingDeclarationFile, setExistingDeclarationFile] = useState(null);
+  const [existingOriginalFile, setExistingOriginalFile] = useState(null);
+
 
 
 
@@ -283,94 +235,100 @@ const Declaration_details = () => {
   // console.log("editid", editid);
 
   const openEditModal = (data) => {
-    // console.log("data", data)
     setEditid(data._id);
-    setEditEmpId(data.employeeId || "");
-    setEditDesignation(data.designation || "");
-    setEditCertificateName(data.certificateName || "");
-    setEditCertificateNo(data.certificateNo || "");
-    setEditEmployeeData(data.employeeName || "");
-    setExistingAttachment(data.documents?.[0] || null);
-    setAttachment(null);
+    setEditEmpId(data.employeeId);
+    setEditDesignation(data.designation);
+    setEditCertificateName(data.certificateName);
+    setEditCertificateNo(data.certificateNo);
+    setEditEmployeeData(data.employeeName);
+
+    setExistingDeclarationFile(data.documents?.[0] || null);
+    setExistingOriginalFile(data.originalDocuments?.[0] || null);
+
+    setDeclarationFiles([]);
+    setOriginalFiles([]);
+
+
     setIsEditModalOpen(true);
     setTimeout(() => setIsAnimating(true), 10);
   };
+
   // const closeEditModal = () => {
   //   setIsEditModalOpen(false);
   //   setErrors("");
   // };
 
-  const handleFileChangeedit = (event) => {
-    const selectedFiles = Array.from(event.target.files);
-    setAttachment((prevFiles) => [...prevFiles, ...selectedFiles]);
+  // const handleFileChangeedit = (event) => {
+  //   const selectedFiles = Array.from(event.target.files);
+  //   setAttachment((prevFiles) => [...prevFiles, ...selectedFiles]);
+  // };
+
+  // const handleEditFileChange = (e) => {
+  //   const file = e.target.files[0];
+
+  //   setAttachment(file);          // new file
+  //   setExistingAttachment(null);  // hide old file immediately
+  // };
+
+
+  // const handleRemoveFileedit = () => {
+  //   setAttachment(null);                // remove new file
+  //   setExistingAttachment(data.documents[0]); // restore old file
+  // };
+
+  // new
+
+  const handleDeclarationChange = (e) => {
+    setDeclarationFiles(Array.from(e.target.files));
   };
 
-  const handleEditFileChange = (e) => {
-    const file = e.target.files[0];
+  const handleOriginalChange = (e) => {
+    setOriginalFiles(Array.from(e.target.files));
+  };
 
-    setAttachment(file);          // new file
-    setExistingAttachment(null);  // hide old file immediately
+  const removeDeclarationFile = (index) => {
+    setDeclarationFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeOriginalFile = (index) => {
+    setOriginalFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
 
-  const handleRemoveFileedit = () => {
-    setAttachment(null);                // remove new file
-    setExistingAttachment(data.documents[0]); // restore old file
-  };
 
   const handlesubmitedit = async (e) => {
     e.preventDefault();
-    try {
-      // const formData = {
-      //   // employeeId: employeeIds,
 
-      //   certificateName: editCertificateName,
-      //   certificateNo: editCertificateNo,
-      // };
+    const formData = new FormData();
 
-      const formData = new FormData();
+    formData.append("certificateName", editCertificateName);
+    formData.append("certificateNo", editCertificateNo);
 
-      formData.append("certificateName", editCertificateName);
-      formData.append("certificateNo", editCertificateNo);
+    declarationFiles.forEach((file) => {
+      formData.append("documents", file);
+    });
 
-      if (attachment) {
-        formData.append("document[]", attachment);
-      }
-//       if (attachment.length >= 0) {
-//   formData.append("document", attachment[0]); 
-// }
+    originalFiles.forEach((file) => {
+      formData.append("originalDocuments", file);
+    });
 
+    await axios.put(
+      `${API_URL}/api/declaration/edit-declarationlist/${editid}`,
+      formData,
+      { withCredentials: true }
+    );
 
-      if (!attachment && !existingAttachment) {
-        formData.append("document", "");
-      }
+    Swal.fire({
+      icon: "success",
+      title: "Declaration updated successfully",
+      timer: 1500,
+    });
 
-
-      const response = await axios.put(
-        `${API_URL}/api/declaration/edit-declarationlist/${editid}`,
-        formData, {withCredentials: true}
-      );
-      // console.log("response:", response);
-      Swal.fire({
-        icon: "success",
-        title: "Declaration Update successfully!",
-        showConfirmButton: true,
-        timer: 1500,
-      });
-
-      setIsEditModalOpen(false);
-      fetchProject();
-
-      //   fetchProject();
-      setErrors({});
-    } catch (err) {
-      if (err.response?.data?.errors) {
-        setErrors(err.response.data.errors);
-      } else {
-        console.error("Error submitting form:", err);
-      }
-    }
+    closeEditModal();
+    fetchProject();
   };
+
+
 
   // Validate Status dynamically
 
@@ -390,7 +348,7 @@ const Declaration_details = () => {
       try {
         const res = await axios.delete(
           `${API_URL}/api/declaration/delete-declarationlist/${id}`,
-          {withCredentials: true}
+          { withCredentials: true }
         );
         Swal.fire("Deleted!", "The Declaration has been deleted.", "success");
         // console.log("res", res);
@@ -417,8 +375,8 @@ const Declaration_details = () => {
     container.style.left = "-9999px";
     document.body.appendChild(container);
 
-    // Render your component
-    ReactDOM.render(<Declaration_pdf row={row} />, container);
+    const root = createRoot(container);
+    root.render(<Declaration_pdf row={row} />);
 
     // Wait for DOM to render
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -437,7 +395,7 @@ const Declaration_details = () => {
     pdf.save(fileName);
 
     // Clean up
-    ReactDOM.unmountComponentAtNode(container);
+    root.unmount();
     document.body.removeChild(container);
   };
 
@@ -454,7 +412,8 @@ const Declaration_details = () => {
     container.style.position = "absolute";
     container.style.left = "-9999px";
     document.body.appendChild(container);
-    ReactDOM.render(<Declaration_pdf row={row} />, container);
+    const root = createRoot(container);
+    root.render(<Declaration_pdf row={row} />);
 
     // give React time to paint
     await new Promise((r) => setTimeout(r, 100));
@@ -485,7 +444,7 @@ const Declaration_details = () => {
       const cleanUp = () => {
         URL.revokeObjectURL(url);
         document.body.removeChild(iframe);
-        ReactDOM.unmountComponentAtNode(container);
+        root.unmount();
         document.body.removeChild(container);
         win.removeEventListener("afterprint", cleanUp);
       };
@@ -499,26 +458,26 @@ const Declaration_details = () => {
   };
 
 
-const handledownloadDocument = (documents) => {
-  if (!documents || documents.length === 0) return;
+  const handledownloadDocument = (documents) => {
+    if (!documents || documents.length === 0) return;
 
-  const doc = documents[0]; 
-  if (!doc.filepath) return;
+    const doc = documents[0];
+    if (!doc.filepath) return;
 
 
-  
 
-  // Construct file URL
-  const url = `${API_URL}/api/uploads/others/${doc.filepath}`;
 
-  // Create temporary link to trigger download
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = doc.originalName || "document"; 
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
+    // Construct file URL
+    const url = `${API_URL}/api/uploads/others/${doc.filepath}`;
+
+    // Create temporary link to trigger download
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = doc.originalName || "document";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
 
 
@@ -561,50 +520,99 @@ const handledownloadDocument = (documents) => {
       title: "certificate No",
       data: "certificateNo",
     },
+    {
+      title: "Declaration Document",
+      data: null,
+      render: (data, type, row) => {
+        const id = `declaration-${row._id}`;
 
+        setTimeout(() => {
+          const container = document.getElementById(id);
+          if (!container) return;
 
-  {
-  title: "Documents",
-  data: null,
-  render: (data, type, row) => {
-    const id = `Documents-${row.sno || Math.random()}`;
+          if (!container._root) {
+            container._root = createRoot(container);
+          }
 
-    setTimeout(() => {
-      const container = document.getElementById(id);
-      if (container && !container.hasChildNodes()) {
-        ReactDOM.render(
-          <div
-            className="action-container"
-            style={{
-              display: "flex",
-              gap: "15px",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {row.documents && row.documents.length > 0 ? (
-              <div
-                className="modula-icon-edit flex gap-2"
-                style={{ color: "#000" }}
-              >
+          const docs = row.documents;
+          const file = Array.isArray(docs) ? docs[0] : docs;
+
+          container._root.render(
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {file?.filepath ? (
                 <BsDownload
-                  className="cursor-pointer"
-                  title="Download"
-                  onClick={() => handledownloadDocument(row.documents)}
+                  className="cursor-pointer text-blue-600"
+                  title="Download Declaration"
+                  onClick={() =>
+                    window.open(
+                      `${API_URL}/api/uploads/others/${file.filepath}`,
+                      "_blank"
+                    )
+                  }
                 />
-              </div>
-            ) : (
-              <span>-</span>
-            )}
-          </div>,
-          container
-        );
-      }
-    }, 0);
+              ) : (
+                <span>-</span>
+              )}
+            </div>
+          );
+        }, 0);
 
-    return `<div id="${id}"></div>`;
-  },
-},
+        return `<div id="${id}"></div>`;
+      },
+    },
+    
+    {
+      title: "Original Attachment",
+      data: null,
+      render: (data, type, row) => {
+        const id = `original-${row._id}`;
+
+        setTimeout(() => {
+          const container = document.getElementById(id);
+          if (!container) return;
+
+          if (!container._root) {
+            container._root = createRoot(container);
+          }
+
+          const docs = row.originalDocuments;
+          const file = Array.isArray(docs) ? docs[0] : docs;
+
+          container._root.render(
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {file?.filepath ? (
+                <BsDownload
+                  className="cursor-pointer text-green-600"
+                  title="Download Original"
+                  onClick={() =>
+                    window.open(
+                      `${API_URL}/api/uploads/originalDocuments/${file.filepath}`,
+                      "_blank"
+                    )
+                  }
+                />
+              ) : (
+                <span>-</span>
+              )}
+            </div>
+          );
+        }, 0);
+
+        return `<div id="${id}"></div>`;
+      },
+    },
 
 
     {
@@ -614,8 +622,11 @@ const handledownloadDocument = (documents) => {
         const id = `actions-${row.sno || Math.random()}`;
         setTimeout(() => {
           const container = document.getElementById(id);
-          if (container && !container.hasChildNodes()) {
-            ReactDOM.render(
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+            container._root.render(
               <div
                 className="action-container"
                 style={{
@@ -658,14 +669,6 @@ const handledownloadDocument = (documents) => {
                     onClick={() => handlePrint(row)}
                   />
                 </div>
-
-                {/* <div className="modula-icon-del" style={{
-                  color: "red"
-                }}>
-                  <RiDeleteBin6Line
-                    onClick={() => handleDelete(row.id)}
-                  />
-                </div> */}
               </div>,
               container
             );
@@ -676,9 +679,6 @@ const handledownloadDocument = (documents) => {
     },
   ];
 
-  // conutry list
-
-  //   const [selectedCountry, setSelectedCountry] = useState(null);
 
   return (
     <div className="flex flex-col justify-between bg-gray-100 w-full min-h-screen px-3 md:px-5 pt-2 md:pt-10 overflow-x-auto">
@@ -832,57 +832,69 @@ const handledownloadDocument = (documents) => {
 
 
 
+
+                    {/* document attachamnet */}
+
                     <div className="mb-3 mt-3 flex justify-between">
                       <label className="block text-sm font-medium mb-2">
-                        Attachment                    </label>
-                      <div className="w-[50%]  rounded-lg">
-                        <input type="file" multiple onChange={handleFileChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                        {errors.description && (
-                          <p className="text-red-500 text-sm">
-                            {errors.description}
-                          </p>
-                        )}
-                        {uploadedFiles.length > 0 && (
-                          <div className="mt-4 space-y-2">
-                            {uploadedFiles.map((file, index) => (
+                        Declaration Document
+                      </label>
 
-                            // console.log("uploadedFiles",uploadedFiles),
-                              <div
-                                key={index}
-                                className="flex justify-between items-center rounded-full border p-2 w-[80%] px-3"
-                              >
-                                <span className="truncate text-sm text-gray-800">
-                                  📄 {file.name}
-                                </span>
-                                <button
-                                  type="button"
-                                  onClick={() => handleRemoveFile(index)}
-                                  className="text-red-500 hover:text-red-700 font-semibold text-sm"
-                                >
-                                  ✕
-                                </button>
-                              </div>
-                            ))}
-                          </div>
+                      <div className="w-[50%]">
+                        {existingDeclarationFile && declarationFiles.length === 0 && (
+                          <a
+                            href={`${API_URL}/api/uploads/others/${existingDeclarationFile.filepath}`}
+                            target="_blank"
+                            className="text-blue-600 underline"
+                          >
+                            📄 {existingDeclarationFile.originalName}
+                          </a>
                         )}
+
+                        <input type="file" multiple onChange={handleDeclarationChange} />
+
+                        {declarationFiles.map((file, index) => (
+                          <div key={index} className="flex justify-between border p-2 mt-2 rounded">
+                            <span>📄 {file.name}</span>
+                            <button onClick={() => removeDeclarationFile(index)}>✕</button>
+                          </div>
+                        ))}
+
+
+
                       </div>
                     </div>
 
-                    {/* Revision Notes */}
-                    {/* <div className="mb-3">
-                <label className="block text-sm font-medium mb-2">Notes</label>
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  rows={4}
-                ></textarea>
-              </div>
-               {errors.notes && (
-                    <p className="text-red-500 text-sm mb-4">
-                      {errors.notes}
-                    </p>
-                  )} */}
+
+                    <div className="mb-3 mt-3 flex justify-between">
+                      <label className="block text-sm font-medium mb-2">
+                        Original Attachment
+                      </label>
+
+                      <div className="w-[50%]">
+                        {existingOriginalFile && originalFiles.length === 0 && (
+                          <a
+                            href={`${API_URL}/api/uploads/others/${existingOriginalFile.filepath}`}
+                            target="_blank"
+                            className="text-blue-600 underline"
+                          >
+                            📄 {existingOriginalFile.originalName}
+                          </a>
+                        )}
+
+                        <input type="file" multiple onChange={handleOriginalChange} />
+
+                        {originalFiles.map((file, index) => (
+                          <div key={index} className="flex justify-between border p-2 mt-2 rounded">
+                            <span>📄 {file.name}</span>
+                            <button onClick={() => removeOriginalFile(index)}>✕</button>
+                          </div>
+                        ))}
+
+
+
+                      </div>
+                    </div>
 
                     {/* Buttons */}
                     <div className="flex justify-end gap-2">
@@ -990,48 +1002,71 @@ const handledownloadDocument = (documents) => {
                     </div>
 
 
-                    {/* attachamnet */}
+                    {/* document attachamnet */}
 
                     <div className="mb-3 mt-3 flex justify-between">
-                      <label className="block text-sm font-medium mb-2">Attachment</label>
+                      <label className="block text-sm font-medium mb-2">
+                        Declaration Document
+                      </label>
 
                       <div className="w-[50%]">
-                        {/* Show Existing File ONLY if no new file selected */}
-                        {existingAttachment && !attachment && (
-                          <div className="flex justify-between items-center rounded-full border p-2 w-full px-3 mb-3">
+                        {existingDeclarationFile && declarationFiles.length === 0 && (
+                          <div className="flex justify-between items-center rounded-full border p-2 mb-3">
                             <a
-                              href={`${API_URL}/api/uploads/others/${existingAttachment.filepath}`}
+                              href={`${API_URL}/api/uploads/others/${existingDeclarationFile.filepath}`}
                               target="_blank"
                               className="text-blue-600 underline truncate"
                             >
-                              📄 {existingAttachment.originalName}
+                              📄 {existingDeclarationFile.originalName}
                             </a>
                           </div>
                         )}
 
-                        {/* Upload New File */}
-                        <input
-                          type="file"
-                          onChange={handleEditFileChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                        <input type="file" multiple onChange={handleDeclarationChange} />
 
-                        {/* Show NEW file */}
-                        {attachment && (
-                          <div className="mt-3 flex justify-between items-center rounded-full border p-2 w-full px-3">
-                            <span className="text-sm truncate">📄 {attachment.name}</span>
-
-                            <button
-                              type="button"
-                              onClick={handleRemoveFileedit}
-                              className="text-red-500 hover:text-red-700 font-semibold text-sm"
-                            >
-                              ✕
-                            </button>
+                        {declarationFiles.map((file, index) => (
+                          <div key={index} className="flex justify-between border p-2 mt-2 rounded">
+                            <span>📄 {file.name}</span>
+                            <button onClick={() => removeDeclarationFile(index)}>✕</button>
                           </div>
-                        )}
+                        ))}
+
+
                       </div>
                     </div>
+
+
+                    <div className="mb-3 mt-3 flex justify-between">
+                      <label className="block text-sm font-medium mb-2">
+                        Original Attachment
+                      </label>
+
+                      <div className="w-[50%]">
+                        {existingOriginalFile && originalFiles.length === 0 && (
+                          <div className="flex justify-between items-center rounded-full border p-2 mb-3">
+                            <a
+                              href={`${API_URL}/api/uploads/originalDocuments/${existingOriginalFile.filepath}`}
+                              target="_blank"
+                              className="text-blue-600 underline truncate"
+                            >
+                              📄 {existingOriginalFile.originalName}
+                            </a>
+                          </div>
+                        )}
+
+
+                        <input type="file" multiple onChange={handleOriginalChange} />
+
+                        {originalFiles.map((file, index) => (
+                          <div key={index} className="flex justify-between border p-2 mt-2 rounded">
+                            <span>📄 {file.name}</span>
+                            <button onClick={() => removeOriginalFile(index)}>✕</button>
+                          </div>
+                        ))}
+
+                      </div>
+                    </div>
+
 
 
 

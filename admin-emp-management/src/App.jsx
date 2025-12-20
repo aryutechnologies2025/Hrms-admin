@@ -134,6 +134,7 @@ import Export_invoice from "./components/invoice desgins/Export_invoice";
 import Performa_invoice from "./components/invoice desgins/Performa_invoice";
 import Sales_invoice from "./components/invoice desgins/Sales_invoice";
 import Invoice_edit_main from "./pages/Invoice_edit_main";
+import Client_invoice_main from "./components/Invoice Client/Client_invoice_main";
 
 export const SettingsContext = createContext();
 
@@ -1058,6 +1059,18 @@ function App() {
           requiredRole={["client", "subuser", "admin"]}
         >
           <Mom />
+        </ProtectedRoute>
+      ),
+    },
+
+      {
+      path: "/invoice_clients",
+      element: (
+        <ProtectedRoute
+          isLoggedIn={isLoggedIn}
+          requiredRole={["client"]}
+        >
+          <Client_invoice_main />
         </ProtectedRoute>
       ),
     },

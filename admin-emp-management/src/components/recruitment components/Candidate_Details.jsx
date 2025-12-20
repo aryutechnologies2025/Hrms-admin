@@ -3120,10 +3120,13 @@ const Candidate_Details = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const [filterStartDate, setFilterStartDate] = useState(null);
-  const [filterEndDate, setFilterEndDate] = useState(null);
+  const [filterStartDate, setFilterStartDate] = useState(() => {
+    return new Date().toISOString().split("T")[0];
+  });
+  const [filterEndDate, setFilterEndDate] = useState(() => {
+    return new Date().toISOString().split("T")[0];
+  });
   const [filterInterviewStatus, setFilterInterviewStatus] = useState("");
-  console.log("filterInterviewStatus",filterInterviewStatus)
   const [filterTechnology, setFilterTechnology] = useState("");
   const [filterPlatform, setFilterPlatform] = useState("");
 
@@ -3768,6 +3771,55 @@ const Candidate_Details = () => {
               </button>
 
 
+                <div className="flex flex-col">
+                  <label>Technology</label>
+                  <Dropdown
+                    value={filterTechnology}
+                    onChange={(e) => setFilterTechnology(e.value)}
+                    options={sourceDropDown}
+                    placeholder="Select Technology"
+                    className="w-full md:w-[100%]"
+                  />
+
+                </div>
+
+                <div className="flex flex-col">
+                  <label>Platform</label>
+                  <Dropdown
+                    value={filterPlatform}
+                    onChange={(e) => setFilterPlatform(e.value)}
+                    options={platformDropDown}
+                    placeholder="Select Platform"
+                    className="w-full md:w-[100%]"
+                  />
+
+                </div>
+              </div>
+
+              {/* Date Filters */}
+              <div className="flex gap-1">
+                <div className="flex flex-col">
+                  <label>Start Date</label>
+                  <input
+                    type="date"
+                    value={filterStartDate}
+                    onChange={(e) => setFilterStartDate(e.target.value)}
+                    className="w-full md:w-[100%] border px-3 py-1.5 rounded"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label>End Date</label>
+                  <input
+                    type="date"
+                    value={filterEndDate}
+                    onChange={(e) => setFilterEndDate(e.target.value)}
+                    className="w-full md:w-[100%] border px-3 py-1.5 rounded"
+                  />
+                </div>
+              </div>
+
+              {/* Buttons */}
               <button
                 onClick={handleReset}
                 className="bg-gray-300 text-gray-800 px-3 py-2 font-medium w-20 rounded-2xl"
