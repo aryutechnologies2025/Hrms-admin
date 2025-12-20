@@ -41,7 +41,7 @@ const Client_invoice_details = () => {
 
   const userid = user ? user._id : null;
 
-//   console.log("user", userid);
+  //   console.log("user", userid);
 
   // Fetch roles from the API
   useEffect(() => {
@@ -61,7 +61,7 @@ const Client_invoice_details = () => {
     try {
       const response = await axios.get(`${API_URL}/api/invoice/client-invoice-dashboard`,
         {
-            params: { clientId: userid }
+          params: { clientId: userid }
         },
         { withCredentials: true }
       );
@@ -83,56 +83,83 @@ const Client_invoice_details = () => {
     }
   };
 
-//   download PDF
+  //   download PDF
 
-// const downloadPDF = (document) => {
+  // const downloadPDF = (document) => {
 
-//     console.log("document", document);
+  //     console.log("document", document);
 
-//   if (!document) return;
-// //   const link = document.createElement("a");
-//   link.href = `${API_URL}/api/uploads/clientInvoices/${document.filename}`; 
-//   link.download = document.originalName || "invoice.pdf";
-//   link.click();
-// };
-
-
-// const downloadPDF = (documents) => {
-//   if (!documents || documents.length === 0) return;
-
-//   const doc = documents[0];
-//   if (!doc.path) return; 
-
- 
-// //   const url = `${API_URL}/api/uploads/clientInvoices/${doc.filename}`;
-
-//   const url = `http://192.168.0.110:5009/api/uploads/clientInvoices/${doc.filename}`;
+  //   if (!document) return;
+  // //   const link = document.createElement("a");
+  //   link.href = `${API_URL}/api/uploads/clientInvoices/${document.filename}`; 
+  //   link.download = document.originalName || "invoice.pdf";
+  //   link.click();
+  // };
 
 
-//   const link = document.createElement("a");
-//   link.href = url;
-//   link.download = doc.originalName || "document.pdf";
-//   document.body.appendChild(link);
-//   link.click();
-//   document.body.removeChild(link);
-// };
-const downloadPDF = (documents) => {
-  if (!documents || documents.length === 0) return;
+  // const downloadPDF = (documents) => {
+  //   if (!documents || documents.length === 0) return;
 
-  const doc = documents[0];
-  if (!doc.path) return;
+  //   const doc = documents[0];
+  //   if (!doc.path) return; 
+
+
+  // //   const url = `${API_URL}/api/uploads/clientInvoices/${doc.filename}`;
+
+  //   const url = `http://192.168.0.110:5009/api/uploads/clientInvoices/${doc.filename}`;
+
+
+  //   const link = document.createElement("a");
+  //   link.href = url;
+  //   link.download = doc.originalName || "document.pdf";
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // };
+  // const downloadPDF = (documents) => {
+  //   if (!documents || documents.length === 0) return;
+
+  //   const doc = documents[0];
+  //   if (!doc.path) return;
+
+  //   const url = `${API_URL}/api/uploads/clientInvoices/${doc.filename}`;
+
+  //   const link = document.createElement("a");
+  //   link.href = url;
+  //   link.target = "_blank";
+  //   link.rel = "noopener noreferrer";
+
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // };
+const downloadPDF = (doc) => {
+
+  // console.log("doc", doc);
+  if (!doc || !doc.path) return;
+
+
 
   const url = `${API_URL}/api/uploads/clientInvoices/${doc.filename}`;
 
   const link = document.createElement("a");
   link.href = url;
-  link.target = "_blank"; 
-  link.rel = "noopener noreferrer"; 
+  link.download = doc.originalName || "invoice.pdf";
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
 
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
 };
+
+  const [isOpenClient, setIsOpenClient] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null);
+
+  const handleOpenClientPopup = (documents) => {
+    setSelectedClient({ documents });
+    setIsOpenClient(true);
+  };
 
 
   const columns = [
@@ -147,7 +174,7 @@ const downloadPDF = (documents) => {
     {
       title: "Client Name",
       data: "clientName",
-    //   render: (data) => data?.client_name || "-"
+      //   render: (data) => data?.client_name || "-"
     },
 
     {
@@ -158,7 +185,7 @@ const downloadPDF = (documents) => {
     {
       title: "Invoice Number",
       data: "invoiceNumber",
-            render: (data) => data ? (data) : "-"
+      render: (data) => data ? (data) : "-"
 
     },
 
@@ -192,51 +219,52 @@ const downloadPDF = (documents) => {
       data: "status",
       render: (data, type, row) => {
         const textColor =
-          data === "0" ? "text-green-600 border rounded-full border-green-600" : data === "1" ? "text-orange-600 border rounded-full border-orange-600" : "text-red-600 border rounded-full border-red-600";
+          data === "paid" ? "text-green-600 border rounded-full border-green-600" : data === "pending" ? "text-orange-600 border rounded-full border-orange-600" : "text-red-600 border rounded-full border-red-600";
         return `<div class="${textColor}" style="display: inline-block; padding: 2px 10px; text-align: center; font-size: 12px; font-weight:500">
-                  ${data === "0" ? "Paid" : data === "1" ? "Pending" : "OverDue"
+                  ${data === "paid" ? "Paid" : data === "pending" ? "Pending" : "OverDue"
           }
                 </div>`;
       },
     },
 
-   {
-    title: "Action",
-    data: null,
-    render: (data, type, row) => {
-      const id = `actions-${row.sno || Math.random()}`;
-      setTimeout(() => {
-        const container = document.getElementById(id);
-        if (container) {
-          if (!container._root) {
-            container._root = createRoot(container);
-          }
+    {
+      title: "Invoice View",
+      data: null,
+      render: (data, type, row) => {
+        const id = `actions-${row.sno || Math.random()}`;
+        setTimeout(() => {
+          const container = document.getElementById(id);
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
 
-          container._root.render(
-            <div
-              className="action-container"
-              style={{
-                display: "flex",
-                gap: "15px",
-                alignItems: "flex-end",
-                justifyContent: "center",
-              }}
-            >
+            container._root.render(
               <div
-                className="cursor-pointer"
-                onClick={() => downloadPDF(row.document)}
+                className="action-container"
+                style={{
+                  display: "flex",
+                  gap: "15px",
+                  alignItems: "flex-end",
+                  justifyContent: "center",
+                }}
               >
-                <FaFileDownload />
+                <div
+                  className="cursor-pointer"
+                  title="View Invoice"
+                  onClick={() => handleOpenClientPopup(row.document)}
+                >
+                  <FaEye />
+                </div>
               </div>
-            </div>
-          );
-        }
-      }, 0);
-      return `<div id="${id}"></div>`;
+            );
+          }
+        }, 0);
+        return `<div id="${id}"></div>`;
+      },
     },
-  },
   ];
- 
+
 
 
   return (
@@ -260,7 +288,7 @@ const downloadPDF = (documents) => {
           <p className="text-sm text-blue-500">Invoice List</p>
         </div>
 
-   
+
 
         <div className="datatable-container">
           {/* Responsive wrapper for the table */}
@@ -280,43 +308,60 @@ const downloadPDF = (documents) => {
             />
           </div>
         </div>
-        {/* {isOpen && (
-          <div
-            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-          >
-            <div className="bg-white p-6 rounded-xl w-96 relative">
+      
+
+{isOpenClient && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
+    <div className="bg-white rounded-2xl shadow-2xl w-[25%] p-6 relative max-h-[90vh] overflow-y-auto">
+
+      {/* Close button */}
+      <button
+        className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl transition"
+        onClick={() => setIsOpenClient(false)}
+      >
+        ✖
+      </button>
+
+      {/* Header */}
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">
+          Client Invoices
+        </h2>
+      </div>
+
+      {/* Documents */}
+      <div className="space-y-3">
+        {selectedClient?.documents?.length > 0 ? (
+          selectedClient.documents.map((doc, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition"
+            >
+              {/* Invoice Name */}
+              <span className="text-gray-700 font-medium">
+                {doc.invoice_document_type}
+              </span>
+
+              {/* Download Icon */}
               <button
-                className="absolute top-3 right-3 text-gray-500"
-                onClick={() => setIsOpen(false)}
+                onClick={() => downloadPDF(doc)}
+                className="text-blue-600 hover:text-blue-800 transition"
+                title="Download Invoice"
               >
-                ✖
+                <FaFileDownload />
               </button>
-
-              <h2 className="text-xl font-semibold mb-4">Details</h2>
-
-              <div className="space-y-3">
-                {items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex justify-between items-center border p-2 rounded-md"
-                  >
-                    <span>{item.title}</span>
-                    <FaEye
-                      className="cursor-pointer text-blue-600"
-                      onClick={() => {
-                navigate(item.path, {
-                  state: { invoiceId: selectedInvoiceId._id } 
-                });
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-
             </div>
-          </div>
-        )} */}
-  
+          ))
+        ) : (
+          <p className="text-gray-400 text-center">
+            No documents available
+          </p>
+        )}
+      </div>
+    </div>
+  </div>
+)}
+
 
 
 

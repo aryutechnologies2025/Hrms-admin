@@ -14,9 +14,10 @@ import Swal from "sweetalert2";
 
 const Performa_invoice = () => {
     const invoiceRef = useRef();
-
+  const params = new URLSearchParams(window.location.search);
+const invoiceId = params.get("invoiceId");
     const location = useLocation();
-    const { invoiceId } = location.state || {};
+    // const { invoiceId } = location.state || {};
 
     // console.log("invoiceId in Sales_invoice:", invoiceId);
 
