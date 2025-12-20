@@ -926,7 +926,7 @@ import { useDateUtils  } from "../../hooks/useDateUtils";
 //   columnOrder: ["todo", "inprogress", "inreview", "done"],
 // };
 
-const TaskList = () => {
+const TaskListClient = () => {
   const formatDateTime = useDateUtils();
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
@@ -2278,4 +2278,4 @@ const TaskList = () => {
   );
 };
 
-export default TaskList;
+export default TaskListClient;
