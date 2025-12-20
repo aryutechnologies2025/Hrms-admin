@@ -235,178 +235,328 @@
 //   );
 // }
 
+// import { useEffect, useRef, useState } from "react";
+// import axios from "axios";
+// import { v4 as uuidv4 } from "uuid";
+// import { API_URL } from "../../config";
+
+// export default function Slack_chatwindow({ socket, currentUser, selectedUser }) {
+//   const [messages, setMessages] = useState([]);
+//   const [text, setText] = useState("");
+//   const bottomRef = useRef(null);
+
+//   /* ---------------- LOAD CHAT + JOIN ROOM ---------------- */
+//   useEffect(() => {
+//     if (!selectedUser || !socket) return;
+
+//     axios
+//       .get(
+//         `${API_URL}/api/messages/dm/${currentUser.employeeId}/${selectedUser._id}`
+//       )
+//       .then((res) => setMessages(res.data.data || []));
+
+//     socket.emit("join_dm", {
+//       senderId: currentUser.employeeId,
+//       receiverId: selectedUser._id,
+//     });
+
+//     // mark seen when opening chat
+//     socket.emit("mark_seen", {
+//       senderId: selectedUser._id,
+//       receiverId: currentUser.employeeId,
+//     });
+//   }, [selectedUser, socket, currentUser]);
+
+//   /* ---------------- RECEIVE MESSAGE ---------------- */
+//   useEffect(() => {
+//     if (!socket || !selectedUser) return;
+
+//     const onReceive = (msg) => {
+//       const me = currentUser.employeeId;
+//       const other = selectedUser._id;
+
+//       // ignore other chats
+//       if (
+//         !(
+//           (msg.senderId === me && msg.receiverId === other) ||
+//           (msg.senderId === other && msg.receiverId === me)
+//         )
+//       ) {
+//         return;
+//       }
+
+//       setMessages((prev) => {
+//         const idx = prev.findIndex((m) => m.clientId === msg.clientId);
+//         if (idx !== -1) {
+//           const copy = [...prev];
+//           copy[idx] = {
+//             ...copy[idx],
+//             pending: false,
+//             receiverOnline: msg.receiverOnline,
+//           };
+//           return copy;
+//         }
+//         return [...prev, msg];
+//       });
+//     };
+
+//     socket.on("receive_dm", onReceive);
+//     return () => socket.off("receive_dm", onReceive);
+//   }, [socket, selectedUser, currentUser]);
+
+
+
+//   /* ---------------- SEEN CONFIRMATION ---------------- */
+//   useEffect(() => {
+//     if (!socket || !selectedUser) return;
+
+//     const onSeen = ({ senderId, receiverId }) => {
+//       // only my sent messages in this chat
+//       if (
+//         senderId !== currentUser.employeeId ||
+//         receiverId !== selectedUser._id
+//       )
+//         return;
+
+//       setMessages((prev) =>
+//         prev.map((m) =>
+//           m.senderId === currentUser.employeeId &&
+//           m.receiverId === selectedUser._id
+//             ? { ...m, seen: true }
+//             : m
+//         )
+//       );
+//     };
+
+//     socket.on("messages_seen", onSeen);
+//     return () => socket.off("messages_seen", onSeen);
+//   }, [socket, selectedUser, currentUser]);
+
+//   /* ---------------- AUTO SCROLL ---------------- */
+//   useEffect(() => {
+//     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+//   }, [messages]);
+
+//   /* ---------------- SEND MESSAGE ---------------- */
+//   const sendMessage = () => {
+//     if (!text.trim()) return;
+
+//     const clientId = uuidv4();
+
+//     setMessages((p) => [
+//       ...p,
+//       {
+//         clientId,
+//         senderId: currentUser.employeeId,
+//         receiverId: selectedUser._id,
+//         text,
+//         pending: true,
+//         seen: false,
+//         receiverOnline: false,
+//       },
+//     ]);
+
+//     socket.emit("send_dm", {
+//       clientId,
+//       senderId: currentUser.employeeId,
+//       receiverId: selectedUser._id,
+//       text,
+//     });
+
+//     setText("");
+//   };
+
+//   /* ---------------- UI ---------------- */
+//   return (
+//     <div className="flex-1 flex flex-col">
+//       <div className="flex-1 p-4 overflow-y-auto">
+//         {messages.map((m) => (
+//           <div
+//             key={m.clientId || m._id}
+//             className={`mb-2 ${
+//               m.senderId === currentUser.employeeId
+//                 ? "text-right"
+//                 : "text-left"
+//             }`}
+//           >
+//             <div className="inline-block px-3 py-2 rounded bg-gray-200">
+//               {m.text}
+//             </div>
+
+//             {m.senderId === currentUser.employeeId && (
+//               <div className="text-xs mt-1">
+//                 {m.pending && "⏳"}
+//                 {!m.pending && !m.seen && (m.receiverOnline ? "✔✔" : "✔")}
+//                 {m.seen && <span className="text-blue-600">✔✔</span>}
+//               </div>
+//             )}
+//           </div>
+//         ))}
+//         <div ref={bottomRef} />
+//       </div>
+
+//       <div className="p-3 flex gap-2 border-t">
+//         <input
+//           value={text}
+//           onChange={(e) => setText(e.target.value)}
+//           className="flex-1 border rounded px-2"
+//           placeholder="Type a message"
+//         />
+//         <button onClick={sendMessage} className="bg-blue-600 text-white px-4">
+//           Send
+//         </button>
+//       </div>
+//     </div>
+//   );
+// }
+
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { API_URL } from "../../config";
 
-export default function Slack_chatwindow({ socket, currentUser, selectedUser }) {
+export default function Slack_chatwindow({
+  socket,
+  currentUser,
+  selectedUser,
+}) {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const bottomRef = useRef(null);
 
-  /* ---------------- LOAD CHAT + JOIN ROOM ---------------- */
+  const me = currentUser.employeeId;
+  const other = selectedUser?._id;
+
+  /* 1️⃣ LOAD HISTORY + JOIN ROOM */
   useEffect(() => {
-    if (!selectedUser || !socket) return;
+    if (!socket || !selectedUser) return;
 
     axios
-      .get(
-        `${API_URL}/api/messages/dm/${currentUser.employeeId}/${selectedUser._id}`
-      )
+      .get(`${API_URL}/api/messages/dm/${me}/${other}`)
       .then((res) => setMessages(res.data.data || []));
 
-    socket.emit("join_dm", {
-      senderId: currentUser.employeeId,
-      receiverId: selectedUser._id,
-    });
+    socket.emit("join_dm", { senderId: me, receiverId: other });
+  }, [selectedUser]);
 
-    // mark seen when opening chat
-    socket.emit("mark_seen", {
-      senderId: selectedUser._id,
-      receiverId: currentUser.employeeId,
-    });
-  }, [selectedUser, socket, currentUser]);
-
-  /* ---------------- RECEIVE MESSAGE ---------------- */
+  /* 2️⃣ RECEIVE MESSAGE */
   useEffect(() => {
     if (!socket || !selectedUser) return;
 
     const onReceive = (msg) => {
-      const me = currentUser.employeeId;
-      const other = selectedUser._id;
-
-      // ignore other chats
       if (
         !(
           (msg.senderId === me && msg.receiverId === other) ||
           (msg.senderId === other && msg.receiverId === me)
         )
-      ) {
-        return;
-      }
+      ) return;
 
-      setMessages((prev) => {
-        const idx = prev.findIndex((m) => m.clientId === msg.clientId);
-        if (idx !== -1) {
-          const copy = [...prev];
-          copy[idx] = {
-            ...copy[idx],
-            pending: false,
-            receiverOnline: msg.receiverOnline,
-          };
-          return copy;
-        }
-        return [...prev, msg];
-      });
+      setMessages((prev) => [...prev, msg]);
+
+      // ✅ IF I AM RECEIVER AND CHAT IS OPEN → MARK SEEN
+      if (msg.senderId === other && msg.receiverId === me) {
+        socket.emit("mark_seen", {
+          senderId: other,
+          receiverId: me,
+        });
+      }
     };
 
     socket.on("receive_dm", onReceive);
     return () => socket.off("receive_dm", onReceive);
-  }, [socket, selectedUser, currentUser]);
+  }, [socket, selectedUser]);
 
+  /* 3️⃣ WHEN CHAT OPENS → MARK OLD MESSAGES SEEN */
+  useEffect(() => {
+    if (!socket || !selectedUser || messages.length === 0) return;
 
+    const hasUnseen = messages.some(
+      (m) => m.senderId === other && m.receiverId === me && !m.seenAt
+    );
 
-  /* ---------------- SEEN CONFIRMATION ---------------- */
+    if (hasUnseen) {
+      socket.emit("mark_seen", {
+        senderId: other,
+        receiverId: me,
+      });
+    }
+  }, [messages, selectedUser]);
+
+  /* 4️⃣ SENDER RECEIVES SEEN EVENT → UPDATE BLUE TICK */
   useEffect(() => {
     if (!socket || !selectedUser) return;
 
-    const onSeen = ({ senderId, receiverId }) => {
-      // only my sent messages in this chat
-      if (
-        senderId !== currentUser.employeeId ||
-        receiverId !== selectedUser._id
-      )
-        return;
-
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.senderId === currentUser.employeeId &&
-          m.receiverId === selectedUser._id
-            ? { ...m, seen: true }
-            : m
-        )
-      );
+    const onSeen = ({ senderId, receiverId, seenAt }) => {
+      // ✅ I AM SENDER
+      if (senderId === me && receiverId === other) {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.senderId === me && !m.seenAt
+              ? { ...m, seenAt }
+              : m
+          )
+        );
+      }
     };
 
     socket.on("messages_seen", onSeen);
     return () => socket.off("messages_seen", onSeen);
-  }, [socket, selectedUser, currentUser]);
+  }, [socket, selectedUser]);
 
-  /* ---------------- AUTO SCROLL ---------------- */
+  /* AUTO SCROLL */
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  /* ---------------- SEND MESSAGE ---------------- */
+  /* SEND */
   const sendMessage = () => {
     if (!text.trim()) return;
 
-    const clientId = uuidv4();
-
-    setMessages((p) => [
-      ...p,
-      {
-        clientId,
-        senderId: currentUser.employeeId,
-        receiverId: selectedUser._id,
-        text,
-        pending: true,
-        seen: false,
-        receiverOnline: false,
-      },
-    ]);
-
     socket.emit("send_dm", {
-      clientId,
-      senderId: currentUser.employeeId,
-      receiverId: selectedUser._id,
+      clientId: uuidv4(),
+      senderId: me,
+      receiverId: other,
       text,
     });
 
     setText("");
   };
 
-  /* ---------------- UI ---------------- */
+  if (!selectedUser) {
+    return <div>Select chat</div>;
+  }
+
   return (
     <div className="flex-1 flex flex-col">
       <div className="flex-1 p-4 overflow-y-auto">
-        {messages.map((m) => (
-          <div
-            key={m.clientId || m._id}
-            className={`mb-2 ${
-              m.senderId === currentUser.employeeId
-                ? "text-right"
-                : "text-left"
-            }`}
-          >
-            <div className="inline-block px-3 py-2 rounded bg-gray-200">
-              {m.text}
-            </div>
-
-            {m.senderId === currentUser.employeeId && (
-              <div className="text-xs mt-1">
-                {m.pending && "⏳"}
-                {!m.pending && !m.seen && (m.receiverOnline ? "✔✔" : "✔")}
-                {m.seen && <span className="text-blue-600">✔✔</span>}
+        {messages.map((m) => {
+          const isMe = m.senderId === me;
+          return (
+            <div key={m._id} className={`mb-2 ${isMe ? "text-right" : ""}`}>
+              <div className="inline-block px-3 py-2 bg-blue-600 text-white rounded">
+                {m.text}
               </div>
-            )}
-          </div>
-        ))}
+
+              {isMe && (
+                <div className="text-xs">
+                  {!m.deliveredAt && "✔"}
+                  {m.deliveredAt && !m.seenAt && "✔✔"}
+                  {m.seenAt && <span className="text-blue-600">✔✔</span>}
+                </div>
+              )}
+            </div>
+          );
+        })}
         <div ref={bottomRef} />
       </div>
 
-      <div className="p-3 flex gap-2 border-t">
+      <div className="p-3 flex gap-2">
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
-          className="flex-1 border rounded px-2"
-          placeholder="Type a message"
+          className="flex-1 border px-3"
         />
-        <button onClick={sendMessage} className="bg-blue-600 text-white px-4">
-          Send
-        </button>
+        <button onClick={sendMessage}>Send</button>
       </div>
     </div>
   );
 }
-

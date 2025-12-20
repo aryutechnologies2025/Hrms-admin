@@ -38,7 +38,7 @@ const Invoice_edit = () => {
 
   const navigate = useNavigate();
 
-  
+
 
 
 
@@ -55,22 +55,22 @@ const Invoice_edit = () => {
   const [clientOption, setClientOption] = useState(null);
   const [projectOption, setProjectOption] = useState(null);
 
-    const [selectedClient, setSelectedClient] = useState(null);
+  const [selectedClient, setSelectedClient] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null);
 
   // console.log("clientOption", clientOption);
 
- useEffect(() => {
-  fetchClientList(); 
-}, []);
+  useEffect(() => {
+    fetchClientList();
+  }, []);
 
-useEffect(() => {
-  if (selectedClient) {
-    fetchaProjectList(selectedClient);
-  }
-}, [selectedClient]);
+  useEffect(() => {
+    if (selectedClient) {
+      fetchaProjectList(selectedClient);
+    }
+  }, [selectedClient]);
 
-const fetchClientList = async () => {
+  const fetchClientList = async () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/client/view-clientdetails`,
@@ -99,19 +99,19 @@ const fetchClientList = async () => {
       const response = await axios.get(
         `${API_URL}/api/invoice/get-project-name-with-client`,
         {
-           params: {
-            project : selectedClient,
+          params: {
+            project: selectedClient,
           },
           // headers: {
           //   Authorization: `Bearer ${localStorage.getItem("token")}`,
           // },
-         
+
         }
       );
 
-      console.log("response",response)
+      console.log("response", response)
 
-        const ProjectOptions = response.data.data.map(emp => ({
+      const ProjectOptions = response.data.data.map(emp => ({
 
         label: emp.name,
         value: emp._id,
@@ -139,7 +139,7 @@ const fetchClientList = async () => {
     setErrors(newErrors);
   };
 
- 
+
   //   currency
 
   const currencyOptions = [
@@ -158,8 +158,10 @@ const fetchClientList = async () => {
   //   add items
 
   const [items, setItems] = useState([
-    { description: "", qty: "", rate: "", total: "" },
+    { description: "", hsn: "", qty: "", rate: "", total: "" },
   ]);
+
+  // console.log("items",items)
 
   const [status, setStatus] = useState("");
 
@@ -188,6 +190,7 @@ const fetchClientList = async () => {
     setIntraOpen(false);
     setInterOpen(false);
   };
+
   const [cgst, setCgst] = useState("");
   const [sgst, setSgst] = useState("");
   const [igst, setIgst] = useState("");
@@ -201,29 +204,29 @@ const fetchClientList = async () => {
     selected.includes("Tax Invoice") && selected.includes("Inter");
 
   useEffect(() => {
-  const subtotal = parseFloat(subTotal) || 0;
+    const subtotal = parseFloat(subTotal) || 0;
 
-  const cgstPercent = parseFloat(cgst) || 0;
-  const sgstPercent = parseFloat(sgst) || 0;
-  const igstPercent = parseFloat(igst) || 0;
+    const cgstPercent = parseFloat(cgst) || 0;
+    const sgstPercent = parseFloat(sgst) || 0;
+    const igstPercent = parseFloat(igst) || 0;
 
-  let total = subtotal;
+    let total = subtotal;
 
-  // Inter-state → IGST
-  if (isInterInvoice && igstPercent > 0) {
-    total = subtotal + (subtotal * igstPercent) / 100;
-  }
+    // Inter-state → IGST
+    if (isInterInvoice && igstPercent > 0) {
+      total = subtotal + (subtotal * igstPercent) / 100;
+    }
 
-  // Intra-state → CGST + SGST
-  if (isIntraInvoice && (cgstPercent > 0 || sgstPercent > 0)) {
-    total =
-      subtotal +
-      (subtotal * cgstPercent) / 100 +
-      (subtotal * sgstPercent) / 100;
-  }
+    // Intra-state → CGST + SGST
+    if (isIntraInvoice && (cgstPercent > 0 || sgstPercent > 0)) {
+      total =
+        subtotal +
+        (subtotal * cgstPercent) / 100 +
+        (subtotal * sgstPercent) / 100;
+    }
 
-  // setTotalAmount(total.toFixed(2));
-}, [subTotal, cgst, sgst, igst, isInterInvoice, isIntraInvoice]);
+    setTotalAmount(total.toFixed(2));
+  }, [subTotal, cgst, sgst, igst, isInterInvoice, isIntraInvoice]);
 
 
 
@@ -301,6 +304,15 @@ const fetchClientList = async () => {
   //   // setTotalAmount(total);
   // }, [subTotal, tax]);
 
+  useEffect(() => {
+    const sum = items.reduce(
+      (acc, item) => acc + Number(item.total || 0),
+      0
+    );
+    setSubTotal(sum.toFixed(2));
+  }, [items]);
+
+
   const addItem = () => {
     setItems([...items, { description: "", qty: "", rate: "", total: "" }]);
   };
@@ -325,9 +337,11 @@ const fetchClientList = async () => {
         currency: currency.name,
         items: items.map((item) => ({
           description: item.description,
+          hsn: item.hsn,
           quantity: item.qty,
           rate: item.rate,
           amount: item.total,
+
         })),
         sub_total: subTotal,
         tax: tax,
@@ -336,42 +350,24 @@ const fetchClientList = async () => {
         notes: notes,
       };
 
-      const response = await axios.post(
-        `${API_URL}/api/invoice/create-invoice`,
+      const response = await axios.put(
+        `${API_URL}/api/invoice/edit-invoice/${rowData._id}`,
         formData
       );
 
       // console.log("response:", response);
 
-      setIsAddModalOpen(false);
 
       Swal.fire({
         icon: "success",
-        title: "Invoice added successfully!",
+        title: "Invoice Edit successfully!",
         showConfirmButton: true,
         timer: 1500,
       }).then(() => {
         navigate("/invoice-details");
       });
 
-      setSelectedClient("");
-      setSelectedProject("");
-      setInvoiceDate("");
-      setDueDate("");
-      setCurreny({});
-      setItems([
-        {
-          description: "",
-          qty: "",
-          rate: "",
-          total: "",
-        },
-      ]);
-      setSubTotal(0);
-      setTax(18);
-      setTotalAmount(0);
-      setNotes("");
-      setStatus("Draft");
+
 
       fetchProject();
 
@@ -521,12 +517,14 @@ const fetchClientList = async () => {
                     <div className="text-lg font-medium  ">Items</div>
                   </div>
                   <div className="mb-4 bg-[#132144] border-b border-gray-800 text-white py-2 mt-2 rounded  flex  gap-1 p-2">
-                    <div className="flex flex-wrap w-full ">
+                    <div className="flex flex-wrap w-[65%] ">
                       <label className="text-sm font-medium mb-1">
                         Description
                       </label>
                     </div>
-
+                    <div className="flex flex-col w-[30%] ">
+                      <label className="text-sm font-medium mb-1">HSN/SAC</label>
+                    </div>
                     <div className="flex flex-col w-[30%] ">
                       <label className="text-sm font-medium mb-1">Qty</label>
                     </div>
@@ -552,6 +550,18 @@ const fetchClientList = async () => {
                           value={item.description}
                           onChange={(e) =>
                             handleChange(index, "description", e.target.value)
+                          }
+                        />
+                      </div>
+
+                      <div className="flex flex-col w-full md:w-[15%]">
+                        <input
+                          type="text"
+                          placeholder="Hsn"
+                          className="border p-2 rounded"
+                          value={item.hsn}
+                          onChange={(e) =>
+                            handleChange(index, "hsn", e.target.value)
                           }
                         />
                       </div>
@@ -596,8 +606,8 @@ const fetchClientList = async () => {
                         <button
                           onClick={() => deleteItem(index)}
                           className="flex items-center justify-center w-8 h-8 rounded-full 
-                 text-white group-hover:text-[#1c8369]
-                 transition-colors duration-200"
+                                  text-white group-hover:text-[#1c8369]
+                                  transition-colors duration-200"
                         >
                           <MdClose className="w-5 h-6 mt-1" />
                         </button>
@@ -743,9 +753,10 @@ const fetchClientList = async () => {
                             className="w-full h-11 px-2 py-2  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                           >
                             <option value="">Select a status</option>
-                            <option value="0">Paid</option>
-                            <option value="1">Pending</option>
-                            <option value="2">OverDue</option>
+                            <option value="paid">Paid</option>
+                            <option value="pending">Pending</option>
+                            <option value="overdue">Overdue</option>
+
                           </select>
                           {errors.status && (
                             <p className="text-red-500 text-sm mb-4">
