@@ -3120,13 +3120,10 @@ const Candidate_Details = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const [filterStartDate, setFilterStartDate] = useState(() => {
-    return new Date().toISOString().split("T")[0];
-  });
-  const [filterEndDate, setFilterEndDate] = useState(() => {
-    return new Date().toISOString().split("T")[0];
-  });
+  const [filterStartDate, setFilterStartDate] = useState(null);
+  const [filterEndDate, setFilterEndDate] = useState(null);
   const [filterInterviewStatus, setFilterInterviewStatus] = useState("");
+  console.log("filterInterviewStatus",filterInterviewStatus)
   const [filterTechnology, setFilterTechnology] = useState("");
   const [filterPlatform, setFilterPlatform] = useState("");
 

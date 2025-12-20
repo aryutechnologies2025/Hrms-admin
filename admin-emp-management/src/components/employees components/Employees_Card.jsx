@@ -27,6 +27,9 @@ const Employees_Card = () => {
 
   const [currentTime, setCurrentTime] = useState(new Date());
 
+  const [filterStartDate, setFilterStartDate] = useState(null);
+  const [filterEndDate, setFilterEndDate] = useState(null);
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentTime(new Date());
@@ -89,7 +92,7 @@ const Employees_Card = () => {
         }
       );
 
-      console.log("response", response);
+      console.log("response check", response);
 
       const Employees = response.data.data;
 
@@ -101,14 +104,18 @@ const Employees_Card = () => {
           employee_Image: employee.photo
             ? `${API_URL}/api/uploads/${employee.photo}`
             : sample,
+
           employee_Name: employee.employeeName,
           employee_Position: employee.employeeType,
           employee_mailId: employee.email,
           employee_dutyStatus: employee.dutyStatus,
           employee_dateofjoining: employee.dateOfJoining,
-          // employee_role: employee.role?.department?.name,
           employee_role: employee.role?.name,
+
+          // ✅ ADD THIS
+          experienceText: calculateTillDate(employee.dateOfJoining),
         }));
+
         const sortedData = transformedData.sort((a, b) =>
           a.employee_Name.localeCompare(b.employee_Name)
         );
@@ -310,6 +317,16 @@ const Employees_Card = () => {
     },
 
     {
+      title: "Till Date",
+      data: "employee_experienceText",
+      render: function (data) {
+        if (!data) return "-";
+
+        return formatDateTime(data)
+      },
+    },
+
+    {
       title: "Status",
       data: "employee_dutyStatus",
       render: (data, type, row) => {
@@ -340,6 +357,16 @@ const Employees_Card = () => {
                 className="flex gap-3 justify-center items-center"
                 style={{ fontSize: "18px" }}
               >
+                <TfiPencilAlt
+                  className="cursor-pointer "
+                  onClick={() =>
+                    navigate("/editemployeedetails", {
+                      state: {
+                        employee_id: row.id,
+                      },
+                    })
+                  }
+                />
                 <FaEye
                   className="cursor-pointer text-blue-600"
                   onClick={() => showUserDetails(row)}
@@ -427,7 +454,7 @@ const Employees_Card = () => {
                   className=" w-fit text-xs md:text-base text-center mt-1 md:mt-4  text-white bg-gray-500 hover:bg-gray-600 font-medium px-2 md:px-3 py-2 rounded-full "
                 >
                   Back
-                </button>
+                </button> */}
                 <button
                   onClick={onClickAddNewMember}
                   className=" w-fit text-xs md:text-base text-center mt-1 md:mt-4  text-white bg-blue-500 hover:bg-blue-600 font-medium px-1 md:px-3 py-2 rounded-full "
@@ -503,46 +530,83 @@ const Employees_Card = () => {
             ) : (
               <>
                 <div className="flex flex-wrap justify-start md:justify-end gap-1 mt-6 md:space-x-3">
-                  {/* STATUS FILTER */}
-                  <select
-                    className="px-3 py-2 w-full md:w-40 cursor-pointer rounded-md border"
-                    onChange={(e) => filterEmployee(e.target.value)}
-                  >
-                    <option value="">Status</option>
-                    <option value="1" selected>
-                      Active
-                    </option>
-                    <option value="0">Relieved</option>
-                  </select>
 
-                  {/* ROLE FILTER */}
-                  <select
-                    className="px-3 py-2 w-full md:w-60 cursor-pointer rounded-md border"
-                    onChange={(e) => setRoleFilter(e.target.value)}
-                  >
-                    <option value="">Role</option>
 
-                    {[
-                      ...new Set(
-                        allEmployees
-                          .map((emp) => emp.employee_role?.trim())
-                          .filter((role) => role && role.length > 0)
-                      ),
-                    ]
-                      .sort((a, b) => a.localeCompare(b))
-                      .map((role, index) => (
-                        <option key={index} value={role}>
-                          {role}
-                        </option>
-                      ))}
-                  </select>
+                  {/* <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-col w-full md:w-40 ">
+                      <label>Start Date</label>
+                      <input
+                        type="date"
+                        value={filterStartDate}
+                        onChange={(e) => setFilterStartDate(e.target.value)}
+                        className="w-[100%] border px-3 py-1.5 rounded"
+                      />
+                    </div>
+
+                    <div className="flex flex-col w-full md:w-40">
+                      <label>End Date</label>
+                      <input
+                        type="date"
+                        value={filterEndDate}
+                        onChange={(e) => setFilterEndDate(e.target.value)}
+                        className="w-[100%] border px-3 py-1.5 rounded"
+                      />
+                    </div>
+                  </div> */}
 
                   {/* JOINING DATE FILTER */}
-                  {/* <input
-                    type="date"
-                    className="px-3 py-2 w-full md:w-44 cursor-pointer rounded-md border"
-                    onChange={(e) => setDateFilter(e.target.value)}
-                  /> */}
+                  <div className="flex flex-col w-full md:w-40">
+                    <label>Joining Date</label>
+                    <input
+                      type="date"
+                      className="px-3 py-2 w-full md:w-44 cursor-pointer rounded-md border"
+                      onChange={(e) => setDateFilter(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="flex flex-wrap gap-1">
+                    {/* STATUS FILTER */}
+                    <div className="flex flex-col w-full md:w-[30%]  ">
+                      <label>Status</label>
+                      <select
+                        className="px-3 py-2 w-full cursor-pointer rounded-md border"
+                        onChange={(e) => filterEmployee(e.target.value)}
+                      >
+                        <option value="">Status</option>
+                        <option value="1" selected>
+                          Active
+                        </option>
+                        <option value="0">Relieved</option>
+                      </select>
+                    </div>
+
+                    {/* ROLE FILTER */}
+                    <div className="flex flex-col w-full md:w-[50%]">
+                      <label>Role</label>
+                      <select
+                        className="px-3 py-2 w-full md:w-60 cursor-pointer rounded-md border"
+                        onChange={(e) => setRoleFilter(e.target.value)}
+                      >
+                        <option value="">Role</option>
+
+                        {[
+                          ...new Set(
+                            allEmployees
+                              .map((emp) => emp.employee_role?.trim())
+                              .filter((role) => role && role.length > 0)
+                          ),
+                        ]
+                          .sort((a, b) => a.localeCompare(b))
+                          .map((role, index) => (
+                            <option key={index} value={role}>
+                              {role}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                  </div>
+
+
                 </div>
 
                 {/* <div className="mt-3 md:mt-0 space-x-2">

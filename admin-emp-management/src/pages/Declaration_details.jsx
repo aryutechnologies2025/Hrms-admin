@@ -547,7 +547,7 @@ const Declaration_details = () => {
             >
               {file?.filepath ? (
                 <BsDownload
-                  className="cursor-pointer text-blue-600"
+                  className="cursor-pointer text-black"
                   title="Download Declaration"
                   onClick={() =>
                     window.open(
@@ -594,7 +594,7 @@ const Declaration_details = () => {
             >
               {file?.filepath ? (
                 <BsDownload
-                  className="cursor-pointer text-green-600"
+                  className="cursor-pointer text-black"
                   title="Download Original"
                   onClick={() =>
                     window.open(
