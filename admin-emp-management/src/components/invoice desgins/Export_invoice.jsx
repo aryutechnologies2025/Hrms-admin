@@ -18,7 +18,9 @@ const Export_invoice = () => {
 
 
     const location = useLocation();
-    const { invoiceId } = location.state || {};
+    // const { invoiceId } = location.state || {};
+    const params = new URLSearchParams(window.location.search);
+    const invoiceId = params.get("invoiceId");
 
     // console.log("invoiceId in Sales_invoice:", invoiceId);
 
@@ -106,81 +108,81 @@ const Export_invoice = () => {
     //   pdf.save(fileName);
     // };
 
-  const [isGenerating, setIsGenerating] = useState(false);
-    
+    const [isGenerating, setIsGenerating] = useState(false);
 
-     const downloadPDF = async () => {
-   
-       setIsGenerating(true);
-   
-       Swal.fire({
-         title: "Generating Invoice",
-         text: "Please wait while we generate your invoice...",
-         allowOutsideClick: false,
-         didOpen: () => {
-           Swal.showLoading();
-         },
-       });
-       try {
-         const element = invoiceRef.current;
-   
-         const canvas = await html2canvas(element, { scale: 1.5 });
-         const imgData = canvas.toDataURL("image/jpeg", 0.7);
-   
-         const pdf = new jsPDF("p", "mm", "a4");
-         const pageWidth = pdf.internal.pageSize.getWidth();
-         const imgProps = pdf.getImageProperties(imgData);
-         const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
-   
-         pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
-   
-         const invoiceNumber =
-           allinvoiceDetails?.invoice_number || `invoice_${Date.now()}`;
-   
-         const pdfBlob = pdf.output("blob");
-   
-   
-         const formData = new FormData();
-         formData.append("clientInvoice", pdfBlob, `${invoiceNumber}.pdf`);
-         formData.append("id", invoiceId);
-         formData.append("invoice_document_type", "Export Invoice");
-   
-   
-        
-           const response = await axios.post(
-             `${API_URL}/api/invoice/upload-client-invoice`,
-             formData,
-             { withCredentials: true }, {
-             headers: {
-               "Content-Type": "multipart/form-data",
-             },
-           }
-           );
-     console.log("PDF uploaded successfully:", response.data);
-   
-       Swal.fire({
-         icon: "success",
-         title: "Invoice Generated",
-         text: "Invoice has been generated and uploaded successfully.",
-         confirmButtonColor: "#2563eb",
-       });
-   
-       // Optional local download
-       // pdf.save(`${invoiceNumber}.pdf`);
-   
-     } catch (error) {
-       console.error("Invoice generation failed:", error);
-   
-       Swal.fire({
-         icon: "error",
-         title: "Generation Failed",
-         text: "Something went wrong while generating invoice.",
-       });
-     } finally {
-       setIsGenerating(false);
-     }
-   };
-   
+
+    const downloadPDF = async () => {
+
+        setIsGenerating(true);
+
+        Swal.fire({
+            title: "Generating Invoice",
+            text: "Please wait while we generate your invoice...",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+        try {
+            const element = invoiceRef.current;
+
+            const canvas = await html2canvas(element, { scale: 1.5 });
+            const imgData = canvas.toDataURL("image/jpeg", 0.7);
+
+            const pdf = new jsPDF("p", "mm", "a4");
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const imgProps = pdf.getImageProperties(imgData);
+            const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
+
+            pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
+
+            const invoiceNumber =
+                allinvoiceDetails?.invoice_number || `invoice_${Date.now()}`;
+
+            const pdfBlob = pdf.output("blob");
+
+
+            const formData = new FormData();
+            formData.append("clientInvoice", pdfBlob, `${invoiceNumber}.pdf`);
+            formData.append("id", invoiceId);
+            formData.append("invoice_document_type", "Export Invoice");
+
+
+
+            const response = await axios.post(
+                `${API_URL}/api/invoice/upload-client-invoice`,
+                formData,
+                { withCredentials: true }, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+            );
+            console.log("PDF uploaded successfully:", response.data);
+
+            Swal.fire({
+                icon: "success",
+                title: "Invoice Generated",
+                text: "Invoice has been generated and uploaded successfully.",
+                confirmButtonColor: "#2563eb",
+            });
+
+            // Optional local download
+            // pdf.save(`${invoiceNumber}.pdf`);
+
+        } catch (error) {
+            console.error("Invoice generation failed:", error);
+
+            Swal.fire({
+                icon: "error",
+                title: "Generation Failed",
+                text: "Something went wrong while generating invoice.",
+            });
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
 
 
 
@@ -366,7 +368,7 @@ const Export_invoice = () => {
                                         Nos
                                     </td>
                                     <td className="no-line-bot p-1 border-r-2   align-middle border-black">
-                                         {NumberFormat(item.amount)}
+                                        {NumberFormat(item.amount)}
                                     </td>
                                 </tr>
                             ))}
@@ -435,19 +437,19 @@ const Export_invoice = () => {
                                 </td>
                             </tr>
                             {/* value */}
-                           <tr className="border-t-2  border-black  ">
-                <td className="no-line-bot p-1 border-r-2  border-l-2 align-middle  border-black"></td>
-                <td className="no-line-bot p-2  border-r-2  align-middle  border-black text-right font-bold">
-                  Invoice Value
-                </td>
-                <td className="no-line-bot p-1 border-r-2  align-middle  border-black"></td>
-                <td className="no-line-bot p-1 border-r-2  align-middle  border-black"></td>
-                <td className="no-line-bot p-1 border-r-2 align-middle   border-black"></td>
-                <td className="no-line-bot p-1 border-r-2 align-middle   border-black"></td>
-                <td className="no-line-bot p-1 border-r-2  align-middle  border-black font-bold">
-                  ₹ {NumberFormat(totalAmount)}
-                </td>
-              </tr>
+                            <tr className="border-t-2  border-black  ">
+                                <td className="no-line-bot p-1 border-r-2  border-l-2 align-middle  border-black"></td>
+                                <td className="no-line-bot p-2  border-r-2  align-middle  border-black text-right font-bold">
+                                    Invoice Value
+                                </td>
+                                <td className="no-line-bot p-1 border-r-2  align-middle  border-black"></td>
+                                <td className="no-line-bot p-1 border-r-2  align-middle  border-black"></td>
+                                <td className="no-line-bot p-1 border-r-2 align-middle   border-black"></td>
+                                <td className="no-line-bot p-1 border-r-2 align-middle   border-black"></td>
+                                <td className="no-line-bot p-1 border-r-2  align-middle  border-black font-bold">
+                                    ₹ {NumberFormat(totalAmount)}
+                                </td>
+                            </tr>
                         </tfoot>
                     </table>
                 </div>
@@ -636,23 +638,23 @@ const Export_invoice = () => {
                     <div className="w-[38%] border-b-2 border-black">
                         <div className="border-b-2  border-black border-l-2 border-r-2 -mt-4 border-t-2 ">
                             {" "}
-                              <p className="   underline text-[14px]  border-black  pt-1 px-1">
-                            Company's Bank Details
-                        </p>
-                        <div className=" border-black   p-1">
-                            <p className=" text-black">
-                                <span className="w-[20%] inline-block ">Ac Name</span>: {settingData?.accountName}
+                            <p className="   underline text-[14px]  border-black  pt-1 px-1">
+                                Company's Bank Details
                             </p>
-                            <p className=" text-black">
-                                <span className="w-[20%] inline-block">Bank Name</span>: {settingData?.bankName}
-                            </p>
-                            <p className="pt-1 text-black">
-                                <span className="w-[20%] inline-block">A/c No</span>: {settingData?.accountNumber}
-                            </p>
-                            <p className="pt-1 text-black pb-1">
-                                <span className="w-[20%] inline-block">IFSC / BR</span>: {settingData?.ifscCode}
-                            </p>
-                        </div>
+                            <div className=" border-black   p-1">
+                                <p className=" text-black">
+                                    <span className="w-[20%] inline-block ">Ac Name</span>: {settingData?.accountName}
+                                </p>
+                                <p className=" text-black">
+                                    <span className="w-[20%] inline-block">Bank Name</span>: {settingData?.bankName}
+                                </p>
+                                <p className="pt-1 text-black">
+                                    <span className="w-[20%] inline-block">A/c No</span>: {settingData?.accountNumber}
+                                </p>
+                                <p className="pt-1 text-black pb-1">
+                                    <span className="w-[20%] inline-block">IFSC / BR</span>: {settingData?.ifscCode}
+                                </p>
+                            </div>
                         </div>
                         <div className="border-x-2 border-black p-3">
                             {/* Top Text */}
@@ -692,7 +694,7 @@ const Export_invoice = () => {
                     onClick={downloadPDF}
                     className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                Generate Invoice
+                    Generate Invoice
 
                 </button>
 

@@ -16,7 +16,9 @@ const Invoice = () => {
   const invoiceRef = useRef();
 
   const location = useLocation();
-  const { invoiceId } = location.state || {};
+    const params = new URLSearchParams(window.location.search);
+const invoiceId = params.get("invoiceId");
+  // const { invoiceId } = location.state || {};
 
   // console.log("invoiceId in Sales_invoice:", invoiceId);
 

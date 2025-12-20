@@ -61,14 +61,103 @@ const Invoice_details = () => {
   const [errors, setErrors] = useState({});
 
   const [clientdetails, setClientdetails] = useState([]);
+  // console.log("clientdetails", clientdetails);
   // console.log("errors::", errors);
+  const [clientOption, setClientOption] = useState(null);
+  // console.log("clientOption", clientOption);
+  const [projectOption, setProjectOption] = useState(null);
+
+  const [clientFilter, setClientFilter] = useState("");
+  const [projectFilter, setProjectFilter] = useState("");
+  // console.log(object)
+  const [statusFilter, setStatusFilter] = useState("");
+
+ 
+
+  useEffect(() => {
+    fetchClientList();
+  }, []);
+
+  useEffect(() => {
+    if (clientFilter) {
+      fetchaProjectList(clientFilter);
+    }
+  }, [clientFilter]);
+  
+useEffect(() => {
+  handleReset();
+}, []);
+
+
+  const fetchClientList = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/client/view-clientdetails`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      const clientOptions = response.data.data.map(emp => ({
+
+        label: emp.client_name,
+        value: emp._id,
+      }));
+
+      setClientOption(clientOptions);
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchaProjectList = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/invoice/get-project-name-with-client`,
+        {
+          params: {
+            project: clientFilter,
+          },
+          // headers: {
+          //   Authorization: `Bearer ${localStorage.getItem("token")}`,
+          // },
+
+        }
+      );
+
+      console.log("response", response)
+
+      const ProjectOptions = response.data.data.map(emp => ({
+
+        label: emp.name,
+        value: emp._id,
+      }));
+
+      setProjectOption(ProjectOptions);
+
+      // const clientName = response.data.data.map((emp) => emp.name);
+      // // console.log("client name", clientName);
+      // setProjectOption(clientName);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
 
   const fetchProject = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/invoice/view-invoice`,
+        {
+          params: { client: clientFilter, 
+            project: projectFilter, 
+            status: statusFilter },
+        },
         { withCredentials: true }
       );
-      // console.log(response);
+      console.log("response", response);
       if (response.data.success) {
         const formattedData = response.data.data.map(item => ({
           ...item,
@@ -85,6 +174,35 @@ const Invoice_details = () => {
       setErrors("Failed to fetch roles.");
     }
   };
+
+  const handleReset = async () => {
+  try {
+    // Clear filters
+    setClientFilter(null);
+    setProjectFilter(null);
+    setStatusFilter("");
+
+    // Fetch all data without filters
+    const response = await axios.get(
+      `${API_URL}/api/invoice/view-invoice`,
+      { withCredentials: true }
+    );
+
+    if (response.data.success) {
+      const formattedData = response.data.data.map(item => ({
+        ...item,
+        invoice_date: item.invoice_date
+          ? formatDateTime(item.invoice_date)
+          : "-"
+      }));
+
+      setClientdetails(formattedData);
+    }
+  } catch (err) {
+    setErrors("Failed to reset table data.");
+  }
+};
+
 
   // Open and close modals
   const openAddModal = () => {
@@ -165,15 +283,15 @@ const Invoice_details = () => {
         formData, { withCredentials: true }
       );
 
-       Swal.fire({
-      icon: "success",
-      title: "Saved Successfully",
-      text: "Invoice documents have been updated.",
-      confirmButtonColor: "#2563EB",
-      background: "#ffffff",
-    }).then(() => {
-      setIsOpenClient(false);
-    });
+      Swal.fire({
+        icon: "success",
+        title: "Saved Successfully",
+        text: "Invoice documents have been updated.",
+        confirmButtonColor: "#2563EB",
+        background: "#ffffff",
+      }).then(() => {
+        setIsOpenClient(false);
+      });
 
 
 
@@ -206,9 +324,6 @@ const Invoice_details = () => {
     { title: "Export Invoice", path: "/invoice-export" },
     { title: "Tax Invoice", path: "/invoice-pdf" },
   ];
-const [clientFilter, setClientFilter] = useState("");
-const [projectFilter, setProjectFilter] = useState("");
-const [statusFilter, setStatusFilter] = useState("");
 
 
   const columns = [
@@ -267,9 +382,9 @@ const [statusFilter, setStatusFilter] = useState("");
       data: "status",
       render: (data, type, row) => {
         const textColor =
-          data === "0" ? "text-green-600 border rounded-full border-green-600" : data === "1" ? "text-orange-600 border rounded-full border-orange-600" : "text-red-600 border rounded-full border-red-600";
+          data === "paid" ? "text-green-600 border rounded-full border-green-600" : data === "pending" ? "text-orange-600 border rounded-full border-orange-600" : "text-red-600 border rounded-full border-red-600";
         return `<div class="${textColor}" style="display: inline-block; padding: 2px 10px; text-align: center; font-size: 12px; font-weight:500">
-                  ${data === "0" ? "Paid" : data === "1" ? "Pending" : "OverDue"
+                  ${data === "paid" ? "Paid" : data === "pending" ? "Pending" : "OverDue"
           }
                 </div>`;
       },
@@ -457,72 +572,64 @@ const [statusFilter, setStatusFilter] = useState("");
           </button>
         </div>
 
- <div className="flex flex-wrap gap-6 mb-6 items-end">
-  {/* Client Filter */}
-  <div className="flex flex-col">
-    <label className="text-sm font-semibold mb-1 text-gray-700">Client</label>
-    <select
-      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-48"
-      value={clientFilter}
-      onChange={(e) => setClientFilter(e.target.value)}
-    >
-      <option value="">All Clients</option>
-      {/* {clientsList.map((c) => (
-        <option key={c._id} value={c.client_name}>
-          {c.client_name}
-        </option>
-      ))} */}
-    </select>
-  </div>
+        <div className="flex flex-wrap gap-6 mb-6 items-end">
+          {/* Client Filter */}
+          <div className="flex flex-col">
+            <label className="text-sm font-semibold mb-1 text-gray-700">Client</label>
+            <Dropdown
+              value={clientFilter}
+              onChange={(e) => setClientFilter(e.value)}
+              options={clientOption}
+              optionLabel="label"
+              placeholder="Select a Client"
+              className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
-  {/* Project Filter */}
-  <div className="flex flex-col">
-    <label className="text-sm font-semibold mb-1 text-gray-700">Project</label>
-    <select
-      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-48"
-      value={projectFilter}
-      onChange={(e) => setProjectFilter(e.target.value)}
-    >
-      <option value="">All Projects</option>
-      {/* {projectsList.map((p) => (
-        <option key={p._id} value={p.name}>
-          {p.name}
-        </option>
-      ))} */}
-    </select>
-  </div>
+          {/* Project Filter */}
+          <div className="flex flex-col">
+            <label className="text-sm font-semibold mb-1 text-gray-700">Project</label>
+            <Dropdown
+              value={projectFilter}
+              onChange={(e) => setProjectFilter(e.value)}
+              options={projectOption}
+              optionLabel="label"
+              placeholder="Select a Project"
+              className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
-  {/* Status Filter */}
-  <div className="flex flex-col">
-    <label className="text-sm font-semibold mb-1 text-gray-700">Status</label>
-    <select
-      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-40"
-      value={statusFilter}
-      onChange={(e) => setStatusFilter(e.target.value)}
-    >
-      <option value="">All</option>
-      <option value="Paid">Paid</option>
-      <option value="Pending">Pending</option>
-      <option value="OverDue">OverDue</option>
-    </select>
-  </div>
+          {/* Status Filter */}
+          <div className="flex flex-col">
+            <label className="text-sm font-semibold mb-1 text-gray-700">Status</label>
+            <select
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-40"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="">All</option>
+              <option value="paid">Paid</option>
+              <option value="pending">Pending</option>
+              <option value="overdue">OverDue</option>
+            </select>
+          </div>
 
-  {/* Buttons */}
-  <div className="flex gap-2 mt-5">
-    <button
-      // onClick={handleFilterSubmit}
-      className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium shadow"
-    >
-      Submit
-    </button>
-    <button
-      // onClick={handleReset}
-      className="border  px-6 py-2 rounded-lg hover:bg-gray-400 bg-gray-500 text-white text-sm font-medium"
-    >
-      Reset
-    </button>
-  </div>
-</div>
+          {/* Buttons */}
+          <div className="flex gap-2 mt-5">
+            <button
+              onClick={fetchProject}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium shadow"
+            >
+              Submit
+            </button>
+            <button
+              onClick={handleReset}
+              className="border  px-6 py-2 rounded-lg hover:bg-gray-400 bg-gray-500 text-white text-sm font-medium"
+            >
+              Reset
+            </button>
+          </div>
+        </div>
 
 
 
@@ -596,7 +703,7 @@ const [statusFilter, setStatusFilter] = useState("");
               {/* Header */}
               <div className="text-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-800">
-                  Client Summary
+                  Client Invoice
                 </h2>
               </div>
 
@@ -628,7 +735,7 @@ const [statusFilter, setStatusFilter] = useState("");
                 onClick={handlesubmit}
                 className="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
               >
-                Submit
+                Show Client
               </button>
 
 
@@ -696,8 +803,15 @@ const [statusFilter, setStatusFilter] = useState("");
                   <div
                     key={index}
                     className="flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium cursor-pointer hover:bg-blue-200 transition"
+                    // onClick={() =>
+                    //   navigate(item.path, { state: { invoiceId: selectedInvoiceId._id } })
+                    // }
                     onClick={() =>
-                      navigate(item.path, { state: { invoiceId: selectedInvoiceId._id } })
+                      window.open(
+                        `${item.path}?invoiceId=${selectedInvoiceId._id}`,
+                        "_blank",
+                        "noopener,noreferrer"
+                      )
                     }
                   >
                     {item.title}

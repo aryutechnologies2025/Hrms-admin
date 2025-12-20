@@ -127,7 +127,7 @@ const Invoice_full = () => {
   //   add items
 
   const [items, setItems] = useState([
-    { description: "", hsn:"", qty: "", rate: "", total: "" },
+    { description: "", hsn: "", qty: "", rate: "", total: "" },
   ]);
 
   const [selectedClient, setSelectedClient] = useState(null);
@@ -140,14 +140,14 @@ const Invoice_full = () => {
   const [tax, setTax] = useState("");
   const [totalAmount, setTotalAmount] = useState("");
   const [notes, setNotes] = useState("");
-  
- const [cgst, setCgst] = useState("");
+
+  const [cgst, setCgst] = useState("");
   const [sgst, setSgst] = useState("");
   const [igst, setIgst] = useState("");
-    const [selected, setSelected] = useState("Select Invoice Type");
+  const [selected, setSelected] = useState("Select Invoice Type");
 
 
-  
+
   const [open, setOpen] = useState(false);
   const [taxOpen, setTaxOpen] = useState(false);
   const [intraOpen, setIntraOpen] = useState(false);
@@ -162,7 +162,7 @@ const Invoice_full = () => {
     setIntraOpen(false);
     setInterOpen(false);
   };
- 
+
 
 
   const isIntraInvoice =
@@ -175,23 +175,23 @@ const Invoice_full = () => {
 
 
 
-    const [clientOption, setClientOption] = useState(null);
+  const [clientOption, setClientOption] = useState(null);
   const [projectOption, setProjectOption] = useState(null);
 
   // console.log("clientOption", projectOption);
 
 
-useEffect(() => {
-  fetchClientList(); 
-}, []);
-useEffect(() => {
-  fetchaSettings(); 
-}, []);
-useEffect(() => {
-  if (selectedClient) {
-    fetchaProjectList(selectedClient);
-  }
-}, [selectedClient]);
+  useEffect(() => {
+    fetchClientList();
+  }, []);
+  useEffect(() => {
+    fetchaSettings();
+  }, []);
+  useEffect(() => {
+    if (selectedClient) {
+      fetchaProjectList(selectedClient);
+    }
+  }, [selectedClient]);
 
 
   const fetchClientList = async () => {
@@ -223,19 +223,19 @@ useEffect(() => {
       const response = await axios.get(
         `${API_URL}/api/invoice/get-project-name-with-client`,
         {
-           params: {
-            project : selectedClient,
+          params: {
+            project: selectedClient,
           },
           // headers: {
           //   Authorization: `Bearer ${localStorage.getItem("token")}`,
           // },
-         
+
         }
       );
 
-      console.log("response",response)
+      console.log("response", response)
 
-        const ProjectOptions = response.data.data.map(emp => ({
+      const ProjectOptions = response.data.data.map(emp => ({
 
         label: emp.name,
         value: emp._id,
@@ -251,21 +251,21 @@ useEffect(() => {
     }
   };
 
-   const fetchaSettings = async () => {
+  const fetchaSettings = async () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/setting/view-invoice-setting`,
-        {withCredentials: true}
-      
+        { withCredentials: true }
+
       );
 
-      console.log("response",response)
+      console.log("response", response)
 
       setIgst(response.data.data[0]?.igst || "");
       setCgst(response.data.data[0]?.cgst || "");
       setSgst(response.data.data[0]?.sgst || "");
 
-     
+
     } catch (error) {
       console.log(error);
     }
@@ -302,29 +302,29 @@ useEffect(() => {
   // }, [subTotal, tax]);
 
   useEffect(() => {
-  const subtotal = parseFloat(subTotal) || 0;
+    const subtotal = parseFloat(subTotal) || 0;
 
-  const cgstPercent = parseFloat(cgst) || 0;
-  const sgstPercent = parseFloat(sgst) || 0;
-  const igstPercent = parseFloat(igst) || 0;
+    const cgstPercent = parseFloat(cgst) || 0;
+    const sgstPercent = parseFloat(sgst) || 0;
+    const igstPercent = parseFloat(igst) || 0;
 
-  let total = subtotal;
+    let total = subtotal;
 
-  // Inter-state → IGST
-  if (isInterInvoice && igstPercent > 0) {
-    total = subtotal + (subtotal * igstPercent) / 100;
-  }
+    // Inter-state → IGST
+    if (isInterInvoice && igstPercent > 0) {
+      total = subtotal + (subtotal * igstPercent) / 100;
+    }
 
-  // Intra-state → CGST + SGST
-  if (isIntraInvoice && (cgstPercent > 0 || sgstPercent > 0)) {
-    total =
-      subtotal +
-      (subtotal * cgstPercent) / 100 +
-      (subtotal * sgstPercent) / 100;
-  }
+    // Intra-state → CGST + SGST
+    if (isIntraInvoice && (cgstPercent > 0 || sgstPercent > 0)) {
+      total =
+        subtotal +
+        (subtotal * cgstPercent) / 100 +
+        (subtotal * sgstPercent) / 100;
+    }
 
-  setTotalAmount(total.toFixed(2));
-}, [subTotal, cgst, sgst, igst, isInterInvoice, isIntraInvoice]);
+    setTotalAmount(total.toFixed(2));
+  }, [subTotal, cgst, sgst, igst, isInterInvoice, isIntraInvoice]);
 
 
   const addItem = () => {
@@ -351,7 +351,7 @@ useEffect(() => {
         currency: currency.name,
         items: items.map((item) => ({
           description: item.description,
-          hsn:item.hsn,
+          hsn: item.hsn,
           quantity: item.qty,
           rate: item.rate,
           amount: item.total,
@@ -367,7 +367,7 @@ useEffect(() => {
         sgst,
 
       };
-    
+
 
       const response = await axios.post(
         `${API_URL}/api/invoice/create-invoice`,
@@ -466,7 +466,7 @@ useEffect(() => {
                       value={selectedClient}
                       onChange={(e) => setSelectedClient(e.value)}
                       options={clientOption}
-                      optionLabel="label" 
+                      optionLabel="label"
                       placeholder="Select a Client"
                       className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -557,7 +557,7 @@ useEffect(() => {
                         Description
                       </label>
                     </div>
- <div className="flex flex-col w-[30%] ">
+                    <div className="flex flex-col w-[30%] ">
                       <label className="text-sm font-medium mb-1">HSN/SAC</label>
                     </div>
                     <div className="flex flex-col w-[30%] ">
@@ -787,9 +787,10 @@ useEffect(() => {
                             className="w-full h-11 px-2 py-2  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                           >
                             <option value="">Select a status</option>
-                            <option value="0">Paid</option>
-                            <option value="1">Pending</option>
-                            <option value="2">OverDue</option>
+                            <option value="paid">Paid</option>
+                            <option value="pending">Pending</option>
+                            <option value="overdue">Overdue</option>
+
                           </select>
                           {errors.status && (
                             <p className="text-red-500 text-sm mb-4">
@@ -797,6 +798,20 @@ useEffect(() => {
                             </p>
                           )}
                         </div>
+                        {/* {status === "paid" && (
+  <div className="mt-4">
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Paid Date
+    </label>
+    <input
+      type="date"
+      value={paidDate}
+      onChange={(e) => setPaidDate(e.target.value)}
+      className="w-full h-11 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+)} */}
+
                       </div>
                     </div>
                   </div>
