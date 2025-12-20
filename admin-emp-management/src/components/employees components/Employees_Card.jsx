@@ -68,13 +68,23 @@ const Employees_Card = () => {
   const [roleFilter, setRoleFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
 
-
   const fetchEmployees = async () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/employees/all-active-employees`,
         {
-          limit: 20,
+          params: {
+            fromDate: "",
+            toDate: "",
+            _id: "",
+            employeeStatus: "1",
+            employeeType: "",
+            roleId: "",
+            departmentId: "",
+            search: "",
+          },
+        },
+        {
           withCredentials: true,
         }
       );
@@ -295,7 +305,7 @@ const Employees_Card = () => {
       render: function (data) {
         if (!data) return "-";
 
-        return formatDateTime(data)
+        return formatDateTime(data);
       },
     },
 
@@ -366,8 +376,6 @@ const Employees_Card = () => {
       ) : (
         <>
           <div>
-
-
             {/* header */}
             {/* date & timing */}
             {/* <div className="flex justify-between items-center bg-white ps-2 pe-4 py-2 mt-5  rounded-2xl">
@@ -415,9 +423,7 @@ const Employees_Card = () => {
               </div>
               <div className="flex justify-between gap-2 ">
                 <button
-                  onClick={() =>
-                    navigate(-1)
-                  }
+                  onClick={() => navigate(-1)}
                   className=" w-fit text-xs md:text-base text-center mt-1 md:mt-4  text-white bg-gray-500 hover:bg-gray-600 font-medium px-2 md:px-3 py-2 rounded-full "
                 >
                   Back

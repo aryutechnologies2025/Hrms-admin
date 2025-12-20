@@ -380,13 +380,13 @@ export default function Slack() {
   const [unread, setUnread] = useState({});
   const [onlineUsers, setOnlineUsers] = useState([]);
 
-  /* 🔐 LOAD LOGGED USER */
+  /* Load current user */
   useEffect(() => {
     const u = JSON.parse(localStorage.getItem("hrmsuser"));
     if (u?.employeeId) setCurrentUser(u);
   }, []);
 
-  /* 🟢 ONLINE USERS */
+  /* Online users */
   useEffect(() => {
     if (!socket || !currentUser) return;
 
@@ -399,7 +399,7 @@ export default function Slack() {
     return () => socket.off("online_users");
   }, [socket, currentUser]);
 
-  /* 👥 FETCH USERS */
+  /* Fetch all users */
   useEffect(() => {
     if (!currentUser) return;
 
@@ -408,14 +408,14 @@ export default function Slack() {
       .then((res) => setUsers(res.data.data || []));
   }, [currentUser]);
 
-  /* 🔔 UNREAD COUNTS FROM SOCKET */
+  /* Socket unread messages */
   useEffect(() => {
     if (!socket || !currentUser) return;
 
     const handler = (msg) => {
       if (msg.receiverId !== currentUser.employeeId) return;
+      
       if (selectedUser?._id === msg.senderId) return;
-
       setUnread((prev) => ({
         ...prev,
         [msg.senderId]: (prev[msg.senderId] || 0) + 1,
@@ -426,7 +426,7 @@ export default function Slack() {
     return () => socket.off("receive_dm", handler);
   }, [socket, currentUser, selectedUser]);
 
-  /* 🔔 FETCH UNREAD COUNTS (DB) */
+  /* Fetch unread counts from DB */
   useEffect(() => {
     if (!currentUser) return;
 
@@ -441,21 +441,38 @@ export default function Slack() {
       });
   }, [currentUser]);
 
-  /* 👆 OPEN CHAT */
-  const handleSelectUser = async (user) => {
-    setSelectedUser(user);
-    setUnread((p) => ({ ...p, [user._id]: 0 }));
+  /* Open chat */
+  // const handleSelectUser = async (user) => {
+  //   setSelectedUser(user);
+  //   setUnread((p) => ({ ...p, [user._id]: 0 }));
 
-    await axios.post(`${API_URL}/api/messages/seen`, {
-      senderId: user._id,
-      receiverId: currentUser.employeeId,
-    });
+  //   await axios.post(`${API_URL}/api/messages/seen`, {
+  //     senderId: user._id,
+  //     receiverId: currentUser.employeeId,
+  //   });
 
-    socket.emit("mark_seen", {
-      senderId: user._id,
-      receiverId: currentUser.employeeId,
-    });
-  };
+  //   socket.emit("mark_seen", {
+  //     senderId: user._id,
+  //     receiverId: currentUser.employeeId,
+  //   });
+  // };
+  // Slack.jsx
+const handleSelectUser = async (user) => {
+  setSelectedUser(user);
+  setUnread((p) => ({ ...p, [user._id]: 0 }));
+
+  // ✅ ONLY PLACE SEEN IS TRIGGERED
+  await axios.post(`${API_URL}/api/messages/seen`, {
+    senderId: user._id,
+    receiverId: currentUser.employeeId,
+  });
+
+  socket.emit("mark_seen", {
+    senderId: user._id,
+    receiverId: currentUser.employeeId,
+  });
+};
+
 
   if (!currentUser) return <div>Loading chat...</div>;
 
@@ -473,8 +490,10 @@ export default function Slack() {
         currentUser={currentUser}
         selectedUser={selectedUser}
         socket={socket}
+        onlineUsers={onlineUsers}
       />
     </div>
   );
 }
+
 

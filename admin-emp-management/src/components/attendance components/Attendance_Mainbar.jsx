@@ -138,7 +138,7 @@ const Attendance_Mainbar = () => {
               {rowData.employeeId.employeeName}
               <br />
               <span className="text-blue-600 text-sm">
-                {rowData.employeeId.roleId.name}
+                {rowData?.employeeId?.roleId?.name}
               </span>
             </div>
           </>

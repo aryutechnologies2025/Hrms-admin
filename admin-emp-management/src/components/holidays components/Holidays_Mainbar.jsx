@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 import { TfiPencilAlt } from "react-icons/tfi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { useDateUtils  } from "../../hooks/useDateUtils";
+import { useDateUtils } from "../../hooks/useDateUtils";
 
 const Holidays_Mainbar = () => {
   const formatDateTime = useDateUtils();
@@ -40,8 +40,7 @@ const Holidays_Mainbar = () => {
     {
       field: "date",
       header: "Date",
-      body: (rowData) =>
-        formatDateTime(rowData?.date),
+      body: (rowData) => formatDateTime(rowData?.date),
     },
     {
       field: "reason",
@@ -71,7 +70,24 @@ const Holidays_Mainbar = () => {
       ),
     },
   ];
+  // year
+  const currentYear = new Date().getFullYear();
 
+  // 🔹 generate years from 2020 → current year
+ 
+
+  const [years, setYears] = useState(currentYear);
+
+   useEffect(() => {
+    try{
+        axios.get(`${API_URL}/api/upcomingholiday/holidays/years`).then((res) => {
+    setYears(res.data.data || []);
+  });
+}
+  catch(error){
+    console.log(error)
+  }
+}, []);
   const handleEditClick = async (rowData) => {
     setHolidayDate(rowData.date.split("T")[0]);
     setHolidayReason(rowData.reason);
@@ -83,7 +99,7 @@ const Holidays_Mainbar = () => {
     try {
       let response = await axios.delete(
         `${API_URL}/api/upcomingholiday/delete-upcomingholiday/${rowData._id}`,
-        {withCredentials: true}
+        { withCredentials: true }
       );
       fetchHolidaysList();
       toast.success("Deleted Successfully!");
@@ -132,9 +148,9 @@ const Holidays_Mainbar = () => {
       };
       const response = await axios.post(
         `${API_URL}/api/upcomingholiday/create-upcomingholiday`,
-        payload, {withCredentials: true}
+        payload,
+        { withCredentials: true }
       );
-
       setHolidayDate("");
       setHolidayReason("");
       fetchHolidaysList();
@@ -178,7 +194,12 @@ const Holidays_Mainbar = () => {
     try {
       let response = await axios.get(
         `${API_URL}/api/upcomingholiday/view-upcomingholiday`,
-        {withCredentials: true}
+        {
+          params: {
+            years,
+          },
+        },
+        { withCredentials: true }
       );
       setHolidaysList(response.data.data);
       setLoading(false);
@@ -188,9 +209,12 @@ const Holidays_Mainbar = () => {
     }
   };
 
+ 
+
+
   useEffect(() => {
     fetchHolidaysList();
-  }, []);
+  }, [years]);
 
   useEffect(() => {
     if (
@@ -213,337 +237,388 @@ const Holidays_Mainbar = () => {
         <Loader />
       ) : (
         <>
-      <div>
-       
-
-        {/* breadcrumb */}
-        <div className="cursor-pointer">
-           <Mobile_Sidebar />
-           
-        </div>
-        <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
-          <p
-            className="text-sm text-gray-500"
-            onClick={() => navigate("/dashboard")}
-          >
-            Dashboard
-          </p>
-          <p>{">"}</p>
-
-          <p className="text-sm text-blue-500 ">Holidays</p>
-          <p>{">"}</p>
-          </div>
-
-        {/* Heading */}
-        <section className="flex flex-wrap md:flex-row justify-between ">
-          <p className="text-2xl md:text-3xl font-semibold  mt-2 md:mt-4">
-            Holidays
-          </p>
-          <button
-            onClick={openUpcomingHolidaysModalOpen}
-            className="px-4 py-1 mt-2 md:mt-8 w-full md:w-fit cursor-pointer rounded-full  text-white bg-blue-500 hover:bg-blue-600 font-medium"
-          >
-            Add Upcoming Holidays
-          </button>
-        </section>
-
-        <div className="w-full mx-auto relative">
-          {/* Global Search Input */}
-          <div className="mt-2 md:mt-8 flex md:justify-end">
-            <InputText
-              value={globalFilter}
-              onChange={(e) => setGlobalFilter(e.target.value)}
-              placeholder="Search"
-              className="px-2 py-2 w-full md:w-fit rounded-md border border-gray-300 focus:outline-none focus:border-blue-500"
-            />
-          </div>
-
-          {/* Table Container with Relative Position */}
-          <div className="relative mt-4">
-            {/* Loader Overlay */}
-            {loading && <Loader />}
-
-            {/* DataTable */}
-            <DataTable
-              className="mt-8"
-              value={holidaysList}
-              paginator
-              rows={10}
-              rowsPerPageOptions={[5, 10, 20]}
-              globalFilter={globalFilter}
-              showGridlines
-              resizableColumns
-            >
-              {columns.map((col, index) => (
-                <Column
-                  key={index}
-                  field={col.field}
-                  header={col.header}
-                  //    body={col.body}
-                  body={
-                    col.field === "S.No"
-                      ? (rowData, { rowIndex }) => rowIndex + 1
-                      : col.body
-                  }
-                  style={{
-                    minWidth: "150px",
-                    wordWrap: "break-word",
-                    overflow: "hidden",
-                    whiteSpace: "normal",
-                  }}
-                />
-              ))}
-            </DataTable>
-          </div>
-        </div>
-
-        {showConfirmAlert && (
-          <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/20 z-50">
-            <div className="bg-white shadow-lg rounded-lg p-4 mx-3 sm:mx-0 sm:p-6 w-80">
-              <h2 className="text-lg font-semibold text-gray-800 mb-2">
-                Confirm Delete
-              </h2>
-              <p className="text-gray-600 mb-4">
-                Are you sure you want to delete this?
+          <div>
+            {/* breadcrumb */}
+            <div className="cursor-pointer">
+              <Mobile_Sidebar />
+            </div>
+            <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
+              <p
+                className="text-sm text-gray-500"
+                onClick={() => navigate("/dashboard")}
+              >
+                Dashboard
               </p>
-              <div className="flex justify-end gap-3">
-                <button
-                  className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-800"
-                  onClick={() => setShowConfirmAlert(false)}
+              <p>{">"}</p>
+
+              <p className="text-sm text-blue-500 ">Holidays</p>
+              <p>{">"}</p>
+            </div>
+
+            {/* Heading */}
+            <section className="flex flex-wrap md:flex-row justify-between ">
+              <p className="text-2xl md:text-3xl font-semibold  mt-2 md:mt-4">
+                Holidays
+              </p>
+              <button
+                onClick={openUpcomingHolidaysModalOpen}
+                className="px-4 py-1 mt-2 md:mt-8 w-full md:w-fit cursor-pointer rounded-full  text-white bg-blue-500 hover:bg-blue-600 font-medium"
+              >
+                Add Upcoming Holidays
+              </button>
+            </section>
+
+            <div className="w-full mx-auto relative">
+              <div className=" w-fit">
+                <label
+                  htmlFor="year"
+                  className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Cancel
-                </button>
-                <button
-                  className="px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white"
-                  onClick={() => {
-                    handleDeleteCLick(deleteSelectedRow);
-                    setShowConfirmAlert(false);
-                  }}
+                  Select Year
+                </label>
+
+                <div className="flex items-center gap-2">
+                  {/* Year Dropdown */}
+                  <select
+                    id="year"
+                    value={years}
+                    onChange={(e) => setYears(Number(e.target.value))}
+                    className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {Array.isArray(years) && years.map((y) => (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* Submit Button */}
+                  <button
+                    onClick={fetchHolidaysList}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+                  >
+                    Submit
+                  </button>
+
+                  {/* Clear Button */}
+                  <button
+                    onClick={() => {
+                      setYears(new Date().getFullYear());
+                      fetchHolidaysList();
+                    }}
+                    className="border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-100 transition"
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+
+              {/* Global Search Input */}
+              <div className="mt-2 md:mt-8 flex md:justify-end">
+                <InputText
+                  value={globalFilter}
+                  onChange={(e) => setGlobalFilter(e.target.value)}
+                  placeholder="Search"
+                  className="px-2 py-2 w-full md:w-fit rounded-md border border-gray-300 focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              {/* Table Container with Relative Position */}
+              <div className="relative mt-4">
+                {/* Loader Overlay */}
+                {loading && <Loader />}
+
+                {/* DataTable */}
+                <DataTable
+                  className="mt-8"
+                  value={holidaysList}
+                  paginator
+                  rows={10}
+                  rowsPerPageOptions={[5, 10, 20]}
+                  globalFilter={globalFilter}
+                  showGridlines
+                  resizableColumns
                 >
-                  Delete
-                </button>
+                  {columns.map((col, index) => (
+                    <Column
+                      key={index}
+                      field={col.field}
+                      header={col.header}
+                      //    body={col.body}
+                      body={
+                        col.field === "S.No"
+                          ? (rowData, { rowIndex }) => rowIndex + 1
+                          : col.body
+                      }
+                      style={{
+                        minWidth: "150px",
+                        wordWrap: "break-word",
+                        overflow: "hidden",
+                        whiteSpace: "normal",
+                      }}
+                    />
+                  ))}
+                </DataTable>
               </div>
             </div>
-          </div>
-        )}
 
-        {addUpcomingHolidaysModalOpen && (
-          <div className="fixed inset-0 top-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
-            {/* Overlay */}
-            <div
-              className="absolute inset-0"
-              onClick={closeUpcomingHolidaysModalOpen}
-            ></div>
-            <div
-              className={`fixed top-0 right-0 h-screen overflow-y-scroll w-[80vw] md:w-[50vw] bg-white shadow-lg px-5 md:px-16 py-3 md:py-10 transform transition-transform duration-500 ease-in-out ${
-                isAnimating ? "translate-x-0" : "translate-x-full"
-              }`}
-            >
-              <div
-                className="w-6 h-6 rounded-full border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
-                title="Toggle Sidebar"
-                onClick={closeUpcomingHolidaysModalOpen}
-              >
-                <IoIosArrowForward className="w-3 h-3" />
+            {showConfirmAlert && (
+              <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/20 z-50">
+                <div className="bg-white shadow-lg rounded-lg p-4 mx-3 sm:mx-0 sm:p-6 w-80">
+                  <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                    Confirm Delete
+                  </h2>
+                  <p className="text-gray-600 mb-4">
+                    Are you sure you want to delete this?
+                  </p>
+                  <div className="flex justify-end gap-3">
+                    <button
+                      className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-800"
+                      onClick={() => setShowConfirmAlert(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white"
+                      onClick={() => {
+                        handleDeleteCLick(deleteSelectedRow);
+                        setShowConfirmAlert(false);
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div className="flex flex-wrap flex-col md:flex-row justify-between">
-                <p className="text-2xl md:text-3xl font-medium mt-2 md:mt-8">
-                  Add Upcoming Holiday
-                </p>
-                <div className="flex justify-end gap-5 mt-2 md:mt-8">
-                  <button
+            )}
+
+            {addUpcomingHolidaysModalOpen && (
+              <div className="fixed inset-0 top-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
+                {/* Overlay */}
+                <div
+                  className="absolute inset-0"
+                  onClick={closeUpcomingHolidaysModalOpen}
+                ></div>
+                <div
+                  className={`fixed top-0 right-0 h-screen overflow-y-scroll w-[80vw] md:w-[50vw] bg-white shadow-lg px-5 md:px-16 py-3 md:py-10 transform transition-transform duration-500 ease-in-out ${
+                    isAnimating ? "translate-x-0" : "translate-x-full"
+                  }`}
+                >
+                  <div
+                    className="w-6 h-6 rounded-full border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
+                    title="Toggle Sidebar"
                     onClick={closeUpcomingHolidaysModalOpen}
-                    className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
                   >
-                    Cancel
-                  </button>
+                    <IoIosArrowForward className="w-3 h-3" />
+                  </div>
+                  <div className="flex flex-wrap flex-col md:flex-row justify-between">
+                    <p className="text-2xl md:text-3xl font-medium mt-2 md:mt-8">
+                      Add Upcoming Holiday
+                    </p>
+                    <div className="flex justify-end gap-5 mt-2 md:mt-8">
+                      <button
+                        onClick={closeUpcomingHolidaysModalOpen}
+                        className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
+                      >
+                        Cancel
+                      </button>
 
-                  <button
-                    onClick={handleSaveUpcomingHoliday}
-                    className={`bg-blue-600 hover:bg-blue-700 text-white px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full flex items-center justify-center gap-2 ${
-                      buttonLoading ? " cursor-not-allowed" : ""
-                    }`}
-                    disabled={buttonLoading}
-                  >
-                    <div className="w-8 h-4 flex items-center justify-center">
-                      {buttonLoading ? <Button_Loader /> : "Save"}
+                      <button
+                        onClick={handleSaveUpcomingHoliday}
+                        className={`bg-blue-600 hover:bg-blue-700 text-white px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full flex items-center justify-center gap-2 ${
+                          buttonLoading ? " cursor-not-allowed" : ""
+                        }`}
+                        disabled={buttonLoading}
+                      >
+                        <div className="w-8 h-4 flex items-center justify-center">
+                          {buttonLoading ? <Button_Loader /> : "Save"}
+                        </div>
+                      </button>
                     </div>
-                  </button>
+                  </div>
+
+                  <div className="flex flex-col gap-3 mt-3 md:mt-8">
+                    {/* leave date */}
+                    <div className="flex flex-col lg:flex-row gap-1 justify-between">
+                      <div className="flex flex-col">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="holiday date"
+                        >
+                          HOLIDAY DATE
+                        </label>
+                        <p className="text-sm text-gray-500">
+                          Add Holiday Date
+                        </p>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <input
+                          type="date"
+                          id="holiday date"
+                          className={`border-2  gray-300 rounded-xl px-4  outline-none h-10 w-full md:w-96`}
+                          //    onKeyUp={handleKeyUp}
+                          value={holidayDate}
+                          onChange={(e) => setHolidayDate(e.target.value)}
+                        />
+                        {addUpcoimgHolidayError.date && (
+                          <p className="text-red-500 text-sm">
+                            {addUpcoimgHolidayError.date}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Department Name */}
+                    <div className="flex flex-col lg:flex-row gap-1 justify-between">
+                      <div className="flex flex-col">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="holiday reason"
+                        >
+                          HOLIDAY REASON
+                        </label>
+                        <p className="text-sm text-gray-500">
+                          Add Holiday Reason
+                        </p>
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        <input
+                          type="text"
+                          id="holiday reason"
+                          placeholder="Enter Holiday Reason"
+                          className={`border-2 rounded-xl px-4  outline-none h-10 w-full md:w-96 `}
+                          value={holidayReason}
+                          onChange={(e) => setHolidayReason(e.target.value)}
+                        />
+                        {addUpcoimgHolidayError.reason && (
+                          <p className="text-red-500 text-sm">
+                            {addUpcoimgHolidayError.reason}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
+            )}
 
-              <div className="flex flex-col gap-3 mt-3 md:mt-8">
-                {/* leave date */}
-                <div className="flex flex-col lg:flex-row gap-1 justify-between">
-                  <div className="flex flex-col">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="holiday date"
-                    >
-                      HOLIDAY DATE
-                    </label>
-                    <p className="text-sm text-gray-500">Add Holiday Date</p>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <input
-                      type="date"
-                      id="holiday date"
-                      className={`border-2  gray-300 rounded-xl px-4  outline-none h-10 w-full md:w-96`}
-                      //    onKeyUp={handleKeyUp}
-                      value={holidayDate}
-                      onChange={(e) => setHolidayDate(e.target.value)}
-                    />
-                    {addUpcoimgHolidayError.date && (
-                      <p className="text-red-500 text-sm">
-                        {addUpcoimgHolidayError.date}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Department Name */}
-                <div className="flex flex-col lg:flex-row gap-1 justify-between">
-                  <div className="flex flex-col">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="holiday reason"
-                    >
-                      HOLIDAY REASON
-                    </label>
-                    <p className="text-sm text-gray-500">Add Holiday Reason</p>
-                  </div>
-
-                  <div className="flex flex-col gap-1">
-                    <input
-                      type="text"
-                      id="holiday reason"
-                      placeholder="Enter Holiday Reason"
-                      className={`border-2 rounded-xl px-4  outline-none h-10 w-full md:w-96 `}
-                      value={holidayReason}
-                      onChange={(e) => setHolidayReason(e.target.value)}
-                    />
-                    {addUpcoimgHolidayError.reason && (
-                      <p className="text-red-500 text-sm">
-                        {addUpcoimgHolidayError.reason}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {editHolidayModalOpen && (
-          <div className="fixed inset-0 top-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
-            {/* Overlay */}
-            <div
-              className="absolute inset-0"
-              onClick={closeEditHolidayModalOpen}
-            ></div>
-            <div
-              className={`fixed top-0 right-0 h-screen overflow-y-scroll w-[90vw] md:w-[70vw] bg-white shadow-lg px-5 md:px-16 py-3 md:py-10 transform transition-transform duration-500 ease-in-out ${
-                isAnimating ? "translate-x-0" : "translate-x-full"
-              }`}
-            >
-              <div
-                className="w-6 h-6 rounded-full border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
-                title="Toggle Sidebar"
-                onClick={closeEditHolidayModalOpen}
-              >
-                <IoIosArrowForward className="w-3 h-3" />
-              </div>
-              <div className="flex flex-wrap flex-col md:flex-row justify-between">
-                <p className="text-3xl font-medium mt-2 md:mt-8">Edit Holiday</p>
-                <div className="flex justify-end gap-5 mt-2 md:mt-8">
-                  <button
+            {editHolidayModalOpen && (
+              <div className="fixed inset-0 top-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
+                {/* Overlay */}
+                <div
+                  className="absolute inset-0"
+                  onClick={closeEditHolidayModalOpen}
+                ></div>
+                <div
+                  className={`fixed top-0 right-0 h-screen overflow-y-scroll w-[90vw] md:w-[70vw] bg-white shadow-lg px-5 md:px-16 py-3 md:py-10 transform transition-transform duration-500 ease-in-out ${
+                    isAnimating ? "translate-x-0" : "translate-x-full"
+                  }`}
+                >
+                  <div
+                    className="w-6 h-6 rounded-full border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
+                    title="Toggle Sidebar"
                     onClick={closeEditHolidayModalOpen}
-                    className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
                   >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSaveEditHoliday}
-                    className={`bg-blue-600 hover:bg-blue-700 text-white px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full flex items-center justify-center gap-2 ${
-                      buttonLoading ? " cursor-not-allowed" : ""
-                    }`}
-                    disabled={buttonLoading}
-                  >
-                    <div className="w-8 h-4 flex items-center justify-center">
-                      {buttonLoading ? <Button_Loader /> : "Save"}
+                    <IoIosArrowForward className="w-3 h-3" />
+                  </div>
+                  <div className="flex flex-wrap flex-col md:flex-row justify-between">
+                    <p className="text-3xl font-medium mt-2 md:mt-8">
+                      Edit Holiday
+                    </p>
+                    <div className="flex justify-end gap-5 mt-2 md:mt-8">
+                      <button
+                        onClick={closeEditHolidayModalOpen}
+                        className="bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleSaveEditHoliday}
+                        className={`bg-blue-600 hover:bg-blue-700 text-white px-5 md:px-9 py-1 md:py-2 font-semibold rounded-full flex items-center justify-center gap-2 ${
+                          buttonLoading ? " cursor-not-allowed" : ""
+                        }`}
+                        disabled={buttonLoading}
+                      >
+                        <div className="w-8 h-4 flex items-center justify-center">
+                          {buttonLoading ? <Button_Loader /> : "Save"}
+                        </div>
+                      </button>
                     </div>
-                  </button>
+                  </div>
+
+                  <div className="flex flex-col gap-3 mt-3 md:mt-8">
+                    {/* leave date */}
+                    <div className="flex flex-col lg:flex-row gap-1 justify-between">
+                      <div className="flex flex-col">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="holiday date"
+                        >
+                          HOLIDAY DATE
+                        </label>
+                        <p className="text-sm text-gray-500">
+                          Add Holiday Date
+                        </p>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <input
+                          type="date"
+                          id="holiday date"
+                          className={`border-2  gray-300 rounded-xl px-4  outline-none h-10 w-full md:w-96`}
+                          //    onKeyUp={handleKeyUp}
+                          value={holidayDate}
+                          onChange={(e) => setHolidayDate(e.target.value)}
+                        />
+                        {editUpcoimgHolidayError.date && (
+                          <p className="text-red-500 text-sm">
+                            {editUpcoimgHolidayError.date}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Department Name */}
+                    <div className="flex flex-col lg:flex-row gap-1 justify-between">
+                      <div className="flex flex-col">
+                        <label
+                          className="font-medium text-sm"
+                          htmlFor="holiday reason"
+                        >
+                          HOLIDAY REASON
+                        </label>
+                        <p className="text-sm text-gray-500">
+                          Add Holiday Reason
+                        </p>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <input
+                          type="text"
+                          id="holiday reason"
+                          placeholder="Enter Holiday Reason"
+                          className={`border-2 rounded-xl px-4  outline-none h-10 w-full md:w-96 `}
+                          //    className={`border-2 rounded-xl px-4  outline-none h-10 w-full md:w-96 ${
+                          //      !educationTouched.DepartmentName
+                          //        ? "border-red-400"
+                          //        : "border-gray-300"
+                          //    }`}
+                          //    onKeyUp={handleKeyUp}
+                          value={holidayReason}
+                          onChange={(e) => setHolidayReason(e.target.value)}
+                        />
+                        {editUpcoimgHolidayError.reason && (
+                          <p className="text-red-500 text-sm">
+                            {editUpcoimgHolidayError.reason}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              <div className="flex flex-col gap-3 mt-3 md:mt-8">
-                {/* leave date */}
-                <div className="flex flex-col lg:flex-row gap-1 justify-between">
-                  <div className="flex flex-col">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="holiday date"
-                    >
-                      HOLIDAY DATE
-                    </label>
-                    <p className="text-sm text-gray-500">Add Holiday Date</p>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <input
-                      type="date"
-                      id="holiday date"
-                      className={`border-2  gray-300 rounded-xl px-4  outline-none h-10 w-full md:w-96`}
-                      //    onKeyUp={handleKeyUp}
-                      value={holidayDate}
-                      onChange={(e) => setHolidayDate(e.target.value)}
-                    />
-                    {editUpcoimgHolidayError.date && (
-                      <p className="text-red-500 text-sm">
-                        {editUpcoimgHolidayError.date}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Department Name */}
-                <div className="flex flex-col lg:flex-row gap-1 justify-between">
-                  <div className="flex flex-col">
-                    <label
-                      className="font-medium text-sm"
-                      htmlFor="holiday reason"
-                    >
-                      HOLIDAY REASON
-                    </label>
-                    <p className="text-sm text-gray-500">Add Holiday Reason</p>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <input
-                      type="text"
-                      id="holiday reason"
-                      placeholder="Enter Holiday Reason"
-                      className={`border-2 rounded-xl px-4  outline-none h-10 w-full md:w-96 `}
-                      //    className={`border-2 rounded-xl px-4  outline-none h-10 w-full md:w-96 ${
-                      //      !educationTouched.DepartmentName
-                      //        ? "border-red-400"
-                      //        : "border-gray-300"
-                      //    }`}
-                      //    onKeyUp={handleKeyUp}
-                      value={holidayReason}
-                      onChange={(e) => setHolidayReason(e.target.value)}
-                    />
-                    {editUpcoimgHolidayError.reason && (
-                      <p className="text-red-500 text-sm">
-                        {editUpcoimgHolidayError.reason}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
-        )}
-      </div>
-         </>
+        </>
       )}
       <Footer />
     </div>
