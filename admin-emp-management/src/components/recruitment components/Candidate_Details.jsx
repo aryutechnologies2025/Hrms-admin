@@ -1575,7 +1575,7 @@ const Candidate_Details = () => {
                 </div>
               </div>
             )}
-          </div>
+        
         </>
       )}
 
