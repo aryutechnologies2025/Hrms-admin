@@ -61,7 +61,6 @@ const Invoice_details = () => {
   const [errors, setErrors] = useState({});
 
   const [clientdetails, setClientdetails] = useState([]);
-  console.log("clientdetails", clientdetails);
   // console.log("errors::", errors);
 
   const fetchProject = async () => {
@@ -114,54 +113,91 @@ const Invoice_details = () => {
 
   const [isOpenClient, setIsOpenClient] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
-  console.log("selectedClient", selectedClient);
   const [checkedDocs, setCheckedDocs] = useState([]);
 
-const handleDocCheck = (docId) => {
-  setCheckedDocs((prev) =>
-    prev.includes(docId)
-      ? prev.filter((id) => id !== docId)
-      : [...prev, docId]
-  );
-};
+  const handleDocCheck = (docId) => {
+    setCheckedDocs((prev) =>
+      prev.includes(docId)
+        ? prev.filter((id) => id !== docId)
+        : [...prev, docId]
+    );
+  };
+
+  useEffect(() => {
+    if (selectedClient?.documents?.length > 0) {
+      const preSelected = selectedClient.documents
+        .filter((doc) => doc.select === true)
+        .map((doc) => doc._id);
+
+      setCheckedDocs(preSelected);
+    }
+  }, [selectedClient]);
 
 
 
-  console.log("checkedDocs", checkedDocs);
+  // console.log("checkedDocs", checkedDocs);
 
 
 
 
-    const handlesubmit = async (e) => {
-      e.preventDefault();
-  
-      try {
-        const formData = {
-          invoiceId: selectedClient?._id,   
-           documentIds: checkedDocs,   
-         
-        };
-      
-  
-        const response = await axios.post(
-          `${API_URL}/api/invoice/select-invoice-document`,
-          formData, { withCredentials: true }
-        );
-  
-       
-  
-        
-  
-        setErrors({});
-      } catch (err) {
-        if (err.response?.data?.errors) {
-          setErrors(err.response.data.errors);
-        } else {
-          console.error("Error submitting form:", err);
-         
-        }
+  const handlesubmit = async (e) => {
+    e.preventDefault();
+    Swal.fire({
+      title: "Saving Selection",
+      text: "Please wait while we update the invoice documents...",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      background: "#ffffff",
+      color: "#111827",
+    });
+    try {
+      const formData = {
+        invoiceId: selectedClient?._id,
+        documentId: checkedDocs,
+
+      };
+
+
+      const response = await axios.post(
+        `${API_URL}/api/invoice/select-invoice-document`,
+        formData, { withCredentials: true }
+      );
+
+       Swal.fire({
+      icon: "success",
+      title: "Saved Successfully",
+      text: "Invoice documents have been updated.",
+      confirmButtonColor: "#2563EB",
+      background: "#ffffff",
+    }).then(() => {
+      setIsOpenClient(false);
+    });
+
+
+
+      setErrors({});
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Submission Failed",
+        text:
+          err.response?.data?.message ||
+          "Something went wrong. Please try again.",
+        confirmButtonColor: "#DC2626",
+        background: "#ffffff",
+        color: "#111827",
+      });
+
+      if (err.response?.data?.errors) {
+        setErrors(err.response.data.errors);
+      } else {
+        console.error("Error submitting form:", err);
+
       }
-    };
+    }
+  };
 
 
   const items = [
@@ -170,6 +206,9 @@ const handleDocCheck = (docId) => {
     { title: "Export Invoice", path: "/invoice-export" },
     { title: "Tax Invoice", path: "/invoice-pdf" },
   ];
+const [clientFilter, setClientFilter] = useState("");
+const [projectFilter, setProjectFilter] = useState("");
+const [statusFilter, setStatusFilter] = useState("");
 
 
   const columns = [
@@ -418,6 +457,75 @@ const handleDocCheck = (docId) => {
           </button>
         </div>
 
+ <div className="flex flex-wrap gap-6 mb-6 items-end">
+  {/* Client Filter */}
+  <div className="flex flex-col">
+    <label className="text-sm font-semibold mb-1 text-gray-700">Client</label>
+    <select
+      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-48"
+      value={clientFilter}
+      onChange={(e) => setClientFilter(e.target.value)}
+    >
+      <option value="">All Clients</option>
+      {/* {clientsList.map((c) => (
+        <option key={c._id} value={c.client_name}>
+          {c.client_name}
+        </option>
+      ))} */}
+    </select>
+  </div>
+
+  {/* Project Filter */}
+  <div className="flex flex-col">
+    <label className="text-sm font-semibold mb-1 text-gray-700">Project</label>
+    <select
+      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-48"
+      value={projectFilter}
+      onChange={(e) => setProjectFilter(e.target.value)}
+    >
+      <option value="">All Projects</option>
+      {/* {projectsList.map((p) => (
+        <option key={p._id} value={p.name}>
+          {p.name}
+        </option>
+      ))} */}
+    </select>
+  </div>
+
+  {/* Status Filter */}
+  <div className="flex flex-col">
+    <label className="text-sm font-semibold mb-1 text-gray-700">Status</label>
+    <select
+      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-40"
+      value={statusFilter}
+      onChange={(e) => setStatusFilter(e.target.value)}
+    >
+      <option value="">All</option>
+      <option value="Paid">Paid</option>
+      <option value="Pending">Pending</option>
+      <option value="OverDue">OverDue</option>
+    </select>
+  </div>
+
+  {/* Buttons */}
+  <div className="flex gap-2 mt-5">
+    <button
+      // onClick={handleFilterSubmit}
+      className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium shadow"
+    >
+      Submit
+    </button>
+    <button
+      // onClick={handleReset}
+      className="border  px-6 py-2 rounded-lg hover:bg-gray-400 bg-gray-500 text-white text-sm font-medium"
+    >
+      Reset
+    </button>
+  </div>
+</div>
+
+
+
         <div className="datatable-container">
           {/* Responsive wrapper for the table */}
           <div className="table-scroll-container" id="datatable">
@@ -473,63 +581,63 @@ const handleDocCheck = (docId) => {
           </div>
         )} */}
 
-       {isOpenClient && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
-    <div className="bg-white rounded-2xl shadow-2xl w-[50%] p-6 relative overflow-y-auto max-h-[90vh]">
+        {isOpenClient && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
+            <div className="bg-white rounded-2xl  shadow-2xl w-[25%] p-6 relative overflow-y-auto max-h-[90vh]">
 
-      {/* Close button */}
-      <button
-        className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl transition"
-        onClick={() => setIsOpenClient(false)}
-      >
-        ✖
-      </button>
+              {/* Close button */}
+              <button
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl transition"
+                onClick={() => setIsOpenClient(false)}
+              >
+                ✖
+              </button>
 
-      {/* Header */}
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">
-          Client Summary
-        </h2>
-      </div>
+              {/* Header */}
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Client Summary
+                </h2>
+              </div>
 
-      {/* Documents */}
-     <div className="space-y-3">
-  {selectedClient?.documents?.length > 0 ? (
-    selectedClient.documents.map((doc) => (
-      <label
-        key={doc._id}
-        className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"
-      >
-        <input
-          type="checkbox"
-          checked={checkedDocs.includes(doc._id)}
-          onChange={() => handleDocCheck(doc._id)}
-          className="w-4 h-4"
-        />
+              {/* Documents */}
+              <div className="space-y-3">
+                {selectedClient?.documents?.length > 0 ? (
+                  selectedClient.documents.map((doc) => (
+                    <label
+                      key={doc._id}
+                      className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checkedDocs.includes(doc._id)}
+                        onChange={() => handleDocCheck(doc._id)}
+                        className="w-4 h-4"
+                      />
 
-        <span className="text-gray-700 font-medium">
-          {doc.invoice_document_type}
-        </span>
-      </label>
-    ))
-  ) : (
-    <p className="text-gray-400 text-center">No documents available</p>
-  )}
-</div>
-<button
-  onClick={handlesubmit}
-  className="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
->
-  Submit
-</button>
-
-
+                      <span className="text-gray-700 font-medium">
+                        {doc.invoice_document_type}
+                      </span>
+                    </label>
+                  ))
+                ) : (
+                  <p className="text-gray-400 text-center">No documents available</p>
+                )}
+              </div>
+              <button
+                onClick={handlesubmit}
+                className="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+              >
+                Submit
+              </button>
 
 
 
-    </div>
-  </div>
-)}
+
+
+            </div>
+          </div>
+        )}
 
 
         {isOpen && (
