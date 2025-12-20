@@ -286,6 +286,15 @@ const Relieved_list_details = () => {
     },
 
     {
+      title: "Total working date",
+      data: "totalDays",
+      render: (data) => {
+        if (!data) return "-";
+        return formatDateTime(data);
+      },
+    },
+
+    {
       title: "Reason",
       data: null,
       render: (data, type, row) => {

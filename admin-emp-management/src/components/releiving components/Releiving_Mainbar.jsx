@@ -231,6 +231,16 @@ const Releiving_Mainbar = () => {
         return `${row.employeeName}<br/>${row.employeeId}`;
       },
     },
+
+    {
+      title: "Joining Date",
+      data: "lastDate",
+      render: (data) => {
+        if (!data) return "-";
+        return formatDateTime(data);
+      },
+    },
+    
     {
       title: "Last Resignation Email Date",
       data: "resignationEmailDate",
@@ -248,6 +258,8 @@ const Releiving_Mainbar = () => {
       // },
     },
 
+    
+
     {
       title: "Last working date",
       data: "lastDate",
@@ -256,6 +268,7 @@ const Releiving_Mainbar = () => {
         return formatDateTime(data);
       },
     },
+
 
     {
       title: "Reason",

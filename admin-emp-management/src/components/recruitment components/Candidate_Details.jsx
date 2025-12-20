@@ -38,19 +38,18 @@ const Candidate_Details = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const [filterStartDate, setFilterStartDate] = useState(() => {
-    return new Date().toISOString().split("T")[0];
-  });
-  const [filterEndDate, setFilterEndDate] = useState(() => {
-    return new Date().toISOString().split("T")[0];
-  });
+  const [filterStartDate, setFilterStartDate] = useState(null);
+  const [filterEndDate, setFilterEndDate] = useState(null);
   const [filterInterviewStatus, setFilterInterviewStatus] = useState("");
+  console.log("filterInterviewStatus",filterInterviewStatus)
   const [filterTechnology, setFilterTechnology] = useState("");
   const [filterPlatform, setFilterPlatform] = useState("");
 
   const [accountOption, setAccountOption] = useState([]);
   const location = useLocation();
   const type = location.state || {};
+  const [tableKey, setTableKey] = useState(0);
+
 
   const candidatetype = type?.name;
   const candidateid = type?.id;
@@ -139,6 +138,7 @@ const Candidate_Details = () => {
   };
 
   const fetchCandidate = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(
         `${API_URL}/api/job-type/view-candidate`,
@@ -146,44 +146,44 @@ const Candidate_Details = () => {
           params: {
             type: "candidate",
             id: candidateid,
-            interviewStatus: filterInterviewStatus || "",
-            technology: filterTechnology || "",
-            platform: filterPlatform || "",
-            search: search || "",
-            fromDate: filterStartDate || "",
-            toDate: filterEndDate || "",
-            page: 1,
-            limit:10,
+            interviewStatus: filterInterviewStatus,
+            technology: filterTechnology,
+            platform: filterPlatform,
+            search,
+            fromDate: filterStartDate,
+            toDate: filterEndDate,
+            page,
+            limit,
           },
           withCredentials: true,
         }
       );
-      console.log("candidate response", response);
-
-      setCandidateDetails(response.data.data);
+      console.log("response",response)
+      setCandidateDetails(response.data.data || []);
+      setTableKey(prev => prev + 1); //  FORCE RELOAD
       setLoading(false);
     } catch (err) {
-      console.error("Error fetching interview status:", err);
-      setErrors("Failed to fetch candidate.");
-      setLoading(false);
       setCandidateDetails([]);
+      setLoading(false);
     }
   };
 
- 
+
+
   const handleReset = () => {
+    // const today = new Date().toISOString().split("T")[0];
+
     setFilterInterviewStatus("");
     setFilterTechnology("");
     setFilterPlatform("");
-    setFilterStartDate("");
-    setFilterEndDate("");
+    setFilterStartDate(null);
+    setFilterEndDate(null);
     setSearch("");
     setPage(1);
 
-    setTimeout(() => {
-    fetchCandidate();
-  }, 0);
+    setTimeout(fetchCandidate, 0);
   };
+
 
 
 
@@ -677,11 +677,15 @@ const Candidate_Details = () => {
 
               {/* Buttons */}
               <button
-                onClick={fetchCandidate}
+                onClick={() => {
+                  setPage(1);
+                  fetchCandidate();
+                }}
                 className="px-3 py-2 text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
               >
                 Submit
               </button>
+
 
               <button
                 onClick={handleReset}
@@ -697,19 +701,22 @@ const Candidate_Details = () => {
               {/* Responsive wrapper for the table */}
               <div className="table-scroll-container" id="datatable">
                 <DataTable
-                  data={candidateDetails}
-                  columns={columns}
-                  options={{
-                    paging: true,
-                    searching: false,
-                    ordering: true,
-                    scrollX: true,
-                    scrollY: true,
-                    responsive: true,
-                    autoWidth: false,
-                  }}
-                  className="display nowrap bg-white"
-                />
+  key={tableKey}
+  data={candidateDetails}
+  columns={columns}
+  options={{
+    destroy: true,          // 🔥 REQUIRED
+    paging: true,
+    searching: false,
+    ordering: true,
+    scrollX: true,
+    responsive: true,
+    autoWidth: false,
+  }}
+  className="display nowrap bg-white"
+/>
+
+
               </div>
             </div>
 
