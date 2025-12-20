@@ -1436,6 +1436,8 @@ import { IoMdClose } from "react-icons/io";
 import { Dropdown } from "primereact/dropdown";
 import { useNavigate } from "react-router-dom";
 import { ImCancelCircle } from "react-icons/im";
+import { createRoot } from "react-dom/client";
+
 
 const Task_details_client = () => {
  
@@ -2011,7 +2013,8 @@ const Task_details_client = () => {
             (value) => value && value.trim()
           ) || "N/A";
 
-        ReactDOM.render(
+         const root = createRoot(td);
+        root.render(
           <span
             // style={{ cursor: "pointer", color: "black" }}
             onMouseOver={(e) => (e.target.style.color = "blue")}
