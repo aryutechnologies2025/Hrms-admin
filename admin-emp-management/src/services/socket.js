@@ -26,7 +26,7 @@
 // src/services/socket.js
 import { io } from "socket.io-client";
 
-const SOCKET_URL = "http://192.168.0.116:5009";
+const SOCKET_URL = "http://192.168.0.116:5000";
 
 let socket = null;
 

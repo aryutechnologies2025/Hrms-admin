@@ -322,12 +322,12 @@ const EmployeeDetails_Mainbar = () => {
 
                   <hr className="w-full border-gray-300" />
                   <p
-                    className={`mt-2 text-md  ${employee.dutyStatus === "1"
+                    className={`mt-2 text-md  ${employee?.dutyStatus === "1"
                       ? "text-green-500"
                       : "text-orange-600"
                       }`}
                   >
-                    {employee.dutyStatus === "1" ? "On Duty" : "Relieved "}
+                    {employee?.dutyStatus === "1" ? "On Duty" : "Relieved "}
                     <span className="ml-10 ">
                       {employee?.dutyStatus === "1"
                         ? ""
@@ -651,20 +651,20 @@ const EmployeeDetails_Mainbar = () => {
                   </div>
                 </div>
 
-                {employee.driveLink ? (
+                {employee?.driveLink ? (
                   <div className="border-2 bg-white px-4 py-3 md:px-7 md:py-5 rounded-2xl">
                     <p className="text-[18px] font-semibold mb-2">
                       Documents Drive Link
                     </p>
                     <a
-                      href={employee.driveLink}
+                      href={employee?.driveLink}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-700 flex items-center gap-2 text-sm break-all md:text-base md:break-normal"
                     >
                       <IoIosLink className="text-lg shrink-0" />
                       <span className="truncate md:whitespace-normal md:truncate-none w-full">
-                        {employee.driveLink}
+                        {employee?.driveLink}
                       </span>
                     </a>
                   </div>

@@ -75,8 +75,9 @@ const Inter_card_details = () => {
                 `${API_URL}/api/employees/all-active-employees`,
                 {
                     params: {
-                        limit: 20,
+                        // limit: 20,
                         type: "Intern",
+                        
                     },
                     withCredentials: true,
                 }

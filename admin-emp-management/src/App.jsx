@@ -200,10 +200,7 @@ function App() {
 
     
 
-    localStorage.setItem(
-      "module",
-      JSON.stringify(response?.data?.data[0]?.module || [])
-    );
+    
 
   };
 
