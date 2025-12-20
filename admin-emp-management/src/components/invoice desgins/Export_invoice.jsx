@@ -8,6 +8,8 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../../config";
 import NumberFormat from "../../utils/NumberFormat";
+import Swal from "sweetalert2";
+
 
 
 
@@ -104,50 +106,81 @@ const Export_invoice = () => {
     //   pdf.save(fileName);
     // };
 
-    const downloadPDF = async () => {
-        const element = invoiceRef.current;
+  const [isGenerating, setIsGenerating] = useState(false);
+    
 
-        const canvas = await html2canvas(element, { scale: 1.5 });
-        const imgData = canvas.toDataURL("image/jpeg", 0.7);
-
-        const pdf = new jsPDF("p", "mm", "a4");
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const imgProps = pdf.getImageProperties(imgData);
-        const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
-
-        pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
-
-        const invoiceNumber =
-            allinvoiceDetails?.invoice_number || `invoice_${Date.now()}`;
-
-        const pdfBlob = pdf.output("blob");
-
-
-        const formData = new FormData();
-        formData.append("clientInvoice", pdfBlob, `${invoiceNumber}.pdf`);
-        formData.append("id", invoiceId);
-        formData.append("invoice_type", "Sales Invoice");
-
-
-        try {
-            const response = await axios.post(
-                `${API_URL}/api/invoice/upload-client-invoice`,
-                formData,
-                { withCredentials: true }, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            }
-            );
-
-            console.log("PDF uploaded successfully:", response.data);
-        } catch (error) {
-            console.error("PDF upload failed:", error);
-        }
-
-        // Optional: download locally also
-        pdf.save(`${invoiceNumber}.pdf`);
-    };
+     const downloadPDF = async () => {
+   
+       setIsGenerating(true);
+   
+       Swal.fire({
+         title: "Generating Invoice",
+         text: "Please wait while we generate your invoice...",
+         allowOutsideClick: false,
+         didOpen: () => {
+           Swal.showLoading();
+         },
+       });
+       try {
+         const element = invoiceRef.current;
+   
+         const canvas = await html2canvas(element, { scale: 1.5 });
+         const imgData = canvas.toDataURL("image/jpeg", 0.7);
+   
+         const pdf = new jsPDF("p", "mm", "a4");
+         const pageWidth = pdf.internal.pageSize.getWidth();
+         const imgProps = pdf.getImageProperties(imgData);
+         const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
+   
+         pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
+   
+         const invoiceNumber =
+           allinvoiceDetails?.invoice_number || `invoice_${Date.now()}`;
+   
+         const pdfBlob = pdf.output("blob");
+   
+   
+         const formData = new FormData();
+         formData.append("clientInvoice", pdfBlob, `${invoiceNumber}.pdf`);
+         formData.append("id", invoiceId);
+         formData.append("invoice_document_type", "Export Invoice");
+   
+   
+        
+           const response = await axios.post(
+             `${API_URL}/api/invoice/upload-client-invoice`,
+             formData,
+             { withCredentials: true }, {
+             headers: {
+               "Content-Type": "multipart/form-data",
+             },
+           }
+           );
+     console.log("PDF uploaded successfully:", response.data);
+   
+       Swal.fire({
+         icon: "success",
+         title: "Invoice Generated",
+         text: "Invoice has been generated and uploaded successfully.",
+         confirmButtonColor: "#2563eb",
+       });
+   
+       // Optional local download
+       // pdf.save(`${invoiceNumber}.pdf`);
+   
+     } catch (error) {
+       console.error("Invoice generation failed:", error);
+   
+       Swal.fire({
+         icon: "error",
+         title: "Generation Failed",
+         text: "Something went wrong while generating invoice.",
+       });
+     } finally {
+       setIsGenerating(false);
+     }
+   };
+   
 
 
 
@@ -243,7 +276,7 @@ const Export_invoice = () => {
                             </div>
                             <div className="pt-1">
                                 <strong className=" w-[40%]  inline-block">Dated</strong>
-                                <strong className="font-bold">:</strong> {new Date(allinvoiceDetails?.invoice_date).toLocaleDateString()}
+                                <strong className="font-bold">:</strong> {new Date().toLocaleDateString("en-IN")}
                             </div>
                             <div className="pt-1 pb-1">
                                 <strong className=" w-[40%]  inline-block">
@@ -659,7 +692,8 @@ const Export_invoice = () => {
                     onClick={downloadPDF}
                     className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                    Download Invoice
+                Generate Invoice
+
                 </button>
 
                 <button
