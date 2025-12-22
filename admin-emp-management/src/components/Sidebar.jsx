@@ -1101,6 +1101,8 @@ const Sidebar = () => {
                             "/bidding-details",
                             "/connect-details",
                             "/bidding-reports",
+                            "/bidding-transaction_history",
+                            "/billing_details"
                           ].includes(currentPath)
                             ? "bg-blue-100 text-[#4F46E5]"
                             : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
@@ -1118,6 +1120,8 @@ const Sidebar = () => {
                                 "/bidding-details",
                                 "/connect-details",
                                 "/bidding-reports",
+                                "/bidding-transaction_history",
+                                "/billing_details"
                               ].includes(currentPath) ? (
                                 <IoIosArrowUp />
                               ) : (
@@ -1137,12 +1141,14 @@ const Sidebar = () => {
                             "/bidding-details",
                             "/connect-details",
                             "/bidding-reports",
+                            "/bidding-transaction_history",
+                            "/billing_details",
                           ].includes(currentPath)
-                            ? "max-h-52 opacity-100"
+                            ? "max-h-60 opacity-100"
                             : "max-h-0 opacity-0"
                         }`}
                       >
-                        <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
+                        <div className="flex gap-2  items-start  ms-4 flex-col text-sm font-medium text-gray-500">
                           <button
                             onClick={() => navigate("/account-bidding")}
                             className={`px-2 py-1 rounded-full 
@@ -1199,6 +1205,30 @@ const Sidebar = () => {
     }`}
                           >
                             Bidding Reports
+                          </button>
+
+                          <button
+                            onClick={() => navigate("/bidding-transaction_history")}
+                            className={`px-2 py-1 rounded-full 
+    ${
+      currentPath === "/bidding-transaction_history"
+        ? " text-[#4F46E5]"
+        : "hover:bg-blue-100 text-gray-500"
+    }`}
+                          >
+                        Transaction History
+                          </button>
+
+                           <button
+                            onClick={() => navigate("/billing_details")}
+                            className={`px-2 py-1 rounded-full 
+    ${
+      currentPath === "/billing_details"
+        ? " text-[#4F46E5]"
+        : "hover:bg-blue-100 text-gray-500"
+    }`}
+                          >
+                        Billing Details
                           </button>
                         </div>
                       </div>
