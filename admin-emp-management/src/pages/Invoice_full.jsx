@@ -127,7 +127,7 @@ const Invoice_full = () => {
   //   add items
 
   const [items, setItems] = useState([
-    { description: "", hsn: "", qty: "", rate: "", total: "" },
+    { description: "", hsnCode: "", qty: "", rate: "", total: "" },
   ]);
 
   const [selectedClient, setSelectedClient] = useState(null);
@@ -337,10 +337,26 @@ const Invoice_full = () => {
     setItems(updatedItems);
   };
 
+  const [paidDate, setPaidDate] = useState("");
 
 
   const handlesubmit = async (e) => {
     e.preventDefault();
+
+      let newErrors = {};
+
+      if (status === "paid" && !paidDate) {
+        newErrors.paidDate = "Paid date is required when status is Paid";
+      }
+
+      if (!status) {
+        newErrors.status = "Status is required";
+      }
+
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return;
+      }
 
     try {
       const formData = {
@@ -351,7 +367,7 @@ const Invoice_full = () => {
         currency: currency.name,
         items: items.map((item) => ({
           description: item.description,
-          hsn: item.hsn,
+          hsnCode: item.hsnCode,
           quantity: item.qty,
           rate: item.rate,
           amount: item.total,
@@ -360,6 +376,7 @@ const Invoice_full = () => {
         tax: tax,
         total_amount: totalAmount,
         status: status,
+        paid_date: paidDate,
         notes: notes,
         invoice_type: selected,
         igst,
@@ -403,6 +420,7 @@ const Invoice_full = () => {
       setTax(18);
       setTotalAmount(0);
       setNotes("");
+      setPaidDate("");
       setStatus("");
 
       fetchProject();
@@ -594,7 +612,7 @@ const Invoice_full = () => {
                           type="text"
                           placeholder="Hsn"
                           className="border p-2 rounded"
-                          value={item.hsn}
+                          value={item.hsnCode}
                           onChange={(e) =>
                             handleChange(index, "hsn", e.target.value)
                           }
@@ -798,19 +816,28 @@ const Invoice_full = () => {
                             </p>
                           )}
                         </div>
-                        {/* {status === "paid" && (
-  <div className="mt-4">
-    <label className="block text-sm font-medium text-gray-700 mb-1">
-      Paid Date
-    </label>
-    <input
-      type="date"
-      value={paidDate}
-      onChange={(e) => setPaidDate(e.target.value)}
-      className="w-full h-11 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-    />
-  </div>
-)} */}
+                        {status === "paid" && (
+                          <div className="mt-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Paid Date <span className="text-red-500">*</span>
+                            </label>
+
+                            <input
+                              type="date"
+                              value={paidDate}
+                              onChange={(e) => {
+                                setPaidDate(e.target.value);
+                                setErrors((prev) => ({ ...prev, paidDate: "" }));
+                              }}
+                              className="w-full h-11 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+
+                            {errors.paidDate && (
+                              <p className="text-red-500 text-sm mt-1">{errors.paidDate}</p>
+                            )}
+                          </div>
+                        )}
+
 
                       </div>
                     </div>
