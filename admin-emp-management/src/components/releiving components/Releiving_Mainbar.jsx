@@ -92,7 +92,7 @@ const Releiving_Mainbar = () => {
         `${API_URL}/api/employees/reliving-list`,
         { withCredentials: true }
       );
-      // console.log("re", response);
+      console.log("re 1", response);
       if (response.data.success) {
         setClientdetails(response.data.data);
         setLoading(false);
@@ -112,7 +112,7 @@ const Releiving_Mainbar = () => {
         `${API_URL}/api/employees/reliving-list,${EmpolyeeId}`,
         { withCredentials: true }
       );
-      // console.log("re", response);
+      console.log("re 2", response);
       if (response.data.success) {
         setLetterlistdetails(response);
         setLoading(false);
@@ -164,8 +164,8 @@ const Releiving_Mainbar = () => {
         employeeName: alldatarow?.employeeName,
         employeeId: alldatarow?.employeeId,
         role: alldatarow?.role,
-        dateOfJoining: alldatarow?.dateOfBirth
-          ? new Date(alldatarow.dateOfBirth).toISOString()
+        dateOfJoining: alldatarow?.dateOfJoining
+          ? new Date(alldatarow.dateOfJoining).toISOString()
           : null,
         lastRelivingDate: alldatarow?.lastDate
           ? new Date(alldatarow.lastDate).toISOString()
@@ -234,7 +234,7 @@ const Releiving_Mainbar = () => {
 
     {
       title: "Joining Date",
-      data: "lastDate",
+      data: "dateOfJoining",
       render: (data) => {
         if (!data) return "-";
         return formatDateTime(data);
@@ -449,6 +449,7 @@ const Releiving_Mainbar = () => {
         `${API_URL}/api/reliving/view-relivinglist`,
         { withCredentials: true }
       );
+      console.log("re 3", response);
       if (response.data.success) {
         // const list = response.data.data;
         setFields(response.data.data);
@@ -924,13 +925,13 @@ const Releiving_Mainbar = () => {
                     {/* date of join */}
                     <div className="mb-3 flex justify-between">
                       <label className="block text-sm font-medium mb-2">
-                        Date of Joinig
+                        Date of Joining
                       </label>
                       <input
                         type="text"
                         // value={alldatarow?.dateOfBirth}
                         value={
-                          formatDateTime(alldatarow?.dateOfBirth)
+                          formatDateTime(alldatarow?.dateOfJoining)
                         }
                         disabled
                         className="w-[50%] px-3 py-2 border border-gray-300 bg-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"

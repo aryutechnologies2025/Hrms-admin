@@ -32,7 +32,7 @@ import {
   FaLock,
   FaSpinner,
 } from "react-icons/fa6";
-import { useDateUtils  } from "../../hooks/useDateUtils";
+import { useDateUtils } from "../../hooks/useDateUtils";
 import { SettingsContext } from "../../App";
 
 // const initialData = {
@@ -63,11 +63,12 @@ import { SettingsContext } from "../../App";
 
 const TaskList = () => {
   const { dynamicDateFormat } = useContext(SettingsContext);
-// console.log("Current date format:", dynamicDateFormat);
+  // console.log("Current date format:", dynamicDateFormat);
 
   const formatDateTime = useDateUtils();
 
   const [data, setData] = useState(null);
+  console.log("data check", data);
   const [error, setError] = useState("");
   const [buttonLoading, setButtonLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -280,7 +281,7 @@ const TaskList = () => {
       try {
         const response = await axios.patch(
           `${API_URL}/api/task/updated-status/${movedItem.taskId}`,
-          payload, {withCredentials: true}
+          payload, { withCredentials: true }
         );
         //       console.log("Dragged Task Object:", movedItem);
         // console.log("Calling PATCH on:", `${API_URL}api/task/updated-status/${movedItem.taskId}`);
@@ -290,7 +291,7 @@ const TaskList = () => {
         console.error("Error updating status via drag:", error);
         toast.error(
           error?.response?.data?.message ||
-            "Failed to update task status after dragging."
+          "Failed to update task status after dragging."
         );
       }
     }
@@ -457,7 +458,7 @@ const TaskList = () => {
 
       const response = await axios.post(
         `${API_URL}/api/task/create-task`,
-        formData, {withCredentials: true}
+        formData, { withCredentials: true }
       );
 
       // console.log("response", response);
@@ -496,7 +497,7 @@ const TaskList = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/project/view-projects`,
-        {withCredentials: true}
+        { withCredentials: true }
       );
       // console.log(response);
       if (response.data.success) {
@@ -801,13 +802,13 @@ const TaskList = () => {
           },
         },
         columnOrder: [
-           "block",
+          "block",
           "todo",
           "inprogress",
           "inreview",
           "done",
           "completed",
-         
+
         ],
       };
 
@@ -936,10 +937,10 @@ const TaskList = () => {
 
   const filteredEmployees = projectname
     ? employeeOption.filter(
-        (emp) =>
-          projectFilter[0].teamMembers.includes(emp.value) ||
-          projectFilter[0].projectManager.includes(emp.value)
-      )
+      (emp) =>
+        projectFilter[0].teamMembers.includes(emp.value) ||
+        projectFilter[0].projectManager.includes(emp.value)
+    )
     : employeeOption;
 
   // const handleTodayClick = () => {
@@ -982,10 +983,10 @@ const TaskList = () => {
           </div>
         ) : (
           <div className="p-2 md:p-5 w-full  ">
-           
+
             <div className="cursor-pointer">
-               <Mobile_Sidebar />
-              
+              <Mobile_Sidebar />
+
             </div>
             <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
               <p
@@ -997,7 +998,7 @@ const TaskList = () => {
 
               <p>{">"}</p>
               <p className="text-sm text-blue-500">Task List</p>
-              </div>
+            </div>
             <div className="flex flex-wrap md:flex-nowrap justify-around gap-3 md:gap-8 my-4 md:my-8 text-[#6b7280] ">
               <div className="flex justify-between bg-[#f3f4f610] border px-8 py-3 md:py-6 rounded-lg shadow-sm w-full">
                 <div className="">
@@ -1300,7 +1301,7 @@ const TaskList = () => {
               </div>
             </div>
 
-             <DragDropContext onDragEnd={onDragEnd}>
+            <DragDropContext onDragEnd={onDragEnd}>
               {/* Outer Scroll (Vertical) */}
               <div className="kanban-scroll h-[600px] rounded-md w-full overflow-y-auto  scroll-smooth  pr-6">
                 {/* Inner Scroll (Horizontal Columns) */}
@@ -1332,130 +1333,165 @@ const TaskList = () => {
 
                           {/* Tasks */}
 
-                         <Droppable droppableId={column.id} className="">
-                          {(provided) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.droppableProps}
-                              className="h-full"
-                            >
-                              {column.items
-                                // .filter((item) => {
-                                //   if (searchTerm.trim() === "") return true;
-                                //   return (
-                                //     item.assignedTo?.employeeName
-                                //       ?.toLowerCase()
-                                //       .includes(searchTerm.toLowerCase()) ||
-                                //     item.taskId
-                                //       ?.toLowerCase()
-                                //       .includes(searchTerm.toLowerCase())
-                                //   );
-                                // })
-                                .map((item, index) => (
-                                  <Draggable
-                                    key={`${column.id}-${item._id}`} // unique key
-                                    draggableId={`${column.id}-${item._id}`}
-                                    index={index}
-                                  >
-                                    {(provided) => (
-                                      <div
-                                        ref={provided.innerRef}
-                                        {...provided.draggableProps}
-                                        {...provided.dragHandleProps}
-                                        onClick={() => handleNavigate(item)}
-                                        className="bg-white rounded-sm shadow-[0px_6px_42px_-23px_rgba(0,_0,_0,_0.1)] p-3 mb-2 hover:scale-[1.03] duration-300 cursor-pointer m-1"
-                                      >
-                                        <div className="flex flex-col  gap-2">
-                                         <div className="flex justify-between">
-                                           <span className="truncate max-w-48 text-wrap text-[14px] flex items-center justify-between">
-                                            {item.title.length > 44
-                                              ? `${item.title.substring(
-                                                  0,
-                                                  44
-                                                )}...`
-                                              : item.title}
-                                            </span>
-                                            <div className="">
-                                                <span className="">
-                                             {item.testerStatus == 1 && (
-                                              <VscDebugConsole
-                                                className="text-2xl text-green-950"
-                                                title="Testing"
-                                              />
-                                            )}
-                                           </span>
-                                            {item.pauseComments?.length > 0 &&
-                                              item.pauseComments[
-                                                item.pauseComments.length - 1
-                                              ]?.pauseCondition === "hold" && (
-                                                <IoPauseCircleOutline
-                                                  className="text-xl text-red-700"
-                                                  title="On Hold"
-                                                />
-                                              )}
-                                            </div>
-                                         </div>
+                          <Droppable droppableId={column.id} className="">
+                            {(provided) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.droppableProps}
+                                className="h-full"
+                              >
+                                {column.items
+                                  // .filter((item) => {
+                                  //   if (searchTerm.trim() === "") return true;
+                                  //   return (
+                                  //     item.assignedTo?.employeeName
+                                  //       ?.toLowerCase()
+                                  //       .includes(searchTerm.toLowerCase()) ||
+                                  //     item.taskId
+                                  //       ?.toLowerCase()
+                                  //       .includes(searchTerm.toLowerCase())
+                                  //   );
+                                  // })
+                                  .map((item, index) => (
+                                    console.log("item check", item),
+                                    <Draggable
+                                      key={`${column.id}-${item._id}`} // unique key
+                                      draggableId={`${column.id}-${item._id}`}
+                                      index={index}
+                                    >
+                                      {(provided) => (
+                                        <div
+                                          ref={provided.innerRef}
+                                          {...provided.draggableProps}
+                                          {...provided.dragHandleProps}
+                                          onClick={() => handleNavigate(item)}
+                                          className="bg-white rounded-sm shadow-[0px_6px_42px_-23px_rgba(0,_0,_0,_0.1)] p-3 mb-2 hover:scale-[1.03] duration-300 cursor-pointer m-1"
+                                        >
+                                          <div className="flex flex-col  gap-2">
+                                            <div className="flex justify-between">
+                                              <div className="w-[70%]">
+                                                <span className="truncate max-w-48 text-wrap text-[14px] flex items-center justify-between">
+                                                  {item.title.length > 44
+                                                    ? `${item.title.substring(
+                                                      0,
+                                                      44
+                                                    )}...`
+                                                    : item.title}
+                                                </span>
+                                              </div>
+                                              {(() => {
+                                                const taskType = item.taskType?.toLowerCase().trim();
+                                                const hasTesting = item.testerStatus == 1;
+                                                const hasHold =
+                                                  item.pauseComments?.length > 0 &&
+                                                  item.pauseComments[item.pauseComments.length - 1]?.pauseCondition === "hold";
 
-                                          <div className="flex justify-between items-center"> 
-                                            <span
-                                              className={`text-xs px-2 py-1 rounded-full font-medium shadow-sm ${
-                                                item.assignedTo?.employeeName
+                                                const hasBadge =
+                                                  taskType === "new" ||
+                                                  taskType === "newrequirement" ||
+                                                  taskType === "bug" ||
+                                                  taskType === "maintenance" ||
+                                                  taskType === "maintainance";
+
+                                                return (
+                                                  <div className="w-[20%] flex items-center gap-1">
+
+
+                                                    {hasBadge && (
+                                                      <span
+                                                        className={`w-7 h-7 flex items-center justify-center rounded-full text-[16px] text-white shadow-sm
+                                                          ${taskType === "bug"
+                                                            ? "bg-red-600 border border-red-600"
+                                                            : taskType === "maintenance" || taskType === "maintainance"
+                                                              ? "bg-blue-600 border border-blue-600"
+                                                              : "bg-green-800 border border-green-900"
+                                                          }
+            ${!hasTesting && !hasHold ? "ml-auto" : ""}  
+          `}
+                                                      >
+                                                        {taskType === "bug" ? "B" : taskType.startsWith("maint") ? "M" : "N"}
+                                                      </span>
+                                                    )}
+
+
+                                                    {hasHold && (
+                                                      <IoPauseCircleOutline
+                                                        className={`text-xl text-red-700 ${!hasTesting ? "ml-auto" : ""}`}
+                                                        title="On Hold"
+                                                      />
+                                                    )}
+
+                                                    {hasTesting && (
+                                                      <VscDebugConsole
+                                                        className="text-2xl text-green-950 ml-auto"
+                                                        title="Testing"
+                                                      />
+                                                    )}
+
+                                                  </div>
+                                                );
+                                              })()}
+
+                                            </div>
+
+                                            <div className="flex justify-between items-center">
+                                              <span
+                                                className={`text-xs px-2 py-1 rounded-full font-medium shadow-sm ${item.assignedTo?.employeeName
                                                   ? "bg-gray-100 text-gray-700"
                                                   : "bg-red-100 text-red-700"
-                                              }`}
-                                            >
-                                              {item.assignedTo?.employeeName ? item.assignedTo?.employeeName.length > 10
-                                              ? `${item.assignedTo?.employeeName.substring(
-                                                  0,
-                                                  10
-                                                )}...`
-                                              : item.assignedTo?.employeeName : "Not Assigned"}
-                                            </span>
-                                             <div>
-                                            <span className="text-[10px] bg-blue-100 rounded-full px-1 py-[2px]">
-                                               {item.projectId?.name ? item.projectId?.name.length > 10
-                                              ? `${item.projectId?.name.substring(
-                                                  0,
-                                                  10
-                                                )}...`
-                                              : item.projectId?.name : "-"}
-                                            </span>
-                                          </div>
-                                          </div>
-
-                                         
-
-                                          <div className="flex justify-between w-full mt-1">
-                                            <span className="text-xs flex gap-2 items-center">
-                                              #{item.taskId}
-                                              <span className="text-xs">
-                                                ({formatDateTime(item?.createdAt)})
+                                                  }`}
+                                              >
+                                                {item.assignedTo?.employeeName ? item.assignedTo?.employeeName.length > 10
+                                                  ? `${item.assignedTo?.employeeName.substring(
+                                                    0,
+                                                    10
+                                                  )}...`
+                                                  : item.assignedTo?.employeeName : "Not Assigned"}
                                               </span>
-                                            </span>
-                                            <div
-                                              className={`font-semibold capitalize ${
-                                                item.priority === "high"
+                                              <div>
+                                                <span className="text-[10px] bg-blue-100 rounded-full px-1 py-[2px]">
+                                                  {item.projectId?.name ? item.projectId?.name.length > 10
+                                                    ? `${item.projectId?.name.substring(
+                                                      0,
+                                                      10
+                                                    )}...`
+                                                    : item.projectId?.name : "-"}
+                                                </span>
+                                              </div>
+                                            </div>
+
+
+
+                                            <div className="flex justify-between w-full mt-1">
+                                              <span className="text-xs flex gap-2 items-center">
+                                                #{item.taskId}
+                                                <span className="text-xs">
+                                                  ({formatDateTime(item?.createdAt)})
+                                                </span>
+                                              </span>
+                                              <div
+                                                className={`font-semibold capitalize ${item.priority === "high"
                                                   ? "text-red-500"
                                                   : item.priority === "medium"
-                                                  ? "text-orange-400"
-                                                  : item.priority === "low"
-                                                  ? "text-yellow-300"
-                                                  : "text-gray-500"
-                                              }`}
-                                            >
-                                              <PiFlagPennantFill />
+                                                    ? "text-orange-400"
+                                                    : item.priority === "low"
+                                                      ? "text-yellow-300"
+                                                      : "text-gray-500"
+                                                  }`}
+                                              >
+                                                <PiFlagPennantFill />
+                                              </div>
                                             </div>
                                           </div>
                                         </div>
-                                      </div>
-                                    )}
-                                  </Draggable>
-                                ))}
+                                      )}
+                                    </Draggable>
+                                  ))}
 
-                              {provided.placeholder}
-                            </div>
-                          )}
-                        </Droppable>
+                                {provided.placeholder}
+                              </div>
+                            )}
+                          </Droppable>
                         </div>
                       );
                     })}

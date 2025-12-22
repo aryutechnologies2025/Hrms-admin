@@ -101,7 +101,7 @@ const Relieved_list_details = () => {
         withCredentials: true,
       }
       );
-      // console.log("re", response);
+      // console.log("re 1", response);
       if (response.data.success) {
         setClientdetails(response.data.data);
         setLoading(false);
@@ -121,7 +121,7 @@ const Relieved_list_details = () => {
         `${API_URL}/api/employees/reliving-list,${EmpolyeeId}`,
         { withCredentials: true }
       );
-      // console.log("re", response);
+      // console.log("re 2", response);
       if (response.data.success) {
         setLetterlistdetails(response);
         setLoading(false);
@@ -178,6 +178,9 @@ const Relieved_list_details = () => {
           : null,
         lastRelivingDate: alldatarow?.lastDate
           ? new Date(alldatarow.lastDate).toISOString()
+          : null,
+        totalDays: alldatarow?.totalDays
+          ? new Date(alldatarow.totalDays).toISOString()
           : null,
         verification,
         status: alldatarow.status,
@@ -253,7 +256,7 @@ const Relieved_list_details = () => {
 
     {
       title: "Joining Date",
-      data: "relievingCheckList.dateOfJoining",
+      data: "dateOfJoining",
       render: (data) => {
         if (!data) return "-";
         return formatDateTime(data);
@@ -473,6 +476,7 @@ const Relieved_list_details = () => {
         `${API_URL}/api/reliving/view-relivinglist`,
         { withCredentials: true }
       );
+      console.log("re 3", response);
       if (response.data.success) {
         // const list = response.data.data;
         setFields(response.data.data);
@@ -940,7 +944,7 @@ const Relieved_list_details = () => {
                     {/* date of join */}
                     <div className="mb-3 flex justify-between">
                       <label className="block text-sm font-medium mb-2">
-                        Date of Joinig
+                        Date of Joining
                       </label>
                       <input
                         type="text"
