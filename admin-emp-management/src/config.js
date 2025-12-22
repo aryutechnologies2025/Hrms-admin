@@ -8,7 +8,7 @@ export const API_URL = "https://hrms.aryuprojects.com";
 
 
 // export const API_URL = "https://portal.aryutechnologies.com";
-
+// 
 // export const API_URL = "http://192.168.0.116:5000";
 
 // 192.168.0.116

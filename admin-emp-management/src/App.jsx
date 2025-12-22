@@ -135,6 +135,8 @@ import Performa_invoice from "./components/invoice desgins/Performa_invoice";
 import Sales_invoice from "./components/invoice desgins/Sales_invoice";
 import Invoice_edit_main from "./pages/Invoice_edit_main";
 import Client_invoice_main from "./components/Invoice Client/Client_invoice_main";
+import Bidding_transaction_main from "./components/bidding assests components/Bidding_transaction_main";
+import Billing_details_main from "./components/bidding assests components/Billing_details.main";
 
 export const SettingsContext = createContext();
 
@@ -959,6 +961,26 @@ function App() {
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
           <Connect_main />
+        </ProtectedRoute>
+      ),
+    },
+
+       {
+      path: "/bidding-transaction_history",
+      permissionTitle: "Bidding",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Bidding_transaction_main />
+        </ProtectedRoute>
+      ),
+    },
+
+       {
+      path: "/billing_details",
+      permissionTitle: "Bidding",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Billing_details_main/>
         </ProtectedRoute>
       ),
     },
