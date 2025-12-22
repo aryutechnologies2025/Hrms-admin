@@ -126,75 +126,142 @@ const Dashboard_Mainbar = () => {
       count: party.variation.range(20, 100),
     });
   };
-  const AbsemtDatacolumns = [
-    {
-      field: "sno",
-      header: "S.No",
-      body: (_rowData, { rowIndex }) => rowIndex + 1,
-      style: { width: "10px !important", textAlign: "center" },
-      bodyStyle: { textAlign: "center" },
-    },
-    {
-      field: "employee_name",
-      header: "Employee Name",
-      body: (rowData) =>
-        rowData ? (
-          <>
-            <div
-              className="cursor-pointer"
-              onClick={() => onClickCard(rowData._id)}
-            >
-              {rowData.employeeName}
-              <br />
-              <span className="text-blue-600 text-sm">
-                {rowData.roleId.name}
-              </span>
-            </div>
-          </>
-        ) : (
-          "-"
-        ),
-    },
-    {
-      field: "login_time",
-      header: "Login Time",
-      body: (rowData) => {
-        if (!rowData?.login) return "-";
+  // const AbsemtDatacolumns = [
+  //   {
+  //     field: "sno",
+  //     header: "S.No",
+  //     body: (_rowData, { rowIndex }) => rowIndex + 1,
+  //     style: { width: "10px !important", textAlign: "center" },
+  //     bodyStyle: { textAlign: "center" },
+  //   },
+  //   {
+  //     field: "employee_name",
+  //     header: "Employee Name",
+  //     body: (rowData) =>
+  //       rowData ? (
+  //         <>
+  //           <div
+  //             className="cursor-pointer"
+  //             onClick={() => onClickCard(rowData._id)}
+  //           >
+  //             {rowData.employeeName}
+  //             <br />
+  //             <span className="text-blue-600 text-sm">
+  //               {rowData.roleId.name}
+  //             </span>
+  //           </div>
+  //         </>
+  //       ) : (
+  //         "-"
+  //       ),
+  //   },
+  //   {
+  //     field: "login_time",
+  //     header: "Login Time",
+  //     body: (rowData) => {
+  //       if (!rowData?.login) return "-";
 
-        const iso = rowData.login; // "2025-12-08T10:43:41.655Z"
-        const time = iso.substring(11, 16); // "10:43"
+  //       const iso = rowData.login; // "2025-12-08T10:43:41.655Z"
+  //       const time = iso.substring(11, 16); // "10:43"
 
-        let [hours, minutes] = time.split(":").map(Number);
+  //       let [hours, minutes] = time.split(":").map(Number);
 
-        // Convert to AM/PM
-        const ampm = hours >= 12 ? "PM" : "AM";
-        const displayHours = hours % 12 || 12; // convert 0 → 12, 13 → 1 etc.
-        const formattedTime = `${displayHours}:${minutes.toString().padStart(2, "0")} ${ampm}`;
+  //       // Convert to AM/PM
+  //       const ampm = hours >= 12 ? "PM" : "AM";
+  //       const displayHours = hours % 12 || 12; // convert 0 → 12, 13 → 1 etc.
+  //       const formattedTime = `${displayHours}:${minutes.toString().padStart(2, "0")} ${ampm}`;
 
-        let colorClass = "";
+  //       let colorClass = "";
 
-        // Orange for 10:05 to 10:29
-        if (hours === 10 && minutes >= 5 && minutes < 30) {
-          colorClass = "text-yellow-500 font-bold";
-        }
-        // Red for 10:30 onwards
-        else if (hours > 10 || (hours === 10 && minutes >= 30)) {
-          colorClass = "text-red-500";
-        }
+  //       // Orange for 10:05 to 10:29
+  //       if (hours === 10 && minutes >= 5 && minutes < 30) {
+  //         colorClass = "text-yellow-500 font-bold";
+  //       }
+  //       // Red for 10:30 onwards
+  //       else if (hours > 10 || (hours === 10 && minutes >= 30)) {
+  //         colorClass = "text-red-500";
+  //       }
 
-        return <p className={colorClass}>{formattedTime}</p>;
-      },
-    },
+  //       return <p className={colorClass}>{formattedTime}</p>;
+  //     },
+  //   },
+
+const commonColumns = [
+  {
+    field: "sno",
+    header: "S.No",
+    body: (_rowData, { rowIndex }) => rowIndex + 1,
+    style: { width: "10px", textAlign: "center" },
+    bodyStyle: { textAlign: "center" },
+  },
+  {
+    field: "employee_name",
+    header: "Employee Name",
+    body: (rowData) =>
+      rowData ? (
+        <div
+          className="cursor-pointer"
+          onClick={() => onClickCard(rowData._id)}
+        >
+          {rowData.employeeName}
+          <br />
+          <span className="text-blue-600 text-sm">
+            {rowData.roleId?.name}
+          </span>
+        </div>
+      ) : (
+        "-"
+      ),
+  },
+];
+
+
+const loginTimeColumn = {
+  field: "login_time",
+  header: "Login Time",
+  body: (rowData) => {
+    if (!rowData?.login) return "-";
+
+    const time = rowData.login.substring(11, 16);
+    let [hours, minutes] = time.split(":").map(Number);
+
+    const ampm = hours >= 12 ? "PM" : "AM";
+    const displayHours = hours % 12 || 12;
+    const formattedTime = `${displayHours}:${minutes
+      .toString()
+      .padStart(2, "0")} ${ampm}`;
+
+    let colorClass = "";
+    if (hours === 10 && minutes >= 5 && minutes < 30) {
+      colorClass = "text-yellow-500 font-bold";
+    } else if (hours > 10 || (hours === 10 && minutes >= 30)) {
+      colorClass = "text-red-500";
+    }
+
+    return <p className={colorClass}>{formattedTime}</p>;
+  },
+};
+
+const absentColumns = [...commonColumns];
+const presentWfhColumns = [...commonColumns, loginTimeColumn];
 
 
 
 
 
-
-    // { field: "employeeId", header: "Employee ID" },
-  ];
+  //   // { field: "employeeId", header: "Employee ID" },
+  // ];
 
   const [show, setShow] = useState(true);
+
+  const sortByLateLogin = (data = []) => {
+  return [...data].sort((a, b) => {
+    if (!a.login) return 1;
+    if (!b.login) return -1;
+    return new Date(b.login) - new Date(a.login); // late first
+  });
+};
+
 
 
   return (
@@ -775,7 +842,7 @@ const Dashboard_Mainbar = () => {
                     showGridlines
                     resizableColumns
                   >
-                    {AbsemtDatacolumns.map((col, index) => (
+                    {absentColumns.map((col, index) => (
                       <Column
                         key={index}
                         field={col.field}
@@ -834,14 +901,14 @@ const Dashboard_Mainbar = () => {
 
                   <DataTable
                     className="mt-8"
-                    value={wfhlistData}
+                    value={sortByLateLogin(wfhlistData)}
                     paginator
                     rows={5}
                     rowsPerPageOptions={[5, 10, 20]}
                     showGridlines
                     resizableColumns
                   >
-                    {AbsemtDatacolumns.map((col, index) => (
+                    {presentWfhColumns.map((col, index) => (
                       <Column
                         key={index}
                         field={col.field}
@@ -901,14 +968,14 @@ const Dashboard_Mainbar = () => {
 
                   <DataTable
                     className="mt-8"
-                    value={presentlistData}
+                    value={sortByLateLogin(presentlistData)}
                     paginator
                     rows={5}
                     rowsPerPageOptions={[5, 10, 20]}
                     showGridlines
                     resizableColumns
                   >
-                    {AbsemtDatacolumns.map((col, index) => (
+                    {presentWfhColumns.map((col, index) => (
                       <Column
                         key={index}
                         field={col.field}
