@@ -76,13 +76,13 @@ const Bidding_transaction_details = () => {
     const [errors, setErrors] = useState({});
 
     const [accountdetails, setAccountdetails] = useState([]);
-    //   console.log("accountdetails", accountdetails);
+      console.log("accountdetails", accountdetails);
     const [loading, setLoading] = useState(true);
 
     const fetchProject = async () => {
         try {
             const response = await axios.get(
-                `${API_URL}/api/bidder/view-connect-purchased`,
+                `${API_URL}/api/bidder/get-import-bidding-excel-report`,
                 { withCredentials: true }
             );
             // console.log(response);
@@ -145,7 +145,7 @@ const Bidding_transaction_details = () => {
             formData.append("file", file);
 
             const response = await axios.post(
-                `${API_URL}/api/bidder/create-connect-purchased`,
+                `${API_URL}/api/bidder/import-bidding-report`,
                 formData,
                 {
                     withCredentials: true,
@@ -170,8 +170,10 @@ const Bidding_transaction_details = () => {
         }
     };
 
-const [isOpen, setIsOpen] = useState(false);
-  const [selectedInvoiceId, setSelectedInvoiceId] = useState(null);
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedInvoiceId, setSelectedInvoiceId] = useState(null);
+
+    console.log("selectedInvoiceId", selectedInvoiceId);
 
 
 
@@ -196,21 +198,22 @@ const [isOpen, setIsOpen] = useState(false);
 
         {
             title: "Type",
-            data: null,
-            render: (row) => row.account?.name || "-",
+            data: "transactionType",
+            // render: (row) => row.account?.name || "-",
         },
         {
             title: "Contract/Details",
-            data: "noOfConnections",
+            data: "transactionSummary",
         },
-        {
-            title: "Client",
-            data: null,
-            render: (row) => row.account?.name || "-",
-        },
+    {
+  title: "Client",
+  data: "clientTeam",
+  render: (data) => data || "-"
+},
+
         {
             title: "Amount",
-            data: "amount",
+            data: "amountINR",
             render: (data) => {
                 if (data == null) return "-";
                 return new Intl.NumberFormat("en-IN", {
@@ -222,77 +225,77 @@ const [isOpen, setIsOpen] = useState(false);
             },
         },
 
+        // {
+        //     title: "Status",
+        //     data: "status",
+        //     render: (data, type, row) => {
+        //         const textColor =
+        //             data === "1"
+        //                 ? "text-green-600 border rounded-full border-green-600"
+        //                 : "text-red-600 border rounded-full border-red-600";
+
+        //         return `<div class="${textColor}" style="display: inline-block; padding: 2px; color: ${textColor}; border: 1px solid ${textColor}; text-align: center; width:100px; font-size: 12px; font-weight:500">
+        //           ${data === "1" ? "Active" : "InActive"}
+        //         </div>`;
+        //     },
+        // },
+
         {
-            title: "Status",
-            data: "status",
+            title: "Action",
+            data: null,
             render: (data, type, row) => {
-                const textColor =
-                    data === "1"
-                        ? "text-green-600 border rounded-full border-green-600"
-                        : "text-red-600 border rounded-full border-red-600";
-
-                return `<div class="${textColor}" style="display: inline-block; padding: 2px; color: ${textColor}; border: 1px solid ${textColor}; text-align: center; width:100px; font-size: 12px; font-weight:500">
-                  ${data === "1" ? "Active" : "InActive"}
-                </div>`;
-            },
-        },
-
-        {
-              title: "Action",
-              data: null,
-              render: (data, type, row) => {
                 const id = `actions-${row.sno || Math.random()}`;
                 setTimeout(() => {
-                  const container = document.getElementById(id);
-                  if (container) {
-                    if (!container._root) {
-                      container._root = createRoot(container);
-                    }
-                    container._root.render(
-                      <div
-                        className="action-container"
-                        style={{
-                          display: "flex",
-                          gap: "15px",
-                          alignItems: "flex-end",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {/* <div className="cursor-pointer">
+                    const container = document.getElementById(id);
+                    if (container) {
+                        if (!container._root) {
+                            container._root = createRoot(container);
+                        }
+                        container._root.render(
+                            <div
+                                className="action-container"
+                                style={{
+                                    display: "flex",
+                                    gap: "15px",
+                                    alignItems: "flex-end",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                {/* <div className="cursor-pointer">
                           <FaEye
         
                           />
                         </div> */}
-                        <div
-                          className="modula-icon-edit  flex gap-2"
-                          style={{
-                            color: "#000",
-                          }}
-                        >
-                       <FaEye
-                                           className="cursor-pointer"
-                                            onClick={() => {
-                      setSelectedInvoiceId(row);
-                      setIsOpen(true);
-                    }}
-                                         />
-                        </div>
-        
-                        {/* <div className="modula-icon-del" style={{
+                                <div
+                                    className="modula-icon-edit  flex gap-2"
+                                    style={{
+                                        color: "#000",
+                                    }}
+                                >
+                                    <FaEye
+                                        className="cursor-pointer"
+                                        onClick={() => {
+                                            setSelectedInvoiceId(row);
+                                            setIsOpen(true);
+                                        }}
+                                    />
+                                </div>
+
+                                {/* <div className="modula-icon-del" style={{
                           color: "red"
                         }}>
                           <RiDeleteBin6Line
                             onClick={() => handleDelete(row.id)}
                           />
                         </div> */}
-                      </div>,
-                      container
-                    );
-                  }
+                            </div>,
+                            container
+                        );
+                    }
                 }, 0);
                 return `<div id="${id}"></div>`;
-              },
             },
+        },
 
 
     ];
@@ -570,83 +573,83 @@ const [isOpen, setIsOpen] = useState(false);
                         {/* view */}
 
 
-      {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
-                  <div className="bg-white rounded-2xl shadow-2xl w-[50%] p-6 relative overflow-y-auto max-h-[90vh]">
-      
-                    {/* Close button */}
-                    <button
-                      className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl transition"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      ✖
-                    </button>
-      
-                    {/* Header */}
-                    <div className="text-center mb-6">
-                      <h2 className="text-2xl font-bold text-gray-800">Invoice Summary</h2>
-                      {/* <p className="text-gray-500 mt-1 text-sm">Quick overview of invoice details</p> */}
-                    </div>
-      
-                    {/* Key Details */}
-                    <div className="grid grid-cols-2 gap-6 mb-6">
-                      <div className="flex flex-col">
-                        <span className="text-gray-500 text-sm">Client</span>
-                        {/* <span className="text-gray-900 font-semibold">{selectedInvoiceId.clientId.client_name}</span> */}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-gray-500 text-sm">Project</span>
-                        {/* <span className="text-gray-900 font-semibold">{selectedInvoiceId.project.name}</span> */}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-gray-500 text-sm">Invoice #</span>
-                        {/* <span className="text-gray-900 font-semibold">{selectedInvoiceId.invoice_number}</span> */}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-gray-500 text-sm">Status</span>
-                        {/* <span className={`font-semibold ${selectedInvoiceId.status === "0" ? "text-green-600" : selectedInvoiceId.status === "1" ? "text-yellow-600" : "text-red-600"}`}>
-                          {selectedInvoiceId.status === "0" ? "Paid" : selectedInvoiceId.status === "1" ? "Pending" : "OverDue"}
-                        </span> */}
-      
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-gray-500 text-sm">Invoice Date</span>
-                        {/* <span className="text-gray-900 font-semibold">{selectedInvoiceId.invoice_date}</span> */}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-gray-500 text-sm">Due Date</span>
-                        {/* <span className="text-gray-900 font-semibold">{formatDateTime(selectedInvoiceId.due_date)}</span> */}
-                      </div>
-                    </div>
-      
-                    {/* Items List */}
-                    <h3 className="text-gray-700 font-semibold mb-3">Invoice Types</h3>
-                    {/* <div className="flex flex-wrap gap-2">
-                      {items.map((item, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium cursor-pointer hover:bg-blue-200 transition"
-                          // onClick={() =>
-                          //   navigate(item.path, { state: { invoiceId: selectedInvoiceId._id } })
-                          // }
-                          onClick={() =>
-                            window.open(
-                              `${item.path}?invoiceId=${selectedInvoiceId._id}`,
-                              "_blank",
-                              "noopener,noreferrer"
-                            )
-                          }
-                        >
-                          {item.title}
-                          <FaEye className="text-blue-500 text-xs" />
-                        </div>
-                      ))}
-                    </div> */}
-      
-                  </div>
-                </div>
-              )}
-      
+                         {isOpen && selectedInvoiceId && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
+    <div className="bg-white rounded-2xl shadow-2xl w-[50%] p-6 relative overflow-y-auto max-h-[90vh]">
+
+      {/* Close */}
+      <button
+        className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl"
+        onClick={() => setIsOpen(false)}
+      >
+        ✖
+      </button>
+
+      <h2 className="text-2xl font-bold text-center mb-6">Details</h2>
+
+      {/* Details */}
+      <div className="grid grid-cols-2 gap-6">
+
+        <div>
+          <p className="text-sm text-gray-500">Client</p>
+          <p className="font-semibold">
+            {selectedInvoiceId.clientTeam || "-"}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-sm text-gray-500">Freelancer</p>
+          <p className="font-semibold">
+            {selectedInvoiceId.freelancer || "-"}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-sm text-gray-500">Transaction ID</p>
+          <p className="font-semibold">
+            {selectedInvoiceId.transactionId || "-"}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-sm text-gray-500">Transaction Type</p>
+          <p className="font-semibold">
+            {selectedInvoiceId.transactionType || "-"}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-sm text-gray-500">Date</p>
+          <p className="font-semibold">
+            {selectedInvoiceId.date
+              ? new Date(selectedInvoiceId.date).toLocaleDateString()
+              : "-"}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-sm text-gray-500">Amount ($)</p>
+          <p className="font-semibold">
+            {selectedInvoiceId.amountDollar ?? "-"}
+          </p>
+        </div>
+
+      </div>
+
+      {/* Descriptions */}
+      <div className="mt-6">
+        <h3 className="font-semibold mb-2">Descriptions</h3>
+        <p>{selectedInvoiceId.description1}</p>
+        <p>{selectedInvoiceId.description2}</p>
+        {selectedInvoiceId.description3 && (
+          <p>{selectedInvoiceId.description3}</p>
+        )}
+      </div>
+
+    </div>
+  </div>
+)}
+ 
 
                     </div>
                 </>
