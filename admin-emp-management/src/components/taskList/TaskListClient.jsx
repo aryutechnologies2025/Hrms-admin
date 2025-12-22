@@ -898,7 +898,7 @@ import {
   FaLock,
   FaSpinner,
 } from "react-icons/fa6";
-import { useDateUtils  } from "../../hooks/useDateUtils";
+import { useDateUtils } from "../../hooks/useDateUtils";
 
 // const initialData = {
 //   columns: {
@@ -1140,9 +1140,9 @@ const TaskListClient = () => {
 
       try {
         const response = await axios.patch(
-        `${API_URL}/api/task/updated-status/${movedItem.taskId}`,
-          payload,{ withCredentials: true}
-          
+          `${API_URL}/api/task/updated-status/${movedItem.taskId}`,
+          payload, { withCredentials: true }
+
         );
         //       console.log("Dragged Task Object:", movedItem);
         // console.log("Calling PATCH on:", `${API_URL}api/task/updated-status/${movedItem.taskId}`);
@@ -1152,7 +1152,7 @@ const TaskListClient = () => {
         console.error("Error updating status via drag:", error);
         toast.error(
           error?.response?.data?.message ||
-            "Failed to update task status after dragging."
+          "Failed to update task status after dragging."
         );
       }
     }
@@ -1268,7 +1268,8 @@ const TaskListClient = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees`,
-        {withCredentials: true,
+        {
+          withCredentials: true,
         }
       );
 
@@ -1320,7 +1321,7 @@ const TaskListClient = () => {
 
       const response = await axios.post(
         `${API_URL}/api/task/create-task`,
-        formData, {withCredentials: true}
+        formData, { withCredentials: true }
       );
 
       // console.log("response", response);
@@ -1388,7 +1389,7 @@ const TaskListClient = () => {
           `${API_URL}/api/project/view-projects-id`,
           {
             params: { clientId: employeeemail },
-          },{withCredentials: true}
+          }, { withCredentials: true }
         );
         // console.log(response);
         if (response.data.success) {
@@ -1644,7 +1645,7 @@ const TaskListClient = () => {
         //  Normal search — clear todayTaskDate completely
         payload = {
           employeeId: employeeemail || "",
-          subUserId:employeeDetails.subType ? employeeDetails._id : "",
+          subUserId: employeeDetails.subType ? employeeDetails._id : "",
           projectId: projectname || "",
           day: dateFilter || "",
           toDate: toDateFilter || "",
@@ -1660,7 +1661,7 @@ const TaskListClient = () => {
 
       const response = await axios.get(
         `${API_URL}/api/task/particular-all-task-status-id`,
-        { params: payload },{withCredentials: true}
+        { params: payload }, { withCredentials: true }
       );
 
       const allTasks = response.data.data;
@@ -1829,10 +1830,10 @@ const TaskListClient = () => {
 
   const filteredEmployees = projectname
     ? employeeOption.filter(
-        (emp) =>
-          projectFilter[0].teamMembers.includes(emp.value) ||
-          projectFilter[0].projectManager.includes(emp.value)
-      )
+      (emp) =>
+        projectFilter[0].teamMembers.includes(emp.value) ||
+        projectFilter[0].projectManager.includes(emp.value)
+    )
     : employeeOption;
 
   // const handleTodayClick = () => {
@@ -2159,96 +2160,134 @@ const TaskListClient = () => {
                                     >
                                       {(provided) => (
                                         <div
-                                        ref={provided.innerRef}
-                                        {...provided.draggableProps}
-                                        {...provided.dragHandleProps}
-                                        onClick={() => handleNavigate(item)}
-                                        className="bg-white rounded-sm shadow-[0px_6px_42px_-23px_rgba(0,_0,_0,_0.1)] p-3 mb-2 hover:scale-[1.03] duration-300 cursor-pointer m-1"
-                                      >
-                                        <div className="flex flex-col  gap-2">
-                                         <div className="flex justify-between">
-                                           <span className="truncate max-w-48 text-wrap text-[14px] flex items-center justify-between">
-                                            {item.title.length > 44
-                                              ? `${item.title.substring(
-                                                  0,
-                                                  44
-                                                )}...`
-                                              : item.title}
-                                            </span>
-                                            <div className="">
-                                                <span className="">
-                                             {item.testerStatus == 1 && (
-                                              <VscDebugConsole
-                                                className="text-2xl text-green-950"
-                                                title="Testing"
-                                              />
-                                            )}
-                                           </span>
-                                            {item.pauseComments?.length > 0 &&
-                                              item.pauseComments[
-                                                item.pauseComments.length - 1
-                                              ]?.pauseCondition === "hold" && (
-                                                <IoPauseCircleOutline
-                                                  className="text-xl text-red-700"
-                                                  title="On Hold"
-                                                />
-                                              )}
+                                          ref={provided.innerRef}
+                                          {...provided.draggableProps}
+                                          {...provided.dragHandleProps}
+                                          onClick={() => handleNavigate(item)}
+                                          className="bg-white rounded-sm shadow-[0px_6px_42px_-23px_rgba(0,_0,_0,_0.1)] p-3 mb-2 hover:scale-[1.03] duration-300 cursor-pointer m-1"
+                                        >
+                                          <div className="flex flex-col  gap-2">
+                                            <div className="flex justify-between">
+                                              <div className="w-[70%]">
+                                                <span className="truncate max-w-48 text-wrap text-[14px] flex items-center justify-between">
+                                                  {item.title.length > 44
+                                                    ? `${item.title.substring(
+                                                      0,
+                                                      44
+                                                    )}...`
+                                                    : item.title}
+                                                </span>
+                                              </div>
+                                              {(() => {
+                                                const taskType = item.taskType?.toLowerCase().trim();
+                                                const hasTesting = item.testerStatus == 1;
+                                                const hasHold =
+                                                  item.pauseComments?.length > 0 &&
+                                                  item.pauseComments[item.pauseComments.length - 1]?.pauseCondition === "hold";
+
+                                                const hasBadge =
+                                                  taskType === "new" ||
+                                                  taskType === "newrequirement" ||
+                                                  taskType === "bug" ||
+                                                  taskType === "maintenance" ||
+                                                  taskType === "maintainance";
+
+                                                return (
+                                                  <div className="w-[20%] flex items-center gap-1">
+
+                                                    
+                                                    {hasBadge && (
+                                                      <span
+                                                        className={`w-7 h-7 flex items-center justify-center rounded-full text-[16px] text-white shadow-sm
+            ${taskType === "bug"
+                                                            ? "bg-red-600 border border-red-600"
+                                                            : taskType === "maintenance" || taskType === "maintainance"
+                                                              ? "bg-blue-600 border border-blue-600"
+                                                              : "bg-green-800 border border-green-900"
+                                                          }
+            ${!hasTesting && !hasHold ? "ml-auto" : ""}
+          `}
+                                                      >
+                                                        {taskType === "bug"
+                                                          ? "B"
+                                                          : taskType.startsWith("maint")
+                                                            ? "M"
+                                                            : "N"}
+                                                      </span>
+                                                    )}
+
+                                                    
+                                                    {hasHold && (
+                                                      <IoPauseCircleOutline
+                                                        className={`text-xl text-red-700 ${!hasTesting ? "ml-auto" : ""}`}
+                                                        title="On Hold"
+                                                      />
+                                                    )}
+
+                                                   
+                                                    {hasTesting && (
+                                                      <VscDebugConsole
+                                                        className="text-2xl text-green-950 ml-auto"
+                                                        title="Testing"
+                                                      />
+                                                    )}
+                                                  </div>
+                                                );
+                                              })()}
+
                                             </div>
-                                         </div>
 
-                                          <div className="flex justify-between items-center"> 
-                                            <span
-                                              className={`text-xs px-2 py-1 rounded-full font-medium shadow-sm ${
-                                                item.assignedTo?.employeeName
-                                                  ? "bg-gray-100 text-gray-700"
-                                                  : "bg-red-100 text-red-700"
-                                              }`}
-                                            >
-                                              {item.assignedTo?.employeeName ? item.assignedTo?.employeeName.length > 10
-                                              ? `${item.assignedTo?.employeeName.substring(
-                                                  0,
-                                                  10
-                                                )}...`
-                                              : item.assignedTo?.employeeName : "Not Assigned"}
-                                            </span>
-                                             <div>
-                                            <span className="text-[10px] bg-blue-100 rounded-full px-1 py-[2px]">
-                                               {item.projectId?.name ? item.projectId?.name.length > 10
-                                              ? `${item.projectId?.name.substring(
-                                                  0,
-                                                  10
-                                                )}...`
-                                              : item.projectId?.name : "-"}
-                                            </span>
-                                          </div>
-                                          </div>
-
-                                         
-
-                                          <div className="flex justify-between w-full mt-1">
-                                            <span className="text-xs flex gap-2 items-center">
-                                              #{item.taskId}
-                                              <span className="text-xs">
-                                      ({formatDateTime(item?.createdAt)})
-                                              
+                                            <div className="flex justify-between items-center">
+                                              <span
+                                                className={`text-xs px-2 py-1 rounded-full font-medium shadow-sm ${item.assignedTo?.employeeName
+                                                    ? "bg-gray-100 text-gray-700"
+                                                    : "bg-red-100 text-red-700"
+                                                  }`}
+                                              >
+                                                {item.assignedTo?.employeeName ? item.assignedTo?.employeeName.length > 10
+                                                  ? `${item.assignedTo?.employeeName.substring(
+                                                    0,
+                                                    10
+                                                  )}...`
+                                                  : item.assignedTo?.employeeName : "Not Assigned"}
                                               </span>
-                                            </span>
-                                            <div
-                                              className={`font-semibold capitalize ${
-                                                item.priority === "high"
-                                                  ? "text-red-500"
-                                                  : item.priority === "medium"
-                                                  ? "text-orange-400"
-                                                  : item.priority === "low"
-                                                  ? "text-yellow-300"
-                                                  : "text-gray-500"
-                                              }`}
-                                            >
-                                              <PiFlagPennantFill />
+                                              <div>
+                                                <span className="text-[10px] bg-blue-100 rounded-full px-1 py-[2px]">
+                                                  {item.projectId?.name ? item.projectId?.name.length > 10
+                                                    ? `${item.projectId?.name.substring(
+                                                      0,
+                                                      10
+                                                    )}...`
+                                                    : item.projectId?.name : "-"}
+                                                </span>
+                                              </div>
+                                            </div>
+
+
+
+                                            <div className="flex justify-between w-full mt-1">
+                                              <span className="text-xs flex gap-2 items-center">
+                                                #{item.taskId}
+                                                <span className="text-xs">
+                                                  ({formatDateTime(item?.createdAt)})
+
+                                                </span>
+                                              </span>
+                                              <div
+                                                className={`font-semibold capitalize ${item.priority === "high"
+                                                    ? "text-red-500"
+                                                    : item.priority === "medium"
+                                                      ? "text-orange-400"
+                                                      : item.priority === "low"
+                                                        ? "text-yellow-300"
+                                                        : "text-gray-500"
+                                                  }`}
+                                              >
+                                                <PiFlagPennantFill />
+                                              </div>
                                             </div>
                                           </div>
                                         </div>
-                                      </div>
                                       )}
                                     </Draggable>
                                   ))}
