@@ -119,7 +119,7 @@ const Employees_Card = () => {
           employee_dutyStatus: employee.dutyStatus,
           employee_dateofjoining: employee.dateOfJoining,
           employee_role: employee.role?.name,
-          employee_TotalExperienceTillNow: TotalExperienceTillJoining,
+          employee_TotalExperienceTillNow: employee?.TotalExperienceTillJoining,
         }));
 
         const sortedData = transformedData.sort((a, b) =>
@@ -328,7 +328,7 @@ const Employees_Card = () => {
       render: function (data) {
         if (!data) return "-";
 
-        return formatDateTime(data)
+        return(data)
       },
     },
 

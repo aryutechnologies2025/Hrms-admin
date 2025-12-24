@@ -42,13 +42,13 @@ const Bidding_transaction_details = () => {
 
     const openAddModal = () => {
         setIsAddModalOpen(true);
-        setTimeout(() => setIsAnimating(true), 10); // Delay to trigger animation
+        setTimeout(() => setIsAnimating(true), 10); 
     };
 
     const closeAddModal = () => {
         setErrors({});
         setIsAnimating(false);
-        setTimeout(() => setIsAddModalOpen(false), 250); // Delay to trigger animation
+        setTimeout(() => setIsAddModalOpen(false), 250); 
     };
 
     const closeEditModal = () => {
@@ -76,16 +76,44 @@ const Bidding_transaction_details = () => {
     const [errors, setErrors] = useState({});
 
     const [accountdetails, setAccountdetails] = useState([]);
-      console.log("accountdetails", accountdetails);
+    // console.log("accountdetails", accountdetails);
     const [loading, setLoading] = useState(true);
+
+
+
+    //api filter for params value
+
+    const [selectedClients, setSelectedClients] = useState("");
+
+    const [selectedContracts, setSelectedContracts] = useState("");
+
+    const [selectedTxnTypes, setSelectedTxnTypes] = useState("");
+
+
+    const [accountfilter, setAccountfilter] = useState("");
+    const [createdBy, setCreatedBy] = useState("");
+
+    const [fromDate, setFromDate] = useState("");
+    const [toDate, setToDate] = useState("");
 
     const fetchProject = async () => {
         try {
             const response = await axios.get(
                 `${API_URL}/api/bidder/get-import-bidding-excel-report`,
-                { withCredentials: true }
+                {
+                    withCredentials: true,
+                    params: {
+                        fromDate: fromDate,
+                        toDate: toDate,
+                        account: accountfilter,
+                        transactionType: selectedTxnTypes,
+                        client: selectedClients,
+                        contractType: selectedContracts,
+                        createdBy: createdBy
+                    },
+                }
             );
-            // console.log(response);
+            console.log(response);
             if (response.data.success) {
                 setAccountdetails(response.data.data);
                 setLoading(false);
@@ -98,12 +126,97 @@ const Bidding_transaction_details = () => {
         }
     };
 
+    // filter alll api showing to data in api
+    const [accountBidderOptions, setAccountBidderOptions] = useState(null);
+    // const [technologyBidderOptions, setTechnologyBidderOptions] = useState(null);
+    const [accountBidder, setAccountBidder] = useState(null);
+    const [transactionType, setTransactionType] = useState(null);
+    const [clientdropdown, setClient] = useState(null);
+    const [contractType, setContractType] = useState(null);
+
+    // console.log("accountBidderOptions", contractType);
+
+
+
+    const fetchAccTechList = async () => {
+        try {
+            const response = await axios.get(
+                `${API_URL}/api/bidder/view-account-technology-bidder`,
+                { withCredentials: true }
+            );
+
+            console.log("responseefsdg", response);
+            setTransactionType(response.data.data?.transactionType);
+            //  setClient(response.data.data?.client);
+
+            const accountBidderOptions = response.data.data?.accountBidder?.map(
+                (data) => ({
+                    label: data.name,
+                    value: data._id,
+                })
+            );
+
+
+            // const technologyBidderOptions = response.data.data?.technologyBidder?.map(
+            //     (data) => ({
+            //         label: data.name,
+            //         value: data._id,
+            //     })
+            // );
+
+            const bidderEmp = response.data.data?.bidder?.map((data) => ({
+                label: data.employeeName,
+                value: data._id,
+            }));
+
+            const clients = Array.isArray(response.data.data?.client)
+                ? response.data.data.client.map((client) => ({
+                    label: client,
+                    value: client,
+                }))
+                : [];
+
+
+
+
+            const contractType = Array.isArray(response.data.data?.description
+            )
+                ? response.data.data.description.map((client) => ({
+                    label: client,
+                    value: client,
+                }))
+                : [];
+
+            // const transactionType = response.data.data?.transactionType?.map((type) => ({
+            //     name: type,
+            //     value: type,
+            // })) || [];
+
+            setClient(clients);
+
+
+            setContractType(contractType);
+
+            // setTechnologyBidderOptions(technologyBidderOptions);
+            setAccountBidderOptions(accountBidderOptions);
+            setAccountBidder(bidderEmp);
+        } catch (err) {
+            setErrors("Failed to fetch biddingList.");
+        }
+    };
+
+    useEffect(() => {
+        fetchAccTechList();
+    }, []);
+
 
 
     // add data
     const [accountoption, setAccountOption] = useState(null);
 
     const [accountname, setAccountname] = useState(null);
+    // console.log(object)
+
     const [file, setFile] = useState(null);
 
 
@@ -142,6 +255,8 @@ const Bidding_transaction_details = () => {
             const formData = new FormData();
 
             formData.append("account", accountname);
+            // formData.append("accountUpworkName", accountname);
+
             formData.append("file", file);
 
             const response = await axios.post(
@@ -173,7 +288,7 @@ const Bidding_transaction_details = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedInvoiceId, setSelectedInvoiceId] = useState(null);
 
-    console.log("selectedInvoiceId", selectedInvoiceId);
+    // console.log("selectedInvoiceId", selectedInvoiceId);
 
 
 
@@ -205,14 +320,26 @@ const Bidding_transaction_details = () => {
             title: "Contract/Details",
             data: "transactionSummary",
         },
-    {
-  title: "Client",
-  data: "clientTeam",
-  render: (data) => data || "-"
-},
-
         {
+            title: "Client",
+            data: "clientTeam",
+            render: (data) => data || "-"
+        },
+{
             title: "Amount",
+            data: "amountDollar",
+            // render: (data) => {
+            //     if (data == null) return "-";
+            //     return new Intl.NumberFormat("en-IN", {
+            //         style: "dollar",
+            //         currency: "USD",
+            //         minimumFractionDigits: 0,
+            //         maximumFractionDigits: 0,
+            //     }).format(data);
+            // },
+        },
+        {
+            title: "Withdrawn",
             data: "amountINR",
             render: (data) => {
                 if (data == null) return "-";
@@ -289,7 +416,7 @@ const Bidding_transaction_details = () => {
                           />
                         </div> */}
                             </div>,
-                            container
+
                         );
                     }
                 }, 0);
@@ -301,17 +428,14 @@ const Bidding_transaction_details = () => {
     ];
 
 
-    const [selectedClients, setSelectedClients] = useState([]);
 
-    const [selectedContracts, setSelectedContracts] = useState([]);
 
-    const [selectedTxnTypes, setSelectedTxnTypes] = useState([]);
 
-    const clients = [
-        { id: 1, name: "ABC Corp" },
-        { id: 2, name: "XYZ Solutions" },
-        { id: 3, name: "Global Tech" },
-    ];
+    // const clients = [
+    //     { id: 1, name: "ABC Corp" },
+    //     { id: 2, name: "XYZ Solutions" },
+    //     { id: 3, name: "Global Tech" },
+    // ];
 
     const contracts = [
         { id: 1, name: "Contract A" },
@@ -319,11 +443,7 @@ const Bidding_transaction_details = () => {
         { id: 3, name: "Contract C" },
     ];
 
-    const transactionTypes = [
-        { id: 1, name: "Credit" },
-        { id: 2, name: "Debit" },
-        { id: 3, name: "Refund" },
-    ];
+
 
 
     return (
@@ -363,94 +483,139 @@ const Bidding_transaction_details = () => {
 
                         </div>
 
-                        <div className="p-1 flex flex-wrap gap-4 items-end mb-6">
+                        <div className="p-1 flex justify-between items-end mb-6">
 
 
-                            {/* From Date */}
-                            <div className="flex flex-col w-40 md:w-48">
-                                <label className="text-sm font-medium text-gray-700 mb-1">
-                                    From Date
-                                </label>
-                                <input
-                                    type="date"
-                                    className="h-11 border border-gray-300 rounded-lg px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
+                            <div className="flex flex-wrap gap-2 mt-1">
+                                {/* From Date */}
+                                <div className="flex flex-col w-40 md:w-48">
+                                    <label className="text-sm font-medium text-gray-700 mb-1">
+                                        From Date
+                                    </label>
+                                    <input
+                                        type="date"
+                                        value={fromDate}
+                                        onChange={(e) => setFromDate(e.target.value)}
+                                        className="h-11 border border-gray-300 rounded-lg px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+
+                                {/* To Date */}
+                                <div className="flex flex-col w-40 md:w-48">
+                                    <label className="text-sm font-medium text-gray-700 mb-1">
+                                        To Date
+                                    </label>
+                                    <input
+                                        type="date"
+                                        value={toDate}
+                                        onChange={(e) => setToDate(e.target.value)}
+                                        className="h-11 border border-gray-300 rounded-lg px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+
+                                {/* Transaction Type */}
+                                <div className="flex flex-col w-40 md:w-48">
+                                    <label className="text-sm font-medium text-gray-700 mb-1">
+                                        Transaction Type
+                                    </label>
+                                    <MultiSelect
+                                        value={selectedTxnTypes}
+                                        onChange={(e) => setSelectedTxnTypes(e.value)}
+                                        options={transactionType}
+                                        // optionLabel="name"
+                                        placeholder="Select Type"
+                                        display="chip"
+                                        className="w-full rounded-lg border border-gray-300"
+                                        panelClassName="rounded-lg shadow-lg"
+                                        pt={{ input: { className: "h-11 px-3 text-sm" } }}
+                                    />
+                                </div>
+
+                                {/* Client */}
+                                <div className="flex flex-col w-48 md:w-60">
+                                    <label className="text-sm font-medium text-gray-700 mb-1">
+                                        Client
+                                    </label>
+                                    <MultiSelect
+                                        value={selectedClients}
+                                        onChange={(e) => setSelectedClients(e.value)}
+                                        options={clientdropdown}
+                                        optionLabel="label"
+                                        optionValue="value"
+                                        placeholder="Select Client"
+                                        filter
+                                        display="chip"
+                                        maxSelectedLabels={2}
+                                        className="w-full rounded-lg border border-gray-300"
+                                        panelClassName="rounded-lg shadow-lg"
+                                        pt={{ input: { className: "h-11 px-3 text-sm" } }}
+                                    />
+                                </div>
+
+                                {/* Contract */}
+                                <div className="flex flex-col w-48 md:w-60">
+                                    <label className="text-sm font-medium text-gray-700 mb-1">
+                                        Contract
+                                    </label>
+                                    <MultiSelect
+                                        value={selectedContracts}
+                                        onChange={(e) => setSelectedContracts(e.value)}
+                                        options={contractType}
+                                        optionLabel="label"
+                                        optionValue="value"
+                                        placeholder="Select Contract"
+                                        filter
+                                        display="chip"
+                                        maxSelectedLabels={2}
+                                        className="w-full rounded-lg border border-gray-300"
+                                        panelClassName="rounded-lg shadow-lg"
+                                        pt={{ input: { className: "h-11 px-3 text-sm" } }}
+                                    />
+                                </div>
+
+                                <div className="flex flex-col w-full md:w-48">
+                                    <label className="text-sm font-medium text-gray-700 mb-1">
+                                        Account
+                                    </label>
+                                    <Dropdown
+                                        value={accountfilter}
+                                        onChange={(e) => setAccountfilter(e.value)}
+                                        options={accountBidderOptions}
+                                        optionLabel="label"
+                                        appendTo="self"
+                                        placeholder="Select an Account"
+                                        className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        required
+                                    />
+                                </div>
+
+
+
+                                {/* Created By Filter */}
+                                <div className="flex flex-col w-full md:w-48">
+                                    <label className="text-sm font-medium text-gray-700 mb-1">
+                                        Created By
+                                    </label>
+                                    <Dropdown
+                                        value={createdBy}
+                                        onChange={(e) => setCreatedBy(e.value)}
+                                        options={accountBidder}
+                                        optionLabel="label"
+                                        appendTo="self"
+                                        placeholder="Select an Bidder"
+                                        className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        required
+                                    />
+                                </div>
+
                             </div>
-
-                            {/* To Date */}
-                            <div className="flex flex-col w-40 md:w-48">
-                                <label className="text-sm font-medium text-gray-700 mb-1">
-                                    To Date
-                                </label>
-                                <input
-                                    type="date"
-                                    className="h-11 border border-gray-300 rounded-lg px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                            </div>
-                            <div className="flex flex-col w-40 md:w-48">
-                                <label className="text-sm font-medium text-gray-700 mb-1">
-                                    Transaction Type
-                                </label>
-                                <MultiSelect
-                                    value={selectedTxnTypes}
-                                    onChange={(e) => setSelectedTxnTypes(e.value)}
-                                    options={transactionTypes}
-                                    optionLabel="name"
-                                    placeholder="Select Type(s)"
-                                    display="chip"
-                                    className="w-full rounded-lg border border-gray-300"
-                                    panelClassName="rounded-lg shadow-lg"
-                                    pt={{ input: { className: "h-11 px-3 text-sm" } }}
-                                />
-                            </div>
-
-                            {/* Client */}
-                            <div className="flex flex-col w-48 md:w-60">
-                                <label className="text-sm font-medium text-gray-700 mb-1">
-                                    Client
-                                </label>
-                                <MultiSelect
-                                    value={selectedClients}
-                                    onChange={(e) => setSelectedClients(e.value)}
-                                    options={clients}
-                                    optionLabel="name"
-                                    placeholder="Select Client(s)"
-                                    filter
-                                    display="chip"
-                                    maxSelectedLabels={2}
-                                    className="w-full rounded-lg border border-gray-300"
-                                    panelClassName="rounded-lg shadow-lg"
-                                    pt={{ input: { className: "h-11 px-3 text-sm" } }}
-                                />
-                            </div>
-
-                            {/* Contract */}
-                            <div className="flex flex-col w-48 md:w-60">
-                                <label className="text-sm font-medium text-gray-700 mb-1">
-                                    Contract
-                                </label>
-                                <MultiSelect
-                                    value={selectedContracts}
-                                    onChange={(e) => setSelectedContracts(e.value)}
-                                    options={contracts}
-                                    optionLabel="name"
-                                    placeholder="Select Contract(s)"
-                                    filter
-                                    display="chip"
-                                    maxSelectedLabels={2}
-                                    className="w-full rounded-lg border border-gray-300"
-                                    panelClassName="rounded-lg shadow-lg"
-                                    pt={{ input: { className: "h-11 px-3 text-sm" } }}
-                                />
-                            </div>
-
-                            {/* Transaction Type */}
 
 
 
                             {/* Buttons */}
-                            <div className="flex gap-3 mt-3 sm:mt-6">
-                                <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow">
+                            <div className="flex justify-end gap-3 mt-3 sm:mt-6">
+                                <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow"
+                                    onClick={fetchProject}>
                                     Apply
                                 </button>
                                 <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-5 py-2 rounded-lg shadow">
@@ -573,83 +738,107 @@ const Bidding_transaction_details = () => {
                         {/* view */}
 
 
-                         {isOpen && selectedInvoiceId && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
-    <div className="bg-white rounded-2xl shadow-2xl w-[50%] p-6 relative overflow-y-auto max-h-[90vh]">
+                        {isOpen && selectedInvoiceId && (
+                            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+                                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl p-6 relative overflow-y-auto max-h-[90vh]">
 
-      {/* Close */}
-      <button
-        className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl"
-        onClick={() => setIsOpen(false)}
-      >
-        ✖
-      </button>
+                                    {/* Close Button */}
+                                    <button
+                                        className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl"
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        ✖
+                                    </button>
 
-      <h2 className="text-2xl font-bold text-center mb-6">Details</h2>
+                                    {/* Title */}
+                                    <h2 className="text-2xl font-semibold text-center mb-8">
+                                        Invoice Details
+                                    </h2>
 
-      {/* Details */}
-      <div className="grid grid-cols-2 gap-6">
+                                    {/* Details Section */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
-        <div>
-          <p className="text-sm text-gray-500">Client</p>
-          <p className="font-semibold">
-            {selectedInvoiceId.clientTeam || "-"}
-          </p>
-        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-500">Client</p>
+                                            <p className="font-medium text-gray-800">
+                                                {selectedInvoiceId.clientTeam || "-"}
+                                            </p>
+                                        </div>
 
-        <div>
-          <p className="text-sm text-gray-500">Freelancer</p>
-          <p className="font-semibold">
-            {selectedInvoiceId.freelancer || "-"}
-          </p>
-        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-500">Freelancer</p>
+                                            <p className="font-medium text-gray-800">
+                                                {selectedInvoiceId.freelancer || "-"}
+                                            </p>
+                                        </div>
 
-        <div>
-          <p className="text-sm text-gray-500">Transaction ID</p>
-          <p className="font-semibold">
-            {selectedInvoiceId.transactionId || "-"}
-          </p>
-        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-500">Transaction ID</p>
+                                            <p className="font-medium text-gray-800 break-all">
+                                                {selectedInvoiceId.transactionId || "-"}
+                                            </p>
+                                        </div>
 
-        <div>
-          <p className="text-sm text-gray-500">Transaction Type</p>
-          <p className="font-semibold">
-            {selectedInvoiceId.transactionType || "-"}
-          </p>
-        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-500">Transaction Type</p>
+                                            <p className="font-medium text-gray-800">
+                                                {selectedInvoiceId.transactionType || "-"}
+                                            </p>
+                                        </div>
 
-        <div>
-          <p className="text-sm text-gray-500">Date</p>
-          <p className="font-semibold">
-            {selectedInvoiceId.date
-              ? new Date(selectedInvoiceId.date).toLocaleDateString()
-              : "-"}
-          </p>
-        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-500">Date</p>
+                                            <p className="font-medium text-gray-800">
+                                                {selectedInvoiceId.date
+                                                    ? new Date(selectedInvoiceId.date).toLocaleDateString()
+                                                    : "-"}
+                                            </p>
+                                        </div>
 
-        <div>
-          <p className="text-sm text-gray-500">Amount ($)</p>
-          <p className="font-semibold">
-            {selectedInvoiceId.amountDollar ?? "-"}
-          </p>
-        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-500">Amount ($)</p>
+                                            <p className="font-medium text-gray-800">
+                                                {selectedInvoiceId.amountDollar ?? "-"}
+                                            </p>
+                                        </div>
 
-      </div>
+                                    </div>
 
-      {/* Descriptions */}
-      <div className="mt-6">
-        <h3 className="font-semibold mb-2">Descriptions</h3>
-        <p>{selectedInvoiceId.description1}</p>
-        <p>{selectedInvoiceId.description2}</p>
-        {selectedInvoiceId.description3 && (
-          <p>{selectedInvoiceId.description3}</p>
-        )}
-      </div>
+                                    {/* Divider */}
+                                    <div className="my-8 border-t" />
 
-    </div>
-  </div>
-)}
- 
+                                    {/* Descriptions Section */}
+                                    <div>
+                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                                            Descriptions
+                                        </h3>
+
+                                        <div className="space-y-3">
+                                            {[
+                                                selectedInvoiceId.description1,
+                                                selectedInvoiceId.description2,
+                                                selectedInvoiceId.description3,
+                                            ]
+                                                .filter(Boolean)
+                                                .map((desc, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="flex gap-4 bg-gray-50 border rounded-lg p-4"
+                                                    >
+                                                        <span className="w-7 h-7 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 text-sm font-medium">
+                                                            {index + 1}
+                                                        </span>
+                                                        <p className="text-sm text-gray-700">{desc}</p>
+                                                    </div>
+                                                ))}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        )}
+
+
 
                     </div>
                 </>
