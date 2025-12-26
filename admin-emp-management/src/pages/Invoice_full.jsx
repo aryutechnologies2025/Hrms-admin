@@ -76,6 +76,8 @@ const Invoice_full = () => {
   const [status, setStatus] = useState("");
 
 
+
+
   // Validate Status dynamically
   const validateStatus = (value) => {
     const newErrors = { ...errors };
@@ -146,6 +148,9 @@ const Invoice_full = () => {
   const [igst, setIgst] = useState("");
   const [selected, setSelected] = useState("Select Invoice Type");
 
+  const [amount, setAmount] = useState("");
+  const [paymentType, setPaymentType] = useState("");
+  const [paidDate, setPaidDate] = useState("");
 
 
   const [open, setOpen] = useState(false);
@@ -337,26 +342,36 @@ const Invoice_full = () => {
     setItems(updatedItems);
   };
 
-  const [paidDate, setPaidDate] = useState("");
 
 
   const handlesubmit = async (e) => {
     e.preventDefault();
 
-      let newErrors = {};
+    let newErrors = {};
+    if (!status) {
+      newErrors.status = "Status is required";
+    }
 
-      if (status === "paid" && !paidDate) {
-        newErrors.paidDate = "Paid date is required when status is Paid";
-      }
+    // paidDate required ONLY when completed
+    if (status  && !paidDate) {
+      newErrors.paidDate = "Paid date is required";
+    }
 
-      if (!status) {
-        newErrors.status = "Status is required";
-      }
+    // amount required ONLY when NOT completed
+    if (status && status !== "completed" && !amount) {
+      newErrors.amount = "Amount is required";
+    }
 
-      if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
-        return;
-      }
+    // payment type required when status selected
+    if (status && !paymentType) {
+      newErrors.paymentType = "Payment type is required";
+    }
+
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
     try {
       const formData = {
@@ -372,6 +387,7 @@ const Invoice_full = () => {
           rate: item.rate,
           amount: item.total,
         })),
+
         sub_total: subTotal,
         tax: tax,
         total_amount: totalAmount,
@@ -382,6 +398,9 @@ const Invoice_full = () => {
         igst,
         cgst,
         sgst,
+        amount,
+        paidDate,
+        paymentType,
 
       };
 
@@ -422,6 +441,9 @@ const Invoice_full = () => {
       setNotes("");
       setPaidDate("");
       setStatus("");
+      setAmount("");
+      setPaidDate("");
+      setPaymentType("");
 
       fetchProject();
       setSelected("Select Invoice Type");
@@ -614,7 +636,7 @@ const Invoice_full = () => {
                           className="border p-2 rounded"
                           value={item.hsnCode}
                           onChange={(e) =>
-                            handleChange(index, "hsn", e.target.value)
+                            handleChange(index, "hsnCode", e.target.value)
                           }
                         />
                       </div>
@@ -804,39 +826,109 @@ const Invoice_full = () => {
                             }}
                             className="w-full h-11 px-2 py-2  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                           >
-                            <option value="">Select a status</option>
-                            <option value="paid">Paid</option>
-                            <option value="pending">Pending</option>
-                            <option value="overdue">Overdue</option>
+                            {/* <option value="">Select a status</option> */}
+                            <option value="" disabled selected>
+                              Payment Status
+                            </option>
+                            <option value="completed">Completed</option>
+                            <option value="advance_pending">Advance Pending</option>
+                            <option value="partial_payment_pending">
+                              Partial payment pending
+                            </option>
+                            <option value="final_payment_pending">
+                              Final payment pending
+                            </option>
+                            <option value="advance_received">Advance received</option>
+                            <option value="partial_payment_received">
+                              Partial payment received
+                            </option>
 
                           </select>
-                          {errors.status && (
-                            <p className="text-red-500 text-sm mb-4">
-                              {errors.status}
-                            </p>
-                          )}
+
                         </div>
-                        {status === "paid" && (
-                          <div className="mt-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Paid Date <span className="text-red-500">*</span>
+                        {errors.status && (
+                          <p className="text-red-500 text-sm mb-4 flex justify-end">
+                            {errors.status}
+                          </p>
+                        )}
+                        {status && (
+                          <div className="w-full flex mt-3">
+                            <label className="w-[50%] text-sm font-medium">
+                              Date <span className="text-red-500">*</span>
                             </label>
 
                             <input
                               type="date"
                               value={paidDate}
+                              onChange={(e) => setPaidDate(e.target.value)}
+                              className="w-full h-11 px-3 border rounded-lg"
+                            />
+                          </div>
+                        )}
+
+                        {errors.paidDate && (
+                          <p className="text-red-500 text-sm mt-1 text-end">{errors.paidDate}</p>
+                        )}
+
+
+
+
+                        {status && status !== "completed" && (
+                          <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
+                            <label className="block text-sm font-medium mb-2 w-[50%]">
+                              Amount <span className="text-red-500">*</span>
+                            </label>
+
+                            <input
+                              type="number"
+                              value={amount}
                               onChange={(e) => {
-                                setPaidDate(e.target.value);
-                                setErrors((prev) => ({ ...prev, paidDate: "" }));
+                                setAmount(e.target.value);
+                                setErrors((prev) => ({ ...prev, amount: "" }));
                               }}
                               className="w-full h-11 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
 
-                            {errors.paidDate && (
-                              <p className="text-red-500 text-sm mt-1">{errors.paidDate}</p>
-                            )}
+
                           </div>
                         )}
+
+                        {errors.amount && (
+                          <p className="text-red-500 text-sm mt-1 text-end">{errors.amount}</p>
+                        )}
+
+
+
+                        {status && (
+                          <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
+                            <label className="block text-sm font-medium mb-2 w-[50%]">
+                              Type <span className="text-red-500">*</span>
+                            </label>
+
+                            <select
+                              value={paymentType}
+                              onChange={(e) => {
+                                setPaymentType(e.target.value);
+                                setErrors((prev) => ({ ...prev, paymentType: "" }));
+                              }}
+                              className="w-full h-11 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="" disabled>
+                                Select Payment Type
+                              </option>
+                              <option value="gpay">GPay</option>
+                              <option value="bank">Bank Transfer</option>
+                              <option value="cash">Cash</option>
+                              <option value="upi">UPI</option>
+                            </select>
+
+
+                          </div>
+                        )}
+                        {errors.paymentType && (
+                          <p className="text-red-500 text-sm mt-1 text-end">{errors.paymentType}</p>
+                        )}
+
 
 
                       </div>
@@ -879,7 +971,7 @@ const Invoice_full = () => {
 
                   <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3 p-2">
 
-                    <div className="w-[100%]">
+                    <div className="w-[100%] ">
                       <label className="block text-sm font-medium text-gray-500 mb-2">
                         Invoice Type
                       </label>
@@ -938,7 +1030,7 @@ const Invoice_full = () => {
                                         onClick={() =>
                                           selectItem(["Tax Invoice", "Intra", "Proforma Invoice"])
                                         }
-                                        className=" py-2 text-[14px] hover:bg-green-50 rounded cursor-pointer"
+                                        className=" py-2 text-[12px] px-2 hover:bg-blue-50 rounded cursor-pointer"
                                       >
                                         Proforma Invoice
                                       </div>
@@ -946,7 +1038,7 @@ const Invoice_full = () => {
                                         onClick={() =>
                                           selectItem(["Tax Invoice", "Intra", "Tax Invoice"])
                                         }
-                                        className=" py-2 text-[14px] hover:bg-green-50 rounded cursor-pointer"
+                                        className=" py-2 text-[12px] px-2 hover:bg-blue-50 rounded cursor-pointer"
                                       >
                                         Tax Invoice
                                       </div>
@@ -974,7 +1066,7 @@ const Invoice_full = () => {
                                         onClick={() =>
                                           selectItem(["Tax Invoice", "Inter", "Proforma Invoice"])
                                         }
-                                        className=" py-2 text-[14px] hover:bg-green-50 rounded cursor-pointer"
+                                        className=" py-2 text-[12px] px-2 hover:bg-blue-50 rounded cursor-pointer"
                                       >
                                         Proforma Invoice
                                       </div>
@@ -982,7 +1074,7 @@ const Invoice_full = () => {
                                         onClick={() =>
                                           selectItem(["Tax Invoice", "Inter", "Tax Invoice"])
                                         }
-                                        className="py-2 text-[14px] hover:bg-green-50 rounded cursor-pointer"
+                                        className="py-2 text-[12px] px-2 hover:bg-blue-50 rounded cursor-pointer"
                                       >
                                         Tax Invoice
                                       </div>

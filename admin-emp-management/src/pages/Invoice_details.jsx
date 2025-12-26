@@ -4,6 +4,7 @@ import DataTable from "datatables.net-react";
 import DT from "datatables.net-dt";
 import "datatables.net-responsive-dt/css/responsive.dataTables.css";
 DataTable.use(DT);
+import { IoClose } from "react-icons/io5";
 
 import axios from "../api/axiosConfig";
 import { API_URL } from "../config";
@@ -30,6 +31,7 @@ import { useDateUtils } from "../hooks/useDateUtils";
 import { createRoot } from "react-dom/client";
 
 import { FaFileInvoice } from "react-icons/fa";
+import { capitalizeFirstLetter } from "../utils/StringCaps";
 
 
 
@@ -72,7 +74,7 @@ const Invoice_details = () => {
   // console.log(object)
   const [statusFilter, setStatusFilter] = useState("");
 
- 
+
 
   useEffect(() => {
     fetchClientList();
@@ -83,10 +85,10 @@ const Invoice_details = () => {
       fetchaProjectList(clientFilter);
     }
   }, [clientFilter]);
-  
-useEffect(() => {
-  handleReset();
-}, []);
+
+  useEffect(() => {
+    handleReset();
+  }, []);
 
 
   const fetchClientList = async () => {
@@ -151,22 +153,24 @@ useEffect(() => {
     try {
       const response = await axios.get(`${API_URL}/api/invoice/view-invoice`,
         {
-          params: { client: clientFilter, 
-            project: projectFilter, 
-            status: statusFilter },
+          params: {
+            client: clientFilter,
+            project: projectFilter,
+            status: statusFilter
+          },
         },
         { withCredentials: true }
       );
       console.log("response", response);
       if (response.data.success) {
-        const formattedData = response.data.data.map(item => ({
-          ...item,
-          invoice_date: item.invoice_date
-            ? formatDateTime(item.invoice_date)
-            : "-"
-        }));
+        // const formattedData = response.data.data.map(item => ({
+        //   ...item,
+        //   invoice_date: item.invoice_date
+        //     ? formatDateTime(item.invoice_date)
+        //     : "-"
+        // }));
 
-        setClientdetails(formattedData);
+        setClientdetails(response.data.data);
       } else {
         setErrors("Failed to fetch roles.");
       }
@@ -176,32 +180,32 @@ useEffect(() => {
   };
 
   const handleReset = async () => {
-  try {
-    // Clear filters
-    setClientFilter(null);
-    setProjectFilter(null);
-    setStatusFilter("");
+    try {
+      // Clear filters
+      setClientFilter(null);
+      setProjectFilter(null);
+      setStatusFilter("");
 
-    // Fetch all data without filters
-    const response = await axios.get(
-      `${API_URL}/api/invoice/view-invoice`,
-      { withCredentials: true }
-    );
+      // Fetch all data without filters
+      const response = await axios.get(
+        `${API_URL}/api/invoice/view-invoice`,
+        { withCredentials: true }
+      );
 
-    if (response.data.success) {
-      const formattedData = response.data.data.map(item => ({
-        ...item,
-        invoice_date: item.invoice_date
-          ? formatDateTime(item.invoice_date)
-          : "-"
-      }));
+      if (response.data.success) {
+        const formattedData = response.data.data.map(item => ({
+          ...item,
+          invoice_date: item.invoice_date
+            ? formatDateTime(item.invoice_date)
+            : "-"
+        }));
 
-      setClientdetails(formattedData);
+        setClientdetails(formattedData);
+      }
+    } catch (err) {
+      setErrors("Failed to reset table data.");
     }
-  } catch (err) {
-    setErrors("Failed to reset table data.");
-  }
-};
+  };
 
 
   // Open and close modals
@@ -324,7 +328,9 @@ useEffect(() => {
     { title: "Export Invoice", path: "/invoice-export" },
     { title: "Tax Invoice", path: "/invoice-pdf" },
   ];
-
+  const [paymentVisible, setPaymentVisible] = useState(false);
+  const [selectedPayments, setSelectedPayments] = useState([]);
+  console.log("selectedPayments", selectedPayments);
 
   const columns = [
     {
@@ -362,7 +368,9 @@ useEffect(() => {
     {
       title: "Invoice Date",
       data: "invoice_date",
-      // render: (data) => data ? formatDateTime(data) : "-"
+      render: (data) => data ? formatDateTime(data) : "-"
+
+      
     },
 
     {
@@ -378,16 +386,58 @@ useEffect(() => {
     },
 
     {
+      title: "Payment",
+      data: null,
+      render: (payments, type, row) => {
+        const id = `payments-${row.sno || Math.random()}`;
+
+        setTimeout(() => {
+          const container = document.getElementById(id);
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+            container._root.render(
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <FaEye
+                  className="cursor-pointer text-black text-xl"
+                  title="View Payments"
+                  onClick={() => {
+                    setSelectedPayments(row || []);
+                    setPaymentVisible(true);
+                  }}
+                />
+              </div>,
+
+            );
+          }
+        }, 0);
+
+        return `<div id="${id}"></div>`;
+      },
+    },
+
+    {
       title: "Status",
       data: "status",
-      render: (data, type, row) => {
-        const textColor =
-          data === "paid" ? "text-green-600 border rounded-full border-green-600" : data === "pending" ? "text-orange-600 border rounded-full border-orange-600" : "text-red-600 border rounded-full border-red-600";
-        return `<div class="${textColor}" style="display: inline-block; padding: 2px 10px; text-align: center; font-size: 12px; font-weight:500">
-                  ${data === "paid" ? "Paid" : data === "pending" ? "Pending" : "OverDue"
-          }
-                </div>`;
-      },
+      render: capitalizeFirstLetter
+      // render: (data) => data === "paid" ? "Paid" : data === "pending" ? "Pending" : "OverDue"
+      // title: "Status",
+      // data: "status",
+      // render: (data, type, row) => {
+      //   const textColor =
+      //     data === "paid" ? "text-green-600 border rounded-full border-green-600" : data === "pending" ? "text-orange-600 border rounded-full border-orange-600" : "text-red-600 border rounded-full border-red-600";
+      //   return `<div class="${textColor}" style="display: inline-block; padding: 2px 10px; text-align: center; font-size: 12px; font-weight:500">
+      //             ${data === "paid" ? "Paid" : data === "pending" ? "Pending" : "OverDue"
+      //     }
+      //           </div>`;
+      // },
     },
 
     {
@@ -819,6 +869,121 @@ useEffect(() => {
                   </div>
                 ))}
               </div>
+
+            </div>
+          </div>
+        )}
+
+        {paymentVisible && (
+          <div
+            onClick={() => setPaymentVisible(false)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
+            >
+              <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 bg-blue-600">
+                <h2 className="text-2xl font-semibold text-white">
+                  Payment Details
+                </h2>
+                <button
+                  onClick={() => setPaymentVisible(false)}
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition"
+                >
+                  <IoClose className="text-xl" />
+                </button>
+              </div>
+              <div className="grid grid-cols-3 divide-x divide-gray-200 text-center bg-gray-50">
+                <div className="p-4">
+                  <p className="text-xs uppercase text-gray-500">Amount</p>
+                  <p className="mt-1 text-lg font-semibold text-gray-800">
+                    
+                    ₹{selectedPayments?.total_amount.toLocaleString(2)}
+
+                  </p>
+                </div>
+                <div className="p-4">
+                  <p className="text-xs uppercase text-gray-500">Received</p>
+                  <p className="mt-1 text-lg font-semibold text-green-600">
+                     ₹{selectedPayments?.totalPaymentAmount.toLocaleString(2)}
+                  </p>
+                </div>
+                <div className="p-4">
+                  <p className="text-xs uppercase text-gray-500">Balance</p>
+                  <p className="mt-1 text-lg font-semibold text-red-600">
+                    ₹{selectedPayments?.balance.toLocaleString(2)}
+                  </p>
+                </div>
+              </div>
+
+              {/* <div className="px-6 py-6 max-h-[60vh] overflow-y-auto">
+                        <h3 className="mb-3 text-lg font-semibold text-gray-800">
+                          Payment List
+                        </h3>
+        
+                        {selectedPayments?.payment_amount?.length === 0 ? (
+                          <p className="text-gray-700">No payments found.</p>
+                        ) : (
+                          <ul className="space-y-2">
+                            {selectedPayments.payment_amount.map((p, index) => (
+                              <li
+                                key={p._id}
+                                className="flex justify-between border-b pb-1 text-sm text-gray-800"
+                              >
+                                <span className="font-medium">
+                                  Payment {index + 1} – {formatDateTime(p.date)}
+                                </span>
+        
+                                <span className="font-semibold">
+                                  ₹
+                                  {p.payment && p.value
+                                    ? `${Number(p.payment).toLocaleString(
+                                        "en-IN"
+                                      )} , ${Number(p.value).toLocaleString("en-IN")}`
+                                    : p.payment
+                                    ? Number(p.payment).toLocaleString("en-IN")
+                                    : Number(p.value).toLocaleString("en-IN")}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div> */}
+
+                      <div className="px-6 py-6 max-h-[60vh] overflow-y-auto">
+  <h3 className="mb-3 text-lg font-semibold text-gray-800">
+    Payment History
+  </h3>
+
+  {selectedPayments?.invoiceLogs?.length === 0 ? (
+    <p className="text-gray-700">No payments found.</p>
+  ) : (
+    <ul className="space-y-3">
+      {selectedPayments?.invoiceLogs.map((log, index) => (
+        <li
+          key={log._id}
+          className="flex justify-between items-center border-b pb-2 text-sm"
+        >
+          {/* LEFT */}
+          <div>
+            <p className="font-medium text-gray-800">
+              Payment {index + 1}
+            </p>
+            <p className="text-xs text-gray-500">
+              {capitalizeFirstLetter(log.status)} • {formatDateTime(log.paidDate || "-")} • {capitalizeFirstLetter(log.paymentType)}
+            </p>
+          </div>
+
+          {/* RIGHT */}
+          <div className="font-semibold text-gray-900">
+            ₹ {Number(log.amount).toLocaleString("en-IN")}
+          </div>
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
 
             </div>
           </div>
