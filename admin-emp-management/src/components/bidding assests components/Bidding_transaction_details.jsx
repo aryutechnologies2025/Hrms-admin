@@ -290,6 +290,8 @@ const Bidding_transaction_details = () => {
 
     // console.log("selectedInvoiceId", selectedInvoiceId);
 
+const [isModalOpen, setIsModalOpen] = useState(false);
+const [fullSummary, setFullSummary] = useState("");
 
 
 
@@ -316,10 +318,49 @@ const Bidding_transaction_details = () => {
             data: "transactionType",
             // render: (row) => row.account?.name || "-",
         },
-        {
-            title: "Contract/Details",
-            data: "transactionSummary",
-        },
+        // {
+        //     title: "Contract/Details",
+        //     data: "transactionSummary",
+        // },
+{
+  title: "Contract / Details",
+  data: null,
+  render: (data, type, row) => {
+    const id = `summary-${row.sno || Math.random()}`;
+
+    setTimeout(() => {
+      const container = document.getElementById(id);
+      if (container) {
+        if (!container._root) {
+          container._root = createRoot(container);
+        }
+
+        const fullText = row.transactionSummary || "-";
+        const shortText =
+          fullText.length > 12
+            ? fullText.substring(0, 12) + "..."
+            : fullText;
+
+        container._root.render(
+          <span
+            className="cursor-pointer hover:text-blue-600 hover:underline"
+            title="Click to view full details"
+            onClick={() => {
+              setFullSummary(fullText);
+              setIsModalOpen(true);
+            }}
+          >
+            {shortText}
+          </span>
+        );
+      }
+    }, 0);
+
+    return `<div id="${id}"></div>`;
+  },
+},
+
+
         {
             title: "Client",
             data: "clientTeam",
@@ -837,6 +878,29 @@ const Bidding_transaction_details = () => {
                                 </div>
                             </div>
                         )}
+
+
+{isModalOpen && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 relative">
+      
+      <button
+        className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+        onClick={() => setIsModalOpen(false)}
+      >
+        ✕
+      </button>
+
+      <h2 className="text-lg font-semibold mb-3">
+        Contract / Details
+      </h2>
+
+      <p className="text-gray-700 whitespace-pre-wrap">
+        {fullSummary}
+      </p>
+    </div>
+  </div>
+)}
 
 
 
