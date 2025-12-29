@@ -42,13 +42,13 @@ const Bidding_transaction_details = () => {
 
     const openAddModal = () => {
         setIsAddModalOpen(true);
-        setTimeout(() => setIsAnimating(true), 10); 
+        setTimeout(() => setIsAnimating(true), 10);
     };
 
     const closeAddModal = () => {
         setErrors({});
         setIsAnimating(false);
-        setTimeout(() => setIsAddModalOpen(false), 250); 
+        setTimeout(() => setIsAddModalOpen(false), 250);
     };
 
     const closeEditModal = () => {
@@ -290,8 +290,8 @@ const Bidding_transaction_details = () => {
 
     // console.log("selectedInvoiceId", selectedInvoiceId);
 
-const [isModalOpen, setIsModalOpen] = useState(false);
-const [fullSummary, setFullSummary] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [fullSummary, setFullSummary] = useState("");
 
 
 
@@ -322,43 +322,43 @@ const [fullSummary, setFullSummary] = useState("");
         //     title: "Contract/Details",
         //     data: "transactionSummary",
         // },
-{
-  title: "Contract / Details",
-  data: null,
-  render: (data, type, row) => {
-    const id = `summary-${row.sno || Math.random()}`;
+        {
+            title: "Contract / Details",
+            data: null,
+            render: (data, type, row) => {
+                const id = `summary-${row.sno || Math.random()}`;
 
-    setTimeout(() => {
-      const container = document.getElementById(id);
-      if (container) {
-        if (!container._root) {
-          container._root = createRoot(container);
-        }
+                setTimeout(() => {
+                    const container = document.getElementById(id);
+                    if (container) {
+                        if (!container._root) {
+                            container._root = createRoot(container);
+                        }
 
-        const fullText = row.transactionSummary || "-";
-        const shortText =
-          fullText.length > 12
-            ? fullText.substring(0, 12) + "..."
-            : fullText;
+                        const fullText = row.transactionSummary || "-";
+                        const shortText =
+                            fullText.length > 12
+                                ? fullText.substring(0, 12) + "..."
+                                : fullText;
 
-        container._root.render(
-          <span
-            className="cursor-pointer hover:text-blue-600 hover:underline"
-            title="Click to view full details"
-            onClick={() => {
-              setFullSummary(fullText);
-              setIsModalOpen(true);
-            }}
-          >
-            {shortText}
-          </span>
-        );
-      }
-    }, 0);
+                        container._root.render(
+                            <span
+                                className="cursor-pointer hover:text-blue-600 hover:underline"
+                                title="Click to view full details"
+                                onClick={() => {
+                                    setFullSummary(fullText);
+                                    setIsModalOpen(true);
+                                }}
+                            >
+                                {shortText}
+                            </span>
+                        );
+                    }
+                }, 0);
 
-    return `<div id="${id}"></div>`;
-  },
-},
+                return `<div id="${id}"></div>`;
+            },
+        },
 
 
         {
@@ -366,7 +366,7 @@ const [fullSummary, setFullSummary] = useState("");
             data: "clientTeam",
             render: (data) => data || "-"
         },
-{
+        {
             title: "Amount",
             data: "amountDollar",
             // render: (data) => {
@@ -527,7 +527,7 @@ const [fullSummary, setFullSummary] = useState("");
                         <div className="p-1 flex justify-between items-end mb-6">
 
 
-                            <div className="flex flex-wrap gap-2 mt-1">
+                            <div className="flex flex-wrap gap-2 mt-1 ">
                                 {/* From Date */}
                                 <div className="flex flex-col w-40 md:w-48">
                                     <label className="text-sm font-medium text-gray-700 mb-1">
@@ -635,7 +635,7 @@ const [fullSummary, setFullSummary] = useState("");
                                 {/* Created By Filter */}
                                 <div className="flex flex-col w-full md:w-48">
                                     <label className="text-sm font-medium text-gray-700 mb-1">
-                                        Created By
+                                        Bidder
                                     </label>
                                     <Dropdown
                                         value={createdBy}
@@ -649,22 +649,28 @@ const [fullSummary, setFullSummary] = useState("");
                                     />
                                 </div>
 
+
+                                <div className="flex gap-3 ml-auto mt-3 sm:mt-6">
+                                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow"
+                                        onClick={fetchProject}>
+                                        Apply
+                                    </button>
+                                    <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-5 py-2 rounded-lg shadow">
+                                        Reset
+                                    </button>
+                                </div>
+
                             </div>
 
 
 
                             {/* Buttons */}
-                            <div className="flex justify-end gap-3 mt-3 sm:mt-6">
-                                <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow"
-                                    onClick={fetchProject}>
-                                    Apply
-                                </button>
-                                <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-5 py-2 rounded-lg shadow">
-                                    Reset
-                                </button>
-                            </div>
+
 
                         </div>
+
+
+
 
                         <div className="datatable-container">
                             {/* Responsive wrapper for the table */}
@@ -880,27 +886,27 @@ const [fullSummary, setFullSummary] = useState("");
                         )}
 
 
-{isModalOpen && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-    <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 relative">
-      
-      <button
-        className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
-        onClick={() => setIsModalOpen(false)}
-      >
-        ✕
-      </button>
+                        {isModalOpen && (
+                            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+                                <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 relative">
 
-      <h2 className="text-lg font-semibold mb-3">
-        Contract / Details
-      </h2>
+                                    <button
+                                        className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+                                        onClick={() => setIsModalOpen(false)}
+                                    >
+                                        ✕
+                                    </button>
 
-      <p className="text-gray-700 whitespace-pre-wrap">
-        {fullSummary}
-      </p>
-    </div>
-  </div>
-)}
+                                    <h2 className="text-lg font-semibold mb-3">
+                                        Contract / Details
+                                    </h2>
+
+                                    <p className="text-gray-700 whitespace-pre-wrap">
+                                        {fullSummary}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
 
 
 

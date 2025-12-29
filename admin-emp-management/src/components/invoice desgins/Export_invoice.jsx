@@ -269,7 +269,7 @@ const finalItems = Object.values(groupedItems || {});
                 <div className="border-b-2 border-l-2 pb-2 border-r-2 border-black  border-t-2 flex justify-center text-[14px] text-black font-semibold p-1 uppercase">
                     Tax Invoice
                 </div>
-                <div className="flex justify-between pb-2 h-full border-black items-start border-b-2 border-r-2 border-l-2">
+                <div className="flex justify-between  h-full border-black items-start  border-r-2 border-l-2">
                     <div className=" border-black w-[50%] border-r-2 ">
                         <div className="border-b-2   border-black px-[5%]">
                             <img src={Aryulogo} alt="Company Logo" className="h-18 mb-2" />
@@ -278,13 +278,7 @@ const finalItems = Object.values(groupedItems || {});
                             <p>{line1}</p>
                             <p className="pt-1">{line2}</p>
                             <p className="pt-2">State Name - {settingData?.invoiceState}, Code - 33</p>
-                            <p className="pt-2">
-                                <strong>GSTIN/UIN</strong>: 33AAPCA1407R1ZE
-                            </p>
-                            <p className="pt-2">
-                                <strong>Email</strong>- {settingData?.invoiceEmail}/{" "}
-                                <strong>PH</strong> - {settingData?.invoicePhone}
-                            </p>{" "}
+                        
                         </div>
                     </div>
                     <div className="w-[50%]   border-black">
@@ -315,16 +309,39 @@ const finalItems = Object.values(groupedItems || {});
                                              MANGAL MURTI SQUARE, Ragado Building, TRIMURTI NAGAR, NAGPUR MH
                                              440022
                                            </p> */}
-                            <p className="pt-1">
-                                <strong>GSTIN/UIN</strong>: {allinvoiceDetails?.clientId?.gst}
-                            </p>
-                            <p className="pt-1">
-                                <strong>Email</strong>- {allinvoiceDetails?.clientId?.email} / <strong>PH</strong>{" "}
-                                - {allinvoiceDetails?.clientId?.phone_number}
-                            </p>{" "}
+                           
                         </div>
                     </div>
                 </div>
+
+                <div className="flex justify-between h-full border-black items-start border-b-2 border-r-2 border-l-2">
+          <div className=" border-black w-[50%] border-r-2 p-1 ">
+            <p className="pt-2">
+              <strong>GSTIN/UIN</strong>: {settingData?.invoiceGstin}
+            </p>
+            <p className="pt-2">
+              <strong>Email</strong>- {settingData?.invoiceEmail}/{" "}
+              <strong>PH</strong> - {settingData?.invoicePhone}
+            </p>{" "}
+          </div>
+
+          <div className="w-[50%]  border-black">
+
+
+            <div className="p-1 text-[12px]   border-black">
+
+              <p className="pt-2">
+                <strong>GSTIN/UIN</strong>: {allinvoiceDetails?.clientId?.gst}
+              </p>
+              <p className="pt-2">
+                <strong>Email</strong>- {allinvoiceDetails?.clientId?.email} / <strong>PH</strong>{" "}
+                - {allinvoiceDetails?.clientId?.phone_number}
+              </p>{" "}
+            </div>
+          </div>
+
+
+        </div>
                 {/* table */}
 
                 <div className=" ">
@@ -600,7 +617,7 @@ const finalItems = Object.values(groupedItems || {});
                               </td>
                         
                               <td className="p-1 border-r-2 text-right border-black">
-                                {settingData?.cgst}.00%
+                                {/* {settingData?.cgst}.00% */}0.00%
                               </td>
                         
                               <td className="p-1 border-r-2 text-right border-black">
@@ -660,7 +677,7 @@ const finalItems = Object.values(groupedItems || {});
                 <div className=" border-r-2 border-l-2 p-1 border-black">
                     <p>
                         <span className="w-[30%] inline-block pb-2">Tax amount (in words)</span>
-                        <strong>:  {amountInWords(allinvoiceDetails?.total_amount)}
+                        <strong>:  {amountInWords()}
                             .</strong>
                     </p>
                     <p>
@@ -689,7 +706,7 @@ const finalItems = Object.values(groupedItems || {});
                                 Declaration
                             </p>
                             <p className="pt-1 p-1">
-                                {settingData?.invoiceTerms}
+                                {settingData?.declaration}
                             </p>
                         </div>
                     </div>

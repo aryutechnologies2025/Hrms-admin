@@ -99,6 +99,8 @@ const Client_details = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const [traderName, setTraderName] = useState("");
+
   //   const [errors, setErrors] = useState({});
 
   const handlesubmit = async (e) => {
@@ -119,6 +121,7 @@ const Client_details = () => {
         status: status,
         notes: notes,
         gst: gst,
+        trader_name: traderName,
       };
 
       const response = await axios.post(
@@ -178,6 +181,8 @@ const Client_details = () => {
   const [editid, setEditid] = useState([]);
   const [gstedit, setgstedit] = useState("");
   const [passwordedit, setPasswordedit] = useState("");
+    const [traderNameedit, setTraderNameedit] = useState("");
+
 
   // console.log("editid", editid);
 
@@ -208,6 +213,7 @@ const Client_details = () => {
     setStatusedit(row.status || "");
     setgstedit(row.gst || "-");
     setIsEditModalOpen(true);
+    setTraderNameedit(row.trader_name || ""); 
   };
 
   const validateStatusedit = (value) => {
@@ -242,6 +248,7 @@ const Client_details = () => {
         status: statusedit,
         notes: notesedit,
         gst: gstedit,
+        trader_name: traderNameedit,
        ...(passwordedit.length > 0 && { password: passwordedit }),
       };
 
@@ -610,12 +617,12 @@ const Client_details = () => {
                     htmlFor="roleName"
                     className="block text-sm font-medium mb-2"
                   >
-                    GST Number
+                    Trader Name
                   </label>
                   <input
                     type="text"
-                    value={gst}
-                    onChange={(e) => setgst(e.target.value)}
+                    value={traderName}
+                    onChange={(e) => setTraderName(e.target.value)}
                     className="w-full px-3 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   {/* {errors.phone_number && (
@@ -849,6 +856,27 @@ const Client_details = () => {
                     <p className="text-red-500 text-sm mb-4">{errors.status}</p>
                   )}
                 </div>
+
+
+                <div className="w-full">
+                  <label
+                    htmlFor="roleName"
+                    className="block text-sm font-medium mb-2"
+                  >
+                    GST Number
+                  </label>
+                  <input
+                    type="text"
+                    value={gst}
+                    onChange={(e) => setgst(e.target.value)}
+                    className="w-full px-3 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  {/* {errors.phone_number && (
+                    <p className="text-red-500 text-sm mb-4">
+                      {errors.phone_number}
+                    </p>
+                  )} */}
+                </div>
                 {/* {error.status && <p className="error">{error.status}</p>} */}
               </div>
               </div>
@@ -942,17 +970,17 @@ const Client_details = () => {
                     </p>
                   )} */}
                 </div>
-                                <div className="w-full">
+                   <div className="w-full">
                   <label
                     htmlFor="roleName"
                     className="block text-sm font-medium mb-2"
                   >
-                    GST Number
+                    Trader Name
                   </label>
                   <input
                     type="text"
-                    value={gstedit}
-                    onChange={(e) => setgstedit(e.target.value)}
+                    value={traderNameedit}
+                    onChange={(e) => setTraderNameedit(e.target.value)}
                     className="w-full px-3 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   {/* {errors.phone_number && (
@@ -1137,6 +1165,26 @@ const Client_details = () => {
                   {errors.status && (
                     <p className="text-red-500 text-sm mb-4">{errors.status}</p>
                   )}
+                </div>
+
+                                <div className="w-full">
+                  <label
+                    htmlFor="roleName"
+                    className="block text-sm font-medium mb-2"
+                  >
+                    GST Number
+                  </label>
+                  <input
+                    type="text"
+                    value={gstedit}
+                    onChange={(e) => setgstedit(e.target.value)}
+                    className="w-full px-3 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  {/* {errors.phone_number && (
+                    <p className="text-red-500 text-sm mb-4">
+                      {errors.phone_number}
+                    </p>
+                  )} */}
                 </div>
 
 
