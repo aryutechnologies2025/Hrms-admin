@@ -220,7 +220,7 @@ const invoiceId = params.get("invoiceId");
         <div className="border-b-2 border-l-2 border-r-2 border-black  border-t-2 flex justify-center text-[14px] text-black font-semibold p-1 uppercase">
           SALES Invoice
         </div>
-        <div className="flex justify-between  h-full border-black items-start border-b-2 border-r-2 border-l-2">
+        <div className="flex justify-between  h-full border-black items-start  border-r-2 border-l-2">
           <div className=" border-black w-[50%] border-r-2 ">
             <div className="border-b-2   border-black px-[1%] pt-5 pb-2 ">
               {/* <img src={Aryulogo} alt="Company Logo" className="h-18 mb-2" /> */}
@@ -239,13 +239,7 @@ const invoiceId = params.get("invoiceId");
               <p>{line1}</p>
               <p className="pt-1">{line2}</p>
               <p className="pt-2">State Name - {settingData?.invoiceState}, Code - 33</p>
-              <p className="pt-2">
-                <strong>GSTIN/UIN</strong>: 33AAPCA1407R1ZE
-              </p>
-              <p className="pt-2">
-                <strong>Email</strong>- {settingData?.invoiceEmail}/{" "}
-                <strong>PH</strong> - {settingData?.invoicePhone}
-              </p>{" "}
+            
             </div>
           </div>
           <div className="w-[50%]   border-black">
@@ -278,15 +272,38 @@ const invoiceId = params.get("invoiceId");
                 MANGAL MURTI SQUARE, Ragado Building, TRIMURTI NAGAR, NAGPUR MH
                 440022
               </p> */}
-              <p className="pt-1">
+              
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-between h-full border-black items-start border-b-2 border-r-2 border-l-2">
+          <div className=" border-black w-[50%] border-r-2 p-1 ">
+            <p className="pt-2">
+              <strong>GSTIN/UIN</strong>: {settingData?.invoiceGstin}
+            </p>
+            <p className="pt-2">
+              <strong>Email</strong>- {settingData?.invoiceEmail}/{" "}
+              <strong>PH</strong> - {settingData?.invoicePhone}
+            </p>{" "}
+          </div>
+
+          <div className="w-[50%]  border-black">
+
+
+            <div className="p-1 text-[12px]   border-black">
+
+              <p className="pt-2">
                 <strong>GSTIN/UIN</strong>: {allinvoiceDetails?.clientId?.gst}
               </p>
-              <p className="pt-1">
+              <p className="pt-2">
                 <strong>Email</strong>- {allinvoiceDetails?.clientId?.email} / <strong>PH</strong>{" "}
                 - {allinvoiceDetails?.clientId?.phone_number}
               </p>{" "}
             </div>
           </div>
+
+
         </div>
         {/* table */}
 
@@ -336,7 +353,7 @@ const invoiceId = params.get("invoiceId");
                     </a>
                   </td>
                   <td className="no-line-bot p-1 border-r-2 align-middle   border-black">
-                    {item.code || "998314"}
+                    {item.hsnCode}
                   </td>
                   <td className="no-line-bot p-1 border-r-2  align-middle  border-black">
                     {item.quantity}
@@ -445,7 +462,7 @@ const invoiceId = params.get("invoiceId");
                 Declaration
               </p>
               <p className="pt-1 p-1">
-                {settingData?.invoiceTerms}
+                {settingData?.declaration}
               </p>
             </div>
           </div>

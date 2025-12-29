@@ -16,8 +16,8 @@ const Invoice = () => {
   const invoiceRef = useRef();
 
   const location = useLocation();
-    const params = new URLSearchParams(window.location.search);
-const invoiceId = params.get("invoiceId");
+  const params = new URLSearchParams(window.location.search);
+  const invoiceId = params.get("invoiceId");
   // const { invoiceId } = location.state || {};
 
   // console.log("invoiceId in Sales_invoice:", invoiceId);
@@ -109,7 +109,7 @@ const invoiceId = params.get("invoiceId");
   // };
   const [isGenerating, setIsGenerating] = useState(false);
 
-    const downloadPDF = async () => {
+  const downloadPDF = async () => {
 
     setIsGenerating(true);
 
@@ -146,40 +146,40 @@ const invoiceId = params.get("invoiceId");
       formData.append("invoice_document_type", "Tax Invoice");
 
 
-     
-        const response = await axios.post(
-          `${API_URL}/api/invoice/upload-client-invoice`,
-          formData,
-          { withCredentials: true }, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-        );
-  console.log("PDF uploaded successfully:", response.data);
 
-    Swal.fire({
-      icon: "success",
-      title: "Invoice Generated",
-      text: "Invoice has been generated and uploaded successfully.",
-      confirmButtonColor: "#2563eb",
-    });
+      const response = await axios.post(
+        `${API_URL}/api/invoice/upload-client-invoice`,
+        formData,
+        { withCredentials: true }, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+      );
+      console.log("PDF uploaded successfully:", response.data);
 
-    // Optional local download
-    // pdf.save(`${invoiceNumber}.pdf`);
+      Swal.fire({
+        icon: "success",
+        title: "Invoice Generated",
+        text: "Invoice has been generated and uploaded successfully.",
+        confirmButtonColor: "#2563eb",
+      });
 
-  } catch (error) {
-    console.error("Invoice generation failed:", error);
+      // Optional local download
+      // pdf.save(`${invoiceNumber}.pdf`);
 
-    Swal.fire({
-      icon: "error",
-      title: "Generation Failed",
-      text: "Something went wrong while generating invoice.",
-    });
-  } finally {
-    setIsGenerating(false);
-  }
-};
+    } catch (error) {
+      console.error("Invoice generation failed:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Generation Failed",
+        text: "Something went wrong while generating invoice.",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
 
 
@@ -241,21 +241,21 @@ const invoiceId = params.get("invoiceId");
 
   const grandTotalTax = totalCgstAmount + totalSgstAmount;
 
-const groupedItems = allinvoiceDetails?.items?.reduce((acc, item) => {
-  const hsn = item.hsnCode;
+  const groupedItems = allinvoiceDetails?.items?.reduce((acc, item) => {
+    const hsn = item.hsnCode;
 
-  if (!acc[hsn]) {
-    acc[hsn] = {
-      hsnCode: hsn,
-      amount: Number(item.amount || 0),
-    };
-  } else {
-    acc[hsn].amount += Number(item.amount || 0);
-  }
+    if (!acc[hsn]) {
+      acc[hsn] = {
+        hsnCode: hsn,
+        amount: Number(item.amount || 0),
+      };
+    } else {
+      acc[hsn].amount += Number(item.amount || 0);
+    }
 
-  return acc;
-}, {});
-const finalItems = Object.values(groupedItems || {});
+    return acc;
+  }, {});
+  const finalItems = Object.values(groupedItems || {});
 
 
   const data = [
@@ -295,7 +295,7 @@ const finalItems = Object.values(groupedItems || {});
         <div className="border-b-2 border-l-2 border-r-2 border-black  border-t-2 flex justify-center text-[14px] text-black font-semibold p-1 uppercase">
           Tax Invoice
         </div>
-        <div className="flex justify-between pb-2 h-full border-black items-start border-b-2 border-r-2 border-l-2">
+        <div className="flex justify-between  h-full border-black items-start  border-r-2 border-l-2">
           <div className=" border-black w-[50%] border-r-2 ">
             <div className="border-b-2   border-black px-[5%]">
               <img src={Aryulogo} alt="Company Logo" className="h-18 mb-2" />
@@ -304,13 +304,7 @@ const finalItems = Object.values(groupedItems || {});
               <p>{line1}</p>
               <p className="pt-1">{line2}</p>
               <p className="pt-2">State Name - {settingData?.invoiceState}, Code - 33</p>
-              <p className="pt-2">
-                <strong>GSTIN/UIN</strong>: 33AAPCA1407R1ZE
-              </p>
-              <p className="pt-2">
-                <strong>Email</strong>- {settingData?.invoiceEmail}/{" "}
-                <strong>PH</strong> - {settingData?.invoicePhone}
-              </p>{" "}
+
             </div>
           </div>
           <div className="w-[50%]   border-black">
@@ -341,15 +335,46 @@ const finalItems = Object.values(groupedItems || {});
                                                    MANGAL MURTI SQUARE, Ragado Building, TRIMURTI NAGAR, NAGPUR MH
                                                    440022
                                                  </p> */}
-              <p className="pt-1">
+              {/* <p className="pt-1">
                 <strong>GSTIN/UIN</strong>: {allinvoiceDetails?.clientId?.gst}
               </p>
               <p className="pt-1">
                 <strong>Email</strong>- {allinvoiceDetails?.clientId?.email} / <strong>PH</strong>{" "}
                 - {allinvoiceDetails?.clientId?.phone_number}
+              </p>{" "} */}
+            </div>
+          </div>
+        </div>
+
+
+        {/* gst in both side */}
+        <div className="flex justify-between h-full border-black items-start border-b-2 border-r-2 border-l-2">
+          <div className=" border-black w-[50%] border-r-2 p-1 ">
+            <p className="pt-2">
+              <strong>GSTIN/UIN</strong>: {settingData?.invoiceGstin}
+            </p>
+            <p className="pt-2">
+              <strong>Email</strong>- {settingData?.invoiceEmail}/{" "}
+              <strong>PH</strong> - {settingData?.invoicePhone}
+            </p>{" "}
+          </div>
+
+          <div className="w-[50%]  border-black">
+
+
+            <div className="p-1 text-[12px]   border-black">
+
+              <p className="pt-2">
+                <strong>GSTIN/UIN</strong>: {allinvoiceDetails?.clientId?.gst}
+              </p>
+              <p className="pt-2">
+                <strong>Email</strong>- {allinvoiceDetails?.clientId?.email} / <strong>PH</strong>{" "}
+                - {allinvoiceDetails?.clientId?.phone_number}
               </p>{" "}
             </div>
           </div>
+
+
         </div>
         {/* table */}
 
@@ -628,45 +653,45 @@ const finalItems = Object.values(groupedItems || {});
             </tbody> */}
 
             <tbody>
-  {finalItems.map((item, index) => (
-    <tr key={index}>
-      <td className="p-1 border-r-2 border-l-2 text-center border-black">
-        {item.hsnCode}
-      </td>
+              {finalItems.map((item, index) => (
+                <tr key={index}>
+                  <td className="p-1 border-r-2 border-l-2 text-center border-black">
+                    {item.hsnCode}
+                  </td>
 
-      <td className="p-1 border-r-2 text-right border-black">
-        {NumberFormat(item.amount)}
-      </td>
+                  <td className="p-1 border-r-2 text-right border-black">
+                    {NumberFormat(item.amount)}
+                  </td>
 
-      <td className="p-1 border-r-2 text-right border-black">
-        {settingData?.cgst}.00%
-      </td>
+                  <td className="p-1 border-r-2 text-right border-black">
+                    {settingData?.igst}.00%
+                  </td>
 
-      <td className="p-1 border-r-2 text-right border-black">
-        0.00
-      </td>
+                  <td className="p-1 border-r-2 text-right border-black">
+                    0.00
+                  </td>
 
-      <td className="p-1 border-r-2 text-right border-black">
-        {(
-          (item.amount * Number(settingData?.cgst || 0)) / 100
-        ).toFixed(2)}
-      </td>
+                  <td className="p-1 border-r-2 text-right border-black">
+                    {(
+                      (item.amount * Number(settingData?.cgst || 0)) / 100
+                    ).toFixed(2)}
+                  </td>
 
-      <td className="p-1 border-r-2 text-right border-black">
-        {(
-          (item.amount * Number(settingData?.sgst || 0)) / 100
-        ).toFixed(2)}
-      </td>
+                  <td className="p-1 border-r-2 text-right border-black">
+                    {(
+                      (item.amount * Number(settingData?.sgst || 0)) / 100
+                    ).toFixed(2)}
+                  </td>
 
-      <td className="p-1 border-r-2 text-right border-black">
-        {NumberFormat(
-          (item.amount * Number(settingData?.cgst || 0)) / 100 +
-          (item.amount * Number(settingData?.sgst || 0)) / 100
-        )}
-      </td>
-    </tr>
-  ))}
-</tbody>
+                  <td className="p-1 border-r-2 text-right border-black">
+                    {NumberFormat(
+                      (item.amount * Number(settingData?.cgst || 0)) / 100 +
+                      (item.amount * Number(settingData?.sgst || 0)) / 100
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
 
             <tfoot className="border-b-2  border-black text-[14px]">
               {/* taxable */}
@@ -702,7 +727,7 @@ const finalItems = Object.values(groupedItems || {});
         <div className=" border-r-2 border-l-2 p-1 border-black">
           <p>
             <span className="w-[30%] inline-block pb-1">Tax amount (in words)</span>
-            <strong>:  {amountInWords(allinvoiceDetails?.total_amount)}
+            <strong>:  {amountInWords(grandTotalTax)}
             </strong>
           </p>
           <p>
@@ -738,23 +763,23 @@ const finalItems = Object.values(groupedItems || {});
           <div className="w-full  border-black">
             <div className="border-b-2  border-black border-l-2 border-r-2  border-t-2 ">
               {" "}
-             <p className="   underline text-[14px]  border-black  pt-1 px-1">
-                            Company's Bank Details
-                        </p>
-                        <div className=" border-black  p-1">
-                            <p className=" text-black">
-                                <span className="w-[20%] inline-block ">Ac Name</span>: {settingData?.accountName}
-                            </p>
-                            <p className=" text-black">
-                                <span className="w-[20%] inline-block">Bank Name</span>: {settingData?.bankName}
-                            </p>
-                            <p className="pt-1 text-black">
-                                <span className="w-[20%] inline-block">A/c No</span>: {settingData?.accountNumber}
-                            </p>
-                            <p className="pt-1 text-black pb-1">
-                                <span className="w-[20%] inline-block">IFSC / BR</span>: {settingData?.ifscCode}
-                            </p>
-                        </div>
+              <p className="   underline text-[14px]  border-black  pt-1 px-1">
+                Company's Bank Details
+              </p>
+              <div className=" border-black  p-1">
+                <p className=" text-black">
+                  <span className="w-[20%] inline-block ">Ac Name</span>: {settingData?.accountName}
+                </p>
+                <p className=" text-black">
+                  <span className="w-[20%] inline-block">Bank Name</span>: {settingData?.bankName}
+                </p>
+                <p className="pt-1 text-black">
+                  <span className="w-[20%] inline-block">A/c No</span>: {settingData?.accountNumber}
+                </p>
+                <p className="pt-1 text-black pb-1">
+                  <span className="w-[20%] inline-block">IFSC / BR</span>: {settingData?.ifscCode}
+                </p>
+              </div>
             </div>
 
           </div>
@@ -768,13 +793,13 @@ const finalItems = Object.values(groupedItems || {});
 
 
             <div className="">
-                            <p className="font-semibold border-b-2  border-black  underline text-[16px] p-1 pb-2">
-                                Declaration
-                            </p>
-                            <p className="pt-1 p-1">
-                                {settingData?.invoiceTerms}
-                            </p>
-                        </div>
+              <p className="font-semibold border-b-2  border-black  underline text-[16px] p-1 pb-2">
+                Declaration
+              </p>
+              <p className="pt-1 p-1">
+                {settingData?.declaration}
+              </p>
+            </div>
           </div>
           <div className="w-full border-b-2 border-black">
 
