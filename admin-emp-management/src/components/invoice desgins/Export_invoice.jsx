@@ -214,6 +214,23 @@ const Export_invoice = () => {
         return convert(num) + " Rupees Only";
     };
 
+    
+const groupedItems = allinvoiceDetails?.items?.reduce((acc, item) => {
+  const hsn = item.hsnCode;
+
+  if (!acc[hsn]) {
+    acc[hsn] = {
+      hsnCode: hsn,
+      amount: Number(item.amount || 0),
+    };
+  } else {
+    acc[hsn].amount += Number(item.amount || 0);
+  }
+
+  return acc;
+}, {});
+const finalItems = Object.values(groupedItems || {});
+
 
     const data = [
         {
@@ -356,7 +373,7 @@ const Export_invoice = () => {
                                         </a>
                                     </td>
                                     <td className="no-line-bot p-1 border-r-2 align-middle   border-black">
-                                        {item.code || "998314"}
+                                        {item.hsnCode}
                                     </td>
                                     <td className="no-line-bot p-1 border-r-2  align-middle  border-black">
                                         {item.quantity}
@@ -542,7 +559,7 @@ const Export_invoice = () => {
                             </tr>
                         </tbody> */}
 
-                        <tbody className="">
+                        {/* <tbody className="">
                             {allinvoiceDetails?.items?.map((item, index) => (
                                 <tr key={index} className="">
 
@@ -569,6 +586,47 @@ const Export_invoice = () => {
                                     </td>
                                 </tr>
                             ))}
+                        </tbody> */}
+
+                                   <tbody>
+                          {finalItems.map((item, index) => (
+                            <tr key={index}>
+                              <td className="p-1 border-r-2 border-l-2 text-center border-black">
+                                {item.hsnCode}
+                              </td>
+                        
+                              <td className="p-1 border-r-2 text-right border-black">
+                                {NumberFormat(item.amount)}
+                              </td>
+                        
+                              <td className="p-1 border-r-2 text-right border-black">
+                                {settingData?.cgst}.00%
+                              </td>
+                        
+                              <td className="p-1 border-r-2 text-right border-black">
+                                0.00
+                              </td>
+                        
+                              <td className="p-1 border-r-2 text-right border-black">
+                                {(
+                                  (item.amount * Number(settingData?.cgst || 0)) / 100
+                                ).toFixed(2)}
+                              </td>
+                        
+                              <td className="p-1 border-r-2 text-right border-black">
+                                {(
+                                  (item.amount * Number(settingData?.sgst || 0)) / 100
+                                ).toFixed(2)}
+                              </td>
+                        
+                              <td className="p-1 border-r-2 text-right border-black">
+                                {NumberFormat(
+                                  (item.amount * Number(settingData?.cgst || 0)) / 100 +
+                                  (item.amount * Number(settingData?.sgst || 0)) / 100
+                                )}
+                              </td>
+                            </tr>
+                          ))}
                         </tbody>
                         <tfoot className="border-b-2  border-black text-[14px]">
                             {/* taxable */}

@@ -27,6 +27,7 @@ import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { use } from "react";
 import { MdClose } from "react-icons/md"; // nice rounded X icon
+import { capitalizeFirstLetter } from "../utils/StringCaps";
 
 const Invoice_full = () => {
   const navigate = useNavigate();
@@ -151,9 +152,9 @@ const Invoice_full = () => {
   const [amount, setAmount] = useState("");
   const [paymentType, setPaymentType] = useState("");
   // const [paidDate, setPaidDate] = useState("");
-const [paidDate, setPaidDate] = useState(
-  new Date().toISOString().split("T")[0]
-);
+  const [paidDate, setPaidDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
 
 
   const [open, setOpen] = useState(false);
@@ -200,6 +201,12 @@ const [paidDate, setPaidDate] = useState(
       fetchaProjectList(selectedClient);
     }
   }, [selectedClient]);
+
+  useEffect(() => {
+    if (selectedProject) {
+      fetchaLogs(selectedProject);
+    }
+  }, [selectedProject]);
 
 
   const fetchClientList = async () => {
@@ -279,6 +286,44 @@ const [paidDate, setPaidDate] = useState(
     }
   };
 
+
+  // invoice details for client previous log
+
+  const [logdetails, setLogdetails] = useState([]);
+
+  // console.log("logdetails", logdetails)
+
+  const fetchaLogs = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/invoice/client-invoice-by-project-wise`,
+        {
+          params: {
+            clientId: selectedClient,
+            project: selectedProject,
+          },
+          // headers: {
+          //   Authorization: `Bearer ${localStorage.getItem("token")}`,
+          // },
+
+        }
+      );
+
+      // console.log("responselogssss", response)
+
+      setLogdetails(response.data.data);
+
+
+
+      // setProjectOption(ProjectOptions);
+
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
   const handleChange = (index, field, value) => {
     const updatedItems = [...items];
     updatedItems[index][field] = value;
@@ -346,33 +391,99 @@ const [paidDate, setPaidDate] = useState(
   };
 
 
+  const validateInvoiceForm = () => {
+    let errors = {};
+
+    // Client & Project
+    if (!selectedClient) {
+      errors.client = "Client is required";
+    }
+
+    if (!selectedProject) {
+      errors.project = "Project is required";
+    }
+
+    // Dates
+    if (!invoiceDate) {
+      errors.invoice_date = "Invoice date is required";
+    }
+
+    if (!dueDate) {
+      errors.due_date = "Due date is required";
+    }
+
+    if (invoiceDate && dueDate && new Date(dueDate) < new Date(invoiceDate)) {
+      errors.due_date = "Due date cannot be before invoice date";
+    }
+
+    // Currency
+    if (!currency || !currency.name) {
+      errors.currency = "Currency is required";
+    }
+
+    // Items validation
+    // if (!items || items.length === 0) {
+    //   errors.items = "At least one item is required";
+    // } else {
+    //   items.forEach((item, index) => {
+    //     if (!item.description) {
+    //       errors[`item_description_${index}`] = "Description is required";
+    //     }
+    //     if (!item.qty || item.qty <= 0) {
+    //       errors[`item_qty_${index}`] = "Quantity must be greater than 0";
+    //     }
+    //     if (!item.rate || item.rate <= 0) {
+    //       errors[`item_rate_${index}`] = "Rate must be greater than 0";
+    //     }
+    //   });
+    // }
+
+    // // Invoice Type
+    // if (!selected || selected === "Select Invoice Type") {
+    //   errors.invoice_type = "Invoice type is required";
+    // }
+
+    // // GST validation
+    // if (isIntraInvoice) {
+    //   if (!cgst && cgst !== 0) errors.cgst = "CGST is required";
+    //   if (!sgst && sgst !== 0) errors.sgst = "SGST is required";
+    // }
+
+    // if (isInterInvoice) {
+    //   if (!igst && igst !== 0) errors.igst = "IGST is required";
+    // }
+
+    // Status
+    if (!status) {
+      errors.status = "Status is required";
+    }
+
+    // Paid Date (when status selected)
+    if (status && !paidDate) {
+      errors.paidDate = "Paid date is required";
+    }
+
+    // Amount (not completed)
+    if (status && status !== "completed" && !amount) {
+      errors.amount = "Amount is required";
+    }
+
+    // Payment Type
+    if (status && !paymentType) {
+      errors.paymentType = "Payment type is required";
+    }
+
+    return errors;
+  };
+
+
 
   const handlesubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = validateInvoiceForm();
 
-    let newErrors = {};
-    if (!status) {
-      newErrors.status = "Status is required";
-    }
-
-    // paidDate required ONLY when completed
-    if (status  && !paidDate) {
-      newErrors.paidDate = "Paid date is required";
-    }
-
-    // amount required ONLY when NOT completed
-    if (status && status !== "completed" && !amount) {
-      newErrors.amount = "Amount is required";
-    }
-
-    // payment type required when status selected
-    if (status && !paymentType) {
-      newErrors.paymentType = "Payment type is required";
-    }
-
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
 
@@ -467,6 +578,9 @@ const [paidDate, setPaidDate] = useState(
     }
   };
 
+  const [openlog, setOpenlog] = useState(false);
+const [selectedLogs, setSelectedLogs] = useState([]);
+
   return (
     <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
       <div>
@@ -488,7 +602,7 @@ const [paidDate, setPaidDate] = useState(
         </div>
 
         <div className="">
-          <div className="bg-white p-2 md:p-5 rounded-xl overflow-y-auto px-2 py-4 md:px-8 md:py-6">
+          <div className="bg-white p-2 md:p-5 rounded-xl overflow-y-auto px-2 py-4 md:px-5 md:py-6">
             <div className="flex justify-between items-center gap-2 ">
               <h2 className="text-xl font-semibold mb-4">Add Invoice</h2>
             </div>
@@ -942,13 +1056,14 @@ const [paidDate, setPaidDate] = useState(
 
               {/* right */}
 
-              <div className="w-full md:w-[30%] md:border-l-4 p-3">
+              <div className="w-full md:w-[35%] md:border-l-4 p-3">
                 <button
                   className="bg-blue-600 hover:bg-blue-700 text-white px-4 min-w-full h-10 font-semibold rounded"
                   onClick={handlesubmit}
                 >
                   Save
                 </button>
+
                 <hr className="mt-5"></hr>
 
                 <div>
@@ -969,12 +1084,18 @@ const [paidDate, setPaidDate] = useState(
                         placeholder="Select a Currency"
                         className="border w-full border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
+
+                      {errors.currency && (
+                        <p className="text-red-500 text-sm mb-4">
+                          {errors.currency}
+                        </p>
+                      )}
                     </div>
                   </div>
 
                   <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3 p-2">
 
-                    <div className="w-[100%] ">
+                    <div className="w-[250px] ">
                       <label className="block text-sm font-medium text-gray-500 mb-2">
                         Invoice Type
                       </label>
@@ -1104,6 +1225,113 @@ const [paidDate, setPaidDate] = useState(
 
 
                 </div>
+                <hr className="mt-5"></hr>
+
+   <div className="p-2">
+    <button
+  onClick={() => {
+    setSelectedLogs(logdetails);
+    setOpenlog(true);
+  }}
+  className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
+>
+  <FaEye size={18} />
+  <span>View Payment History</span>
+</button>
+   </div>
+
+
+
+{openlog && (
+  <div
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    onClick={() => setOpenlog(false)} 
+  >
+    <div
+      className="bg-white rounded-2xl w-[60%] max-w-6xl h-[85vh] shadow-2xl flex flex-col"
+      onClick={(e) => e.stopPropagation()} 
+    >
+
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 py-4 border-b">
+        <h2 className="text-xl font-semibold text-gray-800">
+          Payment Log Details
+        </h2>
+        <button
+          onClick={() => setOpenlog(false)}
+          className="text-gray-400 hover:text-gray-700 text-2xl"
+        >
+          ✕
+        </button>
+      </div>
+
+      {/* Table Wrapper */}
+      <div className="flex-1 overflow-y-auto px-6 py-4">
+        {selectedLogs && selectedLogs.length > 0 ? (
+          <table className="w-full text-sm border border-gray-200 rounded-xl overflow-hidden">
+            {/* Table Head */}
+            <thead className="bg-blue-50 sticky top-0 z-10">
+              <tr>
+                <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                  Invoice No
+                </th>
+                <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                  Status
+                </th>
+                <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                  Paid Date
+                </th>
+                <th className="px-4 py-3 text-right font-semibold text-gray-600">
+                  Amount (₹)
+                </th>
+              </tr>
+            </thead>
+
+            {/* Table Body */}
+            <tbody>
+              {selectedLogs.map((log, i) => (
+                <tr
+                  key={i}
+                  className={`border-b transition
+                    ${i % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                    hover:bg-blue-50`}
+                >
+                  <td className="px-4 py-3 font-medium text-gray-800">
+                     #{log.invoice_number || "-"}
+                  </td>
+                  <td className="px-4 py-3 text-gray-800">
+                    {capitalizeFirstLetter(log.status)}
+                  </td>
+                  <td className="px-4 py-3 text-gray-600">
+                    {new Date(log.paidDate).toLocaleDateString("en-IN")}
+                  </td>
+                  <td className="px-4 py-3 text-right font-semibold text-green-600">
+                    ₹{log.amount}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <div className="flex items-center justify-center h-full text-gray-500 font-medium text-lg">
+            No transactions available
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+)}
+
+
+
+
+
+
+
+
+
+
+
               </div>
             </div>
           </div>
