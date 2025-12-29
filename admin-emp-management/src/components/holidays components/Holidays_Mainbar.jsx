@@ -80,9 +80,10 @@ const Holidays_Mainbar = () => {
 
    useEffect(() => {
     try{
+      setYears(new Date().getFullYear());
         axios.get(`${API_URL}/api/upcomingholiday/holidays/years`).then((res) => {
     setYears(res.data.data || []);
-  });
+  },[years]);
 }
   catch(error){
     console.log(error)
@@ -300,7 +301,7 @@ const Holidays_Mainbar = () => {
                     Submit
                   </button>
 
-                  {/* Clear Button */}
+                  {/* Clear Button  */}
                   {/* <button
                     onClick={() => {
                       setYears(new Date().getFullYear());
