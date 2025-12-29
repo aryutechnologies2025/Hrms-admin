@@ -29,6 +29,7 @@ import { MdDelete } from "react-icons/md";
 import { use } from "react";
 import { useDateUtils } from "../hooks/useDateUtils";
 import { createRoot } from "react-dom/client";
+import { FaMoneyCheckAlt } from "react-icons/fa";
 
 import { FaFileInvoice } from "react-icons/fa";
 import { capitalizeFirstLetter } from "../utils/StringCaps";
@@ -330,7 +331,7 @@ const Invoice_details = () => {
   ];
   const [paymentVisible, setPaymentVisible] = useState(false);
   const [selectedPayments, setSelectedPayments] = useState([]);
-  console.log("selectedPayments", selectedPayments);
+  // console.log("selectedPayments", selectedPayments);
 
   const columns = [
     {
@@ -370,7 +371,7 @@ const Invoice_details = () => {
       data: "invoice_date",
       render: (data) => data ? formatDateTime(data) : "-"
 
-      
+
     },
 
     {
@@ -405,7 +406,7 @@ const Invoice_details = () => {
                   alignItems: "center",
                 }}
               >
-                <FaEye
+                <FaMoneyCheckAlt 
                   className="cursor-pointer text-black text-xl"
                   title="View Payments"
                   onClick={() => {
@@ -657,10 +658,19 @@ const Invoice_details = () => {
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
-              <option value="">All</option>
-              <option value="paid">Paid</option>
-              <option value="pending">Pending</option>
-              <option value="overdue">OverDue</option>
+              <option value="">All Status</option>
+              <option value="completed">Completed</option>
+              <option value="advance_pending">Advance Pending</option>
+              <option value="partial_payment_pending">
+                Partial payment pending
+              </option>
+              <option value="final_payment_pending">
+                Final payment pending
+              </option>
+              <option value="advance_received">Advance received</option>
+              <option value="partial_payment_received">
+                Partial payment received
+              </option>
             </select>
           </div>
 
@@ -831,9 +841,8 @@ const Invoice_details = () => {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-gray-500 text-sm">Status</span>
-                  <span className={`font-semibold ${selectedInvoiceId.status === "0" ? "text-green-600" : selectedInvoiceId.status === "1" ? "text-yellow-600" : "text-red-600"}`}>
-                    {selectedInvoiceId.status === "0" ? "Paid" : selectedInvoiceId.status === "1" ? "Pending" : "OverDue"}
-                  </span>
+                  <span className="text-gray-900 font-semibold">{capitalizeFirstLetter(selectedInvoiceId.status)}</span>
+
 
                 </div>
                 <div className="flex flex-col">
@@ -898,7 +907,7 @@ const Invoice_details = () => {
                 <div className="p-4">
                   <p className="text-xs uppercase text-gray-500">Amount</p>
                   <p className="mt-1 text-lg font-semibold text-gray-800">
-                    
+
                     ₹{selectedPayments?.total_amount.toLocaleString(2)}
 
                   </p>
@@ -906,7 +915,7 @@ const Invoice_details = () => {
                 <div className="p-4">
                   <p className="text-xs uppercase text-gray-500">Received</p>
                   <p className="mt-1 text-lg font-semibold text-green-600">
-                     ₹{selectedPayments?.totalPaymentAmount.toLocaleString(2)}
+                    ₹{selectedPayments?.totalPaymentAmount.toLocaleString(2)}
                   </p>
                 </div>
                 <div className="p-4">
@@ -951,39 +960,39 @@ const Invoice_details = () => {
                         )}
                       </div> */}
 
-                      <div className="px-6 py-6 max-h-[60vh] overflow-y-auto">
-  <h3 className="mb-3 text-lg font-semibold text-gray-800">
-    Payment History
-  </h3>
+              <div className="px-6 py-6 max-h-[60vh] overflow-y-auto">
+                <h3 className="mb-3 text-lg font-semibold text-gray-800">
+                  Payment History
+                </h3>
 
-  {selectedPayments?.invoiceLogs?.length === 0 ? (
-    <p className="text-gray-700">No payments found.</p>
-  ) : (
-    <ul className="space-y-3">
-      {selectedPayments?.invoiceLogs.map((log, index) => (
-        <li
-          key={log._id}
-          className="flex justify-between items-center border-b pb-2 text-sm"
-        >
-          {/* LEFT */}
-          <div>
-            <p className="font-medium text-gray-800">
-              Payment {index + 1}
-            </p>
-            <p className="text-xs text-gray-500">
-              {capitalizeFirstLetter(log.status)} • {formatDateTime(log.paidDate || "-")} • {capitalizeFirstLetter(log.paymentType)}
-            </p>
-          </div>
+                {selectedPayments?.invoiceLogs?.length === 0 ? (
+                  <p className="text-gray-700">No payments found.</p>
+                ) : (
+                  <ul className="space-y-3">
+                    {selectedPayments?.invoiceLogs.map((log, index) => (
+                      <li
+                        key={log._id}
+                        className="flex justify-between items-center border-b pb-2 text-sm"
+                      >
+                        {/* LEFT */}
+                        <div>
+                          <p className="font-medium text-gray-800">
+                            Payment {index + 1}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {capitalizeFirstLetter(log.status)} • {formatDateTime(log.paidDate || "-")} • {capitalizeFirstLetter(log.paymentType)}
+                          </p>
+                        </div>
 
-          {/* RIGHT */}
-          <div className="font-semibold text-gray-900">
-            ₹ {Number(log.amount).toLocaleString("en-IN")}
-          </div>
-        </li>
-      ))}
-    </ul>
-  )}
-</div>
+                        {/* RIGHT */}
+                        <div className="font-semibold text-gray-900">
+                          ₹ {Number(log.amount).toLocaleString("en-IN")}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
 
             </div>
           </div>

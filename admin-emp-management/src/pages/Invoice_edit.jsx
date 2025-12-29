@@ -281,7 +281,7 @@ const Invoice_edit = () => {
     setSgst(rowData.sgst);
     setPaidDate(rowData.paid_date?.split("T")[0]);
     setAmount(rowData.amount);
-    setPaymentType(rowData.payment_type);
+    setPaymentType(rowData?.paymentType);
     setBalance(rowData?.balance);
   }, [rowData]);
 
@@ -399,7 +399,7 @@ const Invoice_edit = () => {
         icon: "success",
         title: "Invoice edited successfully!",
         timer: 1500,
-        showConfirmButton: false,
+        showConfirmButton: true,
       });
 
       setErrors({});
@@ -828,7 +828,7 @@ const Invoice_edit = () => {
                             </div>
                           )}
 
-                          {status && status !== "completed" && (
+                          {status && (
                             <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
                               <label className="block text-sm font-medium mb-2 w-[50%]">
                                 Balance
@@ -847,7 +847,7 @@ const Invoice_edit = () => {
                             </div>
                           )}
 
-                          {status && status !== "completed" && (
+                          {status && (
                             <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
                               <label className="block text-sm font-medium mb-2 w-[50%]">
                                 Amount <span className="text-red-500">*</span>

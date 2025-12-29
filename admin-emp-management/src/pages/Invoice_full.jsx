@@ -150,7 +150,10 @@ const Invoice_full = () => {
 
   const [amount, setAmount] = useState("");
   const [paymentType, setPaymentType] = useState("");
-  const [paidDate, setPaidDate] = useState("");
+  // const [paidDate, setPaidDate] = useState("");
+const [paidDate, setPaidDate] = useState(
+  new Date().toISOString().split("T")[0]
+);
 
 
   const [open, setOpen] = useState(false);
@@ -873,7 +876,7 @@ const Invoice_full = () => {
 
 
 
-                        {status && status !== "completed" && (
+                        {status && (
                           <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
                             <label className="block text-sm font-medium mb-2 w-[50%]">
                               Amount <span className="text-red-500">*</span>
