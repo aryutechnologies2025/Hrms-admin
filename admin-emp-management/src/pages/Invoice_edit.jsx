@@ -27,6 +27,7 @@ import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { use } from "react";
 import { MdClose } from "react-icons/md"; // nice rounded X icon
+import { capitalizeFirstLetter } from "../utils/StringCaps";
 
 const Invoice_edit = () => {
 
@@ -69,6 +70,12 @@ const Invoice_edit = () => {
       fetchaProjectList(selectedClient);
     }
   }, [selectedClient]);
+
+  useEffect(() => {
+    if (selectedProject) {
+      fetchaLogs(selectedProject);
+    }
+  }, [selectedProject]);
 
   const fetchClientList = async () => {
     try {
@@ -122,6 +129,41 @@ const Invoice_edit = () => {
       // const clientName = response.data.data.map((emp) => emp.name);
       // // console.log("client name", clientName);
       // setProjectOption(clientName);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+  const [logdetails, setLogdetails] = useState([]);
+
+  // console.log("logdetails", logdetails)
+
+  const fetchaLogs = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/invoice/client-invoice-by-project-wise`,
+        {
+          params: {
+            clientId: selectedClient,
+            project: selectedProject,
+          },
+          // headers: {
+          //   Authorization: `Bearer ${localStorage.getItem("token")}`,
+          // },
+
+        }
+      );
+
+      // console.log("responselogssss", response)
+
+      setLogdetails(response.data.data);
+
+
+
+      // setProjectOption(ProjectOptions);
+
+
     } catch (error) {
       console.log(error);
     }
@@ -395,305 +437,308 @@ const Invoice_edit = () => {
 
 
       if (response.status === 200 && response.data?.success) {
-      await Swal.fire({
-        icon: "success",
-        title: "Invoice edited successfully!",
-        timer: 1500,
-        showConfirmButton: true,
-      });
+        await Swal.fire({
+          icon: "success",
+          title: "Invoice edited successfully!",
+          timer: 1500,
+          showConfirmButton: true,
+        });
 
-      setErrors({});
+        setErrors({});
 
-      navigate("/invoice-details");
-    }
-
-      } catch (err) {
-        if (err.response?.data?.errors) {
-          setErrors(err.response.data.errors);
-          // console.log("errorss",err.response.data.error)
-        } else {
-          console.error("Error submitting form:", err);
-          Swal.fire({
-            icon: "error",
-            title: "Submission failed!",
-            text: "Please try again.",
-          });
-        }
+        navigate("/invoice-details");
       }
-    };
 
+    } catch (err) {
+      if (err.response?.data?.errors) {
+        setErrors(err.response.data.errors);
+        // console.log("errorss",err.response.data.error)
+      } else {
+        console.error("Error submitting form:", err);
+        Swal.fire({
+          icon: "error",
+          title: "Submission failed!",
+          text: "Please try again.",
+        });
+      }
+    }
+  };
 
+  const [openlog, setOpenlog] = useState(false);
+  const [selectedLogs, setSelectedLogs] = useState([]);
 
-    return (
-      <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
-        <div>
-          <Mobile_Sidebar />
+  return (
+    <div className="flex flex-col justify-between bg-gray-100 w-screen  min-h-screen px-3 md:px-5 pt-2 md:pt-10">
+      <div className="">
+       <div>
+         <Mobile_Sidebar />
+       </div>
 
-          <div className="flex gap-2 items-center cursor-pointer">
-            <p
-              className="text-sm text-gray-500"
-              onClick={() => navigate("/dashboard")}
-            >
-              Dashboard
-            </p>
-            <p>{">"}</p>
+        <div className="flex gap-2 items-center cursor-pointer">
+          <p
+            className="text-sm text-gray-500"
+            onClick={() => navigate("/dashboard")}
+          >
+            Dashboard
+          </p>
+          <p>{">"}</p>
 
-            <p className="text-sm text-gray-500" onClick={() => navigate("/invoice-details")}>Invoice List</p>
-            <p>{">"}</p>
+          <p className="text-sm text-gray-500" onClick={() => navigate("/invoice-details")}>Invoice List</p>
+          <p>{">"}</p>
 
-            <p className="text-sm text-blue-500">Edit Invoice</p>
-          </div>
+          <p className="text-sm text-blue-500">Edit Invoice</p>
+        </div>
 
-          <div className="">
-            <div className="bg-white p-2 md:p-5 rounded-xl overflow-y-auto px-2 py-4 md:px-8 md:py-6">
-              <div className="flex justify-between items-center gap-2 ">
-                <h2 className="text-xl font-semibold mb-4">Edit Invoice</h2>
-              </div>
-              <div className="flex flex-wrap md:flex-nowrap">
-                {/* left */}
-                <div className="w-full border p-5 shadow-2xl rounded ">
-                  {" "}
-                  {/* name and company */}
-                  <div className="flex flex-wrap md:flex-nowrap justify-between gap-5">
-                    <div className="w-full">
-                      <label
-                        htmlFor="roleName"
-                        className="block text-sm font-medium mb-2"
-                      >
-                        Client<span className="text-red-500">*</span>
-                      </label>
-                      <Dropdown
-                        value={selectedClient}
-                        onChange={(e) => setSelectedClient(e.value)}
-                        options={clientOption}
-                        optionLabel="label"
-                        placeholder="Select a Client"
-                        className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      {errors.client && (
-                        <p className="text-red-500 text-sm mb-4">
-                          {errors.client}
-                        </p>
-                      )}
-                    </div>
+        <div className="">
+          <div className="bg-white p-2 md:p-5 rounded-xl overflow-y-auto px-2 py-4 md:px-5 md:py-6">
+            <div className="flex justify-between items-center gap-2 ">
+              <h2 className="text-xl font-semibold mb-4">Edit Invoice</h2>
+            </div>
+            <div className="flex flex-wrap md:flex-nowrap">
+              {/* left */}
+              <div className="w-full border p-5 md:w-[70%] shadow-2xl rounded ">
+                {" "}
+                {/* name and company */}
+                <div className="flex flex-wrap md:flex-nowrap justify-between gap-5">
+                  <div className="w-full">
+                    <label
+                      htmlFor="roleName"
+                      className="block text-sm font-medium mb-2"
+                    >
+                      Client<span className="text-red-500">*</span>
+                    </label>
+                    <Dropdown
+                      value={selectedClient}
+                      onChange={(e) => setSelectedClient(e.value)}
+                      options={clientOption}
+                      optionLabel="label"
+                      placeholder="Select a Client"
+                      className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    {errors.client && (
+                      <p className="text-red-500 text-sm mb-4">
+                        {errors.client}
+                      </p>
+                    )}
+                  </div>
 
-                    <div className="w-full">
-                      <label
-                        htmlFor="roleName"
-                        className="block text-sm font-medium mb-2"
-                      >
-                        Project<span className="text-red-500">*</span>
-                      </label>
-                      <Dropdown
-                        value={selectedProject}
-                        onChange={(e) => setSelectedProject(e.value)}
-                        options={projectOption}
-                        optionLabel="label"
-                        placeholder="Select a Project"
-                        className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      {/* {errors.client && (
+                  <div className="w-full">
+                    <label
+                      htmlFor="roleName"
+                      className="block text-sm font-medium mb-2"
+                    >
+                      Project<span className="text-red-500">*</span>
+                    </label>
+                    <Dropdown
+                      value={selectedProject}
+                      onChange={(e) => setSelectedProject(e.value)}
+                      options={projectOption}
+                      optionLabel="label"
+                      placeholder="Select a Project"
+                      className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    {/* {errors.client && (
                     <p className="text-red-500 text-sm mb-4">
                       {errors.client}
                     </p>
                   )} */}
-                      {/* {errors.contact_person && (
+                    {/* {errors.contact_person && (
                     <p className="text-red-500 text-sm mb-4">
                       {errors.contact_person}
                     </p>
                   )} */}
+                  </div>
+                </div>
+                {/* email phonenumber */}
+                <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3">
+                  <div className="w-full">
+                    <label
+                      htmlFor="roleName"
+                      className="block text-sm font-medium mb-2"
+                    >
+                      Invoice Date<span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+
+                      value={invoiceDate}
+                      onChange={(e) => setInvoiceDate(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    {errors.invoice_date && (
+                      <p className="text-red-500 text-sm mb-4">
+                        {errors.invoice_date}
+                      </p>
+                    )}
+                  </div>
+                  <div className="w-full">
+                    <label
+                      htmlFor="roleName"
+                      className="block text-sm font-medium mb-2"
+                    >
+                      Due Date<span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      value={dueDate}
+                      onChange={(e) => setDueDate(e.target.value)}
+                      min={invoiceDate}
+                      className="w-full px-3 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    {errors.due_date && (
+                      <p className="text-red-500 text-sm mb-4">
+                        {errors.due_date}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                {/* item */}
+                <div className="mt-3">
+                  <div className="flex justify-between">
+                    <div className="text-lg font-medium  ">Items</div>
+                  </div>
+                  <div className="mb-4 bg-[#132144] border-b border-gray-800 text-white py-2 mt-2 rounded  flex  gap-1 p-2">
+                    <div className="flex flex-wrap w-[65%] ">
+                      <label className="text-sm font-medium mb-1">
+                        Description
+                      </label>
+                    </div>
+                    <div className="flex flex-col w-[30%] ">
+                      <label className="text-sm font-medium mb-1">HSN/SAC</label>
+                    </div>
+                    <div className="flex flex-col w-[30%] ">
+                      <label className="text-sm font-medium mb-1">Qty</label>
+                    </div>
+
+                    <div className="flex flex-col w-[30%]  ">
+                      <label className="text-sm font-medium mb-1">Rate</label>
+                    </div>
+
+                    <div className="flex flex-col w-[30%]">
+                      <label className="text-sm font-medium mb-1">Total</label>
                     </div>
                   </div>
-                  {/* email phonenumber */}
-                  <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3">
-                    <div className="w-full">
-                      <label
-                        htmlFor="roleName"
-                        className="block text-sm font-medium mb-2"
-                      >
-                        Invoice Date<span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="date"
-                        
-                        value={invoiceDate}
-                        onChange={(e) => setInvoiceDate(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      {errors.invoice_date && (
-                        <p className="text-red-500 text-sm mb-4">
-                          {errors.invoice_date}
-                        </p>
-                      )}
-                    </div>
-                    <div className="w-full">
-                      <label
-                        htmlFor="roleName"
-                        className="block text-sm font-medium mb-2"
-                      >
-                        Due Date<span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="date"
-                        value={dueDate}
-                        onChange={(e) => setDueDate(e.target.value)}
-                        min={invoiceDate}
-                        className="w-full px-3 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      {errors.due_date && (
-                        <p className="text-red-500 text-sm mb-4">
-                          {errors.due_date}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  {/* item */}
-                  <div className="mt-3">
-                    <div className="flex justify-between">
-                      <div className="text-lg font-medium  ">Items</div>
-                    </div>
-                    <div className="mb-4 bg-[#132144] border-b border-gray-800 text-white py-2 mt-2 rounded  flex  gap-1 p-2">
-                      <div className="flex flex-wrap w-[65%] ">
-                        <label className="text-sm font-medium mb-1">
-                          Description
-                        </label>
-                      </div>
-                      <div className="flex flex-col w-[30%] ">
-                        <label className="text-sm font-medium mb-1">HSN/SAC</label>
-                      </div>
-                      <div className="flex flex-col w-[30%] ">
-                        <label className="text-sm font-medium mb-1">Qty</label>
+                  {items.map((item, index) => (
+                    <div
+                      key={index}
+                      className="group items-start mb-4 border-b border-gray-800 pb-4 flex flex-wrap md:flex-nowrap gap-1"
+                    >
+                      <div className="flex flex-col w-full">
+                        <input
+                          type="text"
+                          placeholder="Description"
+                          className="border p-2 rounded w-full"
+                          value={item.description}
+                          onChange={(e) =>
+                            handleChange(index, "description", e.target.value)
+                          }
+                        />
                       </div>
 
-                      <div className="flex flex-col w-[30%]  ">
-                        <label className="text-sm font-medium mb-1">Rate</label>
+                      <div className="flex flex-col w-full md:w-[15%]">
+                        <input
+                          type="text"
+                          placeholder="Hsn"
+                          className="border p-2 rounded"
+                          value={item.hsnCode}
+                          onChange={(e) =>
+                            handleChange(index, "hsnCode", e.target.value)
+                          }
+                        />
                       </div>
 
-                      <div className="flex flex-col w-[30%]">
-                        <label className="text-sm font-medium mb-1">Total</label>
+                      <div className="flex flex-col w-full md:w-[15%] ">
+                        <input
+                          type="number"
+                          placeholder="Qty"
+                          className="border p-2 rounded"
+                          value={item.qty}
+                          onChange={(e) =>
+                            handleChange(index, "qty", e.target.value)
+                          }
+                        />
                       </div>
-                    </div>
-                    {items.map((item, index) => (
-                      <div
-                        key={index}
-                        className="group items-start mb-4 border-b border-gray-800 pb-4 flex flex-wrap md:flex-nowrap gap-1"
-                      >
-                        <div className="flex flex-col w-full">
-                          <input
-                            type="text"
-                            placeholder="Description"
-                            className="border p-2 rounded w-full"
-                            value={item.description}
-                            onChange={(e) =>
-                              handleChange(index, "description", e.target.value)
-                            }
-                          />
-                        </div>
 
-                        <div className="flex flex-col w-full md:w-[15%]">
-                          <input
-                            type="text"
-                            placeholder="Hsn"
-                            className="border p-2 rounded"
-                            value={item.hsnCode}
-                            onChange={(e) =>
-                              handleChange(index, "hsnCode", e.target.value)
-                            }
-                          />
-                        </div>
+                      <div className="flex flex-col w-full md:w-[15%]  ">
+                        <input
+                          type="number"
+                          placeholder="Rate"
+                          className="border p-2 rounded"
+                          value={item.rate}
+                          onChange={(e) =>
+                            handleChange(index, "rate", e.target.value)
+                          }
+                        />
+                      </div>
 
-                        <div className="flex flex-col w-full md:w-[15%] ">
-                          <input
-                            type="number"
-                            placeholder="Qty"
-                            className="border p-2 rounded"
-                            value={item.qty}
-                            onChange={(e) =>
-                              handleChange(index, "qty", e.target.value)
-                            }
-                          />
-                        </div>
+                      <div className="flex flex-col w-full md:w-[15%]">
+                        <input
+                          type="text"
+                          placeholder="Total"
+                          className="border p-2 rounded bg-gray-100"
+                          value={`${currency?.symbol || ""}${parseFloat(
+                            item.total || 0
+                          ).toFixed(2)}`}
+                          readOnly
+                        />
+                      </div>
 
-                        <div className="flex flex-col w-full md:w-[15%]  ">
-                          <input
-                            type="number"
-                            placeholder="Rate"
-                            className="border p-2 rounded"
-                            value={item.rate}
-                            onChange={(e) =>
-                              handleChange(index, "rate", e.target.value)
-                            }
-                          />
-                        </div>
-
-                        <div className="flex flex-col w-full md:w-[15%]">
-                          <input
-                            type="text"
-                            placeholder="Total"
-                            className="border p-2 rounded bg-gray-100"
-                            value={`${currency?.symbol || ""}${parseFloat(
-                              item.total || 0
-                            ).toFixed(2)}`}
-                            readOnly
-                          />
-                        </div>
-
-                        <div className="flex items-end">
-                          <button
-                            onClick={() => deleteItem(index)}
-                            className="flex items-center justify-center w-8 h-8 rounded-full 
+                      <div className="flex items-end">
+                        <button
+                          onClick={() => deleteItem(index)}
+                          className="flex items-center justify-center w-8 h-8 rounded-full 
                                   text-white group-hover:text-[#1c8369]
                                   transition-colors duration-200"
-                          >
-                            <MdClose className="w-5 h-6 mt-1" />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                    <button
-                      onClick={addItem}
-                      className="flex items-center justify-center gap-1 w-28 text-[13px] rounded border-2 border-[#6fc8b1] text-[#6fc8b1] hover:bg-[#6fc8b1] hover:text-white px-3 py-2"
-                    >
-                      <IoMdAdd /> Line Item
-                    </button>
-                  </div>
-                  {/* address and notes */}
-                  <div className="flex flex-wrap md:flex-nowrap ">
-                    {/* left */}
-                    <div className="w-full md:w-[50%]">
-                      <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3">
-                        <div className="w-full">
-                          <label
-                            htmlFor="notes"
-                            className="block text-sm font-medium mb-2"
-                          >
-                            Notes
-                          </label>
-                          <textarea
-                            id="notes"
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            rows={4}
-                          ></textarea>
-                        </div>
+                        >
+                          <MdClose className="w-5 h-6 mt-1" />
+                        </button>
                       </div>
                     </div>
-                    {/* right */}
-                    <div className="w-full md:w-[50%] flex justify-start md:justify-end p-3">
-                      <div className=" ">
-                        <div className=" mt-3">
-                          <div className="w-full flex  justify-between">
-                            <span className="block text-sm font-medium text-gray-400">
-                              Subtotal
-                            </span>
-                            <span className="block text-sm font-medium text-gray-400">
-                              {currency?.symbol || ""}
-                              {parseFloat(subTotal || 0).toFixed(2)}
-                            </span>
-                          </div>
+                  ))}
+                  <button
+                    onClick={addItem}
+                    className="flex items-center justify-center gap-1 w-28 text-[13px] rounded border-2 border-[#6fc8b1] text-[#6fc8b1] hover:bg-[#6fc8b1] hover:text-white px-3 py-2"
+                  >
+                    <IoMdAdd /> Line Item
+                  </button>
+                </div>
+                {/* address and notes */}
+                <div className="flex flex-wrap md:flex-nowrap ">
+                  {/* left */}
+                  <div className="w-full md:w-[50%]">
+                    <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3">
+                      <div className="w-full">
+                        <label
+                          htmlFor="notes"
+                          className="block text-sm font-medium mb-2"
+                        >
+                          Notes
+                        </label>
+                        <textarea
+                          id="notes"
+                          value={notes}
+                          onChange={(e) => setNotes(e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          rows={4}
+                        ></textarea>
+                      </div>
+                    </div>
+                  </div>
+                  {/* right */}
+                  <div className="w-full md:w-[50%] flex justify-start md:justify-end p-3">
+                    <div className=" ">
+                      <div className=" mt-3">
+                        <div className="w-full flex  justify-between">
+                          <span className="block text-sm font-medium text-gray-400">
+                            Subtotal
+                          </span>
+                          <span className="block text-sm font-medium text-gray-400">
+                            {currency?.symbol || ""}
+                            {parseFloat(subTotal || 0).toFixed(2)}
+                          </span>
+                        </div>
 
-                          {/* <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
+                        {/* <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
                           <label
                             htmlFor="roleName"
                             className="block text-sm font-medium mb-2 w-[50%]"
@@ -707,206 +752,207 @@ const Invoice_edit = () => {
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                           />
                         </div> */}
-                          {isIntraInvoice && (
-                            <div className="w-full mt-4 space-y-3">
+                        {isIntraInvoice && (
+                          <div className="w-full mt-4 space-y-3">
 
-                              {/* CGST */}
-                              <div className="flex flex-wrap md:flex-nowrap items-center">
-                                <label className="block text-sm font-medium w-[50%]">
-                                  CGST (%)
-                                </label>
-                                <input
-                                  type="number"
-                                  value={cgst}
-                                  onChange={(e) => setCgst(e.target.value)}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                />
-                              </div>
-
-                              {/* SGST */}
-                              <div className="flex flex-wrap md:flex-nowrap items-center">
-                                <label className="block text-sm font-medium w-[50%]">
-                                  SGST (%)
-                                </label>
-                                <input
-                                  type="number"
-                                  value={sgst}
-                                  onChange={(e) => setSgst(e.target.value)}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                />
-                              </div>
-
-                            </div>
-                          )}
-
-                          {isInterInvoice && (
-                            <div className="flex items-center mt-4">
+                            {/* CGST */}
+                            <div className="flex flex-wrap md:flex-nowrap items-center">
                               <label className="block text-sm font-medium w-[50%]">
-                                IGST (%)
+                                CGST (%)
                               </label>
                               <input
                                 type="number"
-                                value={igst}
-                                onChange={(e) => setIgst(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                                value={cgst}
+                                onChange={(e) => setCgst(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                               />
                             </div>
-                          )}
 
+                            {/* SGST */}
+                            <div className="flex flex-wrap md:flex-nowrap items-center">
+                              <label className="block text-sm font-medium w-[50%]">
+                                SGST (%)
+                              </label>
+                              <input
+                                type="number"
+                                value={sgst}
+                                onChange={(e) => setSgst(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                              />
+                            </div>
 
+                          </div>
+                        )}
 
-                          <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
-                            <label
-                              htmlFor="country"
-                              className="block text-sm font-medium mb-2 w-[50%]"
-                            >
-                              Total Amount
+                        {isInterInvoice && (
+                          <div className="flex items-center mt-4">
+                            <label className="block text-sm font-medium w-[50%]">
+                              IGST (%)
                             </label>
                             <input
-                              type="text"
-                              value={`${currency?.symbol || ""}${parseFloat(
-                                totalAmount || 0
-                              ).toFixed(2)}`}
-                              onChange={(e) => setTotalAmount(e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              type="number"
+                              value={igst}
+                              onChange={(e) => setIgst(e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                             />
                           </div>
-                          <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
-                            <label
-                              htmlFor="roleName"
-                              className="block text-sm font-medium mb-2 w-[50%]"
-                            >
-                              Status<span className="text-red-500">*</span>
-                            </label>
-                            <select
-                              name="status"
-                              id="status"
-                              value={status}
-                              onChange={(e) => {
-                                setStatus(e.target.value);
-                                validateStatus(e.target.value);
-                              }}
-                              className="w-full h-11 px-2 py-2  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                              {/* <option value="">Select a status</option> */}
-                              <option value="" disabled selected>
-                                Payment Status
-                              </option>
-                              <option value="completed">Completed</option>
-                              <option value="advance_pending">Advance Pending</option>
-                              <option value="partial_payment_pending">
-                                Partial payment pending
-                              </option>
-                              <option value="final_payment_pending">
-                                Final payment pending
-                              </option>
-                              <option value="advance_received">Advance received</option>
-                              <option value="partial_payment_received">
-                                Partial payment received
-                              </option>
-
-                            </select>
-                            {errors.status && (
-                              <p className="text-red-500 text-sm mb-4">
-                                {errors.status}
-                              </p>
-                            )}
-                          </div>
-
-                          {status && (
-                            <div className="w-full flex mt-3">
-                              <label className="w-[50%] text-sm font-medium">
-                                Date <span className="text-red-500">*</span>
-                              </label>
-
-                              <input
-                                type="date"
-                                value={paidDate}
-                                onChange={(e) => setPaidDate(e.target.value)}
-                                className="w-full h-11 px-3 border rounded-lg"
-                              />
-                            </div>
-                          )}
-
-                          {status && (
-                            <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
-                              <label className="block text-sm font-medium mb-2 w-[50%]">
-                                Balance
-                              </label>
-
-                              <input
-                                type="number"
-                                value={balance}
-
-                                disabled
-
-                                className="w-full h-11 px-3 border border-gray-300 rounded-lg bg-gray-100"
-                              />
+                        )}
 
 
-                            </div>
-                          )}
 
-                          {status && (
-                            <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
-                              <label className="block text-sm font-medium mb-2 w-[50%]">
-                                Amount <span className="text-red-500">*</span>
-                              </label>
+                        <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
+                          <label
+                            htmlFor="country"
+                            className="block text-sm font-medium mb-2 w-[50%]"
+                          >
+                            Total Amount
+                          </label>
+                          <input
+                            type="text"
+                            value={`${currency?.symbol || ""}${parseFloat(
+                              totalAmount || 0
+                            ).toFixed(2)}`}
+                            onChange={(e) => setTotalAmount(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                        <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
+                          <label
+                            htmlFor="roleName"
+                            className="block text-sm font-medium mb-2 w-[50%]"
+                          >
+                            Status<span className="text-red-500">*</span>
+                          </label>
+                          <select
+                            name="status"
+                            id="status"
+                            value={status}
+                            onChange={(e) => {
+                              setStatus(e.target.value);
+                              validateStatus(e.target.value);
+                            }}
+                            className="w-full h-11 px-2 py-2  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            {/* <option value="">Select a status</option> */}
+                            <option value="" disabled selected>
+                              Payment Status
+                            </option>
+                            <option value="completed">Completed</option>
+                            <option value="advance_pending">Advance Pending</option>
+                            <option value="partial_payment_pending">
+                              Partial payment pending
+                            </option>
+                            <option value="final_payment_pending">
+                              Final payment pending
+                            </option>
+                            <option value="advance_received">Advance received</option>
+                            <option value="partial_payment_received">
+                              Partial payment received
+                            </option>
 
-                              <input
-                                type="number"
-                                value={amount}
-                                onChange={(e) => {
-                                  setAmount(e.target.value);
-                                  setErrors((prev) => ({ ...prev, amount: "" }));
-                                }}
-                                className="w-full h-11 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              />
-
-                              {errors.amount && (
-                                <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
-                              )}
-                            </div>
-                          )}
-
-
-                          {status && (
-                            <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
-                              <label className="block text-sm font-medium mb-2 w-[50%]">
-                                Type <span className="text-red-500">*</span>
-                              </label>
-
-                              <select
-                                value={paymentType}
-                                onChange={(e) => {
-                                  setPaymentType(e.target.value);
-                                  setErrors((prev) => ({ ...prev, paymentType: "" }));
-                                }}
-                                className="w-full h-11 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              >
-                                <option value="" disabled>
-                                  Select Payment Type
-                                </option>
-                                <option value="gpay">GPay</option>
-                                <option value="bank">Bank Transfer</option>
-                                <option value="cash">Cash</option>
-                                <option value="upi">UPI</option>
-                              </select>
-
-                              {errors.paymentType && (
-                                <p className="text-red-500 text-sm mt-1">{errors.paymentType}</p>
-                              )}
-                            </div>
+                          </select>
+                          {errors.status && (
+                            <p className="text-red-500 text-sm mb-4">
+                              {errors.status}
+                            </p>
                           )}
                         </div>
+
+                        {status && (
+                          <div className="w-full flex mt-3">
+                            <label className="w-[50%] text-sm font-medium">
+                              Date <span className="text-red-500">*</span>
+                            </label>
+
+                            <input
+                              type="date"
+                              value={paidDate}
+                              onChange={(e) => setPaidDate(e.target.value)}
+                              className="w-full h-11 px-3 border rounded-lg"
+                            />
+                          </div>
+                        )}
+
+                        {status && (
+                          <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
+                            <label className="block text-sm font-medium mb-2 w-[50%]">
+                              Balance
+                            </label>
+
+                            <input
+                              type="number"
+                              value={balance}
+
+                              disabled
+
+                              className="w-full h-11 px-3 border border-gray-300 rounded-lg bg-gray-100"
+                            />
+
+
+                          </div>
+                        )}
+
+                        {status && (
+                          <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
+                            <label className="block text-sm font-medium mb-2 w-[50%]">
+                              Amount <span className="text-red-500">*</span>
+                            </label>
+
+                            <input
+                              type="number"
+                              value={amount}
+                              onChange={(e) => {
+                                setAmount(e.target.value);
+                                setErrors((prev) => ({ ...prev, amount: "" }));
+                              }}
+                              className="w-full h-11 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+
+                            {errors.amount && (
+                              <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
+                            )}
+                          </div>
+                        )}
+
+
+                        {status && (
+                          <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
+                            <label className="block text-sm font-medium mb-2 w-[50%]">
+                              Type <span className="text-red-500">*</span>
+                            </label>
+
+                            <select
+                              value={paymentType}
+                              onChange={(e) => {
+                                setPaymentType(e.target.value);
+                                setErrors((prev) => ({ ...prev, paymentType: "" }));
+                              }}
+                              className="w-full h-11 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="" disabled>
+                                Select Payment Type
+                              </option>
+                              <option value="gpay">GPay</option>
+                              <option value="bank">Bank Transfer</option>
+                              <option value="cash">Cash</option>
+                              <option value="upi">UPI</option>
+                            </select>
+
+                            {errors.paymentType && (
+                              <p className="text-red-500 text-sm mt-1">{errors.paymentType}</p>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* right */}
+              {/* right */}
 
-                <div className="w-full md:w-[30%] md:border-l-4 p-3">
+              <div className="w-full md:w-[30%] md:border-l-4 p-3">
+                <div className=" w-[80%]">
                   <button
                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 min-w-full h-10 font-semibold rounded"
                     onClick={handlesubmit}
@@ -936,9 +982,9 @@ const Invoice_edit = () => {
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3 p-2">
+                    <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3 p-2 ">
 
-                      <div className="w-[100%]">
+                      <div className="w-full">
                         <label className="block text-sm font-medium text-gray-500 mb-2">
                           Invoice Type
                         </label>
@@ -1068,14 +1114,113 @@ const Invoice_edit = () => {
 
 
                   </div>
+                  <hr className="mt-5"></hr>
+
+                  <div className="p-2">
+                    <button
+                      onClick={() => {
+                        setSelectedLogs(logdetails);
+                        setOpenlog(true);
+                      }}
+                      className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
+                    >
+                      <FaEye size={18} />
+                      <span>View Payment History</span>
+                    </button>
+                  </div>
                 </div>
+
+
+                {openlog && (
+                  <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+                    onClick={() => setOpenlog(false)}
+                  >
+                    <div
+                      className="bg-white rounded-2xl w-[60%] max-w-6xl h-[85vh] shadow-2xl flex flex-col"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+
+                      {/* Header */}
+                      <div className="flex items-center justify-between px-6 py-4 border-b">
+                        <h2 className="text-xl font-semibold text-gray-800">
+                          Payment Log Details
+                        </h2>
+                        <button
+                          onClick={() => setOpenlog(false)}
+                          className="text-gray-400 hover:text-gray-700 text-2xl"
+                        >
+                          ✕
+                        </button>
+                      </div>
+
+                      {/* Table Wrapper */}
+                      <div className="flex-1 overflow-y-auto px-6 py-4">
+                        {selectedLogs && selectedLogs.length > 0 ? (
+                          <table className="w-full text-sm border border-gray-200 rounded-xl overflow-hidden">
+                            {/* Table Head */}
+                            <thead className="bg-blue-50 sticky top-0 z-10">
+                              <tr>
+                                <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                                  Invoice No
+                                </th>
+                                <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                                  Status
+                                </th>
+                                <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                                  Paid Date
+                                </th>
+                                <th className="px-4 py-3 text-right font-semibold text-gray-600">
+                                  Amount (₹)
+                                </th>
+                              </tr>
+                            </thead>
+
+                            {/* Table Body */}
+                            <tbody>
+                              {selectedLogs.map((log, i) => (
+                                <tr
+                                  key={i}
+                                  className={`border-b transition
+                    ${i % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                    hover:bg-blue-50`}
+                                >
+                                  <td className="px-4 py-3 font-medium text-gray-800">
+                                    #{log.invoice_number || "-"}
+                                  </td>
+                                  <td className="px-4 py-3 text-gray-800">
+                                    {capitalizeFirstLetter(log.status)}
+                                  </td>
+                                  <td className="px-4 py-3 text-gray-600">
+                                    {new Date(log.paidDate).toLocaleDateString("en-IN")}
+                                  </td>
+                                  <td className="px-4 py-3 text-right font-semibold text-green-600">
+                                    ₹{log.amount}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        ) : (
+                          <div className="flex items-center justify-center h-full text-gray-500 font-medium text-lg">
+                            No transactions available
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+
+
               </div>
             </div>
           </div>
         </div>
-
-        <Footer />
       </div>
-    );
-  };
-  export default Invoice_edit;
+
+      <Footer />
+    </div>
+  );
+};
+export default Invoice_edit;
