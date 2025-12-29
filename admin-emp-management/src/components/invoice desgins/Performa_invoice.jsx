@@ -433,7 +433,7 @@ const invoiceId = params.get("invoiceId");
                         <div className="font-semibold mt-4">Note :</div>
                         <div className="list-decimal list-inside text-sm">
                             <div className="list-decimal list-inside text-sm mx-4">
-                                <div>{settingData?.invoiceTerms}</div>
+                                <div>{allinvoiceDetails?.notes}</div>
 
 
                             </div>

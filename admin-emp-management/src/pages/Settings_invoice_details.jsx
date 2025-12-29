@@ -52,6 +52,9 @@ const Settings_invoice_details = () => {
 const [sgst, setSgst] = useState("");
 const [cgst, setCgst] = useState("");
 
+const [declarationNo, setDeclarationNo] = useState("");
+// const [declarationDate, setDeclarationDate] = useState("");
+
 
 
 
@@ -85,6 +88,8 @@ const [cgst, setCgst] = useState("");
       setIfscCode(data.ifscCode || "");
       setBranchName(data.branchName || "");
       setInvoiceTerms(data.invoiceTerms || "");
+      setDeclarationNo(data.declaration || "");
+      // setDeclarationDate(data.declarationDate || "");
 
       // GST details
       setIgst(data.igst || "");
@@ -125,6 +130,8 @@ const [cgst, setCgst] = useState("");
       igst,
       sgst,
       cgst,
+
+      declaration:declarationNo,
       };
 
       const response = await axios.post(
@@ -369,6 +376,20 @@ const [cgst, setCgst] = useState("");
                         value={invoiceTerms}
                         onChange={(e) => setInvoiceTerms(e.target.value)}
                         placeholder="Enter terms & conditions"
+                        rows={4}
+                        className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition resize-none"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2 w-full">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Declaration 
+                      </label>
+
+                      <textarea
+                        value={declarationNo}
+                        onChange={(e) => setDeclarationNo(e.target.value)}
+                        placeholder="Enter Declaration"
                         rows={4}
                         className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition resize-none"
                       />
