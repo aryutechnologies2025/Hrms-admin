@@ -301,7 +301,7 @@ const finalItems = Object.values(groupedItems || {});
 
                         <div className="p-1 text-[12px]   border-black">
                             <p className="font-bold pt-2">Buyer (Bill To)</p>
-                            <p className="font-bold pt-3">{allinvoiceDetails?.clientId?.client_name}</p>
+                            <p className="font-bold pt-3">{allinvoiceDetails?.clientId?.trader_name}</p>
                             <p className="pt-1">
                                 {allinvoiceDetails?.clientId?.address}
                             </p>

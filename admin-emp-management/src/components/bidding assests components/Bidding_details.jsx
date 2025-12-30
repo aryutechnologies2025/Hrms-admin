@@ -670,7 +670,7 @@ const Bidding_details = () => {
               {/* Created By Filter */}
               <div className="flex flex-col w-full md:w-48">
                 <label className="text-sm font-medium text-gray-700 mb-1">
-                  Created By
+                  Bidder
                 </label>
                 <Dropdown
                   value={createdBy}

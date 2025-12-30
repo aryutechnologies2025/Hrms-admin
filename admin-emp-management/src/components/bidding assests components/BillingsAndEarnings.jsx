@@ -1,83 +1,120 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import DateRangePicker from "../../DateRangePicker";
+import dayjs from "dayjs";
+import axios from "axios";
+import { API_URL } from "../../config";
+import { CloudCog } from "lucide-react";
 
 function BillingsAndEarnings() {
-  const clients = [
-    "Ardit Kallaba",
-    "Aventur Capital",
-    "Gazelle Marketing ApS",
-    "Otis Ferguson",
-    "RYVR Interactive",
-  ];
 
-  const billingData = {
-    "Ardit Kallaba": {
-      earnings: 1248.5,
-      totalBilled: 1380,
-      fees: 131.5,
-      jobs: [
-        { name: "WordPress Plugin API Enhancement", fees: 25.25, billed: 250 },
-        { name: "WooCommerce Customization", fees: 40, billed: 400 },
-        { name: "Payment Gateway Integration", fees: 30.25, billed: 300 },
-        { name: "Bug Fixes & Optimization", fees: 36, billed: 360 },
-      ],
-    },
-    "Aventur Capital": {
-      earnings: 2150,
-      totalBilled: 2400,
-      fees: 250,
-      jobs: [
-        { name: "React Dashboard UI", fees: 80, billed: 800 },
-        { name: "API Integration", fees: 60, billed: 600 },
-        { name: "Authentication Module", fees: 50, billed: 500 },
-        { name: "Performance Optimization", fees: 60, billed: 500 },
-      ],
-    },
-    "Gazelle Marketing ApS": {
-      earnings: 890.75,
-      totalBilled: 980,
-      fees: 89.25,
-      jobs: [
-        { name: "Landing Page Redesign", fees: 30, billed: 300 },
-        { name: "SEO Dashboard", fees: 25.5, billed: 255 },
-        { name: "Google Analytics Integration", fees: 18.75, billed: 187.5 },
-        { name: "Marketing Automation Setup", fees: 15, billed: 150 },
-      ],
-    },
-    "Otis Ferguson": {
-      earnings: 460,
-      totalBilled: 500,
-      fees: 40,
-      jobs: [
-        { name: "Portfolio Website", fees: 20, billed: 250 },
-        { name: "Contact Form Integration", fees: 10, billed: 125 },
-        { name: "Website Maintenance", fees: 10, billed: 125 },
-      ],
-    },
-    "RYVR Interactive": {
-      earnings: 3180.25,
-      totalBilled: 3500,
-      fees: 319.75,
-      jobs: [
-        { name: "SaaS Admin Panel", fees: 120, billed: 1200 },
-        { name: "Role Based Access Control", fees: 75, billed: 750 },
-        { name: "Subscription Billing System", fees: 85, billed: 850 },
-        { name: "Email & Notification Service", fees: 39.75, billed: 397.5 },
-        { name: "Bug Fixes & QA Support", fees: 0, billed: 302.5 },
-      ],
-    },
+  const [clientsdetails, setClientsdetails] = useState([]);
+  const [data, setData] = useState([]);
+
+  console.log("data", data);
+
+  const [errors, setErrors] = useState("");
+
+  const [selectedClient, setSelectedClient] = useState("");
+  console.log("selectedClient", selectedClient);
+  //  console.log("clientsdetails", clientsdetails);
+
+  const [dates, setDates] = useState({
+    fromDate: dayjs().startOf("month").format("YYYY-MM-DD"),
+    toDate: dayjs().endOf("month").format("YYYY-MM-DD"),
+  });
+
+  // console.log("dates", dates);
+  useEffect(() => {
+    if (dates.fromDate && dates.toDate) {
+      fetchAllTechList();
+    }
+  }, [dates.fromDate, dates.toDate]);
+
+  const fetchAllTechList = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/bidder/get-bidding-client-name`,
+        {
+          withCredentials: true,
+          params: {
+            fromDate: dates.fromDate,
+            toDate: dates.toDate,
+
+          },
+        }
+      );
+
+      // console.log("response",response)
+
+      const clients = response?.data?.data || [];
+
+      setClientsdetails(clients);
+
+      //  Default select FIRST client (string)
+      if (!selectedClient && clients.length > 0) {
+        setSelectedClient(clients[0]);
+      }
+
+
+
+    } catch (err) {
+      setErrors("Failed to fetch biddingList.");
+    }
   };
 
-  const [selectedClient, setSelectedClient] = useState(clients[0]);
-  const [fromDate, setFromDate] = useState("2025-01-01");
-  const [toDate, setToDate] = useState("2025-12-31");
 
-  const data = billingData[selectedClient];
+  useEffect(() => {
+    if (
+      dates.fromDate &&
+      dates.toDate &&
+      selectedClient
+    ) {
+      fetchAlldetails();
+    }
+  }, [dates.fromDate, dates.toDate, selectedClient]);
+
+
+  const fetchAlldetails = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/bidder/get-bidding-transaction`,
+        {
+          withCredentials: true,
+          params: {
+            client: selectedClient,
+            fromDate: dates.fromDate,
+            toDate: dates.toDate,
+
+          },
+        }
+      );
+
+      // console.log("response",response)
+
+      setData(response?.data)
+
+
+
+
+    } catch (err) {
+      setErrors("Failed to fetch biddingList.");
+    }
+  };
+
+
+
+
+
+
+
+  //  const [dates, setDates] = useState({ });
+
 
   return (
     <>
       {/* Date Filters */}
       <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
-        <div className="flex gap-4">
+        {/* <div className="flex gap-4">
           <div>
             <label className="text-xs text-gray-500">From</label>
             <input
@@ -97,7 +134,13 @@ function BillingsAndEarnings() {
               className="block border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
             />
           </div>
-        </div>
+        </div> */}
+
+        <DateRangePicker
+          fromDate={dates.fromDate}
+          toDate={dates.toDate}
+          onChange={(range) => setDates(range)}
+        />
 
         <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
           Download CSV
@@ -107,23 +150,22 @@ function BillingsAndEarnings() {
       <div className="grid grid-cols-12 gap-6">
         {/* Client list */}
         <div className="col-span-12 md:col-span-3 bg-white rounded-xl p-4 shadow-sm">
-        <ul className="space-y-2 text-sm max-h-[420px] overflow-y-auto">
-          {clients.map((client) => (
-            <li
-              key={client}
-              onClick={() => setSelectedClient(client)}
-              className={`px-3 py-2 rounded-lg cursor-pointer transition
-                ${
-                  selectedClient === client
+          <ul className="space-y-2 text-sm max-h-[420px] overflow-y-auto">
+            {clientsdetails.map((client) => (
+              <li
+                key={client}
+                onClick={() => setSelectedClient(client)}
+                className={`px-3 py-2 rounded-lg cursor-pointer transition
+    ${selectedClient === client
                     ? "bg-blue-50 text-blue-600 font-medium"
                     : "text-gray-700 hover:bg-gray-100"
-                }`}
-            >
-              {client}
-            </li>
-          ))}
-        </ul>
-      </div>
+                  }`}
+              >
+                {client}
+              </li>
+            ))}
+          </ul>
+        </div>
 
         {/* Right Content */}
         <div className="col-span-12 md:col-span-9 space-y-6">
@@ -131,16 +173,31 @@ function BillingsAndEarnings() {
           <div className="bg-white rounded-xl p-6 shadow-sm flex justify-between items-center">
             <div>
               <h2 className="text-3xl font-bold text-gray-900">
-                ${data.earnings.toFixed(2)}
+                ${data?.overallNetTotal}
               </h2>
               <p className="text-sm text-gray-500">
                 Your earnings after fees & taxes
               </p>
+              <div className="mt-4 space-y-1 text-sm text-gray-700">
+                <p>
+                  <span className="text-gray-600">Total billed:</span>{" "}
+                  <span className="font-medium text-gray-900">
+                    ${Number(data?.overallEarnings || 0).toFixed(2)}
+                  </span>
+                </p>
 
-              <div className="mt-4 text-sm text-gray-600 space-y-1">
-                <p>Total billed: ${data.totalBilled}</p>
-                <p>Total fees & taxes: ${data.fees}</p>
+                <p>
+                  <span className="text-gray-600">Total fees &amp; taxes:</span>{" "}
+                  <span className="font-medium text-gray-900">
+                    (${Number(data?.overallDeductions || 0).toFixed(2)})
+                  </span>
+                </p>
               </div>
+
+              {/* <div className="mt-4 text-sm text-gray-600 space-y-1">
+                <p>Total billed: ${data?.overallEarnings}</p>
+                <p>Total fees & taxes: ${data?.overallDeductions}</p>
+              </div> */}
             </div>
 
             <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center text-3xl">
@@ -159,13 +216,36 @@ function BillingsAndEarnings() {
                 </tr>
               </thead>
               <tbody>
-                {data.jobs.map((job, index) => (
+                {data?.transactions?.map((job, index) => (
+                  console.log("job", job),
                   <tr key={index} className="border-t hover:bg-gray-50">
-                    <td className="px-6 py-4">{job.name}</td>
-                    <td className="px-6 py-4 text-right">${job.fees}</td>
-                    <td className="px-6 py-4 text-right font-semibold">
-                      ${job.billed}
+                    <td className="px-6 text-left py-4">{job.title}</td>
+                    {/* <td className="px-6 py-4 text-right">
+                      <div>
+                        <p>${job.deductions}</p>
+                        <p className="text-xs text-gray-400 font-semibold">${job.serviceFee} Fees + ${job.wht} tax</p>
+                      </div>
                     </td>
+                    <td className="px-6 py-4 text-right font-semibold">
+                      ${job.earnings}
+                    </td> */}
+                    <td className="px-6 py-4 text-right align-top">
+                      <div className="leading-tight">
+                        <p className="text-sm font-medium text-gray-500">
+                          (${Number(job.deductions).toFixed(1)})
+                        </p>
+                        <p className="mt-0.5 text-xs text-gray-400 font-semibold">
+                          ${job.serviceFee} Fees + ${job.wht} tax
+                        </p>
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4 text-right align-top">
+                      <p className="text-sm font-semibold text-gray-500">
+                        ${Number(job.earnings).toFixed(0)}
+                      </p>
+                    </td>
+
                   </tr>
                 ))}
               </tbody>
