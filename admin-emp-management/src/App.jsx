@@ -137,6 +137,7 @@ import Invoice_edit_main from "./pages/Invoice_edit_main";
 import Client_invoice_main from "./components/Invoice Client/Client_invoice_main";
 import Bidding_transaction_main from "./components/bidding assests components/Bidding_transaction_main";
 import Billing_details_main from "./components/bidding assests components/Billing_details.main";
+import LeadManagement_Mainbar from "./pages/LeadManagement_Mainbar";
 
 export const SettingsContext = createContext();
 
@@ -1066,6 +1067,16 @@ function App() {
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
           <Candidate_Main />
+        </ProtectedRoute>
+      ),
+    },
+
+    {
+      path: "/leads",
+      permissionTitle: "leads",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+         <LeadManagement_Mainbar />
         </ProtectedRoute>
       ),
     },
