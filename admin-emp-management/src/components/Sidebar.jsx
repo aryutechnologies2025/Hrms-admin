@@ -1129,7 +1129,7 @@ const Sidebar = () => {
                             Connects Details
                           </button>
 
-                          <button
+                          {/* <button
                             onClick={() => navigate("/bidding-reports")}
                             className={`px-2 py-1 rounded-full 
     ${currentPath === "/bidding-reports"
@@ -1138,7 +1138,7 @@ const Sidebar = () => {
                               }`}
                           >
                             Bidding Reports
-                          </button>
+                          </button> */}
 
                           <button
                             onClick={() => navigate("/bidding-transaction_history")}
