@@ -15,7 +15,7 @@ function BillingsAndEarnings() {
   const [errors, setErrors] = useState("");
 
   const [selectedClient, setSelectedClient] = useState("");
-  console.log("selectedClient", selectedClient);
+  // console.log("selectedClient", selectedClient);
   //  console.log("clientsdetails", clientsdetails);
 
   const [dates, setDates] = useState({
@@ -189,7 +189,11 @@ function BillingsAndEarnings() {
                 <p>
                   <span className="text-gray-600">Total fees &amp; taxes:</span>{" "}
                   <span className="font-medium text-gray-900">
-                    (${Number(data?.overallDeductions || 0).toFixed(2)})
+                    {data?.overallDeductions != null
+                      ? Number(data.overallDeductions) < 0
+                        ? `-$${Math.abs(data.overallDeductions).toFixed(2)}`
+                        : `$${Number(data.overallDeductions).toFixed(2)}`
+                      : "$0.00"}
                   </span>
                 </p>
               </div>
@@ -232,7 +236,12 @@ function BillingsAndEarnings() {
                     <td className="px-6 py-4 text-right align-top">
                       <div className="leading-tight">
                         <p className="text-sm font-medium text-gray-500">
-                          (${Number(job.deductions).toFixed(1)})
+                          {/* (${Number(job.deductions).toFixed(1)}) */}
+                          {job?.deductions != null
+                            ? Number(job.deductions) < 0
+                              ? `-$${Math.abs(job.deductions).toFixed(2)}`
+                              : `$${Number(job.deductions).toFixed(2)}`
+                            : "$0.00"}
                         </p>
                         <p className="mt-0.5 text-xs text-gray-400 font-semibold">
                           ${job.serviceFee} Fees + ${job.wht} tax

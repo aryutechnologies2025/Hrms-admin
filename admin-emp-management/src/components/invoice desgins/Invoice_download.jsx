@@ -494,7 +494,7 @@ const Invoice = () => {
               <tr className="">
                 <td className="no-line-bot p-1 border-r-2  border-l-2   border-black"></td>
                 <td className="no-line-bot p-1 border-r-2    border-black text-right font-bold">
-                  Output IGST Export 0%
+                  Output IGST {settingData?.igst}%
                 </td>
                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
                 <td className="no-line-bot p-1 border-r-2    border-black"></td>

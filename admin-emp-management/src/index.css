@@ -545,3 +545,43 @@ table.dataTable {
 .animate-slideDown {
   animation: slideDown 0.18s ease-out;
 }
+
+
+/* custom multi select */
+
+/* Panel styling */
+.txn-panel {
+  
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Checkbox box default */
+.txn-panel .p-checkbox-box {
+  border: 1px solid #d1d5db; /* gray-300 */
+  background: #f9fafb;        /* gray-50 */
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+/* Checkbox when selected (blue) */
+.txn-panel .p-checkbox.p-highlight .p-checkbox-box {
+  background-color: #2563eb; /* blue-600 */
+  border-color: #2563eb;
+}
+
+/* Check icon color */
+.txn-panel .p-checkbox.p-highlight .p-checkbox-icon {
+  color: #ffffff;
+}
+
+/* Hover on item */
+.txn-panel .p-multiselect-item:hover {
+  background: #f3f4f6; /* gray-100 */
+}
+
+/* Selected item background */
+.txn-panel .p-multiselect-item.p-highlight {
+  background: #eff6ff; /* blue-50 */
+}
+

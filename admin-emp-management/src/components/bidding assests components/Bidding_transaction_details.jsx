@@ -128,13 +128,56 @@ const Bidding_transaction_details = () => {
         }
     };
 
+
+    const handleReset = async () => {
+  setFromDate(""); 
+  setToDate("");     
+  setAccountfilter("");          
+  setSelectedTxnTypes([]);     
+  setSelectedClients([]);        
+  setSelectedContracts([]);     
+  setCreatedBy("");            
+
+//   setLoading(true);
+  setErrors(null);
+
+  try {
+    const response = await axios.get(
+      `${API_URL}/api/bidder/get-import-bidding-excel-report`,
+      {
+        withCredentials: true,
+        params: {
+          fromDate: "",
+          toDate: "",
+          account: "",
+          transactionType: [],
+          client: [],
+          contractType: [],
+          createdBy: "",
+        },
+      }
+    );
+
+    if (response.data.success) {
+      setAccountdetails(response.data.data);
+    } else {
+      setErrors("Failed to fetch data.");
+    }
+  } catch (err) {
+    setErrors("Failed to fetch data.");
+  } finally {
+    // setLoading(false);
+  }
+};
+
+
     // filter alll api showing to data in api
     const [accountBidderOptions, setAccountBidderOptions] = useState(null);
-    console.log("accountBidderOptions", accountBidderOptions);
+    // console.log("accountBidderOptions", accountBidderOptions);
     // const [technologyBidderOptions, setTechnologyBidderOptions] = useState(null);
     const [accountBidder, setAccountBidder] = useState(null);
 
-        // console.log("accountBidderOptions", accountBidder);
+    // console.log("accountBidderOptions", accountBidder);
 
     const [transactionType, setTransactionType] = useState(null);
     const [clientdropdown, setClient] = useState(null);
@@ -162,11 +205,11 @@ const Bidding_transaction_details = () => {
             );
 
 
-         
+
 
             // setTechnologyBidderOptions(technologyBidderOptions);
             setAccountBidderOptions(accountBidderOptions);
-           
+
         } catch (err) {
             setErrors("Failed to fetch biddingList.");
         }
@@ -177,25 +220,26 @@ const Bidding_transaction_details = () => {
     }, []);
 
 
-useEffect(() => {
-  if (accountfilter) {
-    fetchAllTechList(accountfilter);
-  }
-}, [accountfilter]);
-       const fetchAllTechList = async () => {
+    useEffect(() => {
+        if (accountfilter) {
+            fetchAllTechList(accountfilter);
+        }
+    }, [accountfilter]);
+    const fetchAllTechList = async () => {
         try {
             const response = await axios.get(
                 `${API_URL}/api/bidder/get-transaction-bidder`,
-                { withCredentials: true,
+                {
+                    withCredentials: true,
                     params: {
                         account: accountfilter,
-                      
+
                     },
-                 }
+                }
             );
 
             // console.log("responseefsdg", response);
-        
+
             setTransactionType(response.data.data?.transactionType);
 
             const bidderEmp = response.data.data?.bidder?.map((data) => ({
@@ -221,7 +265,7 @@ useEffect(() => {
                 }))
                 : [];
 
-          
+
 
             setClient(clients);
 
@@ -508,8 +552,63 @@ useEffect(() => {
     //     { id: 3, name: "Global Tech" },
     // ];
 
-  
 
+    const [showMoreClients, setShowMoreClients] = useState(false);
+    const [showMoreTxn, setShowMoreTxn] = useState(false);
+    const [showMoreContracts, setShowMoreContracts] = useState(false);
+
+    const ITEMS_LIMIT = 10;
+
+    // Generic function to render items with show more/less
+    const renderItems = (items, type, showMore, setShowMore) => {
+        const visibleItems = showMore ? items : items.slice(0, ITEMS_LIMIT);
+
+        return (
+            <>
+                {visibleItems.map((item) => {
+                    let label = item;
+                    if (type === "clients") {
+                        label = clientdropdown.find((c) => c.value === item)?.label || item;
+                    } else if (type === "contracts") {
+                        label = contractType.find((c) => c.value === item)?.label || item;
+                    }
+
+                    return (
+                        <div
+                            key={item}
+                            className={`flex items-center gap-2 ${type === "clients"
+                                    ? "bg-blue-100"
+                                    : type === "transactions"
+                                        ? "bg-green-100"
+                                        : "bg-purple-100"
+                                } px-3 py-1 rounded-full text-sm`}
+                        >
+                            <span>{label}</span>
+                            <button
+                                onClick={() => {
+                                    if (type === "clients") setSelectedClients(selectedClients.filter((val) => val !== item));
+                                    else if (type === "transactions") setSelectedTxnTypes(selectedTxnTypes.filter((t) => t !== item));
+                                    else setSelectedContracts(selectedContracts.filter((val) => val !== item));
+                                }}
+                                className="text-red-600 font-bold"
+                            >
+                                ✕
+                            </button>
+                        </div>
+                    );
+                })}
+
+                {items.length > ITEMS_LIMIT && (
+                    <button
+                        onClick={() => setShowMore(!showMore)}
+                        className="text-sm text-gray-500 hover:underline"
+                    >
+                        {showMore ? "Show Less" : `+${items.length - ITEMS_LIMIT} More`}
+                    </button>
+                )}
+            </>
+        );
+    };
 
 
 
@@ -554,6 +653,22 @@ useEffect(() => {
 
 
                             <div className="flex flex-wrap gap-2 mt-1 ">
+                                 {/* accounts */}
+                                <div className="flex flex-col w-full md:w-48">
+                                    <label className="text-sm font-medium text-gray-700 mb-1">
+                                        Account
+                                    </label>
+                                    <Dropdown
+                                        value={accountfilter}
+                                        onChange={(e) => setAccountfilter(e.value)}
+                                        options={accountBidderOptions}
+                                        optionLabel="label"
+                                        appendTo="self"
+                                        placeholder="Select an Account"
+                                        className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        required
+                                    />
+                                </div>
                                 {/* From Date */}
                                 <div className="flex flex-col w-40 md:w-48">
                                     <label className="text-sm font-medium text-gray-700 mb-1">
@@ -580,22 +695,7 @@ useEffect(() => {
                                     />
                                 </div>
 
-                                {/* accounts */}
-                                <div className="flex flex-col w-full md:w-48">
-                                    <label className="text-sm font-medium text-gray-700 mb-1">
-                                        Account
-                                    </label>
-                                    <Dropdown
-                                        value={accountfilter}
-                                        onChange={(e) => setAccountfilter(e.value)}
-                                        options={accountBidderOptions}
-                                        optionLabel="label"
-                                        appendTo="self"
-                                        placeholder="Select an Account"
-                                        className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        required
-                                    />
-                                </div>
+                               
 
                                 {/* Transaction Type */}
                                 <div className="flex flex-col w-40 md:w-48">
@@ -609,10 +709,28 @@ useEffect(() => {
                                         // optionLabel="name"
                                         placeholder="Select Type"
                                         display="chip"
-                                        className="w-full rounded-lg border border-gray-300"
-                                        panelClassName="rounded-lg shadow-lg"
-                                        pt={{ input: { className: "h-11 px-3 text-sm" } }}
-                                    />
+                                        className="w-full   rounded-lg border border-gray-300"
+                                        panelClassName="txn-panel"
+                                        filter
+                                        maxSelectedLabels={2}
+                                        filterPlaceholder="Search..."
+                                        pt={{
+                                            root: {
+                                                className:
+                                                    "w-full  rounded-lg border border-gray-300",
+                                            },
+                                            label: { className: "text-gray-700 px-3" },
+                                            trigger: { className: "text-gray-500" },
+                                            input: { className: "h-11" },
+                                            token: {
+                                                className:
+                                                    "bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-md",
+                                            },
+                                            item: {
+                                                className:
+                                                    "text-sm text-gray-700 hover:bg-gray-100 px-3 py-2",
+                                            },
+                                        }} />
                                 </div>
 
                                 {/* Client */}
@@ -630,11 +748,29 @@ useEffect(() => {
                                         filter
                                         display="chip"
                                         maxSelectedLabels={2}
-                                          
+
                                         className="w-full rounded-lg border border-gray-300"
-                                        panelClassName="rounded-lg shadow-lg"
-                                        pt={{ input: { className: "h-11 px-3 text-sm" } }}
-                                    />
+                                        panelClassName="txn-panel"
+                                        // filter                      
+                                        filterPlaceholder="Search..."
+                                        pt={{
+                                            root: {
+                                                className:
+                                                    "w-full  rounded-lg border border-gray-300",
+                                            },
+                                            label: { className: "text-gray-700 px-3" },
+                                            trigger: { className: "text-gray-500" },
+                                            input: { className: "h-11" },
+                                            token: {
+                                                className:
+                                                    "bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-md",
+                                            },
+                                            item: {
+                                                className:
+                                                    "text-sm text-gray-700 hover:bg-gray-100 px-3 py-2",
+                                            },
+                                        }} />
+
                                 </div>
 
                                 {/* Contract */}
@@ -653,9 +789,27 @@ useEffect(() => {
                                         display="chip"
                                         maxSelectedLabels={2}
                                         className="w-full rounded-lg border border-gray-300"
-                                        panelClassName="rounded-lg shadow-lg"
-                                        pt={{ input: { className: "h-11 px-3 text-sm" } }}
-                                    />
+                                        panelClassName="txn-panel"
+                                        // filter                      
+                                        filterPlaceholder="Search..."
+                                        pt={{
+                                            root: {
+                                                className:
+                                                    "w-full  rounded-lg border border-gray-300",
+                                            },
+                                            label: { className: "text-gray-700 px-3" },
+                                            trigger: { className: "text-gray-500" },
+                                            input: { className: "h-11" },
+                                            token: {
+                                                className:
+                                                    "bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-md",
+                                            },
+                                            item: {
+                                                className:
+                                                    "text-sm text-gray-700 hover:bg-gray-100 px-3 py-2",
+                                            },
+                                        }} />
+
                                 </div>
 
 
@@ -684,7 +838,8 @@ useEffect(() => {
                                         onClick={fetchProject}>
                                         Apply
                                     </button>
-                                    <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-5 py-2 rounded-lg shadow">
+                                    <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-5 py-2 rounded-lg shadow"
+                                    onClick={handleReset}>
                                         Reset
                                     </button>
                                 </div>
@@ -698,125 +853,59 @@ useEffect(() => {
 
                         </div>
 
+                        <div className="mt-5 space-y-3">
 
-                         <div className="mt-5 space-y-3">
+                            {/* Clients */}
+                            {selectedClients.length > 0 && (
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <span className="text-sm font-semibold text-gray-600">Clients</span>
+                                    <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
+                                        {selectedClients.length} selected
+                                    </span>
+                                    {renderItems(selectedClients, "clients", showMoreClients, setShowMoreClients)}
+                                </div>
+                            )}
 
-        {/* Clients */}
-        {selectedClients.length > 0 && (
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm font-semibold text-gray-600">
-              Clients
-            </span>
-            <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
-              {selectedClients.length} selected
-            </span>
+                            {/* Transaction Types */}
+                            {selectedTxnTypes.length > 0 && (
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <span className="text-sm font-semibold text-gray-600">Transaction</span>
+                                    <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full">
+                                        {selectedTxnTypes.length} selected
+                                    </span>
+                                    {renderItems(selectedTxnTypes, "transactions", showMoreTxn, setShowMoreTxn)}
+                                </div>
+                            )}
 
-            {selectedClients.map((id) => {
-              const client = clientdropdown.find(c => c.value === id);
-              return (
-                <div
-                  key={id}
-                  className="flex items-center gap-2 bg-blue-100 px-3 py-1 rounded-full text-sm"
-                >
-                  <span>{client?.label}</span>
-                  <button
-                    onClick={() =>
-                      setSelectedClients(
-                        selectedClients.filter(val => val !== id)
-                      )
-                    }
-                    className="text-red-600 font-bold"
-                  >
-                    ✕
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                            {/* Contracts */}
+                            {selectedContracts.length > 0 && (
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <span className="text-sm font-semibold text-gray-600">Contracts</span>
+                                    <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
+                                        {selectedContracts.length} selected
+                                    </span>
+                                    {renderItems(selectedContracts, "contracts", showMoreContracts, setShowMoreContracts)}
+                                </div>
+                            )}
 
-        {/* Transaction Type */}
-        {selectedTxnTypes.length > 0 && (
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm font-semibold text-gray-600">
-              Transaction
-            </span>
-            <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full">
-              {selectedTxnTypes.length} selected
-            </span>
+                        </div>
 
-            {selectedTxnTypes.map((type) => (
-              <div
-                key={type}
-                className="flex items-center gap-2 bg-green-100 px-3 py-1 rounded-full text-sm"
-              >
-                <span>{type}</span>
-                <button
-                  onClick={() =>
-                    setSelectedTxnTypes(
-                      selectedTxnTypes.filter(t => t !== type)
-                    )
-                  }
-                  className="text-red-600 font-bold"
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
 
-        {/* Contracts */}
-        {selectedContracts.length > 0 && (
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm font-semibold text-gray-600">
-              Contracts
-            </span>
-            <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
-              {selectedContracts.length} selected
-            </span>
-
-            {selectedContracts.map((id) => {
-              const contract = contractType.find(c => c.value === id);
-              return (
-                <div
-                  key={id}
-                  className="flex items-center gap-2 bg-purple-100 px-3 py-1 rounded-full text-sm"
-                >
-                  <span>{contract?.label}</span>
-                  <button
-                    onClick={() =>
-                      setSelectedContracts(
-                        selectedContracts.filter(val => val !== id)
-                      )
-                    }
-                    className="text-red-600 font-bold"
-                  >
-                    ✕
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-      </div>
-
-      {/* ================= CLEAR ALL ================= */}
-      {(selectedClients.length ||
-        selectedTxnTypes.length ||
-        selectedContracts.length) > 0 && (
-        <button
-          onClick={() => {
-            setSelectedClients([]);
-            setSelectedTxnTypes([]);
-            setSelectedContracts([]);
-          }}
-          className="mt-4 text-sm text-red-600 underline"
-        >
-          Clear All Filters
-        </button>
-      )}
+                        {/* ================= CLEAR ALL ================= */}
+                        {(selectedClients.length ||
+                            selectedTxnTypes.length ||
+                            selectedContracts.length) > 0 && (
+                                <button
+                                    onClick={() => {
+                                        setSelectedClients([]);
+                                        setSelectedTxnTypes([]);
+                                        setSelectedContracts([]);
+                                    }}
+                                    className="mt-4 text-sm text-red-600 underline"
+                                >
+                                    Clear All Filters
+                                </button>
+                            )}
 
 
 

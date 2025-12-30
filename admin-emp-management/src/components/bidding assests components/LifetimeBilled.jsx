@@ -1,57 +1,124 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { API_URL } from "../../config";
 
 function LifetimeBilled() {
-  const clientData = {
-    "A Dark Cloud Creative": 2450.75,
-    "Akash Sharma": 1800.0,
-    "Bon Millar": 950.25,
-    "Black Belt Marketing": 3200.5,
-    "Blend Agency": 2750.0,
-    "Brandon Weldes": 1120.75,
-    "Caption Easy Inc": 4300.25,
-    "CleverKickers Ltd": 1980.0,
-    "CreativeMotion": 3650.5,
-    "Darky Harry": 890.0,
-    "David Read": 1540.25,
-    "Drive Local Business": 2890.0,
-    FUTUREPROOF: 4100.75,
-    "Gadget Mart": 2240.5,
+
+  const [clientsdetails, setClientsdetails] = useState([]);
+  const [data, setData] = useState([]);
+
+  console.log("data", data);
+
+  const [errors, setErrors] = useState("");
+
+  const [selectedClient, setSelectedClient] = useState("");
+  
+
+
+  // console.log("dates", dates);
+  useEffect(() => {
+  
+      fetchAllTechList();
+    
+  }, []);
+
+  const fetchAllTechList = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/bidder/get-bidding-client-name`,
+        {
+          withCredentials: true,
+        
+        }
+      );
+
+      // console.log("response",response)
+
+      const clients = response?.data?.data || [];
+
+      setClientsdetails(clients);
+
+      //  Default select FIRST client (string)
+      if (!selectedClient && clients.length > 0) {
+        setSelectedClient(clients[0]);
+      }
+
+
+
+    } catch (err) {
+      setErrors("Failed to fetch biddingList.");
+    }
   };
 
-  const clients = Object.keys(clientData);
 
-  const [selectedClient, setSelectedClient] = useState(clients[0]);
+  useEffect(() => {
+    if (
+      
+      selectedClient
+    ) {
+      fetchAlldetails();
+    }
+  }, [ selectedClient]);
+
+
+  const fetchAlldetails = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/bidder/get-bidding-transaction`,
+        {
+          withCredentials: true,
+          params: {
+            client: selectedClient,
+       
+
+          },
+        }
+      );
+
+      // console.log("response",response)
+
+      setData(response?.data)
+
+
+
+
+    } catch (err) {
+      setErrors("Failed to fetch biddingList.");
+    }
+  };
+
+
+
 
   return (
     <div className="grid grid-cols-12 gap-6">
       {/* Left Client List */}
       <div className="col-span-12 md:col-span-3 bg-white rounded-xl p-4 shadow-sm">
-        <ul className="space-y-2 text-sm max-h-[420px] overflow-y-auto">
-          {clients.map((client) => (
-            <li
-              key={client}
-              onClick={() => setSelectedClient(client)}
-              className={`px-3 py-2 rounded-lg cursor-pointer transition
-                ${
-                  selectedClient === client
+         <ul className="space-y-2 text-sm max-h-[420px] overflow-y-auto">
+            {clientsdetails.map((client) => (
+              <li
+                key={client}
+                onClick={() => setSelectedClient(client)}
+                className={`px-3 py-2 rounded-lg cursor-pointer transition
+    ${selectedClient === client
                     ? "bg-blue-50 text-blue-600 font-medium"
                     : "text-gray-700 hover:bg-gray-100"
-                }`}
-            >
-              {client}
-            </li>
-          ))}
-        </ul>
+                  }`}
+              >
+                {client}
+              </li>
+            ))}
+          </ul>
       </div>
 
       {/* Right Content */}
       <div className="col-span-12 md:col-span-9">
         {/* Download */}
-        <div className="flex justify-end mb-3">
+        {/* <div className="flex justify-end mb-3">
           <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
             Download CSV
           </button>
-        </div>
+        </div> */}
 
         {/* Card */}
         <div className="bg-white rounded-xl shadow-sm flex flex-col items-center justify-center text-center p-16">
@@ -62,7 +129,7 @@ function LifetimeBilled() {
           <h2 className="text-2xl font-semibold text-gray-900 mb-1">
             {selectedClient} lifetime billed amount is{" "}
             <span className="font-bold">
-              ${clientData[selectedClient].toFixed(2)}
+              ${data?.overallEarnings}
             </span>
           </h2>
 
