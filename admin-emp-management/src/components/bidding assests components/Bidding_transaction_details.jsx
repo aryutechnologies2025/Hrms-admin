@@ -91,6 +91,8 @@ const Bidding_transaction_details = () => {
 
 
     const [accountfilter, setAccountfilter] = useState("");
+
+    console.log("accountfilter", accountfilter);
     const [createdBy, setCreatedBy] = useState("");
 
     const [fromDate, setFromDate] = useState("");
@@ -128,8 +130,12 @@ const Bidding_transaction_details = () => {
 
     // filter alll api showing to data in api
     const [accountBidderOptions, setAccountBidderOptions] = useState(null);
+    console.log("accountBidderOptions", accountBidderOptions);
     // const [technologyBidderOptions, setTechnologyBidderOptions] = useState(null);
     const [accountBidder, setAccountBidder] = useState(null);
+
+        // console.log("accountBidderOptions", accountBidder);
+
     const [transactionType, setTransactionType] = useState(null);
     const [clientdropdown, setClient] = useState(null);
     const [contractType, setContractType] = useState(null);
@@ -145,8 +151,7 @@ const Bidding_transaction_details = () => {
                 { withCredentials: true }
             );
 
-            console.log("responseefsdg", response);
-            setTransactionType(response.data.data?.transactionType);
+            // console.log("responseefsdg", response);
             //  setClient(response.data.data?.client);
 
             const accountBidderOptions = response.data.data?.accountBidder?.map(
@@ -157,12 +162,41 @@ const Bidding_transaction_details = () => {
             );
 
 
-            // const technologyBidderOptions = response.data.data?.technologyBidder?.map(
-            //     (data) => ({
-            //         label: data.name,
-            //         value: data._id,
-            //     })
-            // );
+         
+
+            // setTechnologyBidderOptions(technologyBidderOptions);
+            setAccountBidderOptions(accountBidderOptions);
+           
+        } catch (err) {
+            setErrors("Failed to fetch biddingList.");
+        }
+    };
+
+    useEffect(() => {
+        fetchAccTechList();
+    }, []);
+
+
+useEffect(() => {
+  if (accountfilter) {
+    fetchAllTechList(accountfilter);
+  }
+}, [accountfilter]);
+       const fetchAllTechList = async () => {
+        try {
+            const response = await axios.get(
+                `${API_URL}/api/bidder/get-transaction-bidder`,
+                { withCredentials: true,
+                    params: {
+                        account: accountfilter,
+                      
+                    },
+                 }
+            );
+
+            // console.log("responseefsdg", response);
+        
+            setTransactionType(response.data.data?.transactionType);
 
             const bidderEmp = response.data.data?.bidder?.map((data) => ({
                 label: data.employeeName,
@@ -187,10 +221,7 @@ const Bidding_transaction_details = () => {
                 }))
                 : [];
 
-            // const transactionType = response.data.data?.transactionType?.map((type) => ({
-            //     name: type,
-            //     value: type,
-            // })) || [];
+          
 
             setClient(clients);
 
@@ -198,16 +229,15 @@ const Bidding_transaction_details = () => {
             setContractType(contractType);
 
             // setTechnologyBidderOptions(technologyBidderOptions);
-            setAccountBidderOptions(accountBidderOptions);
+            // setAccountBidderOptions(accountBidderOptions);
             setAccountBidder(bidderEmp);
         } catch (err) {
             setErrors("Failed to fetch biddingList.");
         }
     };
 
-    useEffect(() => {
-        fetchAccTechList();
-    }, []);
+
+
 
 
 
@@ -478,11 +508,7 @@ const Bidding_transaction_details = () => {
     //     { id: 3, name: "Global Tech" },
     // ];
 
-    const contracts = [
-        { id: 1, name: "Contract A" },
-        { id: 2, name: "Contract B" },
-        { id: 3, name: "Contract C" },
-    ];
+  
 
 
 
@@ -554,6 +580,23 @@ const Bidding_transaction_details = () => {
                                     />
                                 </div>
 
+                                {/* accounts */}
+                                <div className="flex flex-col w-full md:w-48">
+                                    <label className="text-sm font-medium text-gray-700 mb-1">
+                                        Account
+                                    </label>
+                                    <Dropdown
+                                        value={accountfilter}
+                                        onChange={(e) => setAccountfilter(e.value)}
+                                        options={accountBidderOptions}
+                                        optionLabel="label"
+                                        appendTo="self"
+                                        placeholder="Select an Account"
+                                        className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        required
+                                    />
+                                </div>
+
                                 {/* Transaction Type */}
                                 <div className="flex flex-col w-40 md:w-48">
                                     <label className="text-sm font-medium text-gray-700 mb-1">
@@ -587,6 +630,7 @@ const Bidding_transaction_details = () => {
                                         filter
                                         display="chip"
                                         maxSelectedLabels={2}
+                                          
                                         className="w-full rounded-lg border border-gray-300"
                                         panelClassName="rounded-lg shadow-lg"
                                         pt={{ input: { className: "h-11 px-3 text-sm" } }}
@@ -614,21 +658,6 @@ const Bidding_transaction_details = () => {
                                     />
                                 </div>
 
-                                <div className="flex flex-col w-full md:w-48">
-                                    <label className="text-sm font-medium text-gray-700 mb-1">
-                                        Account
-                                    </label>
-                                    <Dropdown
-                                        value={accountfilter}
-                                        onChange={(e) => setAccountfilter(e.value)}
-                                        options={accountBidderOptions}
-                                        optionLabel="label"
-                                        appendTo="self"
-                                        placeholder="Select an Account"
-                                        className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        required
-                                    />
-                                </div>
 
 
 
@@ -668,6 +697,127 @@ const Bidding_transaction_details = () => {
 
 
                         </div>
+
+
+                         <div className="mt-5 space-y-3">
+
+        {/* Clients */}
+        {selectedClients.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm font-semibold text-gray-600">
+              Clients
+            </span>
+            <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
+              {selectedClients.length} selected
+            </span>
+
+            {selectedClients.map((id) => {
+              const client = clientdropdown.find(c => c.value === id);
+              return (
+                <div
+                  key={id}
+                  className="flex items-center gap-2 bg-blue-100 px-3 py-1 rounded-full text-sm"
+                >
+                  <span>{client?.label}</span>
+                  <button
+                    onClick={() =>
+                      setSelectedClients(
+                        selectedClients.filter(val => val !== id)
+                      )
+                    }
+                    className="text-red-600 font-bold"
+                  >
+                    ✕
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Transaction Type */}
+        {selectedTxnTypes.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm font-semibold text-gray-600">
+              Transaction
+            </span>
+            <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full">
+              {selectedTxnTypes.length} selected
+            </span>
+
+            {selectedTxnTypes.map((type) => (
+              <div
+                key={type}
+                className="flex items-center gap-2 bg-green-100 px-3 py-1 rounded-full text-sm"
+              >
+                <span>{type}</span>
+                <button
+                  onClick={() =>
+                    setSelectedTxnTypes(
+                      selectedTxnTypes.filter(t => t !== type)
+                    )
+                  }
+                  className="text-red-600 font-bold"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Contracts */}
+        {selectedContracts.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm font-semibold text-gray-600">
+              Contracts
+            </span>
+            <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
+              {selectedContracts.length} selected
+            </span>
+
+            {selectedContracts.map((id) => {
+              const contract = contractType.find(c => c.value === id);
+              return (
+                <div
+                  key={id}
+                  className="flex items-center gap-2 bg-purple-100 px-3 py-1 rounded-full text-sm"
+                >
+                  <span>{contract?.label}</span>
+                  <button
+                    onClick={() =>
+                      setSelectedContracts(
+                        selectedContracts.filter(val => val !== id)
+                      )
+                    }
+                    className="text-red-600 font-bold"
+                  >
+                    ✕
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+      </div>
+
+      {/* ================= CLEAR ALL ================= */}
+      {(selectedClients.length ||
+        selectedTxnTypes.length ||
+        selectedContracts.length) > 0 && (
+        <button
+          onClick={() => {
+            setSelectedClients([]);
+            setSelectedTxnTypes([]);
+            setSelectedContracts([]);
+          }}
+          className="mt-4 text-sm text-red-600 underline"
+        >
+          Clear All Filters
+        </button>
+      )}
+
 
 
 

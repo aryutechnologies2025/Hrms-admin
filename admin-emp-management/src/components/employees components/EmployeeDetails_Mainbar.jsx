@@ -78,6 +78,7 @@ const EmployeeDetails_Mainbar = () => {
   };
 
   const deleteEmployee = (roleId) => {
+    // console.log("roleId", roleId);
     Swal.fire({
       title: "Are you sure?",
       text: "Do you want to delete this employee?",
