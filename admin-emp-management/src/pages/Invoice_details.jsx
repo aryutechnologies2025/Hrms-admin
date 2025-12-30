@@ -5,6 +5,7 @@ import DT from "datatables.net-dt";
 import "datatables.net-responsive-dt/css/responsive.dataTables.css";
 DataTable.use(DT);
 import { IoClose } from "react-icons/io5";
+import { FaFileDownload } from "react-icons/fa";
 
 import axios from "../api/axiosConfig";
 import { API_URL } from "../config";
@@ -333,6 +334,37 @@ const Invoice_details = () => {
   const [selectedPayments, setSelectedPayments] = useState([]);
   // console.log("selectedPayments", selectedPayments);
 
+     const [isOpeninvoice, setIsOpeninvoice] = useState(false);
+     const [selectedinvoice, setSelectedinvoice] = useState(null);
+   
+  
+  const handleOpeninvoicePopup = (documents) => {
+    // console.log("documents", documents);
+    setSelectedinvoice({ documents });
+    setIsOpeninvoice(true);
+  };
+
+  const downloadPDF = (doc) => {
+  
+    // console.log("doc", doc);
+    if (!doc || !doc.path) return;
+  
+  
+  
+    const url = `${API_URL}/api/uploads/clientInvoices/${doc.filename}`;
+  
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = doc.originalName || "invoice.pdf";
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+  
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
+
   const columns = [
     {
       title: "Sno",
@@ -440,6 +472,44 @@ const Invoice_details = () => {
       //           </div>`;
       // },
     },
+
+      {
+          title: "Invoice View",
+          data: null,
+          render: (data, type, row) => {
+            const id = `actions-${row.sno || Math.random()}`;
+            setTimeout(() => {
+              const container = document.getElementById(id);
+              if (container) {
+                if (!container._root) {
+                  container._root = createRoot(container);
+                }
+    
+                container._root.render(
+                  <div
+                    className="action-container"
+                    style={{
+                      display: "flex",
+                      gap: "15px",
+                      alignItems: "flex-end",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <div
+                      className="cursor-pointer"
+                      title="View Invoice"
+                      onClick={() => handleOpeninvoicePopup(row.documents
+)}
+                    >
+                      <FaEye />
+                    </div>
+                  </div>
+                );
+              }
+            }, 0);
+            return `<div id="${id}"></div>`;
+          },
+        },
 
     {
       title: "Client View",
@@ -997,7 +1067,57 @@ const Invoice_details = () => {
             </div>
           </div>
         )}
+{isOpeninvoice && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
+    <div className="bg-white rounded-2xl shadow-2xl w-[25%] p-6 relative max-h-[90vh] overflow-y-auto">
 
+      {/* Close button */}
+      <button
+        className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl transition"
+        onClick={() => setIsOpeninvoice(false)}
+      >
+        ✖
+      </button>
+
+      {/* Header */}
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">
+           Invoices
+        </h2>
+      </div>
+
+      {/* Documents */}
+      <div className="space-y-3">
+        {selectedinvoice?.documents?.length > 0 ? (
+          selectedinvoice.documents.map((doc, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition"
+            >
+              {/* Invoice Name */}
+              <span className="text-gray-700 font-medium">
+                {doc.invoice_document_type}
+              </span>
+
+              {/* Download Icon */}
+              <button
+                onClick={() => downloadPDF(doc)}
+                className="text-blue-600 hover:text-blue-800 transition"
+                title="Download Invoice"
+              >
+                <FaFileDownload />
+              </button>
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-400 text-center">
+            No documents available
+          </p>
+        )}
+      </div>
+    </div>
+  </div>
+)}
 
 
 
