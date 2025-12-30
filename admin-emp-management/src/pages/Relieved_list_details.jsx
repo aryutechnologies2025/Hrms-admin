@@ -299,10 +299,6 @@ const Relieved_list_details = () => {
     {
       title: "Total working date",
       data: "TotalExperienceTillJoining",
-      render: (data) => {
-        if (!data) return "-";
-        return formatDateTime(data);
-      },
     },
 
     {
