@@ -147,7 +147,10 @@ const Invoice_full = () => {
   const [cgst, setCgst] = useState("");
   const [sgst, setSgst] = useState("");
   const [igst, setIgst] = useState("");
+  const [invoicetype, setInvoiceType] = useState("");
   const [selected, setSelected] = useState("Select Invoice Type");
+
+  const[invoiceNo, setInvoiceNo] = useState("");
 
   const [amount, setAmount] = useState("");
   const [paymentType, setPaymentType] = useState("");
@@ -274,11 +277,12 @@ const Invoice_full = () => {
 
       );
 
-      console.log("response", response)
+      console.log("responseseettibg", response)
 
       setIgst(response.data.data[0]?.igst || "");
       setCgst(response.data.data[0]?.cgst || "");
       setSgst(response.data.data[0]?.sgst || "");
+      setInvoiceType(response.data.data[0]?.invoiceId_option || "");
 
 
     } catch (error) {
@@ -416,6 +420,12 @@ const Invoice_full = () => {
       errors.due_date = "Due date cannot be before invoice date";
     }
 
+     if (invoicetype === "Manual") {
+    if (!invoiceNo || invoiceNo.trim() === "") {
+      errors.invoice_no = "Invoice number is required";
+    }
+  }
+
     // Currency
     if (!currency || !currency.name) {
       errors.currency = "Currency is required";
@@ -515,6 +525,8 @@ const Invoice_full = () => {
         amount,
         paidDate,
         paymentType,
+        invoice_number:invoiceNo,
+
 
       };
 
@@ -579,7 +591,7 @@ const Invoice_full = () => {
   };
 
   const [openlog, setOpenlog] = useState(false);
-const [selectedLogs, setSelectedLogs] = useState([]);
+  const [selectedLogs, setSelectedLogs] = useState([]);
 
   return (
     <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
@@ -703,6 +715,32 @@ const [selectedLogs, setSelectedLogs] = useState([]);
                     )}
                   </div>
                 </div>
+
+
+                {/* /invoice numbrf */}
+              {invoicetype === "Manual" && (
+  <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3">
+    <div className="w-[50%]">
+      <label className="block text-sm font-medium mb-2">
+        Invoice No <span className="text-red-500">*</span>
+      </label>
+
+      <input
+        type="text"
+        value={invoiceNo}
+        onChange={(e) => setInvoiceNo(e.target.value)}
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+
+      {errors.invoice_no && (
+        <p className="text-red-500 text-sm mt-1">
+          {errors.invoice_no}
+        </p>
+      )}
+    </div>
+  </div>
+)}
+
                 {/* item */}
                 <div className="mt-3">
                   <div className="flex justify-between">
@@ -1227,100 +1265,100 @@ const [selectedLogs, setSelectedLogs] = useState([]);
                 </div>
                 <hr className="mt-5"></hr>
 
-   <div className="p-2">
-    <button
-  onClick={() => {
-    setSelectedLogs(logdetails);
-    setOpenlog(true);
-  }}
-  className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
->
-  <FaEye size={18} />
-  <span>View Payment History</span>
-</button>
-   </div>
+                <div className="p-2">
+                  <button
+                    onClick={() => {
+                      setSelectedLogs(logdetails);
+                      setOpenlog(true);
+                    }}
+                    className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    <FaEye size={18} />
+                    <span>View Payment History</span>
+                  </button>
+                </div>
 
 
 
-{openlog && (
-  <div
-    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-    onClick={() => setOpenlog(false)} 
-  >
-    <div
-      className="bg-white rounded-2xl w-[60%] max-w-6xl h-[85vh] shadow-2xl flex flex-col"
-      onClick={(e) => e.stopPropagation()} 
-    >
+                {openlog && (
+                  <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+                    onClick={() => setOpenlog(false)}
+                  >
+                    <div
+                      className="bg-white rounded-2xl w-[60%] max-w-6xl h-[85vh] shadow-2xl flex flex-col"
+                      onClick={(e) => e.stopPropagation()}
+                    >
 
-      {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b">
-        <h2 className="text-xl font-semibold text-gray-800">
-          Payment Log Details
-        </h2>
-        <button
-          onClick={() => setOpenlog(false)}
-          className="text-gray-400 hover:text-gray-700 text-2xl"
-        >
-          ✕
-        </button>
-      </div>
+                      {/* Header */}
+                      <div className="flex items-center justify-between px-6 py-4 border-b">
+                        <h2 className="text-xl font-semibold text-gray-800">
+                          Payment Log Details
+                        </h2>
+                        <button
+                          onClick={() => setOpenlog(false)}
+                          className="text-gray-400 hover:text-gray-700 text-2xl"
+                        >
+                          ✕
+                        </button>
+                      </div>
 
-      {/* Table Wrapper */}
-      <div className="flex-1 overflow-y-auto px-6 py-4">
-        {selectedLogs && selectedLogs.length > 0 ? (
-          <table className="w-full text-sm border border-gray-200 rounded-xl overflow-hidden">
-            {/* Table Head */}
-            <thead className="bg-blue-50 sticky top-0 z-10">
-              <tr>
-                <th className="px-4 py-3 text-left font-semibold text-gray-600">
-                  Invoice No
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-600">
-                  Status
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-600">
-                  Paid Date
-                </th>
-                <th className="px-4 py-3 text-right font-semibold text-gray-600">
-                  Amount (₹)
-                </th>
-              </tr>
-            </thead>
+                      {/* Table Wrapper */}
+                      <div className="flex-1 overflow-y-auto px-6 py-4">
+                        {selectedLogs && selectedLogs.length > 0 ? (
+                          <table className="w-full text-sm border border-gray-200 rounded-xl overflow-hidden">
+                            {/* Table Head */}
+                            <thead className="bg-blue-50 sticky top-0 z-10">
+                              <tr>
+                                <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                                  Invoice No
+                                </th>
+                                <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                                  Status
+                                </th>
+                                <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                                  Paid Date
+                                </th>
+                                <th className="px-4 py-3 text-right font-semibold text-gray-600">
+                                  Amount (₹)
+                                </th>
+                              </tr>
+                            </thead>
 
-            {/* Table Body */}
-            <tbody>
-              {selectedLogs.map((log, i) => (
-                <tr
-                  key={i}
-                  className={`border-b transition
+                            {/* Table Body */}
+                            <tbody>
+                              {selectedLogs.map((log, i) => (
+                                <tr
+                                  key={i}
+                                  className={`border-b transition
                     ${i % 2 === 0 ? "bg-white" : "bg-gray-50"}
                     hover:bg-blue-50`}
-                >
-                  <td className="px-4 py-3 font-medium text-gray-800">
-                     #{log.invoice_number || "-"}
-                  </td>
-                  <td className="px-4 py-3 text-gray-800">
-                    {capitalizeFirstLetter(log.status)}
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">
-                    {new Date(log.paidDate).toLocaleDateString("en-IN")}
-                  </td>
-                  <td className="px-4 py-3 text-right font-semibold text-green-600">
-                    ₹{log.amount}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <div className="flex items-center justify-center h-full text-gray-500 font-medium text-lg">
-            No transactions available
-          </div>
-        )}
-      </div>
-    </div>
-  </div>
-)}
+                                >
+                                  <td className="px-4 py-3 font-medium text-gray-800">
+                                    #{log.invoice_number || "-"}
+                                  </td>
+                                  <td className="px-4 py-3 text-gray-800">
+                                    {capitalizeFirstLetter(log.status)}
+                                  </td>
+                                  <td className="px-4 py-3 text-gray-600">
+                                    {new Date(log.paidDate).toLocaleDateString("en-IN")}
+                                  </td>
+                                  <td className="px-4 py-3 text-right font-semibold text-green-600">
+                                    ₹{log.amount}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        ) : (
+                          <div className="flex items-center justify-center h-full text-gray-500 font-medium text-lg">
+                            No transactions available
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
 
 

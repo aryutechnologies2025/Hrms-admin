@@ -4,14 +4,22 @@ import { API_URL } from "../../config";
 
 function LifetimeBilled() {
 
-  const [clientsdetails, setClientsdetails] = useState([]);
+    const [clientsdetails, setClientsdetails] = useState([]);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedClient, setSelectedClient] = useState(null);
+
+  // Filter clients based on search term
+  const filteredClients = clientsdetails.filter((client) =>
+    client.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const [data, setData] = useState([]);
 
   console.log("data", data);
 
   const [errors, setErrors] = useState("");
 
-  const [selectedClient, setSelectedClient] = useState("");
   
 
 
@@ -93,23 +101,45 @@ function LifetimeBilled() {
   return (
     <div className="grid grid-cols-12 gap-6">
       {/* Left Client List */}
-      <div className="col-span-12 md:col-span-3 bg-white rounded-xl p-4 shadow-sm">
-         <ul className="space-y-2 text-sm max-h-[420px] overflow-y-auto">
-            {clientsdetails.map((client) => (
-              <li
-                key={client}
-                onClick={() => setSelectedClient(client)}
-                className={`px-3 py-2 rounded-lg cursor-pointer transition
-    ${selectedClient === client
-                    ? "bg-blue-50 text-blue-600 font-medium"
-                    : "text-gray-700 hover:bg-gray-100"
-                  }`}
-              >
-                {client}
-              </li>
-            ))}
-          </ul>
+     <div className="col-span-12 md:col-span-3 bg-white rounded-xl p-4 shadow-sm">
+      {/* Search Input with Cancel */}
+      <div className="relative mb-3">
+        <input
+          type="text"
+          placeholder="Search client..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+        />
+        {searchTerm && (
+          <button
+            onClick={() => setSearchTerm("")}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          >
+            ✕
+          </button>
+        )}
       </div>
+
+      <ul className="space-y-2 text-sm max-h-[420px] overflow-y-auto">
+        {filteredClients.map((client) => (
+          <li
+            key={client}
+            onClick={() => setSelectedClient(client)}
+            className={`px-3 py-2 rounded-lg cursor-pointer transition ${
+              selectedClient === client
+                ? "bg-blue-50 text-blue-600 font-medium"
+                : "text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            {client}
+          </li>
+        ))}
+        {filteredClients.length === 0 && (
+          <li className="text-gray-400 px-3 py-2">No clients found</li>
+        )}
+      </ul>
+    </div>
 
       {/* Right Content */}
       <div className="col-span-12 md:col-span-9">

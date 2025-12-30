@@ -226,6 +226,8 @@ const Invoice_edit = () => {
   const [selected, setSelected] = useState("Select Invoice Type");
   const [paidDate, setPaidDate] = useState("");
 
+  const[invoiceNo, setInvoiceNo] = useState("");
+
 
   // console.log("selected", selected)
 
@@ -325,6 +327,7 @@ const Invoice_edit = () => {
     setAmount(rowData.amount);
     setPaymentType(rowData?.paymentType);
     setBalance(rowData?.balance);
+    setInvoiceNo(rowData?.invoice_number);
   }, [rowData]);
 
 
@@ -426,6 +429,8 @@ const Invoice_edit = () => {
         amount,
         paidDate,
         paymentType,
+        invoice_number:invoiceNo,
+
       };
 
       const response = await axios.put(
@@ -592,6 +597,27 @@ const Invoice_edit = () => {
                     )}
                   </div>
                 </div>
+
+                 <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3">
+    <div className="w-[50%]">
+      <label className="block text-sm font-medium mb-2">
+        Invoice No <span className="text-red-500">*</span>
+      </label>
+
+      <input
+        type="text"
+        value={invoiceNo}
+        onChange={(e) => setInvoiceNo(e.target.value)}
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+
+      {errors.invoice_no && (
+        <p className="text-red-500 text-sm mt-1">
+          {errors.invoice_no}
+        </p>
+      )}
+    </div>
+  </div>
                 {/* item */}
                 <div className="mt-3">
                   <div className="flex justify-between">
