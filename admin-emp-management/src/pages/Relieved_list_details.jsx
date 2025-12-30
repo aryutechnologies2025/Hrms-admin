@@ -48,21 +48,30 @@ const Relieved_list_details = () => {
   const [alldatarow, setAlldatarow] = useState("");
   const EmpolyeeId = alldatarow.id;
 
-  // console.log("EmpolyeeId",EmpolyeeId);
-  window.onClickCard = function (id) {
-    navigate(`/employeedetails/${id}`);
-  };
+  console.log("EmpolyeeId",EmpolyeeId);
+  useEffect(() => {
+    window.onClickCard = (id) => {
+      if (!id) return;
+
+      console.log("Navigating to employee:", id); 
+      navigate(`/employeedetails/${id}`);
+    };
+
+    return () => {
+      delete window.onClickCard; 
+    };
+  }, [navigate]);
 
 
   const openAddModal = (row) => {
     setAlldatarow(row);
     setIsAddModalOpen(true);
-    setTimeout(() => setIsAnimating(true), 10); // Delay to trigger animation
+    setTimeout(() => setIsAnimating(true), 10); 
   };
 
   const closeAddModal = () => {
     setIsAnimating(false);
-    setTimeout(() => setIsAddModalOpen(false), 250); // Delay to trigger animation
+    setTimeout(() => setIsAddModalOpen(false), 250); 
   };
 
   const closeEditModal = () => {
@@ -86,6 +95,7 @@ const Relieved_list_details = () => {
   const userid = parsedDetails ? parsedDetails.id : null;
   const [errors, setErrors] = useState({});
   const [clientdetails, setClientdetails] = useState([]);
+  // console.log("clientdetails",clientdetails);
   // const [employeeid ,setEmployeeid] =useState([]);
 
   const [letterlistdetails, setLetterlistdetails] = useState([]);
@@ -240,10 +250,11 @@ const Relieved_list_details = () => {
       title: "Employee",
       data: null,
       render: function (data, type, row) {
-        if (!row.employeeId) return "-";
+        if (!row.id) return "-";
 
         return `
-      <div class="cursor-pointer" onclick="onClickCard('${row.employeeId._id}')">
+      <div class="cursor-pointer"
+           onclick="window.onClickCard('${row.id}')">
         ${row.employeeName}
         <br/>
         <span class="text-blue-600 text-sm">
@@ -274,9 +285,6 @@ const Relieved_list_details = () => {
     {
       title: "Notice period",
       data: "noticePeriod",
-      // render: (data) => {
-      //   return data || "-";
-      // },
     },
 
     {
@@ -290,7 +298,7 @@ const Relieved_list_details = () => {
 
     {
       title: "Total working date",
-      data: "totalDays",
+      data: "TotalExperienceTillJoining",
       render: (data) => {
         if (!data) return "-";
         return formatDateTime(data);
@@ -446,6 +454,8 @@ const Relieved_list_details = () => {
     //   },
     // },
   ];
+
+  console.log("columns", columns);
 
   //   all buttons
 
