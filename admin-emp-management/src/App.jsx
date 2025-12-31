@@ -138,6 +138,7 @@ import Client_invoice_main from "./components/Invoice Client/Client_invoice_main
 import Bidding_transaction_main from "./components/bidding assests components/Bidding_transaction_main";
 import Billing_details_main from "./components/bidding assests components/Billing_details.main";
 import LeadManagement_Mainbar from "./pages/LeadManagement_Mainbar";
+import Payslip_govt from "./components/payroll components/Payslip_govt";
 
 export const SettingsContext = createContext();
 
@@ -719,6 +720,27 @@ function App() {
         </ProtectedRoute>
       ),
     },
+
+
+       {
+      path:"/play-slip",
+      permissionTitle: "Clients",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <PayslipContent />
+        </ProtectedRoute>
+      ),
+    },
+   {
+      path:"/play-slip-govt",
+      permissionTitle: "Clients",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Payslip_govt />
+        </ProtectedRoute>
+      ),
+    },
+
 
     /* -------------------------------------------
       FINANCE

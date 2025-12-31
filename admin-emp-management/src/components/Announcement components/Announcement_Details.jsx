@@ -319,11 +319,14 @@ const Announcement_Details = () => {
       render: (data, type, row) => {
         const id = `actions-${row.sno || Math.random()}`;
         setTimeout(() => {
-          if (container) {
-            if (!container._root) {
-              container._root = createRoot(container);
-            }
-            container._root.render(
+                      const container = document.getElementById(id);
+
+           if (container) {
+                          if (!container._root) {
+                            container._root = createRoot(container);
+                          }
+              
+                          container._root.render(
               <div
                 className="action-container"
                 style={{
@@ -357,7 +360,7 @@ const Announcement_Details = () => {
 
 
               </div>,
-              container
+             
             );
           }
         }, 0);
