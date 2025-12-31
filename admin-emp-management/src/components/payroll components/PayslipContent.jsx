@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
-import Aryulogo from "../../assets/Aryu_logo.svg";
+import Aryulogo from "../../assets/Aryu-logo1.png";
 import Sing from "../../assets/sign.png";
 import Steal from "../../assets/steal.png";
 
@@ -66,19 +66,22 @@ const PayslipContent = () => {
 
         <div className="flex justify-between border-black items-start border-t-2 border-b-2 border-r-2 border-l-2">
           <div className="flex w-full gap-3">
-            <div className="w-[20%] ">
-              <img src={Aryulogo} alt="Company Logo" className="w-full h-20 " />
+            <div className="w-[22%] ">
+              <img src={Aryulogo} alt="Company Logo" className=" pt-2 " />
             </div>
             <div className="w-[80%] leading-5 pb-2 ">
               <p className="font-bold text-2xl mt-3 ">ARYU ENTERPRISES PRIVATE LIMITED</p>
               <p className="mt-5">No 33/ 14, Jayammal St, Ayyavoo Colony, Aminjikarai, Chennai, Tamil Nadu 600029</p>
-              <p className=""><span className="font-bold">Mob</span> - 9994715106 <span className="font-bold">/ Mail</span> - yuvaraj@aryuenterprises.com <span className="font-bold">/ web</span> - https://aryuenterprises.com/</p>
+              <p className=""><span className="font-bold">Mob</span> - 9994715106 <span className="font-bold">/ Mail</span> - yuvaraj@aryuenterprises.com <span className="font-bold">/ web</span> - <a href="https://aryuenterprises.com/" target="_blank">
+                https://aryuenterprises.com/
+              </a>
+              </p>
             </div>
           </div>
         </div>
         {/* payslip*/}
-        <div className="w-full flex justify-center border-black border-l-2 border-r-2 ">
-          <div className="font-bold pt-0 py-2 text-center">PAYSLIP - JUL 2025</div>
+        <div className="w-full flex justify-center border-black bg-[#d9e1f2] border-l-2 border-r-2 ">
+          <div className="font-bold pt-0 py-2 text-center ">PAYSLIP - JUL 2025</div>
         </div>
         {/* table 1 */}
         <div className="px-2 p-3 flex justify-between border-black border-l-2 border-r-2 border border-t-2">
@@ -121,34 +124,34 @@ const PayslipContent = () => {
         </div>
         {/* table */}
         <div className="items-start w-full flex leading-5">
-          <div className="flex w-[50%] text-black ">
+          <div className="flex w-[50%]  ">
             <div className="w-full border-black border border-r  border-t border-l-2 ">
-              <div className="p-1 border-b border-black text-left">Gross Salary</div>
-              <div className="p-1 border-b border-black text-left">Total Working Days</div>
-              <div className="p-1 border-b border-black text-left">Casual Leave </div>
+              <div className="p-1 border-b border-black text-left payslip-table">Gross Salary</div>
+              <div className="p-1 border-b border-black text-left payslip-table">Total Working Days</div>
+              <div className="p-1 border-b border-black text-left payslip-table">Casual Leave </div>
             </div>
             <div className="w-full border-black border border-r-2 border-l-0 border-t  ">
-              <div className="p-1 border-b border-black text-center">₹9153</div>
-              <div className="p-1 border-b border-black text-center" >25</div>
-              <div className="p-1 border-b border-black text-center" >₹0</div>
+              <div className="p-1 border-b border-black text-center payslip-table">₹9153</div>
+              <div className="p-1 border-b border-black text-center payslip-table" >25</div>
+              <div className="p-1 border-b border-black text-center payslip-table" >₹0</div>
             </div>
           </div>
           <div className="flex w-[50%] text-black ">
             <div className="w-full border-black border border-r border-l-0 border-t ">
-              <div className="p-1 border-b border-black text-left">Standard CTC </div>
-              <div className="p-1 border-b border-black text-left">Leaves Taken</div>
-              <div className="p-1 border-b border-black text-left">Paid Days</div>
+              <div className="p-1 border-b border-black text-left payslip-table">Standard CTC </div>
+              <div className="p-1 border-b border-black text-left payslip-table">Leaves Taken</div>
+              <div className="p-1 border-b border-black text-left payslip-table">Paid Days</div>
             </div>
             <div className="w-full border-black border border-t border-l-0 border-r-2 border-b-2 ">
-              <div className="p-1 border-b border-black text-center">0</div>
-              <div className="p-1 border-b border-black text-center">25</div>
-              <div className="p-1 borber-b border-black text-center">₹10000</div>
+              <div className="p-1 border-b border-black text-center payslip-table">0</div>
+              <div className="p-1 border-b border-black text-center payslip-table">25</div>
+              <div className="p-1 borber-b border-black text-center payslip-table">₹10000</div>
             </div>
           </div>
         </div>
         {/* empty */}
         <div className="flex w-full h-7">
-          <div className="flex w-[50%] text-black ">
+          <div className="flex w-[50%]  ">
             <div className="w-full border-black  border-l-2 border-t-0 border-b  ">
               <div className="p-1 "></div>
             </div>
@@ -157,7 +160,7 @@ const PayslipContent = () => {
             </div>
           </div>
 
-          <div className="flex w-[50%] text-black ">
+          <div className="flex w-[50%]  ">
             <div className="w-full border-black border-b ">
               <div className="p-1"></div>
             </div>
@@ -168,79 +171,79 @@ const PayslipContent = () => {
         </div>
 
         {/* table 3 */}
-        <table className="w-full text-black border-collapse leading-6 border-l-2 border-r-2  border-black">
+        <table className="w-full  border-collapse leading-6 border-l-2 border-r-2  border-black">
           <thead className="table-fixed  ">
             <tr className="border-black  ">
-              <th colSpan={2} className="w-[50%]  bg-white text-center font-bold payslip-th border-black border ">Earnings</th>
-              <th colSpan={2} className="w-[50%] bg-white text-center font-bold payslip-th border-black border border-l-2 ">Deductions</th>
+              <th colSpan={2} className="w-[50%]   text-center font-bold payslip-th border-black border bg-[#d9e1f2]">Earnings</th>
+              <th colSpan={2} className="w-[50%] bg-[#d9e1f2] text-center font-bold payslip-th border-black border border-l-2 ">Deductions</th>
             </tr>
           </thead>
-          <tbody className="border-black table-fixed border-b-2 border-t-2  ">
-            <tr>
-              <td className="border-black p-1 border text-left w-[25%] ">Basic</td>
-              <td className="border-black p-1 border ">₹4577</td>
-              <td className="border-black p-1 border border-l-2 text-left w-[25%]">EE EPF</td>
-              <td className="border-black p-1 border  ">₹549</td>
+          <tbody className="border-black table-fixed  border-b-2 border-t-2  ">
+            <tr className="payslip-table">
+              <td className="border-black p-1 border text-left w-[25%] payslip-table">Basic</td>
+              <td className="border-black p-1 border payslip-table ">₹4577</td>
+              <td className="border-black p-1 border border-l-2 text-left w-[25%] payslip-table">EE EPF</td>
+              <td className="border-black p-1 border payslip-table">₹549</td>
             </tr>
             <tr>
-              <td className="border-black p-1 border text-left ">HRA</td>
-              <td className="border-black p-1 border">₹ 1,830.66</td>
-              <td className="border-black p-1 border-l-2 text-left">EE ESI</td>
-              <td className="border-black p-1 border border-r-2">₹75</td>
+              <td className="border-black p-1 border text-left  payslip-table">HRA</td>
+              <td className="border-black p-1 border payslip-table">₹ 1,830.66</td>
+              <td className="border-black p-1 border-l-2 text-left payslip-table">EE ESI</td>
+              <td className="border-black p-1 border border-r-2 payslip-table">₹75</td>
             </tr>
             <tr>
-              <td className="border-black p-1 border text-left">Conveyance Allowance</td>
-              <td className="border-black p-1 border">₹1600</td>
-              <td className="border-black p-1 border-l-2 text-left">Professional Tax</td>
-              <td className="border-black p-1 border border-r-2">₹155</td>
+              <td className="border-black p-1 border text-left payslip-table">Conveyance Allowance</td>
+              <td className="border-black p-1 border payslip-table">₹1600</td>
+              <td className="border-black p-1 border-l-2 text-left payslip-table">Professional Tax</td>
+              <td className="border-black p-1 border border-r-2 payslip-table">₹155</td>
             </tr>
             <tr>
-              <td className="border-black p-1 border text-left">Medical Allowance</td>
-              <td className="border-black p-1 border">₹1250</td>
-              <td className="border-black p-1 border-l-2 text-left">TDS </td>
-              <td className="border-black p-1 border border-r-2">₹0</td>
+              <td className="border-black p-1 border text-left payslip-table">Medical Allowance</td>
+              <td className="border-black p-1 border payslip-table">₹1250</td>
+              <td className="border-black p-1 border-l-2 text-left payslip-table">TDS </td>
+              <td className="border-black p-1 border border-r-2 payslip-table">₹0</td>
             </tr>
             <tr>
-              <td className="border-black p-1 border text-left">Other Allowances</td>
-              <td className="border-black p-1 border">-₹ 104.00</td>
-              <td className="border-black p-1 border-l-2 text-left">Advance</td>
-              <td className="border-black p-1 border border-r-2">₹0</td>
+              <td className="border-black p-1 border text-left payslip-table">Other Allowances</td>
+              <td className="border-black p-1 border payslip-table">-₹ 104.00</td>
+              <td className="border-black p-1 border-l-2 text-left payslip-table">Advance</td>
+              <td className="border-black p-1 border border-r-2 payslip-table">₹0</td>
             </tr>
             <tr>
-              <td className="border-black p-1 border-t-2 border-b-2 payslip-th font-bold text-left">Gross Earnings</td>
-              <td className="border-black p-1 border border-t-2 payslip-th border-b-2 font-bold">₹9153</td>
-              <td className="border-black p-1 border-l-2"></td>
-              <td className="border-black p-1 border border-r-2"></td>
+              <td className="border-black p-1 border-t-2 border-b-2 payslip-th font-bold text-left payslip-table">Gross Earnings</td>
+              <td className="border-black p-1 border border-t-2 payslip-th border-b-2 font-bold payslip-table">₹9153</td>
+              <td className="border-black p-1 border-l-2 payslip-table"></td>
+              <td className="border-black p-1 border border-r-2 payslip-table"></td>
             </tr>
             <tr>
-              <td className="border-black p-1 border text-left">ER EPF</td>
-              <td className="border-black p-1 border">₹549</td>
-              <td className="border-black p-1 border-l-2"></td>
-              <td className="border-black p-1 border border-r-2"></td>
+              <td className="border-black p-1 border text-left payslip-table">ER EPF</td>
+              <td className="border-black p-1 border payslip-table">₹549</td>
+              <td className="border-black p-1 border-l-2 payslip-table"></td>
+              <td className="border-black p-1 border border-r-2 payslip-table"></td>
             </tr>
             <tr>
-              <td className="border-black p-1 border text-left">ER ESI</td>
-              <td className="border-black p-1 border">₹ 297.48</td>
-              <td className="border-black p-1 border-l-2"></td>
-              <td className="border-black p-1 border border-r-2"></td>
+              <td className="border-black p-1 border text-left payslip-table">ER ESI</td>
+              <td className="border-black p-1 border payslip-table">₹ 297.48</td>
+              <td className="border-black p-1 border-l-2 payslip-table"></td>
+              <td className="border-black p-1 border border-r-2 payslip-table"></td>
             </tr>
-            <tr>
-              <td className="border-black p-1 border-t-2 border-b-2 font-bold payslip-th text-left">Actual CTC</td>
-              <td className="border-black p-1  border-t-2 border-b-2 border payslip-th font-bold">₹10000</td>
-              <td className="border-black p-1 border-l-2 border-t-2 border-b-2 font-bold payslip-th text-left">Total Deductions</td>
-              <td className="border-black p-1 border-t-2 border-b-2 border font-bold payslip-th ">₹779</td>
+            <tr className="bg-[#d9e1f2]">
+              <td className="border-black p-1 border-t-2 border-b-2 font-bold payslip-th text-left payslip-table">Actual CTC</td>
+              <td className="border-black p-1  border-t-2 border-b-2 border payslip-th font-bold payslip-table">₹10000</td>
+              <td className="border-black p-1 border-l-2 border-t-2 border-b-2 font-bold payslip-th text-left payslip-table">Total Deductions</td>
+              <td className="border-black p-1 border-t-2 border-b-2 border font-bold payslip-th  payslip-table">₹779</td>
             </tr>
           </tbody>
         </table>
-        <div className="flex justify-end border border-r-0 border-t-0 border-black">
-          <div className="border-black p-1">(Take-home pay) <span className="font-bold payslip-th">Net Salary</span></div>
-          <div className="border-black w-[25.2%] text-center border-l p-1 font-bold border-r-2 payslip-th">₹8374</div>
+        <div className="flex justify-end border border-r-0 border-t-0 border-black bg-[#d9e1f2] ">
+          <div className="border-black p-1 payslip-table pb-2">(Take-home pay) <span className="font-bold payslip-th ">Net Salary</span></div>
+          <div className="border-black w-[25.2%] text-center border-l p-1 font-bold border-r-2 payslip-th ">₹8374</div>
         </div>
         {/* table 4 */}
         <table className="w-full border-collapse leading-5">
-          <tbody className="border">
+          <tbody className="border bg-[#d9e1f2]">
             <tr>
-              <td className="border-black p-1  border-l-2 text-left w-[25%] ">Amount In words </td>
+              <td className="border-black p-1  border-l-2 text-left w-[25%] payslip-table pb-2">Amount In words </td>
               <td col-span={2} className="border-black p-1 border payslip-th border-t-0 border-r-2 text-left font-bold ">Eight thousand Three Hundred Eighty Rupees Only</td>
             </tr>
           </tbody>

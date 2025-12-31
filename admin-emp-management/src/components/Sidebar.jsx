@@ -1382,7 +1382,7 @@ const Sidebar = () => {
                       <div
                         onClick={() => onClickSidebarMenu("announcement")}
                         className={`flex items-center w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
-                          } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/payroll"
+                          } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/announcement"
                             ? "bg-blue-100 text-[#4F46E5]"
                             : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
                           }`}
