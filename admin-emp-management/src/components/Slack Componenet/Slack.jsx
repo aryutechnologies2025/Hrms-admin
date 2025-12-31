@@ -744,6 +744,9 @@ export default function Slack() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [unread, setUnread] = useState({});
+  const [chaneel, setChaneel] = useState([]);
+  const [selectedChannel, setSelectedChannel] = useState(null);
+
 
   /* LOAD CURRENT USER */
   useEffect(() => {
@@ -800,8 +803,22 @@ export default function Slack() {
     return () => socket.off("receive_dm", onReceive);
   }, [socket, currentUser, selectedUser]);
 
+//   useEffect(() => {
+//   if (!socket) return;
+
+//   socket.on("receive_channel_message", (msg) => {
+//     if (msg.channelId === selectedChannel?._id) {
+//       setMessages(prev => [...prev, msg]);
+//     }
+//   });
+
+//   return () => socket.off("receive_channel_message");
+// }, [socket, selectedChannel]);
+
+
   /* OPEN CHAT */
   const handleSelectUser = async (user) => {
+     setSelectedChannel(null);
     setSelectedUser(user);
 
     // clear unread immediately
@@ -819,20 +836,47 @@ export default function Slack() {
     });
   };
 
+  // console.log
+   /* LOAD USERS */
+  useEffect(() => {
+    // if (!currentUser) return;
+    axios.get(`${API_URL}/api/channel/channel-list`)
+      .then(res => setChaneel(res.data.data || []));
+      console.log("users",users);
+  }, []);
+
   return (
     <div className="flex h-screen">
-      <Slack_sidebar
+      {/* <Slack_sidebar
         users={users}
         selectedUser={selectedUser}
         unread={unread}
         onlineUsers={onlineUsers}
         onSelectUser={handleSelectUser}
-      />
+        currentUser={currentUser}
+        channels={chaneel}
+      /> */}
+      <Slack_sidebar
+  users={users}
+  channels={chaneel}
+  selectedUser={selectedUser}
+  selectedChannel={selectedChannel}
+  onSelectUser={handleSelectUser}
+  onSelectChannel={(ch) => {
+    setSelectedChannel(ch);
+    setSelectedUser(null); // important
+  }}
+  unread={unread}
+  onlineUsers={onlineUsers}
+  currentUser={currentUser}
+/>
+
 
       <Slack_chatwindow
         socket={socket}
         currentUser={currentUser}
         selectedUser={selectedUser}
+        selectedChannel={selectedChannel}
       />
     </div>
   );

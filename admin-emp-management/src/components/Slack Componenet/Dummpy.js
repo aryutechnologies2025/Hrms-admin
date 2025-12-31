@@ -926,7 +926,7 @@ useEffect(() => {
   return () => {
     socket.emit("leave_channel", { channelId });
   };
-}, [socket, selectedChannel]);
+}, [socket, selectedChannel, currentUser?._id]);
 
 
   // useEffect(() => {
@@ -1087,41 +1087,40 @@ useEffect(() => {
         setMessages((prev) => [...prev, msg]);
 
         if (msg.senderId === other) {
-          socket.emit("mark_seen",{
+          socket.emit("mark_seen", {
             senderId: other,
             receiverId: me,
           });
         }
       }
     });
+
     return () => socket.off("receive_dm");
   }, [socket, selectedUser]);
 
   /* RECEIVE MESSAGE channel*/
- useEffect(() => {
-  if (!socket || !selectedChannel) return;
+  useEffect(() => {
+    if (!socket || !selectedChannel) return;
 
-  const handleReceiveChannelMessage = (msg) => {
-    if (msg.channelId !== selectedChannel._id) return;
+    socket.on("receive_channel_message", (msg) => {
+      if (
+        (msg.channelId === selectedChannel._id)
+        
+      ) {
+        console.log("RECEIVED CHANNEL MESSAGE:", msg);
+        setMessages((prev) => [...prev, msg]);
 
-    console.log("RECEIVED CHANNEL MESSAGE:", msg);
-
-    setMessages((prev) => [...prev, msg]);
-
-    // 🔵 auto mark seen ONLY if user is viewing this channel
-    socket.emit("channel_seen", {
-      channelId: selectedChannel._id,
-      userId: currentUser._id,
+        if (msg.senderId === other) {
+          socket.emit("mark_seen", {
+            senderId: other,
+            receiverId: me,
+          });
+        }
+      }
     });
-  };
 
-  socket.on("receive_channel_message", handleReceiveChannelMessage);
-
-  return () => {
-    socket.off("receive_channel_message", handleReceiveChannelMessage);
-  };
-}, [socket, selectedChannel]);
-
+    return () => socket.off("receive_channel_message");
+  }, [socket, selectedUser]);
 
   /* 🔵 BLUE TICK dm*/
   useEffect(() => {
@@ -1136,38 +1135,26 @@ useEffect(() => {
         )
       );
     });
+
     return () => socket.off("messages_seen");
   }, [socket]);
 
-useEffect(() => {
-  if (!socket || !selectedChannel) return;
+// 🔵 BLUE TICK channel*/
+  useEffect(() => {
+  if (!socket) return;
 
-  socket.on("channel_seen_update", ({ channelId, userId, requiredSeen }) => {
+  socket.on("channel_seen_update", ({ channelId, userId }) => {
     setMessages((prev) =>
-      prev.map((msg) => {
-        if (
-          msg.channelId !== channelId ||
-          msg.senderId === userId
-        ) {
-          return msg;
-        }
-
-        if (msg.seenBy.includes(userId)) return msg;
-
-        const updatedSeenBy = [...msg.seenBy, userId];
-
-        return {
-          ...msg,
-          seenBy: updatedSeenBy,
-          isSeenByAll: updatedSeenBy.length >= requiredSeen,
-        };
-      })
+      prev.map((m) =>
+        m.channelId === channelId
+          ? { ...m, seenBy: [...new Set([...(m.seenBy || []), userId])] }
+          : m
+      )
     );
   });
 
   return () => socket.off("channel_seen_update");
-}, [socket, selectedChannel]);
-
+}, [socket]);
 
 
 
@@ -1250,9 +1237,9 @@ useEffect(() => {
       // if (res.data?.success) {
       //   socket.emit("new_message", res.data.data);
       // }
-      // console.log("entering socket emit for channel or dm 4444",res);
+      console.log("entering socket emit for channel or dm 4444",res);
       if (res.data?.success) {
-        // console.log("entering socket emit for channel or dm ggg");
+        console.log("entering socket emit for channel or dm ggg");
         socket.emit(
           selectedChannel ? "new_channel_message" : "new_message",
           res.data.data
@@ -1373,23 +1360,6 @@ useEffect(() => {
       </div>
     );
   }
-
-  const renderTick = (msg) => {
-  if (!msg.deliveredAt) {
-    return "✔";
-  }
-
-  if (msg.seenBy.length === 0) {
-    return "✔✔"; // delivered gray
-  }
-
-  if (msg.isSeenByAll) {
-    return <span style={{ color: "#0b93f6" }}>✔✔</span>; // BLUE
-  }
-
-  return "✔✔"; // seen by some (gray)
-};
-
 
   return (
     <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50">
@@ -1575,9 +1545,9 @@ useEffect(() => {
                           </div>
                         );
                       })}
-{/* dm tick */}
+
                     {/* Message Status and Time */}
-                    {selectedUser &&  <div
+                    <div
                       className={`flex items-center justify-end gap-2 mt-2 ${
                         isMe ? "text-blue-100" : "text-gray-500"
                       }`}
@@ -1594,13 +1564,7 @@ useEffect(() => {
                           )}
                         </div>
                       )}
-                    </div>}
-                    {/* channel tick */}
-                   {selectedChannel && <div>
-                    <div className="message-footer">
-  {renderTick(m)}
-</div>
-</div>}
+                    </div>
                   </div>
                 </div>
               </div>
