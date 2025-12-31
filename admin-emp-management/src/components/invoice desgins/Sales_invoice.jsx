@@ -217,7 +217,7 @@ const invoiceId = params.get("invoiceId");
         className="bg-white   max-w-4xl mx-auto text-xs leading-tight p-6"
       >
         {/* Header */}
-        <div className="border-b-2 border-l-2 border-r-2 border-black  border-t-2 flex justify-center text-[14px] text-black font-semibold p-1 uppercase">
+        <div className="border-b-2 border-l-2 border-r-2 border-black pb-2 border-t-2 flex justify-center text-[14px] text-black font-semibold p-1 uppercase">
           SALES Invoice
         </div>
         <div className="flex justify-between  h-full border-black items-start  border-r-2 border-l-2">
@@ -286,6 +286,7 @@ const invoiceId = params.get("invoiceId");
               <strong>Email</strong>- {settingData?.invoiceEmail}/{" "}
               <strong>PH</strong> - {settingData?.invoicePhone}
             </p>{" "}
+            <div className="pt-2"></div>
           </div>
 
           <div className="w-[50%]  border-black">
@@ -335,13 +336,13 @@ const invoiceId = params.get("invoiceId");
                 </th>
               </tr>
             </thead>
-            <tbody className="">
+            <tbody className="text-black font-semibold ">
               {allinvoiceDetails?.items?.map((item, index) => (
                 <tr key={index} className="">
-                  <td className="no-line-bot p-1 border-r-2 border-l-2  align-middle border-black">
+                  <td className="no-line-bot p-1 border-r-2 border-l-2 pb-2 align-middle border-black">
                     {index + 1}
                   </td>
-                  <td className="no-line-bot p-1 border-r-2  align-middle  border-black text-left">
+                  <td className="no-line-bot p-1 border-r-2  align-middle pb-2  border-black text-left">
                     {item.description} <br />
                     <a
                       href={item.link}
@@ -352,19 +353,20 @@ const invoiceId = params.get("invoiceId");
                       {item.link}
                     </a>
                   </td>
-                  <td className="no-line-bot p-1 border-r-2 align-middle   border-black">
+                  <td className="no-line-bot p-1 border-r-2 align-middle pb-2  border-black">
                     {item.hsnCode}
                   </td>
-                  <td className="no-line-bot p-1 border-r-2  align-middle  border-black">
+                  <td className="no-line-bot p-1 border-r-2  align-middle pb-2 border-black">
                     {item.quantity}
                   </td>
-                  <td className="no-line-bot p-1 border-r-2 align-middle   border-black">
-                    {item.rate}
+                  <td className="no-line-bot p-1 border-r-2 align-middle pb-2  border-black">
+                    {NumberFormat(item.rate)}
                   </td>
-                  <td className="no-line-bot p-1 border-r-2  align-middle  border-black">
-                    Nos
+                  <td className="no-line-bot p-1 border-r-2  align-middle pb-2  border-black">
+                                        {item.rate ? "Nos" : ""}
+
                   </td>
-                  <td className="no-line-bot p-1 border-r-2   align-middle border-black">
+                  <td className="no-line-bot p-1 border-r-2 pb-2  align-middle border-black">
                     {NumberFormat(item.amount)}
                   </td>
                 </tr>
@@ -428,7 +430,7 @@ const invoiceId = params.get("invoiceId");
           <div className="w-full  border-black">
             <div className="border-b-2  border-black border-l-2   ">
               {" "}
-              <p className="   underline text-[14px]  border-black border-r-2 pt-1 px-1">
+              <p className="   underline text-[14px]  underline-offset-4 border-black border-r-2 pt-1 px-1">
                 Company's Bank Details
               </p>
               <div className=" border-black border-r-2 p-1">
@@ -458,7 +460,7 @@ const invoiceId = params.get("invoiceId");
 
 
             <div className="">
-              <p className="font-semibold border-b-2  border-black  underline text-[16px] p-1 pb-2">
+              <p className="font-semibold border-b-2  border-black  underline underline-offset-4 text-[16px] p-1 pb-2">
                 Declaration
               </p>
               <p className="pt-1 p-1">

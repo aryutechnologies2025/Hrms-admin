@@ -287,16 +287,16 @@ const finalItems = Object.values(groupedItems || {});
                                 <strong className=" w-[40%]  inline-block">Invoice No</strong>
                                 <strong className="font-bold">:</strong> {allinvoiceDetails?.invoice_number}
                             </div>
-                            <div className="pt-1">
+                            <div className="pt-1 pb-3">
                                 <strong className=" w-[40%]  inline-block">Dated</strong>
                                 <strong className="font-bold">:</strong> {new Date().toLocaleDateString("en-IN")}
                             </div>
-                            <div className="pt-1 pb-1">
+                            {/* <div className="pt-1 pb-1">
                                 <strong className=" w-[40%]  inline-block">
                                     Payment Terms
                                 </strong>
                                 <strong className="font-bold">:</strong> within 30 days
-                            </div>
+                            </div> */}
                         </div>
 
                         <div className="p-1 text-[12px]   border-black">
@@ -323,6 +323,7 @@ const finalItems = Object.values(groupedItems || {});
               <strong>Email</strong>- {settingData?.invoiceEmail}/{" "}
               <strong>PH</strong> - {settingData?.invoicePhone}
             </p>{" "}
+            <div className="pt-1"></div>
           </div>
 
           <div className="w-[50%]  border-black">
@@ -372,7 +373,7 @@ const finalItems = Object.values(groupedItems || {});
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="">
+                        <tbody className="text-black font-semibold">
                             {allinvoiceDetails?.items?.map((item, index) => (
                                 <tr key={index} className="">
                                     <td className="no-line-bot p-1 border-r-2 border-l-2  align-middle border-black">
@@ -396,10 +397,11 @@ const finalItems = Object.values(groupedItems || {});
                                         {item.quantity}
                                     </td>
                                     <td className="no-line-bot p-1 border-r-2 align-middle   border-black">
-                                        {item.rate}
+                    {NumberFormat(item.rate)}
                                     </td>
                                     <td className="no-line-bot p-1 border-r-2  align-middle  border-black">
-                                        Nos
+                                                            {item.rate ? "Nos" : ""}
+
                                     </td>
                                     <td className="no-line-bot p-1 border-r-2   align-middle border-black">
                                         {NumberFormat(item.amount)}
@@ -457,7 +459,7 @@ const finalItems = Object.values(groupedItems || {});
                             {/* 1gst */}
                             <tr className="">
                                 <td className="no-line-bot p-1 border-r-2  border-l-2   border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black text-right font-bold">
+                                <td className="no-line-bot p-1 border-r-2 pb-2   border-black text-right font-bold">
                                     Output IGST Export 0%
                                 </td>
                                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
@@ -491,7 +493,7 @@ const finalItems = Object.values(groupedItems || {});
                 {/* Amount in Words */}
                 <div className="border-b-2 border-r-2 border-l-2 p-1 border-black">
                     <p className="">Amount Chargeable (in Words)</p>
-                    <p className="font-semibold">
+                    <p className="font-semibold pb-2">
                         {" "}
                         {amountInWords(allinvoiceDetails?.total_amount)}
 
@@ -522,7 +524,7 @@ const finalItems = Object.values(groupedItems || {});
                                 <th className=" border-r-2   border-b-2 w-[111px] p-1 border-black">
                                     SGST
                                 </th>
-                                <th className=" border-r-2   border-b-2   w-[111px] p-1 border-black">
+                                <th className=" border-r-2   border-b-2 pb-2  w-[111px] p-1 border-black">
                                     Total Tax amount
                                 </th>
                             </tr>
@@ -605,10 +607,10 @@ const finalItems = Object.values(groupedItems || {});
                             ))}
                         </tbody> */}
 
-                                   <tbody>
+                                   <tbody className="text-black font-semibold">
                           {finalItems.map((item, index) => (
                             <tr key={index}>
-                              <td className="p-1 border-r-2 border-l-2 text-center border-black">
+                              <td className="p-1 pb-2 border-r-2 border-l-2 text-center border-black">
                                 {item.hsnCode}
                               </td>
                         
@@ -617,23 +619,23 @@ const finalItems = Object.values(groupedItems || {});
                               </td>
                         
                               <td className="p-1 border-r-2 text-right border-black">
-                                {/* {settingData?.cgst}.00% */}0.00%
+                                {/* {settingData?.cgst}.00% */}0
                               </td>
                         
                               <td className="p-1 border-r-2 text-right border-black">
-                                0.00
+                                0
                               </td>
                         
                               <td className="p-1 border-r-2 text-right border-black">
-                                {(
+                                {NumberFormat(
                                   (item.amount * Number(settingData?.cgst || 0)) / 100
-                                ).toFixed(2)}
+                                )}
                               </td>
                         
                               <td className="p-1 border-r-2 text-right border-black">
-                                {(
+                                {NumberFormat(
                                   (item.amount * Number(settingData?.sgst || 0)) / 100
-                                ).toFixed(2)}
+                                )}
                               </td>
                         
                               <td className="p-1 border-r-2 text-right border-black">
@@ -648,7 +650,7 @@ const finalItems = Object.values(groupedItems || {});
                         <tfoot className="border-b-2  border-black text-[14px]">
                             {/* taxable */}
                             <tr className="border-t-2  border-black">
-                                <td className="no-line-bot p-1 border-r-2 border-l-2  text-center  border-black  font-bold">
+                                <td className="no-line-bot p-1 border-r-2 border-l-2 pb-2 text-center  border-black  font-bold">
                                     Total
                                 </td>
                                 <td className="no-line-bot p-1 border-r-2    border-black text-right font-bold">
@@ -702,7 +704,7 @@ const finalItems = Object.values(groupedItems || {});
                         </div>
 
                         <div className="">
-                            <p className="font-semibold border-b-2  border-black  underline text-[16px] p-1 pb-2">
+                            <p className="font-semibold border-b-2  border-black  underline underline-offset-4 text-[16px] p-1 pb-2">
                                 Declaration
                             </p>
                             <p className="pt-1 p-1">
@@ -711,9 +713,9 @@ const finalItems = Object.values(groupedItems || {});
                         </div>
                     </div>
                     <div className="w-[38%] border-b-2 border-black">
-                        <div className="border-b-2  border-black border-l-2 border-r-2 -mt-4 border-t-2 ">
+                        <div className="border-b-2  border-black border-l-2 border-r-2 -mt-8 border-t-2 ">
                             {" "}
-                            <p className="   underline text-[14px]  border-black  pt-1 px-1">
+                            <p className="   underline text-[14px] underline-offset-4  border-black pb-4  pt-1 px-1">
                                 Company's Bank Details
                             </p>
                             <div className=" border-black   p-1">
