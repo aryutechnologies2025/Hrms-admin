@@ -116,12 +116,12 @@ const Declaration_details = () => {
   const fetchEmployeeList = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/employees/all-active-employees`,
+        `${API_URL}/api/employees/all-employees`,
         {
           withCredentials: true,
         }
       );
-      // console.log("response", response.data.data);
+      console.log("response", response.data.data);
 
       const employeeemail = response.data.data.map((emp) => ({
         label: emp.employeeName,
@@ -551,7 +551,7 @@ const Declaration_details = () => {
                   title="Download Declaration"
                   onClick={() =>
                     window.open(
-                      `${API_URL}/api/uploads/others/${file.filepath}`,
+                      `${API_URL}/api/uploads/DeclarationDocuments/${file.filepath}`,
                       "_blank"
                     )
                   }
@@ -598,7 +598,7 @@ const Declaration_details = () => {
                   title="Download Original"
                   onClick={() =>
                     window.open(
-                      `${API_URL}/api/uploads/originalDocuments/${file.filepath}`,
+                      `${API_URL}/api/uploads/originalDeclarationDocuments/${file.filepath}`,
                       "_blank"
                     )
                   }
