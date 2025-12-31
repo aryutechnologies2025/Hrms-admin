@@ -292,7 +292,7 @@ const Invoice = () => {
         className="bg-white   max-w-4xl mx-auto text-xs leading-tight p-6"
       >
         {/* Header */}
-        <div className="border-b-2 border-l-2 border-r-2 border-black  border-t-2 flex justify-center text-[14px] text-black font-semibold p-1 uppercase">
+        <div className="border-b-2 border-l-2 border-r-2 border-black pb-2 border-t-2 flex justify-center text-[14px] text-black font-semibold p-1 uppercase">
           Tax Invoice
         </div>
         <div className="flex justify-between  h-full border-black items-start  border-r-2 border-l-2">
@@ -313,7 +313,7 @@ const Invoice = () => {
                 <strong className=" w-[40%]  inline-block">Invoice No</strong>
                 <strong className="font-bold">:</strong> {allinvoiceDetails?.invoice_number}
               </div>
-              <div className="pt-1 pb-3">
+              <div className="pt-1 pb-5">
                 <strong className=" w-[40%]  inline-block">Dated</strong>
                 <strong className="font-bold">:</strong> {new Date().toLocaleDateString("en-IN")}
               </div>
@@ -348,8 +348,8 @@ const Invoice = () => {
 
 
         {/* gst in both side */}
-        <div className="flex justify-between h-full border-black items-start border-b-2 border-r-2 border-l-2">
-          <div className=" border-black w-[50%] border-r-2 p-1 ">
+        <div className="flex justify-between h-full border-black items-start  border-r-2 border-l-2">
+          <div className=" border-black w-[50%] border-r-2 p-1  ">
             <p className="pt-2">
               <strong>GSTIN/UIN</strong>: {settingData?.invoiceGstin}
             </p>
@@ -357,9 +357,10 @@ const Invoice = () => {
               <strong>Email</strong>- {settingData?.invoiceEmail}/{" "}
               <strong>PH</strong> - {settingData?.invoicePhone}
             </p>{" "}
+            <div className="pt-1"></div>
           </div>
 
-          <div className="w-[50%]  border-black">
+          <div className="w-[50%]  border-black ">
 
 
             <div className="p-1 text-[12px]   border-black">
@@ -378,7 +379,7 @@ const Invoice = () => {
         </div>
         {/* table */}
 
-        <div className=" ">
+        <div className="border-t-2 border-black  ">
           {" "}
           <table className="w-full   text-center ">
             <thead className="border-black">
@@ -406,7 +407,7 @@ const Invoice = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className="">
+            <tbody className="text-black font-medium">
               {allinvoiceDetails?.items?.map((item, index) => (
                 <tr key={index} className="">
                   <td className="no-line-bot p-1 border-r-2 border-l-2  align-middle border-black">
@@ -430,10 +431,10 @@ const Invoice = () => {
                     {item.quantity}
                   </td>
                   <td className="no-line-bot p-1 border-r-2 align-middle   border-black">
-                    {item.rate}
+                    {NumberFormat(item.rate)}
                   </td>
                   <td className="no-line-bot p-1 border-r-2  align-middle  border-black">
-                    Nos
+                    {item.rate ? "Nos" : ""}
                   </td>
                   <td className="no-line-bot p-1 border-r-2 pb-2  align-middle border-black">
                     {NumberFormat(item.amount)}
@@ -464,13 +465,13 @@ const Invoice = () => {
                 </td>
                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                <td className="no-line-bot p-1 border-r-2    border-black">
+                <td className="no-line-bot p-1 border-r-2  font-semibold   border-black">
                   {settingData?.cgst} %
                 </td>
                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
                 <td className="no-line-bot p-1 border-r-2    border-black font-bold">
-                  {(
-                    (Number(totalAmount || 0) * Number(settingData?.cgst || 0)) / 100).toFixed(2)}
+                  {NumberFormat(
+                    (Number(totalAmount || 0) * Number(settingData?.cgst || 0)) / 100)}
                 </td>
               </tr>
               {/* sgst */}
@@ -481,24 +482,24 @@ const Invoice = () => {
                 </td>
                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                <td className="no-line-bot p-1 border-r-2    border-black">
+                <td className="no-line-bot p-1 border-r-2  font-semibold   border-black">
                   {settingData?.sgst} %
                 </td>
                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
                 <td className="no-line-bot p-1 border-r-2    border-black font-bold">
-                  {((Number(totalAmount || 0) * Number(settingData?.sgst || 0)) / 100).toFixed(2)}
+                  {NumberFormat((Number(totalAmount || 0) * Number(settingData?.sgst || 0)) / 100)}
                 </td>
               </tr>
 
               {/* 1gst */}
               <tr className="">
                 <td className="no-line-bot p-1 border-r-2  border-l-2   border-black"></td>
-                <td className="no-line-bot p-1 border-r-2    border-black text-right font-bold">
+                <td className="no-line-bot p-1 pb-2 border-r-2    border-black text-right font-bold">
                   Output IGST {settingData?.igst}%
                 </td>
                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                <td className="no-line-bot p-1 border-r-2    border-black">
+                <td className="no-line-bot p-1 border-r-2  font-semibold  border-black">
                   {settingData?.igst} %
                 </td>
                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
@@ -527,7 +528,7 @@ const Invoice = () => {
         {/* Amount in Words */}
         <div className="border-b-2 border-r-2 border-l-2 p-1 border-black">
           <p className="">Amount Chargeable (in Words)</p>
-          <p className="font-semibold">
+          <p className="font-semibold pb-2">
             {" "}
             {amountInWords(allinvoiceDetails?.total_amount)}
           </p>
@@ -557,7 +558,7 @@ const Invoice = () => {
                 <th className=" border-r-2   border-b-2 w-[111px] p-1 border-black">
                   SGST
                 </th>
-                <th className=" border-r-2   border-b-2   w-[111px] p-1 border-black">
+                <th className=" border-r-2   border-b-2   w-[111px] p-1 pb-2 border-black">
                   Total Tax amount
                 </th>
               </tr>
@@ -652,10 +653,10 @@ const Invoice = () => {
               ))}
             </tbody> */}
 
-            <tbody>
+            <tbody className="font-semibold text-black">
               {finalItems.map((item, index) => (
                 <tr key={index}>
-                  <td className="p-1 border-r-2 border-l-2 text-center border-black">
+                  <td className="p-1 border-r-2 border-l-2 pb-2  text-center border-black">
                     {item.hsnCode}
                   </td>
 
@@ -664,23 +665,23 @@ const Invoice = () => {
                   </td>
 
                   <td className="p-1 border-r-2 text-right border-black">
-                    {settingData?.igst}.00%
+                    {NumberFormat(settingData?.igst)}%
                   </td>
 
                   <td className="p-1 border-r-2 text-right border-black">
-                    0.00
+                    0
                   </td>
 
                   <td className="p-1 border-r-2 text-right border-black">
-                    {(
+                    {NumberFormat(
                       (item.amount * Number(settingData?.cgst || 0)) / 100
-                    ).toFixed(2)}
+                    )}
                   </td>
 
                   <td className="p-1 border-r-2 text-right border-black">
-                    {(
+                    {NumberFormat(
                       (item.amount * Number(settingData?.sgst || 0)) / 100
-                    ).toFixed(2)}
+                    )}
                   </td>
 
                   <td className="p-1 border-r-2 text-right border-black">
@@ -695,8 +696,8 @@ const Invoice = () => {
 
             <tfoot className="border-b-2  border-black text-[14px]">
               {/* taxable */}
-              <tr className="border-t-2  border-black">
-                <td className="no-line-bot p-1 border-r-2 border-l-2  text-center  border-black  font-bold">
+              <tr className=" border-black">
+                <td className="no-line-bot p-1 border-r-2 border-l-2 pb-2 text-center  border-black  font-bold">
                   Total
                 </td>
                 <td className="no-line-bot p-1 border-r-2    border-black text-right font-bold">
@@ -731,7 +732,7 @@ const Invoice = () => {
             </strong>
           </p>
           <p>
-            <span className="w-[30%] inline-block pb-1">Company's PAN No</span>
+            <span className="w-[30%] inline-block pb-2">Company's PAN No</span>
             <strong>: AAPCA1407R</strong>
           </p>
         </div>
@@ -763,7 +764,7 @@ const Invoice = () => {
           <div className="w-full  border-black">
             <div className="border-b-2  border-black border-l-2 border-r-2  border-t-2 ">
               {" "}
-              <p className="   underline text-[14px]  border-black  pt-1 px-1">
+              <p className="   underline underline-offset-4 text-[14px]  border-black  pt-1 px-1">
                 Company's Bank Details
               </p>
               <div className=" border-black  p-1">
@@ -793,7 +794,7 @@ const Invoice = () => {
 
 
             <div className="">
-              <p className="font-semibold border-b-2  border-black  underline text-[16px] p-1 pb-2">
+              <p className="font-semibold border-b-2  border-black  underline underline-offset-4  text-[16px] p-1 pb-2">
                 Declaration
               </p>
               <p className="pt-1 p-1">

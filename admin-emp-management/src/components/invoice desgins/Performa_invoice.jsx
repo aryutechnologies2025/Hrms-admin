@@ -14,8 +14,8 @@ import Swal from "sweetalert2";
 
 const Performa_invoice = () => {
     const invoiceRef = useRef();
-  const params = new URLSearchParams(window.location.search);
-const invoiceId = params.get("invoiceId");
+    const params = new URLSearchParams(window.location.search);
+    const invoiceId = params.get("invoiceId");
     const location = useLocation();
     // const { invoiceId } = location.state || {};
 
@@ -278,33 +278,34 @@ const invoiceId = params.get("invoiceId");
 
 
                 <div className="flex justify-between h-full border-black items-start border-b-2 border-r-2 border-l-2">
-          <div className=" border-black w-[50%] border-r-2 p-1 ">
-            <p className="pt-2">
-              <strong>GSTIN/UIN</strong>: {settingData?.invoiceGstin}
-            </p>
-            <p className="pt-2">
-              <strong>Email</strong>- {settingData?.invoiceEmail}/{" "}
-              <strong>PH</strong> - {settingData?.invoicePhone}
-            </p>{" "}
-          </div>
+                    <div className=" border-black w-[50%] border-r-2 p-1 ">
+                        <p className="pt-2">
+                            <strong>GSTIN/UIN</strong>: {settingData?.invoiceGstin}
+                        </p>
+                        <p className="pt-2">
+                            <strong>Email</strong>- {settingData?.invoiceEmail}/{" "}
+                            <strong>PH</strong> - {settingData?.invoicePhone}
+                        </p>{" "}
+                        <div className="pt-2"></div>
+                    </div>
 
-          <div className="w-[50%]  border-black">
-
-
-            <div className="p-1 text-[12px]   border-black">
-
-              <p className="pt-2">
-                <strong>GSTIN/UIN</strong>: {allinvoiceDetails?.clientId?.gst}
-              </p>
-              <p className="pt-2">
-                <strong>Email</strong>- {allinvoiceDetails?.clientId?.email} / <strong>PH</strong>{" "}
-                - {allinvoiceDetails?.clientId?.phone_number}
-              </p>{" "}
-            </div>
-          </div>
+                    <div className="w-[50%]  border-black">
 
 
-        </div>
+                        <div className="p-1 text-[12px]   border-black">
+
+                            <p className="pt-2">
+                                <strong>GSTIN/UIN</strong>: {allinvoiceDetails?.clientId?.gst}
+                            </p>
+                            <p className="pt-2">
+                                <strong>Email</strong>- {allinvoiceDetails?.clientId?.email} / <strong>PH</strong>{" "}
+                                - {allinvoiceDetails?.clientId?.phone_number}
+                            </p>{" "}
+                        </div>
+                    </div>
+
+
+                </div>
                 {/* table */}
 
                 <div className=" ">
@@ -335,7 +336,7 @@ const invoiceId = params.get("invoiceId");
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="">
+                        <tbody className="text-black font-semibold">
                             {allinvoiceDetails?.items?.map((item, index) => (
                                 <tr key={index} className="">
                                     <td className="no-line-bot p-1 border-r-2 border-l-2  align-middle border-black">
@@ -359,10 +360,10 @@ const invoiceId = params.get("invoiceId");
                                         {item.quantity}
                                     </td>
                                     <td className="no-line-bot p-1 border-r-2 align-middle   border-black">
-                                        {item.rate}
+                                        {NumberFormat(item.rate)}
                                     </td>
                                     <td className="no-line-bot p-1 border-r-2  align-middle  border-black">
-                                        Nos
+                                        {item.rate ? "Nos" : ""}
                                     </td>
                                     <td className="no-line-bot p-1 border-r-2   align-middle border-black">
                                         {NumberFormat(item.amount)}
@@ -393,13 +394,13 @@ const invoiceId = params.get("invoiceId");
                                 </td>
                                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
                                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black">
+                                <td className="no-line-bot p-1 border-r-2  font-semibold  border-black">
                                     {settingData?.cgst} %
                                 </td>
                                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
                                 <td className="no-line-bot p-1 border-r-2    border-black font-bold">
-                                    {(
-                                        (Number(totalAmount || 0) * Number(settingData?.cgst || 0)) / 100).toFixed(2)}
+                                    {NumberFormat(
+                                        (Number(totalAmount || 0) * Number(settingData?.cgst || 0)) / 100)}
                                 </td>
                             </tr>
                             {/* sgst */}
@@ -410,12 +411,12 @@ const invoiceId = params.get("invoiceId");
                                 </td>
                                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
                                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
-                                <td className="no-line-bot p-1 border-r-2    border-black">
+                                <td className="no-line-bot p-1 border-r-2 font-semibold   border-black">
                                     {settingData?.sgst} %
                                 </td>
                                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
                                 <td className="no-line-bot p-1 border-r-2    border-black font-bold">
-                                    {((Number(totalAmount || 0) * Number(settingData?.sgst || 0)) / 100).toFixed(2)}
+                                    {NumberFormat((Number(totalAmount || 0) * Number(settingData?.sgst || 0)) / 100)}
                                 </td>
                             </tr>
 
@@ -484,7 +485,7 @@ const invoiceId = params.get("invoiceId");
 
                     <div className="border-b-2 w-[50%] border-black border-l-2   ">
                         {" "}
-                        <p className="   underline text-[14px]  border-black  pt-1 px-1">
+                        <p className="   underline text-[14px] underline-offset-8  border-black  pt-1 px-1">
                             Company's Bank Details
                         </p>
                         <div className=" border-black  p-1">

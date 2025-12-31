@@ -626,6 +626,8 @@ const Invoice_details = () => {
     },
   ];
 
+  
+
   const handleDelete = async (id) => {
     // console.log("editid", id);
 
@@ -820,7 +822,7 @@ const Invoice_details = () => {
 
         {isOpenClient && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
-            <div className="bg-white rounded-2xl  shadow-2xl w-[25%] p-6 relative overflow-y-auto max-h-[90vh]">
+            <div className="bg-white rounded-2xl  shadow-2xl w-[100%] md:w-[25%] p-6 relative overflow-y-auto max-h-[90vh]">
 
               {/* Close button */}
               <button
@@ -879,7 +881,7 @@ const Invoice_details = () => {
 
         {isOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-[50%] p-6 relative overflow-y-auto max-h-[90vh]">
+            <div className="bg-white rounded-2xl shadow-2xl w-[100%] md:w-[50%] p-6 relative overflow-y-auto max-h-[90vh]">
 
               {/* Close button */}
               <button
@@ -1067,9 +1069,10 @@ const Invoice_details = () => {
             </div>
           </div>
         )}
-{isOpeninvoice && (
+
+        {isOpeninvoice && (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
-    <div className="bg-white rounded-2xl shadow-2xl w-[25%] p-6 relative max-h-[90vh] overflow-y-auto">
+    <div className="bg-white rounded-2xl shadow-2xl w-[100%] md:w-[25%] p-6 relative max-h-[90vh] overflow-y-auto">
 
       {/* Close button */}
       <button
@@ -1117,7 +1120,7 @@ const Invoice_details = () => {
       </div>
     </div>
   </div>
-)}
+         )}
 
 
 
