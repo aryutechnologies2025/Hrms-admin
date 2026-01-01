@@ -2947,6 +2947,7 @@ const CreateEmployee_Mainbar = () => {
                             <option value="Mother">Mother</option>
                             <option value="Sibling">Sibling</option>
                             <option value="Friend">Friend</option>
+                            <option value="Spouse">Spouse</option>
                           </select>
                         </div>
                       </div>
