@@ -2793,6 +2793,34 @@ const handleLastworkdate = (date) => {
                               Sibling
                             </label>
                           </div>
+
+                          {/* spouse */}
+
+                          <div className="flex items-center gap-1">
+                            <input
+                              type="radio"
+                              name="RELATION"
+                              id="Spouse"
+                              value="Spouse"
+                              checked={emergency_relationtype === "Spouse"}
+                              onChange={(e) => {
+                                setRelationType(e.target.value);
+                                setFormData({
+                                  ...formData, // Spread the existing formData
+                                  emergencyContact: {
+                                    ...formData.emergencyContact, // Spread the existing employee_details
+                                    relation: e.target.value, // Update only the passport_no field
+                                  },
+                                });
+                              }}
+                            />
+                            <label
+                              htmlFor="Spouse"
+                              className="tex-sm font-medium"
+                            >
+                              Spouse
+                            </label>
+                          </div>
                         </div>
 
                         {/* <p className="text-sm">Add Aadar</p> */}
