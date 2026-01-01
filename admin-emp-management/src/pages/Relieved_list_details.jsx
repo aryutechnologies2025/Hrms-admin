@@ -297,7 +297,7 @@ const Relieved_list_details = () => {
     },
 
     {
-      title: "Total working date",
+      title: "Total working Period",
       data: "TotalExperienceTillJoining",
     },
 
@@ -451,7 +451,7 @@ const Relieved_list_details = () => {
     // },
   ];
 
-  console.log("columns", columns);
+  // console.log("columns", columns);
 
   //   all buttons
 
@@ -818,7 +818,6 @@ const Relieved_list_details = () => {
             </div>
             {/* Add Button */}
             <div className="flex justify-between mt-2 mb-3">
-              <h1 className="text-2xl md:text-3xl font-semibold">Relieved List</h1>
               <div className="flex gap-3">
                 {" "}
                 {/* <button
@@ -854,11 +853,12 @@ const Relieved_list_details = () => {
                     paging: true,
                     searching: true,
                     ordering: true,
+                    order: [],    
                     scrollX: true,
                     responsive: true,
                     autoWidth: false,
                   }}
-                  className="display nowrap bg-white"
+                  className="display nowrap bg-white "
                 />
               </div>
             </div>
