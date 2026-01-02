@@ -15,6 +15,7 @@ import Login from "./pages/Login";
 import PageNotFound from "./pages/PageNotFound";
 import CreateVacancy from "./pages/CreateVacancy";
 import Roles from "./pages/Roles";
+import CustomerDashboard from "./pages/Customer";
 import Permission from "./pages/Permission";
 import Sitemap from "./pages/Sitemap";
 import Income_History from "./pages/Income_History";
@@ -396,6 +397,15 @@ function App() {
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
           <Roles />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/customer-dashboard",
+      permissionTitle: "On Boarding",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <CustomerDashboard />
         </ProtectedRoute>
       ),
     },

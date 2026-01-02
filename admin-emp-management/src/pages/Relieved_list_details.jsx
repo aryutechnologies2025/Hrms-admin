@@ -183,8 +183,8 @@ const Relieved_list_details = () => {
         employeeName: alldatarow?.employeeName,
         employeeId: alldatarow?.employeeId,
         role: alldatarow?.role,
-        dateOfJoining: alldatarow?.dateOfBirth
-          ? new Date(alldatarow.dateOfBirth).toISOString()
+        dateOfJoining: alldatarow?.dateOfJoining
+          ? new Date(alldatarow.dateOfJoining).toISOString()
           : null,
         lastRelivingDate: alldatarow?.lastDate
           ? new Date(alldatarow.lastDate).toISOString()
@@ -590,17 +590,21 @@ const Relieved_list_details = () => {
     container.style.position = "absolute";
     container.style.left = "-9999px";
     document.body.appendChild(container);
-
-    await new Promise((resolve) => {
+    const root = createRoot(container);
+    const contentReady = new Promise((resolve) => {
       root.render(
         <Letters_download
           letterTitle={letterTitle._id}
           employeeId={employeeId.id}
-          onReady={resolve} // called after mount
+          onReady={() => {
+            // Give a small delay to ensure DOM is fully updated
+            setTimeout(resolve, 300);
+          }}
         />
       );
     });
-
+    await contentReady;
+    await new Promise(resolve => setTimeout(resolve, 500));
     // capture canvas
     const canvas = await html2canvas(container, { scale: 1.5 });
 
@@ -956,7 +960,7 @@ const Relieved_list_details = () => {
                         type="text"
                         // value={alldatarow?.dateOfBirth}
                         value={
-                          formatDateTime(alldatarow?.dateOfBirth)
+                          formatDateTime(alldatarow?.dateOfJoining)
                         }
                         disabled
                         className="w-[50%] px-3 py-2 border border-gray-300 bg-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
