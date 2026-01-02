@@ -43,8 +43,10 @@ const Roles_Mainbar = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [website, setWebsite] = useState("");
+  const [monthly, setMonthly] = useState("");
   const [status, setStatus] = useState("");
   const [subscription, setSubscription] = useState("");
+  console.log("subscription", subscription);
   const storedDetatis = localStorage.getItem("hrmsuser");
   const parsedDetails = JSON.parse(null);
   const userid = parsedDetails ? parsedDetails.id : null;
@@ -93,6 +95,7 @@ const Roles_Mainbar = () => {
     customerPhone: "",
     customerWebsite: "",
     subscriptionType: "",
+    monthly: "",
     active: "",
   });
 
@@ -105,6 +108,7 @@ const Roles_Mainbar = () => {
       customerPhone: row.customerPhone,
       customerWebsite: row.customerWebsite,
       subscriptionType: row.subscriptionType,
+      monthly: row.monthly,
       active: row.active,
       id: row._id,
     });
@@ -128,6 +132,7 @@ const Roles_Mainbar = () => {
         companyName: company,
         customerWebsite: website,
         subscriptionType: subscription,
+        monthly: monthly,
         active: status,
         departmentId: selectedEmployeeTypeId,
       };
@@ -146,7 +151,8 @@ const Roles_Mainbar = () => {
       setPassword("");
       setEmail("");
       setWebsite("");
-
+      setMonthly("");
+      setSubscription("");
       setSelectedEmployeeTypeId(null);
       setStatus("");
       toast.success("Role name created successfully.");
@@ -167,6 +173,7 @@ const Roles_Mainbar = () => {
       customerPhone,
       customerWebsite,
       subscriptionType,
+      monthly,
       active,
     } = roleDetails;
     // console.log(roleId);
@@ -183,6 +190,7 @@ const Roles_Mainbar = () => {
           customerPhone,
           customerWebsite,
           subscriptionType,
+          monthly,
           active,
           // departmentId,
           // created_by: userid,
@@ -197,6 +205,7 @@ const Roles_Mainbar = () => {
         customerPhone: "",
         customerWebsite: "",
         subscriptionType: "",
+        monthly: "",
         active: "",
         id: "",
       });
@@ -700,7 +709,7 @@ const Roles_Mainbar = () => {
                         </label>
                       </div>
                       <div className="w-[60%] md:w-[50%]">
-                        <input
+                        {/* <input
                           type="text"
                           id="rolename"
                           name="rolename"
@@ -708,9 +717,60 @@ const Roles_Mainbar = () => {
                             setSubscription(e.target.value);
                           }}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                        /> */}
+
+                        <select
+                          name="subscription"
+                          id="subscription"
+                          onChange={(e) => {
+                            setSubscription(e.target.value);
+                          }}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">Select a Subscription</option>
+                          <option value="one_time">One Time</option>
+                          <option value="recurring">Recurring</option>
+                        </select>
                       </div>
                     </div>
+
+                    {subscription === "recurring" && (
+                      <div className="mt-2 md:mt-10 flex justify-between items-center ">
+                      <div className="">
+                        <label className="block text-[15px] md:text-md font-medium mb-2">
+                         Monthly
+                          <span className="text-red-500">*</span>
+                        </label>
+                      </div>
+                      <div className="w-[60%] md:w-[50%]">
+                        {/* <input
+                          type="text"
+                          id="rolename"
+                          name="rolename"
+                          onChange={(e) => {
+                            setSubscription(e.target.value);
+                          }}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        /> */}
+
+                        <select
+                          name="monthly"
+                          id="monthly"
+                          onChange={(e) => {
+                            setMonthly(e.target.value);
+                          }}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">Select a Monthly Type</option>
+                          <option value="15days">15 Days</option>
+                          <option value="30days">30 Days</option>
+                          <option value="60days">60 Days</option>
+                          <option value="1year">1 Year</option>
+                        </select>
+                      </div>
+                    </div>
+                    )}
+                    
 
                     {/* {error.rolename && <p className="error">{error.rolename}</p>} */}
 
@@ -973,7 +1033,7 @@ const Roles_Mainbar = () => {
                             <span className="text-red-500">*</span>
                           </label>
                           <div className="w-[60%] md:w-[50%]">
-                            <input
+                            {/* <input
                               name="subscriptionType"
                               type="text"
                               value={roleDetails.subscriptionType}
@@ -984,10 +1044,69 @@ const Roles_Mainbar = () => {
                                 });
                               }}
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
+                            /> */}
+
+                            <select
+                              name="subscriptionType"
+                              id="subscriptionType"
+                              value={roleDetails.subscriptionType}
+                              onChange={(e) => {
+                                setRoleDetails({
+                                  ...roleDetails,
+                                  subscriptionType: e.target.value,
+                                });
+                                 setSubscription(e.target.value);
+                              }}
+                             
+                           
+                     
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="one_time">One Time</option>
+                              <option value="recurring">Recurring</option>
+                            </select>
                           </div>
                         </div>
+                        {subscription === "recurring" && (
+                        <div className="mt-8 flex justify-between items-center">
+                          <label className="block text-[15px] md:text-md font-medium mb-2">
+                            Monthly{" "}
+                            <span className="text-red-500">*</span>
+                          </label>
+                          <div className="w-[60%] md:w-[50%]">
+                            {/* <input
+                              name="subscriptionType"
+                              type="text"
+                              value={roleDetails.subscriptionType}
+                              onChange={(e) => {
+                                setRoleDetails({
+                                  ...roleDetails,
+                                  subscriptionType: e.target.value,
+                                });
+                              }}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            /> */}
 
+                            <select
+                              name="monthly"
+                              id="monthly"
+                              value={roleDetails.monthly}
+                              onChange={(e) => {
+                                setRoleDetails({
+                                  ...roleDetails,
+                                  monthly: e.target.value,
+                                });
+                              }}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="15days">15 Days</option>
+                              <option value="30days">30 Days</option>
+                              <option value="60days">60 Days</option>
+                              <option value="1year">1 Year</option>
+                            </select>
+                          </div>
+                        </div>
+                        )}
                         <div className="mt-8 flex justify-between items-center">
                           <label className="block text-[15px] md:text-md font-medium mb-2">
                             Status <span className="text-red-500">*</span>
