@@ -114,6 +114,7 @@ const Letters_download = ({ letterTitle, employeeId ,onReady}) => {
 
             <div className="mt-10 pt-5">
               <div className="whitespace-pre-line">
+              {/* <p style={{ marginBottom: "8px" }}>{allletter}</p> */}
                 {Array.isArray(allletter)
                   ? allletter.map((item, i) => (
                       <p key={i}>{item.content || item}</p>

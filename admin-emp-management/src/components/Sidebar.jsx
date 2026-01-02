@@ -417,6 +417,17 @@ const Sidebar = () => {
                           </button>
 
                           <button
+                            onClick={() => navigate("/customer-dashboard")}
+                            className={`px-2 py-1 rounded-full 
+                        ${currentPath === "/customer-dashboard"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
+                          >
+                            Customer
+                          </button>
+
+                          <button
                             onClick={() => navigate("/employees")}
                             className={`px-2 py-1 rounded-full 
                         ${currentPath === "/employees"

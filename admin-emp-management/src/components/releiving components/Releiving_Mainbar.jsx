@@ -551,41 +551,67 @@ const Releiving_Mainbar = () => {
   //   document.body.removeChild(container);
   // };
 
-  const handleDownload = async (letterTitle, employeeId) => {
-    // create hidden container
+const handleDownload = async (letterTitle, employeeId) => {
+  try {
+    // Create hidden container
     const container = document.createElement("div");
     container.style.position = "absolute";
     container.style.left = "-9999px";
+    container.style.top = "0";
+    container.style.width = "210mm"; // Match A4 width
+    container.style.minHeight = "297mm"; // Match A4 height
+    container.style.background = "#ffffff";
     document.body.appendChild(container);
 
     const root = createRoot(container);
 
-    await new Promise((resolve) => {
+    // Create a promise that resolves when content is ready
+    const contentReady = new Promise((resolve) => {
       root.render(
         <Letters_download
           letterTitle={letterTitle._id}
           employeeId={employeeId.id}
-          onReady={resolve}
+          onReady={() => {
+            // Give a small delay to ensure DOM is fully updated
+            setTimeout(resolve, 300);
+          }}
         />
       );
     });
 
+    // Wait for content to be ready
+    await contentReady;
 
-    // capture canvas
-    const canvas = await html2canvas(container, { scale: 1.5 });
+    // Additional delay to ensure all images are loaded
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-    const imgData = canvas.toDataURL("image/jpeg", 0.7);
+    // Capture canvas - increase scale for better quality
+    const canvas = await html2canvas(container.firstChild, { 
+      scale: 2,
+      useCORS: true,
+      backgroundColor: "#ffffff",
+      logging: false
+    });
+
+    const imgData = canvas.toDataURL("image/png", 1.0);
     const pdf = new jsPDF("p", "mm", "a4");
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-    pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
-
+    
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
     pdf.save(`${employeeId.employeeName || "Employee"}-${letterTitle.title}.pdf`);
 
-    // clean up
-    root.unmount();
-    document.body.removeChild(container);
-  };
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    alert("Failed to generate PDF. Please try again.");
+  } finally {
+    // Clean up
+    if (container && container.parentNode) {
+      root.unmount();
+      document.body.removeChild(container);
+    }
+  }
+};
 
 
   // const handlePrint = async (letterTitle, employeeId) => {
