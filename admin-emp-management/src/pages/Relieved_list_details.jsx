@@ -737,17 +737,21 @@ const Relieved_list_details = () => {
     document.body.appendChild(container);
 
     // Wait for component to finish loading
-
-    await new Promise((resolve) => {
+    const root = createRoot(container);
+    const contentReady = new Promise((resolve) => {
       root.render(
         <Letters_download
           letterTitle={letterTitle._id}
           employeeId={employeeId.id}
-          onReady={resolve} // called after mount
+          onReady={() => {
+            // Give a small delay to ensure DOM is fully updated
+            setTimeout(resolve, 300);
+          }}
         />
       );
     });
-
+    await contentReady;
+    await new Promise(resolve => setTimeout(resolve, 500));
     // Capture the component
     const canvas = await html2canvas(container, { scale: 1.5 });
     const imgData = canvas.toDataURL("image/jpeg", 0.7);

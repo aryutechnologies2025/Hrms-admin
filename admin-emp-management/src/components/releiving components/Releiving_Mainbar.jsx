@@ -741,17 +741,20 @@ const handleDownload = async (letterTitle, employeeId) => {
     //   );
     // });
     const root = createRoot(container);
-
-    await new Promise((resolve) => {
-      root.render(
-        <Letters_download
-          letterTitle={letterTitle._id}
-          employeeId={employeeId.id}
-          onReady={resolve}
-        />
-      );
-    });
-
+        const contentReady = new Promise((resolve) => {
+          root.render(
+            <Letters_download
+              letterTitle={letterTitle._id}
+              employeeId={employeeId.id}
+              onReady={() => {
+                // Give a small delay to ensure DOM is fully updated
+                setTimeout(resolve, 300);
+              }}
+            />
+          );
+        });
+        await contentReady;
+        await new Promise(resolve => setTimeout(resolve, 500));
 
     // Capture the component
     const canvas = await html2canvas(container, { scale: 1.5 });
