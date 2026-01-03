@@ -1139,35 +1139,73 @@ useEffect(() => {
     return () => socket.off("messages_seen");
   }, [socket]);
 
+// useEffect(() => {
+//   if (!socket || !selectedChannel) return;
+
+//   socket.on("channel_seen_update", ( value ) => {
+//     console.log("CHANNEL SEEN UPDATE RECEIVED:", value);
+//     setMessages((prev) =>
+//       prev.map((msg) => {
+//         if (
+//           msg.channelId !== value?.channelId ||
+//           msg.senderId === value?.senderId
+//         ) {
+//           return msg;
+//         }
+
+//         // if (msg.seenBy.includes(senderId)) return msg;
+
+//         // const updatedSeenBy = [...msg.seenBy, senderId];
+
+//         return {
+//           ...msg,
+//           // seenBy: updatedSeenBy,
+          
+//         };
+//       })
+//     );
+//   });
+
+//   return () => socket.off("channel_seen_update");
+// }, [socket, selectedChannel]);
+
+// useEffect(() => {
+//   if (!socket || !selectedChannel) return;
+
+//   const handleSeenUpdate = ({ channelId, updatedMessages }) => {
+//     if (channelId !== selectedChannel._id) return;
+
+//     setMessages(updatedMessages);
+//   };
+
+//   socket.on("channel_seen_update", handleSeenUpdate);
+
+//   return () => {
+//     socket.off("channel_seen_update", handleSeenUpdate);
+//   };
+// }, [socket, selectedChannel]);
+
 useEffect(() => {
   if (!socket || !selectedChannel) return;
 
-  socket.on("channel_seen_update", ({ channelId, userId, requiredSeen }) => {
+  const handleSeenUpdate = ({ channelId, messageId, isSeenByAll }) => {
+    if (channelId !== selectedChannel._id) return;
+
     setMessages((prev) =>
-      prev.map((msg) => {
-        if (
-          msg.channelId !== channelId ||
-          msg.senderId === userId
-        ) {
-          return msg;
-        }
-
-        if (msg.seenBy.includes(userId)) return msg;
-
-        const updatedSeenBy = [...msg.seenBy, userId];
-
-        return {
-          ...msg,
-          seenBy: updatedSeenBy,
-          isSeenByAll: updatedSeenBy.length >= requiredSeen,
-        };
-      })
+      prev.map((msg) =>
+        msg._id === messageId
+          ? { ...msg, isSeenByAll }
+          : msg
+      )
     );
-  });
+  };
 
-  return () => socket.off("channel_seen_update");
+  socket.on("channel_seen_update", handleSeenUpdate);
+
+  return () => {
+    socket.off("channel_seen_update", handleSeenUpdate);
+  };
 }, [socket, selectedChannel]);
-
 
 
 
@@ -1390,7 +1428,7 @@ useEffect(() => {
   return "✔✔"; // seen by some (gray)
 };
 
-
+console.log(" Message Rendering Chat Window with selectedChannel:", messages);
   return (
     <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50">
       {/* Chat Header */}
