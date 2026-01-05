@@ -855,7 +855,7 @@ export default function Slack_chatwindow({
       .get(`${API_URL}/api/messages/dm/${me}/${other}`)
       .then((res) => setMessages(res.data.data || []));
 
-    socket.emit("mark_seen",{
+    socket.emit("mark_seen", {
       senderId: other,
       receiverId: me,
     });
@@ -888,46 +888,45 @@ export default function Slack_chatwindow({
 
   // joining chaneel and loading messages
 
-useEffect(() => {
-  if (!socket || !selectedChannel || !currentUser?._id) return;
+  useEffect(() => {
+    if (!socket || !selectedChannel || !currentUser?._id) return;
 
-  const channelId = selectedChannel._id;
+    const channelId = selectedChannel._id;
 
-  // 🔹 Join channel room
-  socket.emit("join_channel", { channelId });
+    // 🔹 Join channel room
+    socket.emit("join_channel", { channelId });
 
-  // 🔹 Fetch channel messages
-  const fetchMessages = async () => {
-    try {
-      const res = await axios.get(
-        `${API_URL}/api/messages/channel/${channelId}`
-      );
-      setMessages(res.data.data || []);
+    // 🔹 Fetch channel messages
+    const fetchMessages = async () => {
+      try {
+        const res = await axios.get(
+          `${API_URL}/api/messages/channel/${channelId}`
+        );
+        setMessages(res.data.data || []);
 
-      // 🔹 Mark messages as seen (DB)
-      // await axios.post(`${API_URL}/api/messages/channel-seen`, {
-      //   channelId,
-      //   userId: currentUser._id,
-      // });
+        // 🔹 Mark messages as seen (DB)
+        // await axios.post(`${API_URL}/api/messages/channel-seen`, {
+        //   channelId,
+        //   userId: currentUser._id,
+        // });
 
-      // 🔹 Notify via socket (real-time tick)
-      socket.emit("channel_seen", {
-        channelId,
-        userId: currentUser._id,
-      });
-    } catch (err) {
-      console.error("Channel load error:", err);
-    }
-  };
+        // 🔹 Notify via socket (real-time tick)
+        socket.emit("channel_seen", {
+          channelId,
+          userId: currentUser._id,
+        });
+      } catch (err) {
+        console.error("Channel load error:", err);
+      }
+    };
 
-  fetchMessages();
+    fetchMessages();
 
-  // ✅ CLEANUP (VERY IMPORTANT)
-  return () => {
-    socket.emit("leave_channel", { channelId });
-  };
-}, [socket, selectedChannel]);
-
+    // ✅ CLEANUP (VERY IMPORTANT)
+    return () => {
+      socket.emit("leave_channel", { channelId });
+    };
+  }, [socket, selectedChannel]);
 
   // useEffect(() => {
   //   if (!socket) return;
@@ -1087,7 +1086,7 @@ useEffect(() => {
         setMessages((prev) => [...prev, msg]);
 
         if (msg.senderId === other) {
-          socket.emit("mark_seen",{
+          socket.emit("mark_seen", {
             senderId: other,
             receiverId: me,
           });
@@ -1098,30 +1097,29 @@ useEffect(() => {
   }, [socket, selectedUser]);
 
   /* RECEIVE MESSAGE channel*/
- useEffect(() => {
-  if (!socket || !selectedChannel) return;
+  useEffect(() => {
+    if (!socket || !selectedChannel) return;
 
-  const handleReceiveChannelMessage = (msg) => {
-    if (msg.channelId !== selectedChannel._id) return;
+    const handleReceiveChannelMessage = (msg) => {
+      if (msg.channelId !== selectedChannel._id) return;
 
-    console.log("RECEIVED CHANNEL MESSAGE:", msg);
+      console.log("RECEIVED CHANNEL MESSAGE:", msg);
 
-    setMessages((prev) => [...prev, msg]);
+      setMessages((prev) => [...prev, msg]);
 
-    // 🔵 auto mark seen ONLY if user is viewing this channel
-    socket.emit("channel_seen", {
-      channelId: selectedChannel._id,
-      userId: currentUser._id,
-    });
-  };
+      // 🔵 auto mark seen ONLY if user is viewing this channel
+      socket.emit("channel_seen", {
+        channelId: selectedChannel._id,
+        userId: currentUser._id,
+      });
+    };
 
-  socket.on("receive_channel_message", handleReceiveChannelMessage);
+    socket.on("receive_channel_message", handleReceiveChannelMessage);
 
-  return () => {
-    socket.off("receive_channel_message", handleReceiveChannelMessage);
-  };
-}, [socket, selectedChannel]);
-
+    return () => {
+      socket.off("receive_channel_message", handleReceiveChannelMessage);
+    };
+  }, [socket, selectedChannel]);
 
   /* 🔵 BLUE TICK dm*/
   useEffect(() => {
@@ -1139,76 +1137,71 @@ useEffect(() => {
     return () => socket.off("messages_seen");
   }, [socket]);
 
-// useEffect(() => {
-//   if (!socket || !selectedChannel) return;
+  // useEffect(() => {
+  //   if (!socket || !selectedChannel) return;
 
-//   socket.on("channel_seen_update", ( value ) => {
-//     console.log("CHANNEL SEEN UPDATE RECEIVED:", value);
-//     setMessages((prev) =>
-//       prev.map((msg) => {
-//         if (
-//           msg.channelId !== value?.channelId ||
-//           msg.senderId === value?.senderId
-//         ) {
-//           return msg;
-//         }
+  //   socket.on("channel_seen_update", ( value ) => {
+  //     console.log("CHANNEL SEEN UPDATE RECEIVED:", value);
+  //     setMessages((prev) =>
+  //       prev.map((msg) => {
+  //         if (
+  //           msg.channelId !== value?.channelId ||
+  //           msg.senderId === value?.senderId
+  //         ) {
+  //           return msg;
+  //         }
 
-//         // if (msg.seenBy.includes(senderId)) return msg;
+  //         // if (msg.seenBy.includes(senderId)) return msg;
 
-//         // const updatedSeenBy = [...msg.seenBy, senderId];
+  //         // const updatedSeenBy = [...msg.seenBy, senderId];
 
-//         return {
-//           ...msg,
-//           // seenBy: updatedSeenBy,
-          
-//         };
-//       })
-//     );
-//   });
+  //         return {
+  //           ...msg,
+  //           // seenBy: updatedSeenBy,
 
-//   return () => socket.off("channel_seen_update");
-// }, [socket, selectedChannel]);
+  //         };
+  //       })
+  //     );
+  //   });
 
-// useEffect(() => {
-//   if (!socket || !selectedChannel) return;
+  //   return () => socket.off("channel_seen_update");
+  // }, [socket, selectedChannel]);
 
-//   const handleSeenUpdate = ({ channelId, updatedMessages }) => {
-//     if (channelId !== selectedChannel._id) return;
+  // useEffect(() => {
+  //   if (!socket || !selectedChannel) return;
 
-//     setMessages(updatedMessages);
-//   };
+  //   const handleSeenUpdate = ({ channelId, updatedMessages }) => {
+  //     if (channelId !== selectedChannel._id) return;
 
-//   socket.on("channel_seen_update", handleSeenUpdate);
+  //     setMessages(updatedMessages);
+  //   };
 
-//   return () => {
-//     socket.off("channel_seen_update", handleSeenUpdate);
-//   };
-// }, [socket, selectedChannel]);
+  //   socket.on("channel_seen_update", handleSeenUpdate);
 
-useEffect(() => {
-  if (!socket || !selectedChannel) return;
+  //   return () => {
+  //     socket.off("channel_seen_update", handleSeenUpdate);
+  //   };
+  // }, [socket, selectedChannel]);
 
-  const handleSeenUpdate = ({ channelId, messageId, isSeenByAll }) => {
-    if (channelId !== selectedChannel._id) return;
+  useEffect(() => {
+    if (!socket || !selectedChannel) return;
 
-    setMessages((prev) =>
-      prev.map((msg) =>
-        msg._id === messageId
-          ? { ...msg, isSeenByAll }
-          : msg
-      )
-    );
-  };
+    const handleSeenUpdate = ({ channelId, messageId, isSeenByAll }) => {
+      if (channelId !== selectedChannel._id) return;
 
-  socket.on("channel_seen_update", handleSeenUpdate);
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg._id === messageId ? { ...msg, isSeenByAll } : msg
+        )
+      );
+    };
 
-  return () => {
-    socket.off("channel_seen_update", handleSeenUpdate);
-  };
-}, [socket, selectedChannel]);
+    socket.on("channel_seen_update", handleSeenUpdate);
 
-
-
+    return () => {
+      socket.off("channel_seen_update", handleSeenUpdate);
+    };
+  }, [socket, selectedChannel]);
 
   const sendMessage = async () => {
     if (!text && files.length === 0) return;
@@ -1248,7 +1241,7 @@ useEffect(() => {
     // }
 
     try {
-      const res =await axios.post(
+      const res = await axios.post(
         selectedChannel
           ? `${API_URL}/api/messages/send`
           : `${API_URL}/api/messages/send`,
@@ -1413,22 +1406,23 @@ useEffect(() => {
   }
 
   const renderTick = (msg) => {
-  if (!msg.deliveredAt) {
-    return "✔";
-  }
+    console.log("Rendering tick for message:", msg);
+    if (!msg.deliveredAt) {
+      return "✔";
+    }
 
-  if (msg.seenBy.length === 0) {
-    return "✔✔"; // delivered gray
-  }
+    // if (msg.seenBy.length === 0) {
+    //   return "✔✔"; // delivered gray
+    // }
 
-  if (msg.isSeenByAll) {
-    return <span style={{ color: "#0b93f6" }}>✔✔</span>; // BLUE
-  }
+    if (msg.isSeenByAll) {
+      return <span style={{ color: "#0b93f6" }}>✔✔</span>; // BLUE
+    }
 
-  return "✔✔"; // seen by some (gray)
-};
+    return "✔✔"; // seen by some (gray)
+  };
+  console.log(" Message Rendering Chat Window with selectedChannel:", messages);
 
-console.log(" Message Rendering Chat Window with selectedChannel:", messages);
   return (
     <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50">
       {/* Chat Header */}
@@ -1613,32 +1607,37 @@ console.log(" Message Rendering Chat Window with selectedChannel:", messages);
                           </div>
                         );
                       })}
-{/* dm tick */}
+                    {/* dm tick */}
                     {/* Message Status and Time */}
-                    {selectedUser &&  <div
-                      className={`flex items-center justify-end gap-2 mt-2 ${
-                        isMe ? "text-blue-100" : "text-gray-500"
-                      }`}
-                    >
-                      <span className="text-xs">{time}</span>
-                      {isMe && (
-                        <div className="flex items-center">
-                          {!m.deliveredAt && <Check className="w-3.5 h-3.5" />}
-                          {m.deliveredAt && !m.seenAt && (
-                            <CheckCheck className="w-3.5 h-3.5" />
-                          )}
-                          {m.seenAt && (
-                            <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
-                          )}
-                        </div>
-                      )}
-                    </div>}
+                    {selectedUser && (
+                      <div
+                        className={`flex items-center justify-end gap-2 mt-2 ${
+                          isMe ? "text-blue-100" : "text-gray-500"
+                        }`}
+                      >
+                        <span className="text-xs">{time}</span>
+                        {isMe && (
+                          <div className="flex items-center">
+                            {!m.deliveredAt && (
+                              <Check className="w-3.5 h-3.5" />
+                            )}
+                            {m.deliveredAt && !m.seenAt && (
+                              <CheckCheck className="w-3.5 h-3.5" />
+                            )}
+                            {m.seenAt && (
+                              <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
                     {/* channel tick */}
-                   {selectedChannel && <div>
-                    <div className="message-footer">
-  {renderTick(m)}
-</div>
-</div>}
+                    {selectedChannel && m.senderId==me &&(
+
+                      <div>
+                        <div className="message-footer">{renderTick(m)}</div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

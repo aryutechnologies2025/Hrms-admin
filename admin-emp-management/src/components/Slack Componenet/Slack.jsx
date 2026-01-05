@@ -746,6 +746,12 @@ export default function Slack() {
   const [unread, setUnread] = useState({});
   const [chaneel, setChaneel] = useState([]);
   const [selectedChannel, setSelectedChannel] = useState(null);
+  const [channelUnread, setChannelUnread] = useState({});
+  const [favorites, setFavorites] = useState({
+  dm: [],
+  channels: [],
+});
+
 
 
   /* LOAD CURRENT USER */
@@ -753,6 +759,7 @@ export default function Slack() {
     const u = JSON.parse(localStorage.getItem("hrmsuser"));
     if (u?._id) setCurrentUser(u);
   }, []);
+  console.log("currentUser",currentUser);
 
   /* ONLINE USERS */
   useEffect(() => {
@@ -773,7 +780,7 @@ export default function Slack() {
 
   /* LOAD UNREAD FROM DB */
   useEffect(() => {
-    if(!currentUser) return;
+    if(!currentUser ) return;
 
     axios.get(`${API_URL}/api/messages/unread/${currentUser._id}`)
       .then(res => {
@@ -782,6 +789,10 @@ export default function Slack() {
         setUnread(map);
       });
   }, [currentUser]);
+
+
+
+
 
   /* RECEIVE MESSAGE → INCREASE UNREAD */
   useEffect(() => {
@@ -827,36 +838,166 @@ export default function Slack() {
     // mark seen
     await axios.post(`${API_URL}/api/messages/seen`, {
       senderId: user._id,
-      receiverId: currentUser._id,
+      receiverId: currentUser?._id,
     });
 
     socket.emit("mark_seen", {
       senderId: user._id,
-      receiverId: currentUser._id,
+      receiverId: currentUser?._id,
     });
   };
 
   // console.log
    /* LOAD USERS */
-  useEffect(() => {
-    // if (!currentUser) return;
-    axios.get(`${API_URL}/api/channel/channel-list`)
-      .then(res => setChaneel(res.data.data || []));
-      console.log("users",users);
-  }, []);
+useEffect(() => {
+  if (!currentUser?._id) return;
 
+  axios
+    .get(`${API_URL}/api/channel/channel-list`, {
+      params: {
+        userId: currentUser._id,
+        isSuperAdmin: currentUser?.superUser || false, // boolean
+      },
+    })
+    .then((res) => setChaneel(res.data.data || []))
+    .catch(console.error);
+
+}, [currentUser]); // ✅ IMPORTANT
+
+
+
+    // Load channel unread from 
+  useEffect(() => {
+  if (currentUser && !currentUser?._id) return;
+
+  axios
+    .get(`${API_URL}/api/messages/channels/unread/${currentUser?._id}`)
+    .then((res) => {
+      if (res.data.success) {
+        setChannelUnread(res.data.data);
+      }
+    });
+}, [currentUser]);
+
+// CHANNEL UNREAD INCREMENT
+
+// useEffect(() => {
+//   if (!socket || !currentUser) return;
+
+//   const onChannelMessage = (msg) => {
+//     if (
+//       msg.channelId &&
+//       msg.senderId !== currentUser._id &&
+//       msg.channelId !== selectedChannel?._id
+//     ) {
+//       setChannelUnread((prev) => ({
+//         ...prev,
+//         [msg.channelId]: (prev[msg.channelId] || 0) + 1,
+//       }));
+//     }
+//   };
+
+//   socket.on("receive_channel_message", onChannelMessage);
+
+//   return () => socket.off("receive_channel_message", onChannelMessage);
+
+// }, [socket, currentUser, selectedChannel]);
+useEffect(() => {
+  if (!socket || !currentUser) return;
+
+  const onChannelMessage = (msg) => {
+    if (!msg.channelId) return;
+
+    const channelId = msg.channelId.toString();
+
+    // ignore own messages
+    if (msg.senderId === currentUser._id) return;
+
+    setChannelUnread((prev) => {
+      // if channel is open, do not increment
+      if (selectedChannel?._id === channelId) return prev;
+
+      return {
+        ...prev,
+        [channelId]: (prev[channelId] || 0) + 1,
+      };
+    });
+  };
+
+  socket.on("receive_channel_message", onChannelMessage);
+  return () => socket.off("receive_channel_message", onChannelMessage);
+
+}, [socket, currentUser, selectedChannel?._id]);
+
+
+// CLEAR CHANNEL UNREAD ON OPEN
+
+useEffect(() => {
+  if (!socket) return;
+
+  const onUnreadClear = ({ channelId }) => {
+    setChannelUnread((prev) => ({
+      ...prev,
+      [channelId]: 0,
+    }));
+  };
+
+  socket.on("channel_unread_clear", onUnreadClear);
+
+  return () => {
+    socket.off("channel_unread_clear", onUnreadClear);
+  };
+}, [socket]);
+
+
+
+// All channel join
+useEffect(() => {
+  if (!socket || !currentUser || !chaneel.length) return;
+
+  chaneel.forEach((ch) => {
+    socket.emit("join_channel", {
+      channelId: ch._id,
+    });
+  });
+
+}, [socket, currentUser, chaneel]);
+
+// dm room
+useEffect(() => {
+  if (!socket || !currentUser || !users?.length) return;
+
+  users.forEach((dm) => {
+    socket.emit("join_dm", {
+      senderId: currentUser?._id,
+      receiverId:dm?._id, // other user
+    });
+  });
+}, [socket, currentUser, users]);
+
+
+// favorities list
+useEffect(() => {
+  if (!currentUser?._id) return;
+
+  axios
+    .get(`${API_URL}/api/favorites/${currentUser._id}`)
+    .then((res) => {
+      if (res.data.success) {
+        setFavorites(res.data.data || { dm: [], channels: [] });
+      }
+    })
+    .catch(console.error);
+}, [currentUser]);
+
+
+
+
+console.log("channelUnread",channelUnread);
   return (
     <div className="flex h-screen">
+     
       {/* <Slack_sidebar
-        users={users}
-        selectedUser={selectedUser}
-        unread={unread}
-        onlineUsers={onlineUsers}
-        onSelectUser={handleSelectUser}
-        currentUser={currentUser}
-        channels={chaneel}
-      /> */}
-      <Slack_sidebar
   users={users}
   channels={chaneel}
   selectedUser={selectedUser}
@@ -869,6 +1010,29 @@ export default function Slack() {
   unread={unread}
   onlineUsers={onlineUsers}
   currentUser={currentUser}
+  setChannelUnread={setChannelUnread}
+  channelUnread={channelUnread}
+/> */}
+
+
+<Slack_sidebar
+  socket={socket}
+  currentUser={currentUser}
+  users={users}
+  channels={chaneel}
+  selectedUser={selectedUser}
+  selectedChannel={selectedChannel}
+  onSelectUser={handleSelectUser}
+  onSelectChannel={(ch) => {
+    setSelectedChannel(ch);
+    setSelectedUser(null);
+  }}
+  unread={unread}
+  onlineUsers={onlineUsers}
+  setChannelUnread={setChannelUnread}
+  channelUnread={channelUnread}
+  favorites={favorites}
+  setFavorites={setFavorites}
 />
 
 
