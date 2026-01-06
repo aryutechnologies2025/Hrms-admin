@@ -1431,6 +1431,9 @@ export default function Slack_chatwindow({
           <div className="flex items-center space-x-3">
             <div className="relative">
               <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+               { console.log("Rendering header with selectedUser name:",
+                selectedUser
+              )}
                 {selectedUser && selectedUser?.name.charAt(0).toUpperCase()}
               </div>
               <div

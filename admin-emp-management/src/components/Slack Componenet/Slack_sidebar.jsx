@@ -772,6 +772,232 @@ function SectionHeader({ title, open, onToggle, rightAction }) {
 //   );
 // }
 
+// export default function SlackSidebar({
+//   socket,
+//   users = [],
+//   channels = [],
+//   favorites = { dm: [], channels: [] },
+//   setFavorites,
+//   selectedUser,
+//   selectedChannel,
+//   onSelectUser,
+//   onSelectChannel,
+//   unread = {},
+//   onlineUsers = [],
+//   currentUser,
+//   channelUnread = {},
+//   setChannelUnread,
+// }) {
+//   const [searchTerm, setSearchTerm] = useState("");
+//   const [filter, setFilter] = useState("all");
+//   const [dmOpen, setDmOpen] = useState(true);
+//   const [channelOpen, setChannelOpen] = useState(true);
+
+//   /* ---------------- FILTER USERS ---------------- */
+//   const filteredUsers = users.filter((u) => {
+//     const match = u.name.toLowerCase().includes(searchTerm.toLowerCase());
+//     if (filter === "online") return match && onlineUsers.includes(u._id);
+//     if (filter === "unread") return match && unread[u._id] > 0;
+//     return match;
+//   });
+
+//   /* ---------------- OPEN CHANNEL ---------------- */
+//   const openChannel = (channel) => {
+//     onSelectChannel(channel);
+
+//     socket.emit("join_channel", { channelId: channel._id });
+
+//     setChannelUnread((prev) => ({
+//       ...prev,
+//       [channel._id]: 0,
+//     }));
+
+//     socket.emit("channel_seen", {
+//       channelId: channel._id,
+//       userId: currentUser._id,
+//     });
+//   };
+
+//   /* ---------------- FAVORITES ---------------- */
+//   const toggleFavoriteDM = async (dmId) => {
+//   const res = await axios.post(`${API_URL}/api/favorites/dm`, {
+//     userId: currentUser._id,
+//     dmId,
+//   });
+
+//   if (res.data.success) {
+//     setFavorites(res.data.data); // ✅ FULL populated object
+//   }
+// };
+
+
+//   const toggleFavoriteChannel = async (channelId) => {
+//   const res = await axios.post(`${API_URL}/api/favorites/channel`, {
+//     userId: currentUser._id,
+//     channelId,
+//   });
+
+//   if (res.data.success) {
+//     setFavorites(res.data.data); // ✅ FULL populated object
+//   }
+// };
+
+
+//   return (
+//     <div className="w-80 h-screen flex flex-col border-r bg-white">
+//       {/* ---------------- HEADER ---------------- */}
+//       <div className="p-4 border-b">
+//         <h2 className="text-xl font-bold mb-3">Messages</h2>
+
+//         <input
+//           className="w-full px-3 py-2 rounded bg-gray-100 mb-3"
+//           placeholder="Search..."
+//           value={searchTerm}
+//           onChange={(e) => setSearchTerm(e.target.value)}
+//         />
+
+//         <div className="flex gap-2">
+//           {["all", "online", "unread"].map((f) => (
+//             <button
+//               key={f}
+//               onClick={() => setFilter(f)}
+//               className={`px-3 py-1 rounded-full text-sm ${
+//                 filter === f ? "bg-purple-600 text-white" : "bg-gray-100"
+//               }`}
+//             >
+//               {f}
+//             </button>
+//           ))}
+//         </div>
+//       </div>
+
+//       {/* ---------------- BODY ---------------- */}
+//       <div className="flex-1 overflow-y-auto">
+
+//         {/* ⭐ FAVORITES */}
+//         {(favorites.dm.length > 0 || favorites.channels.length > 0) && (
+//           <>
+//             <SectionHeader title="Favorites" open />
+//             {favorites.channels.length && favorites.channels.map((ch) => (
+//               <div
+//                 key={ch._id}
+//                 onClick={() => openChannel(ch)}
+//                 className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100"
+//               >
+//                 ⭐ # {ch.name}
+//               </div>
+//             ))}
+//             {favorites.dm.length && favorites.dm.map((u) => (
+//               <div
+//                 key={u._id}
+//                 onClick={() => onSelectUser(u)}
+//                 className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100"
+//               >
+//                 ⭐ {u.employeeName}
+//               </div>
+//             ))}
+//           </>
+//         )}
+
+//         {/* 💬 DIRECT MESSAGES */}
+//         <SectionHeader
+//           title="Direct Messages"
+//           open={dmOpen}
+//           onToggle={() => setDmOpen((p) => !p)}
+//         />
+
+//         {dmOpen &&
+//           Array.isArray(filteredUsers)  &&filteredUsers.map((u) => (
+//             <div
+//               key={u._id}
+//               onClick={() => onSelectUser(u)}
+//               className={`mx-3 my-1 p-3 rounded-lg cursor-pointer flex justify-between items-center ${
+//                 selectedUser?._id === u._id
+//                   ? "bg-purple-100"
+//                   : "hover:bg-gray-100"
+//               }`}
+//             >
+//               <div className="flex items-center gap-2">
+//                 <span
+//                   className={`w-2 h-2 rounded-full ${
+//                     onlineUsers.includes(u._id)
+//                       ? "bg-green-500"
+//                       : "bg-gray-400"
+//                   }`}
+//                 />
+//                 <span>{u.name}</span>
+//               </div>
+
+//               <div className="flex items-center gap-2">
+//                 {unread[u._id] > 0 && (
+//                   <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+//                     {unread[u._id]}
+//                   </span>
+//                 )}
+//                 <span
+//                   onClick={(e) => {
+//                     e.stopPropagation();
+//                     toggleFavoriteDM(u._id);
+//                   }}
+//                 >
+//                   {favorites.dm.some((f) => f._id === u._id) ? "⭐" : "☆"}
+//                 </span>
+//               </div>
+//             </div>
+//           ))}
+
+//         {/* #️⃣ CHANNELS */}
+//         <SectionHeader
+//           title="Channels"
+//           open={channelOpen}
+//           onToggle={() => setChannelOpen((p) => !p)}
+//         />
+
+//         {channelOpen &&
+//           channels.map((ch) => (
+//             <div
+//               key={ch._id}
+//               onClick={() => openChannel(ch)}
+//               className={`mx-3 my-1 p-3 rounded-lg cursor-pointer flex justify-between items-center ${
+//                 selectedChannel?._id === ch._id
+//                   ? "bg-blue-100"
+//                   : "hover:bg-gray-100"
+//               }`}
+//             >
+//               <span># {ch.name}</span>
+
+//               <div className="flex items-center gap-2">
+//                 {channelUnread[ch._id] > 0 && (
+//                   <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+//                     {channelUnread[ch._id]}
+//                   </span>
+//                 )}
+//                 <span
+//                   onClick={(e) => {
+//                     e.stopPropagation();
+//                     toggleFavoriteChannel(ch._id);
+//                   }}
+//                 >
+//                   {favorites.channels.some((f) => f._id === ch._id)
+//                     ? "⭐"
+//                     : "☆"}
+//                 </span>
+//               </div>
+//             </div>
+//           ))}
+//       </div>
+
+//       {/* ---------------- FOOTER ---------------- */}
+//       <div className="p-4 border-t text-sm text-gray-500">
+//         Online users: {onlineUsers.length}
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
+
 export default function SlackSidebar({
   socket,
   users = [],
@@ -791,13 +1017,17 @@ export default function SlackSidebar({
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
   const [dmOpen, setDmOpen] = useState(true);
-  const [channelOpen, setChannelOpen] = useState(true);
+  const [favoritesOpen, setFavoritesOpen] = useState(false);
+  const [channelOpen, setChannelOpen] = useState(false);
 
   /* ---------------- FILTER USERS ---------------- */
   const filteredUsers = users.filter((u) => {
-    const match = u.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const name = u.name || "";
+    const match = name.toLowerCase().includes(searchTerm.toLowerCase());
+
     if (filter === "online") return match && onlineUsers.includes(u._id);
     if (filter === "unread") return match && unread[u._id] > 0;
+
     return match;
   });
 
@@ -818,22 +1048,39 @@ export default function SlackSidebar({
     });
   };
 
-  /* ---------------- FAVORITES ---------------- */
-  const toggleFavoriteDM = async (dmId) => {
+  /* ---------------- FAVORITES API ---------------- */
+  const toggleFavoriteDM = async (user) => {
     const res = await axios.post(`${API_URL}/api/favorites/dm`, {
-      userId: currentUser._id,
-      dmId,
+      userId:currentUser?._id,
+      userModel:currentUser?.type=="employee"?"Employee" : currentUser?.type=="admin"?"AdminUser":"ClientDetails", // Employee | User | Client
+      dmId: user._id,
+      dmModel:  user.type=="employee"?"Employee" : user.type=="admin"?"AdminUser":"ClientDetails",
     });
-    if (res.data.success) setFavorites(res.data.data);
+
+    if (res.data.success) {
+      setFavorites(res.data.data);
+    }
   };
 
-  const toggleFavoriteChannel = async (channelId) => {
+  const toggleFavoriteChannel = async (channel) => {
     const res = await axios.post(`${API_URL}/api/favorites/channel`, {
       userId: currentUser._id,
-      channelId,
+      userModel: currentUser?.type=="employee"?"Employee" : currentUser?.type=="admin"?"AdminUser":"ClientDetails",
+      channelId: channel._id,
+      channelModel: "Channel",
     });
-    if (res.data.success) setFavorites(res.data.data);
+
+    if (res.data.success) {
+      setFavorites(res.data.data);
+    }
   };
+
+  /* ---------------- HELPERS ---------------- */
+  const isDMFavorite = (id) =>
+    favorites.dm.some((f) => f._id === id);
+
+  const isChannelFavorite = (id) =>
+    favorites.channels.some((f) => f._id === id);
 
   return (
     <div className="w-80 h-screen flex flex-col border-r bg-white">
@@ -865,31 +1112,99 @@ export default function SlackSidebar({
 
       {/* ---------------- BODY ---------------- */}
       <div className="flex-1 overflow-y-auto">
-
+         <SectionHeader title="Favorites"  open={favoritesOpen}
+          onToggle={() =>setFavoritesOpen((p) => !p)} />
         {/* ⭐ FAVORITES */}
-        {(favorites.dm.length > 0 || favorites.channels.length > 0) && (
-          <>
-            <SectionHeader title="Favorites" open />
-            {favorites.channels.length && favorites.channels.map((ch) => (
-              <div
-                key={ch._id}
-                onClick={() => openChannel(ch)}
-                className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100"
-              >
-                ⭐ # {ch.name}
+
+       {favoritesOpen &&
+  (favorites.dm.length > 0 || favorites.channels.length > 0) && (
+    <>
+      {/* Favorite Channels */}
+      {favorites.channels.map((ch) => (
+        <div
+          key={ch._id}
+          onClick={() => openChannel(ch)}
+          className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100 flex justify-between items-center"
+        >
+          ⭐ # {ch.name}
+
+           <div className="flex items-center gap-2">
+                
+                {channelUnread[ch._id] > 0 && (
+                  <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+                    {channelUnread[ch._id]}
+                  </span>
+                )}
+
+               
               </div>
-            ))}
-            {favorites.dm.length && favorites.dm.map((u) => (
-              <div
-                key={u._id}
-                onClick={() => onSelectUser(u)}
-                className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100"
-              >
-                ⭐ {u.employeeName}
+        </div>
+
+      ))}
+
+      {/* Favorite DMs */}
+      {favorites.dm.map((u) => (
+        <div
+          key={u._id}
+          onClick={() => onSelectUser(u)}
+          className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100 flex justify-between items-center"
+        >
+          ⭐ {u.name}
+          <div>
+             {unread[u._id] > 0 && (
+                  <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+                    {unread[u._id]}
+                  </span>
+                )}
+          </div>
+         
+        </div>
+        
+      ))}
+    </>
+  )}
+
+
+   {/* #️⃣ CHANNELS */}
+        <SectionHeader
+          title="Channels"
+          open={channelOpen}
+          onToggle={() => setChannelOpen((p) => !p)}
+        />
+
+        {channelOpen &&
+          channels.map((ch) => (
+            <div
+              key={ch._id}
+              onClick={() => openChannel(ch)}
+              className={`mx-3 my-1 p-3 rounded-lg cursor-pointer flex justify-between items-center ${
+                selectedChannel?._id === ch._id
+                  ? "bg-blue-100"
+                  : "hover:bg-gray-100"
+              }`}
+            >
+              <span># {ch.name}</span>
+
+              <div className="flex items-center gap-2">
+                {channelUnread[ch._id] > 0 && (
+                  <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+                    {channelUnread[ch._id]}
+                  </span>
+                )}
+
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFavoriteChannel(ch);
+                  }}
+                >
+                  {isChannelFavorite(ch._id) ? "⭐" : "☆"}
+                </span>
               </div>
-            ))}
-          </>
-        )}
+            </div>
+          ))}
+
+        
 
         {/* 💬 DIRECT MESSAGES */}
         <SectionHeader
@@ -899,7 +1214,7 @@ export default function SlackSidebar({
         />
 
         {dmOpen &&
-          Array.isArray(filteredUsers)  &&filteredUsers.map((u) => (
+          filteredUsers.map((u) => (
             <div
               key={u._id}
               onClick={() => onSelectUser(u)}
@@ -926,57 +1241,20 @@ export default function SlackSidebar({
                     {unread[u._id]}
                   </span>
                 )}
+
                 <span
                   onClick={(e) => {
                     e.stopPropagation();
-                    toggleFavoriteDM(u._id);
+                    toggleFavoriteDM(u);
                   }}
                 >
-                  {favorites.dm.some((f) => f._id === u._id) ? "⭐" : "☆"}
+                  {isDMFavorite(u._id) ? "⭐" : "☆"}
                 </span>
               </div>
             </div>
           ))}
 
-        {/* #️⃣ CHANNELS */}
-        <SectionHeader
-          title="Channels"
-          open={channelOpen}
-          onToggle={() => setChannelOpen((p) => !p)}
-        />
-
-        {channelOpen &&
-          channels.map((ch) => (
-            <div
-              key={ch._id}
-              onClick={() => openChannel(ch)}
-              className={`mx-3 my-1 p-3 rounded-lg cursor-pointer flex justify-between items-center ${
-                selectedChannel?._id === ch._id
-                  ? "bg-blue-100"
-                  : "hover:bg-gray-100"
-              }`}
-            >
-              <span># {ch.name}</span>
-
-              <div className="flex items-center gap-2">
-                {channelUnread[ch._id] > 0 && (
-                  <span className="bg-red-500 text-white text-xs px-2 rounded-full">
-                    {channelUnread[ch._id]}
-                  </span>
-                )}
-                <span
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleFavoriteChannel(ch._id);
-                  }}
-                >
-                  {favorites.channels.some((f) => f._id === ch._id)
-                    ? "⭐"
-                    : "☆"}
-                </span>
-              </div>
-            </div>
-          ))}
+       
       </div>
 
       {/* ---------------- FOOTER ---------------- */}
@@ -986,3 +1264,5 @@ export default function SlackSidebar({
     </div>
   );
 }
+
+

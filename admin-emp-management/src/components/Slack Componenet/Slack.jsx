@@ -752,8 +752,6 @@ export default function Slack() {
   channels: [],
 });
 
-
-
   /* LOAD CURRENT USER */
   useEffect(() => {
     const u = JSON.parse(localStorage.getItem("hrmsuser"));
