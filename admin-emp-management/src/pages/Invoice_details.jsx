@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 
 import DataTable from "datatables.net-react";
 import DT from "datatables.net-dt";
@@ -35,11 +35,17 @@ import { FaMoneyCheckAlt } from "react-icons/fa";
 import { FaFileInvoice } from "react-icons/fa";
 import { capitalizeFirstLetter } from "../utils/StringCaps";
 
+import { useSearchParams } from "react-router-dom";
+import Sales_invoice from "../components/invoice desgins/Sales_invoice";
+import Export_invoice from "../components/invoice desgins/Export_invoice";
+import Performa_invoice from "../components/invoice desgins/Performa_invoice";
+import Invoice from "../components/invoice desgins/Invoice_download";
 
 
 const Invoice_details = () => {
   const navigate = useNavigate();
   const formatDateTime = useDateUtils();
+
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -49,9 +55,17 @@ const Invoice_details = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]);
 
   // Fetch roles from the API
-  useEffect(() => {
-    fetchProject();
-  }, []);
+  // useEffect(() => {
+  //   fetchProject();
+  // }, []);
+
+
+  //   useEffect(() => {
+  //   if (clientFilter || projectFilter || statusFilter) {
+  //     fetchProject();
+  //   }
+  //   // eslint-disable-next-line
+  // }, []);
 
   // console.log("roles", roles);
 
@@ -65,16 +79,48 @@ const Invoice_details = () => {
   const [errors, setErrors] = useState({});
 
   const [clientdetails, setClientdetails] = useState([]);
-  // console.log("clientdetails", clientdetails);
+  console.log("clientdetails", clientdetails);
   // console.log("errors::", errors);
   const [clientOption, setClientOption] = useState(null);
   // console.log("clientOption", clientOption);
   const [projectOption, setProjectOption] = useState(null);
 
+  // const [clientFilter, setClientFilter] = useState("");
+  // const [projectFilter, setProjectFilter] = useState("");
+  // // console.log(object)
+  // const [statusFilter, setStatusFilter] = useState("");
+
+
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [clientFilter, setClientFilter] = useState("");
   const [projectFilter, setProjectFilter] = useState("");
-  // console.log(object)
   const [statusFilter, setStatusFilter] = useState("");
+
+
+
+  // useEffect(() => {
+  //   const client = searchParams.get("client") || "";
+  //   const project = searchParams.get("project") || "";
+  //   const status = searchParams.get("status") || "";
+
+  //   setClientFilter(client);
+  //   setProjectFilter(project);
+  //   setStatusFilter(status);
+
+  //   if (client || project || status) {
+  //     fetchProject(client, project, status);
+  //   } else {
+  //     handleReset();
+  //   }
+  // }, []);
+
+
+
+  // const [clientFilter, setClientFilter] = useState(searchParams.get("client") || "");
+  // const [projectFilter, setProjectFilter] = useState(searchParams.get("project") || "");
+  // const [statusFilter, setStatusFilter] = useState(searchParams.get("status") || "");
 
 
 
@@ -89,8 +135,29 @@ const Invoice_details = () => {
   }, [clientFilter]);
 
   useEffect(() => {
-    handleReset();
+    // Only reset if no filters are present
+    if (!clientFilter && !projectFilter && !statusFilter) {
+      handleReset();
+    } else {
+      // Filters exist, just fetch the filtered data
+      fetchProject();
+    }
   }, []);
+
+  // useEffect(() => {
+  //   // Check if there are filters in URL
+  //   const hasFilters = clientFilter || projectFilter || statusFilter;
+
+  //   if (hasFilters && performance.getEntriesByType("navigation")[0].type !== "reload") {
+  //     // Came back from edit page, use filters
+  //     fetchProject();
+  //   } else {
+  //     // Page refreshed or no filters → reset all
+  //     handleReset();
+  //   }
+  // }, []);
+
+
 
 
   const fetchClientList = async () => {
@@ -149,9 +216,25 @@ const Invoice_details = () => {
       console.log(error);
     }
   };
+  const [isFilterApplied, setIsFilterApplied] = useState(false);
 
+  console.log("isFilterApplied", isFilterApplied);
+
+
+  const normalize = (val) => val?.trim() || "";
 
   const fetchProject = async () => {
+    const clientVal = normalize(clientFilter);
+    const projectVal = normalize(projectFilter);
+    const statusVal = normalize(statusFilter);
+
+    const hasFilter = Boolean(clientVal) || Boolean(projectVal) || Boolean(statusVal);
+    setIsFilterApplied(hasFilter);
+    setSearchParams({
+      client: clientFilter || "",
+      project: projectFilter || "",
+      status: statusFilter || "",
+    });
     try {
       const response = await axios.get(`${API_URL}/api/invoice/view-invoice`,
         {
@@ -187,6 +270,8 @@ const Invoice_details = () => {
       setClientFilter(null);
       setProjectFilter(null);
       setStatusFilter("");
+      setIsFilterApplied(false);
+      setSearchParams({});
 
       // Fetch all data without filters
       const response = await axios.get(
@@ -220,10 +305,18 @@ const Invoice_details = () => {
 
 
   // edit page id passing
+  // const handleEdit = (row) => {
+  //   navigate("/invoice-edit", {
+  //     state: { rowData: row }
+  //   });
+  // };
   const handleEdit = (row) => {
-    navigate("/invoice-edit", {
-      state: { rowData: row }
-    });
+    navigate(
+      `/invoice-edit?client=${clientFilter || ""}&project=${projectFilter || ""}&status=${statusFilter || ""}`,
+      {
+        state: { rowData: row }
+      }
+    );
   };
 
 
@@ -324,20 +417,63 @@ const Invoice_details = () => {
   };
 
 
-  const items = [
-    { title: "Sales Invoice", path: "/invoice-sales" },
-    { title: "Performa Invoice", path: "/invoice-performa" },
-    { title: "Export Invoice", path: "/invoice-export" },
-    { title: "Tax Invoice", path: "/invoice-pdf" },
-  ];
+  // const items = [
+  //   { title: "Sales Invoice", path: "/invoice-sales" },
+  //   { title: "Performa Invoice", path: "/invoice-performa" },
+  //   { title: "Export Invoice", path: "/invoice-export" },
+  //   { title: "Tax Invoice", path: "/invoice-pdf" },
+  // ];
+
+
+
+    const [selectedInvoiceTitle, setSelectedInvoiceTitle] = useState(null);
+
+    // console.log("selectedInvoiceTitle", selectedInvoiceTitle);
+  
+    const items = [
+      { title: "Sales Invoice" },
+      { title: "Performa Invoice" },
+      { title: "Export Invoice" },
+      { title: "Tax Invoice" },
+    ];
+  
+  
+  
+    const invoiceComponents = {
+      "Sales Invoice": Sales_invoice,
+      "Performa Invoice": Performa_invoice,
+      "Export Invoice": Export_invoice,
+      "Tax Invoice": Invoice,
+    };
+  
+    const invoiceRef = useRef(); // ref to the current invoice component
+  
+    const handleDownload = (title) => {
+      setSelectedInvoiceTitle(title);
+  
+      // wait for render
+      setTimeout(() => {
+        if (invoiceRef.current?.downloadPDF) {
+          invoiceRef.current.downloadPDF();
+        }
+      }, 50);
+    };
+  
+    const CurrentInvoiceComponent = selectedInvoiceTitle
+      ? invoiceComponents[selectedInvoiceTitle]
+      : null;
+  
   const [paymentVisible, setPaymentVisible] = useState(false);
   const [selectedPayments, setSelectedPayments] = useState([]);
+
+  const [paymentVisible1, setPaymentVisible1] = useState(false);
+  const [selectedPayments1, setSelectedPayments1] = useState([]);
   // console.log("selectedPayments", selectedPayments);
 
-     const [isOpeninvoice, setIsOpeninvoice] = useState(false);
-     const [selectedinvoice, setSelectedinvoice] = useState(null);
-   
-  
+  const [isOpeninvoice, setIsOpeninvoice] = useState(false);
+  const [selectedinvoice, setSelectedinvoice] = useState(null);
+
+
   const handleOpeninvoicePopup = (documents) => {
     // console.log("documents", documents);
     setSelectedinvoice({ documents });
@@ -345,25 +481,36 @@ const Invoice_details = () => {
   };
 
   const downloadPDF = (doc) => {
-  
+
     // console.log("doc", doc);
     if (!doc || !doc.path) return;
-  
-  
-  
+
+
+
     const url = `${API_URL}/api/uploads/clientInvoices/${doc.filename}`;
-  
+
     const link = document.createElement("a");
     link.href = url;
     link.download = doc.originalName || "invoice.pdf";
     link.target = "_blank";
     link.rel = "noopener noreferrer";
-  
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
-  
+
+  const downloadPDFOpen = (doc) => {
+  if (!doc || !doc.path) return;
+
+  const url = `${API_URL}/api/uploads/clientInvoices/${doc.filename}`;
+
+  // Open in new tab
+  window.open(url, "_blank", "noopener,noreferrer");
+};
+
+
+
 
   const columns = [
     {
@@ -412,16 +559,54 @@ const Invoice_details = () => {
       render: (data) => data ? formatDateTime(data) : "-"
     },
 
-    {
-      title: "Paid Date",
-      data: "paid_date",
-      render: (data) => data ? formatDateTime(data) : "-"
-    },
+    // {
+    //   title: "Paid Date",
+    //   data: "paid_date",
+    //   render: (data) => data ? formatDateTime(data) : "-"
+    // },
+
+    // {
+    //   title: "Payment",
+    //   data: null,
+    //   render: (payments, type, row) => {
+    //     const id = `payments-${row.sno || Math.random()}`;
+
+    //     setTimeout(() => {
+    //       const container = document.getElementById(id);
+    //       if (container) {
+    //         if (!container._root) {
+    //           container._root = createRoot(container);
+    //         }
+    //         container._root.render(
+    //           <div
+    //             style={{
+    //               display: "flex",
+    //               justifyContent: "center",
+    //               alignItems: "center",
+    //             }}
+    //           >
+    //             <FaMoneyCheckAlt
+    //               className="cursor-pointer text-black text-xl"
+    //               title="View Payments"
+    //               onClick={() => {
+    //                 setSelectedPayments(row || []);
+    //                 setPaymentVisible(true);
+    //               }}
+    //             />
+    //           </div>,
+
+    //         );
+    //       }
+    //     }, 0);
+
+    //     return `<div id="${id}"></div>`;
+    //   },
+    // },
 
     {
-      title: "Payment",
-      data: null,
-      render: (payments, type, row) => {
+      title: "Total Amount",
+      data: "total_amount", // if value directly exists
+      render: (totalAmount, type, row) => {
         const id = `payments-${row.sno || Math.random()}`;
 
         setTimeout(() => {
@@ -430,24 +615,84 @@ const Invoice_details = () => {
             if (!container._root) {
               container._root = createRoot(container);
             }
+
             container._root.render(
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
+              <span
+                className="cursor-pointer   hover:underline"
+                title="View Payments"
+                onClick={() => {
+                  setSelectedPayments1(row || []);
+                  setPaymentVisible1(true);
                 }}
               >
-                <FaMoneyCheckAlt 
-                  className="cursor-pointer text-black text-xl"
-                  title="View Payments"
-                  onClick={() => {
-                    setSelectedPayments(row || []);
-                    setPaymentVisible(true);
-                  }}
-                />
-              </div>,
+                ₹{totalAmount ?? 0}
+              </span>
+            );
+          }
+        }, 0);
 
+        return `<div id="${id}"></div>`;
+      },
+    },
+
+
+    // balance
+    {
+      title: "Received Amount",
+      data: "totalPaymentAmount", // if value directly exists
+      render: (totalPaymentAmount, type, row) => {
+        const id = `payments-${row.sno || Math.random()}`;
+
+        setTimeout(() => {
+          const container = document.getElementById(id);
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+
+            container._root.render(
+              <span
+                className="cursor-pointer   hover:underline"
+                title="View Payments"
+                onClick={() => {
+                  setSelectedPayments1(row || []);
+                  setPaymentVisible1(true);
+                }}
+              >
+                ₹{totalPaymentAmount ?? 0}
+              </span>
+            );
+          }
+        }, 0);
+
+        return `<div id="${id}"></div>`;
+      },
+    },
+
+    {
+      title: "Balance Amount",
+      data: "balance", // if value directly exists
+      render: (balance, type, row) => {
+        const id = `payments-${row.sno || Math.random()}`;
+
+        setTimeout(() => {
+          const container = document.getElementById(id);
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+
+            container._root.render(
+              <span
+                className="cursor-pointer   hover:underline"
+                title="View Payments"
+                onClick={() => {
+                  setSelectedPayments1(row || []);
+                  setPaymentVisible1(true);
+                }}
+              >
+                ₹{balance ?? 0}
+              </span>
             );
           }
         }, 0);
@@ -473,43 +718,43 @@ const Invoice_details = () => {
       // },
     },
 
-      {
-          title: "Invoice View",
-          data: null,
-          render: (data, type, row) => {
-            const id = `actions-${row.sno || Math.random()}`;
-            setTimeout(() => {
-              const container = document.getElementById(id);
-              if (container) {
-                if (!container._root) {
-                  container._root = createRoot(container);
-                }
-    
-                container._root.render(
-                  <div
-                    className="action-container"
-                    style={{
-                      display: "flex",
-                      gap: "15px",
-                      alignItems: "flex-end",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <div
-                      className="cursor-pointer"
-                      title="View Invoice"
-                      onClick={() => handleOpeninvoicePopup(row.documents
-)}
-                    >
-                      <FaEye />
-                    </div>
-                  </div>
-                );
-              }
-            }, 0);
-            return `<div id="${id}"></div>`;
-          },
-        },
+    {
+      title: "Invoice View",
+      data: null,
+      render: (data, type, row) => {
+        const id = `actions-${row.sno || Math.random()}`;
+        setTimeout(() => {
+          const container = document.getElementById(id);
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+
+            container._root.render(
+              <div
+                className="action-container"
+                style={{
+                  display: "flex",
+                  gap: "15px",
+                  alignItems: "flex-end",
+                  justifyContent: "center",
+                }}
+              >
+                <div
+                  className="cursor-pointer"
+                  title="View Invoice"
+                  onClick={() => handleOpeninvoicePopup(row.documents
+                  )}
+                >
+                  <FaEye />
+                </div>
+              </div>
+            );
+          }
+        }, 0);
+        return `<div id="${id}"></div>`;
+      },
+    },
 
     {
       title: "Client View",
@@ -626,7 +871,336 @@ const Invoice_details = () => {
     },
   ];
 
-  
+
+  const columnsfilter = [
+    {
+      title: "Sno",
+      data: null,
+      render: function (data, type, row, meta) {
+        return meta.row + 1;
+      },
+    },
+
+    // {
+    //   title: "Client Name",
+    //   data: "clientId",
+    //   render: (data) => data?.client_name || "-"
+    // },
+
+    // {
+    //   title: "Project",
+    //   data: "project",
+    //   render: (data) => data?.name || "-"
+
+    // },
+    {
+      title: "Invoice Number",
+      data: "invoice_number",
+    },
+
+    // {
+    //   title: "Invoice Date",
+    //   data: "invoice_date",
+    //   render: function (data) {
+    //     return formatDateTime(data);
+    //   },
+    // },
+    {
+      title: "Invoice Date",
+      data: "invoice_date",
+      render: (data) => data ? formatDateTime(data) : "-"
+
+
+    },
+
+    {
+      title: "Due Date",
+      data: "due_date",
+      render: (data) => data ? formatDateTime(data) : "-"
+    },
+
+    // {
+    //   title: "Paid Date",
+    //   data: "paid_date",
+    //   render: (data) => data ? formatDateTime(data) : "-"
+    // },
+    // total amount
+
+    {
+      title: "Total Amount",
+      data: "total_amount", // if value directly exists
+      render: (totalAmount, type, row) => {
+        const id = `payments-${row.sno || Math.random()}`;
+
+        setTimeout(() => {
+          const container = document.getElementById(id);
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+
+            container._root.render(
+              <span
+                className="cursor-pointer   hover:underline"
+                title="View Payments"
+                onClick={() => {
+                  setSelectedPayments1(row || []);
+                  setPaymentVisible1(true);
+                }}
+              >
+                ₹ {totalAmount ?? 0}
+              </span>
+            );
+          }
+        }, 0);
+
+        return `<div id="${id}"></div>`;
+      },
+    },
+
+
+    // balance
+    {
+      title: "Received Amount",
+      data: "totalPaymentAmount", // if value directly exists
+      render: (totalPaymentAmount, type, row) => {
+        const id = `payments-${row.sno || Math.random()}`;
+
+        setTimeout(() => {
+          const container = document.getElementById(id);
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+
+            container._root.render(
+              <span
+                className="cursor-pointer   hover:underline"
+                title="View Payments"
+                onClick={() => {
+                  setSelectedPayments1(row || []);
+                  setPaymentVisible1(true);
+                }}
+              >
+                ₹ {totalPaymentAmount ?? 0}
+              </span>
+            );
+          }
+        }, 0);
+
+        return `<div id="${id}"></div>`;
+      },
+    },
+
+    {
+      title: "Balance Amount",
+      data: "balance", // if value directly exists
+      render: (balance, type, row) => {
+        const id = `payments-${row.sno || Math.random()}`;
+
+        setTimeout(() => {
+          const container = document.getElementById(id);
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+
+            container._root.render(
+              <span
+                className="cursor-pointer   hover:underline"
+                title="View Payments"
+                onClick={() => {
+                  setSelectedPayments1(row || []);
+                  setPaymentVisible1(true);
+                }}
+              >
+                ₹ {balance ?? 0}
+              </span>
+            );
+          }
+        }, 0);
+
+        return `<div id="${id}"></div>`;
+      },
+    },
+
+    {
+      title: "Status",
+      data: "status",
+      render: capitalizeFirstLetter
+
+    },
+
+    {
+      title: "Invoice View",
+      data: null,
+      render: (data, type, row) => {
+        const id = `actions-${row.sno || Math.random()}`;
+        setTimeout(() => {
+          const container = document.getElementById(id);
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+
+            container._root.render(
+              <div
+                className="action-container"
+                style={{
+                  display: "flex",
+                  gap: "15px",
+                  alignItems: "flex-end",
+                  justifyContent: "center",
+                }}
+              >
+                <div
+                  className="cursor-pointer"
+                  title="View Invoice"
+                  onClick={() => handleOpeninvoicePopup(row.documents
+                  )}
+                >
+                  <FaEye />
+                </div>
+              </div>
+            );
+          }
+        }, 0);
+        return `<div id="${id}"></div>`;
+      },
+    },
+
+    {
+      title: "Client View",
+      data: null,
+      render: (data, type, row) => {
+        const id = `actions-${row.sno || Math.random()}`;
+        setTimeout(() => {
+          const container = document.getElementById(id);
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+
+            container._root.render(
+              <div
+                className="action-container"
+                style={{
+                  display: "flex",
+                  gap: "15px",
+                  alignItems: "flex-end",
+                  justifyContent: "center",
+                }}
+              >
+                <div className="cursor-pointer">
+                  <FaFileInvoice
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setSelectedClient(row);
+                      setIsOpenClient(true);
+                    }}
+                  />
+
+                </div>
+
+
+                {/* <div className="modula-icon-del" style={{
+                  color: "red"
+                }}>
+                  <RiDeleteBin6Line
+                    onClick={() => handleDelete(row.id)}
+                  />
+                </div> */}
+              </div>,
+              // container
+            );
+          }
+        }, 0);
+        return `<div id="${id}"></div>`;
+      },
+    },
+
+    {
+      title: "Action",
+      data: null,
+      render: (data, type, row) => {
+        const id = `actions-${row.sno || Math.random()}`;
+        setTimeout(() => {
+          const container = document.getElementById(id);
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+
+            container._root.render(
+              <div
+                className="action-container"
+                style={{
+                  display: "flex",
+                  gap: "15px",
+                  alignItems: "flex-end",
+                  justifyContent: "center",
+                }}
+              >
+                <div className="cursor-pointer">
+                  <FaEye
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setSelectedInvoiceId(row);
+                      setIsOpen(true);
+                    }}
+                  />
+
+                </div>
+                <div
+                  className="modula-icon-edit  flex gap-2"
+                  style={{
+                    color: "#000",
+                  }}
+                >
+                  <TfiPencilAlt
+                    className="cursor-pointer"
+                    onClick={() => handleEdit(row)}
+                  />
+                  <MdOutlineDeleteOutline
+                    className="text-red-600 text-xl cursor-pointer"
+                    onClick={() => handleDelete(row._id)}
+                  />
+                </div>
+
+                {/* <div className="modula-icon-del" style={{
+                  color: "red"
+                }}>
+                  <RiDeleteBin6Line
+                    onClick={() => handleDelete(row.id)}
+                  />
+                </div> */}
+              </div>,
+              // container
+            );
+          }
+        }, 0);
+        return `<div id="${id}"></div>`;
+      },
+    },
+  ];
+
+
+  // const normalize = (val) =>
+  //   typeof val === "string" ? val.trim() : val;
+
+  // const isFilterApplied =
+  //   Boolean(normalize(clientFilter)) ||
+  //   Boolean(normalize(projectFilter)) ||
+  //   Boolean(normalize(statusFilter));
+
+
+  //   console.log("isFilterApplied", isFilterApplied);
+
+  const activeColumns = useMemo(() => (isFilterApplied ? columnsfilter : columns), [isFilterApplied]);
+
+  // Force DataTable re-mount whenever filters change
+  const tableKey = `${clientFilter}-${projectFilter}-${statusFilter}-${isFilterApplied}`;
+
 
   const handleDelete = async (id) => {
     // console.log("editid", id);
@@ -663,14 +1237,14 @@ const Invoice_details = () => {
 
 
   return (
-    <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
-      <div>
+    <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10 overflow-x-auto">
 
 
-        <div className="cursor-pointer">
-          <Mobile_Sidebar />
 
-        </div>
+      <div className="cursor-pointer">
+        <Mobile_Sidebar />
+
+
         <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
           <p
             className="text-sm text-gray-500"
@@ -703,6 +1277,7 @@ const Invoice_details = () => {
               value={clientFilter}
               onChange={(e) => setClientFilter(e.value)}
               options={clientOption}
+              filter
               optionLabel="label"
               placeholder="Select a Client"
               className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -749,7 +1324,7 @@ const Invoice_details = () => {
           {/* Buttons */}
           <div className="flex gap-2 mt-5">
             <button
-              onClick={fetchProject}
+              onClick={() => fetchProject(clientFilter, projectFilter, statusFilter)}
               className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium shadow"
             >
               Submit
@@ -769,8 +1344,11 @@ const Invoice_details = () => {
           {/* Responsive wrapper for the table */}
           <div className="table-scroll-container" id="datatable">
             <DataTable
+              key={tableKey}
               data={clientdetails}
-              columns={columns}
+              // columns={columns}
+              columns={activeColumns}
+
               options={{
                 paging: true,
                 searching: true,
@@ -933,17 +1511,11 @@ const Invoice_details = () => {
                 {items.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium cursor-pointer hover:bg-blue-200 transition"
-                    // onClick={() =>
-                    //   navigate(item.path, { state: { invoiceId: selectedInvoiceId._id } })
-                    // }
-                    onClick={() =>
-                      window.open(
-                        `${item.path}?invoiceId=${selectedInvoiceId._id}`,
-                        "_blank",
-                        "noopener,noreferrer"
-                      )
-                    }
+                    className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium cursor-pointer
+                     bg-blue-100 text-blue-700 hover:bg-blue-200 transition
+                      opacity-50 
+                   `}
+                    onClick={() => handleDownload(item.title)}
                   >
                     {item.title}
                     <FaEye className="text-blue-500 text-xs" />
@@ -952,6 +1524,14 @@ const Invoice_details = () => {
               </div>
 
             </div>
+              {CurrentInvoiceComponent && (
+                <div style={{ display: "none" }}>
+                  <CurrentInvoiceComponent
+                    ref={invoiceRef}
+                    invoiceId={selectedInvoiceId._id} // pass the selected invoice ID
+                  />
+                </div>
+              )}
           </div>
         )}
 
@@ -1070,62 +1650,147 @@ const Invoice_details = () => {
           </div>
         )}
 
-        {isOpeninvoice && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
-    <div className="bg-white rounded-2xl shadow-2xl w-[100%] md:w-[25%] p-6 relative max-h-[90vh] overflow-y-auto">
-
-      {/* Close button */}
-      <button
-        className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl transition"
-        onClick={() => setIsOpeninvoice(false)}
-      >
-        ✖
-      </button>
-
-      {/* Header */}
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">
-           Invoices
-        </h2>
-      </div>
-
-      {/* Documents */}
-      <div className="space-y-3">
-        {selectedinvoice?.documents?.length > 0 ? (
-          selectedinvoice.documents.map((doc, index) => (
+        {paymentVisible1 && (
+          <div
+            onClick={() => setPaymentVisible1(false)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+          >
             <div
-              key={index}
-              className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition"
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
             >
-              {/* Invoice Name */}
-              <span className="text-gray-700 font-medium">
-                {doc.invoice_document_type}
-              </span>
+              <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 bg-blue-600">
+                <h2 className="text-2xl font-semibold text-white">
+                  Payment Details
+                </h2>
+                <button
+                  onClick={() => setPaymentVisible1(false)}
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition"
+                >
+                  <IoClose className="text-xl" />
+                </button>
+              </div>
+              <div className="grid grid-cols-3 divide-x divide-gray-200 text-center bg-gray-50">
+                <div className="p-4">
+                  <p className="text-xs uppercase text-gray-500">Amount</p>
+                  <p className="mt-1 text-lg font-semibold text-gray-800">
 
-              {/* Download Icon */}
-              <button
-                onClick={() => downloadPDF(doc)}
-                className="text-blue-600 hover:text-blue-800 transition"
-                title="Download Invoice"
-              >
-                <FaFileDownload />
-              </button>
+                    ₹{selectedPayments1?.total_amount.toLocaleString(2)}
+
+                  </p>
+                </div>
+                <div className="p-4">
+                  <p className="text-xs uppercase text-gray-500">Received</p>
+                  <p className="mt-1 text-lg font-semibold text-green-600">
+                    ₹{selectedPayments1?.totalPaymentAmount.toLocaleString(2)}
+                  </p>
+                </div>
+                <div className="p-4">
+                  <p className="text-xs uppercase text-gray-500">Balance</p>
+                  <p className="mt-1 text-lg font-semibold text-red-600">
+                    ₹{selectedPayments1?.balance.toLocaleString(2)}
+                  </p>
+                </div>
+              </div>
+
+              {/* <div className="px-6 py-6 max-h-[60vh] overflow-y-auto">
+                        <h3 className="mb-3 text-lg font-semibold text-gray-800">
+                          Payment List
+                        </h3>
+        
+                        {selectedPayments?.payment_amount?.length === 0 ? (
+                          <p className="text-gray-700">No payments found.</p>
+                        ) : (
+                          <ul className="space-y-2">
+                            {selectedPayments.payment_amount.map((p, index) => (
+                              <li
+                                key={p._id}
+                                className="flex justify-between border-b pb-1 text-sm text-gray-800"
+                              >
+                                <span className="font-medium">
+                                  Payment {index + 1} – {formatDateTime(p.date)}
+                                </span>
+        
+                                <span className="font-semibold">
+                                  ₹
+                                  {p.payment && p.value
+                                    ? `${Number(p.payment).toLocaleString(
+                                        "en-IN"
+                                      )} , ${Number(p.value).toLocaleString("en-IN")}`
+                                    : p.payment
+                                    ? Number(p.payment).toLocaleString("en-IN")
+                                    : Number(p.value).toLocaleString("en-IN")}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div> */}
+              {/*  */}
+
             </div>
-          ))
-        ) : (
-          <p className="text-gray-400 text-center">
-            No documents available
-          </p>
+          </div>
         )}
+
+
+
+        {isOpeninvoice && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-[100%] md:w-[25%] p-6 relative max-h-[90vh] overflow-y-auto">
+
+              {/* Close button */}
+              <button
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl transition"
+                onClick={() => setIsOpeninvoice(false)}
+              >
+                ✖
+              </button>
+
+              {/* Header */}
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Invoices
+                </h2>
+              </div>
+
+              {/* Documents */}
+              <div className="space-y-3">
+                {selectedinvoice?.documents?.length > 0 ? (
+                  selectedinvoice.documents.map((doc, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition"
+                    >
+                      {/* Invoice Name */}
+                      <span className="text-gray-700 font-medium"
+                       onClick={() => downloadPDFOpen(doc)}>
+                        {doc.invoice_document_type}
+                      </span>
+
+                      {/* Download Icon */}
+                      <button
+                        onClick={() => downloadPDF(doc)}
+                        className="text-blue-600 hover:text-blue-800 transition"
+                        title="Download Invoice"
+                      >
+                        <FaFileDownload />
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-400 text-center">
+                    No documents available
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
-    </div>
-  </div>
-         )}
 
 
 
-
-      </div>
 
       <Footer />
     </div>

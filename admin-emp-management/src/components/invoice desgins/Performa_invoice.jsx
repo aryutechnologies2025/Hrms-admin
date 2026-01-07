@@ -1,6 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState, useImperativeHandle, forwardRef, useEffect } from "react";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import html2pdf from "html2pdf.js";
+
 import Aryulogo from "../../assets/aryu_logo.png";
 import Sing from "../../assets/sign.png";
 import Steal from "../../assets/steal.png";
@@ -12,10 +14,10 @@ import NumberFormat from "../../utils/NumberFormat";
 import Swal from "sweetalert2";
 
 
-const Performa_invoice = () => {
+const Performa_invoice = forwardRef(({ invoiceId }, ref) => {
     const invoiceRef = useRef();
     const params = new URLSearchParams(window.location.search);
-    const invoiceId = params.get("invoiceId");
+    // const invoiceId = params.get("invoiceId");
     const location = useLocation();
     // const { invoiceId } = location.state || {};
 
@@ -106,79 +108,163 @@ const Performa_invoice = () => {
     // };
     const [isGenerating, setIsGenerating] = useState(false);
 
-    const downloadPDF = async () => {
+    // const downloadPDF = async () => {
 
-        setIsGenerating(true);
+    //     setIsGenerating(true);
 
-        Swal.fire({
-            title: "Generating Invoice",
-            text: "Please wait while we generate your invoice...",
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            },
-        });
-        try {
-            const element = invoiceRef.current;
+    //     Swal.fire({
+    //         title: "Generating Invoice",
+    //         text: "Please wait while we generate your invoice...",
+    //         allowOutsideClick: false,
+    //         didOpen: () => {
+    //             Swal.showLoading();
+    //         },
+    //     });
+    //     try {
+    //         const element = invoiceRef.current;
 
-            const canvas = await html2canvas(element, { scale: 1.5 });
-            const imgData = canvas.toDataURL("image/jpeg", 0.7);
+    //         const canvas = await html2canvas(element, { scale: 1.5 });
+    //         const imgData = canvas.toDataURL("image/jpeg", 0.7);
 
-            const pdf = new jsPDF("p", "mm", "a4");
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const imgProps = pdf.getImageProperties(imgData);
-            const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
+    //         const pdf = new jsPDF("p", "mm", "a4");
+    //         const pageWidth = pdf.internal.pageSize.getWidth();
+    //         const imgProps = pdf.getImageProperties(imgData);
+    //         const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
 
-            pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
+    //         pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
 
-            const invoiceNumber =
-                allinvoiceDetails?.invoice_number || `invoice_${Date.now()}`;
+    //         const invoiceNumber =
+    //             allinvoiceDetails?.invoice_number || `invoice_${Date.now()}`;
 
-            const pdfBlob = pdf.output("blob");
-
-
-            const formData = new FormData();
-            formData.append("clientInvoice", pdfBlob, `${invoiceNumber}.pdf`);
-            formData.append("id", invoiceId);
-            formData.append("invoice_document_type", "Performa Invoice");
+    //         const pdfBlob = pdf.output("blob");
 
 
+    //         const formData = new FormData();
+    //         formData.append("clientInvoice", pdfBlob, `${invoiceNumber}.pdf`);
+    //         formData.append("id", invoiceId);
+    //         formData.append("invoice_document_type", "Performa Invoice");
 
-            const response = await axios.post(
-                `${API_URL}/api/invoice/upload-client-invoice`,
-                formData,
-                { withCredentials: true }, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
+
+
+    //         const response = await axios.post(
+    //             `${API_URL}/api/invoice/upload-client-invoice`,
+    //             formData,
+    //             { withCredentials: true }, {
+    //             headers: {
+    //                 "Content-Type": "multipart/form-data",
+    //             },
+    //         }
+    //         );
+    //         console.log("PDF uploaded successfully:", response.data);
+
+    //         Swal.fire({
+    //             icon: "success",
+    //             title: "Invoice Generated",
+    //             text: "Invoice has been generated and uploaded successfully.",
+    //             confirmButtonColor: "#2563eb",
+    //         });
+
+    //         // Optional local download
+    //         // pdf.save(`${invoiceNumber}.pdf`);
+
+    //     } catch (error) {
+    //         console.error("Invoice generation failed:", error);
+
+    //         Swal.fire({
+    //             icon: "error",
+    //             title: "Generation Failed",
+    //             text: "Something went wrong while generating invoice.",
+    //         });
+    //     } finally {
+    //         setIsGenerating(false);
+    //     }
+    // };
+
+
+       const downloadPDF = async () => {
+            if (!invoiceId) return;
+    
+            setIsGenerating(true);
+    
+            Swal.fire({
+                title: "Generating Invoice",
+                text: "Please wait...",
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading(),
+            });
+    
+            try {
+                const element = invoiceRef.current;
+    
+                // IMPORTANT: element must be visible
+                element.style.display = "block";
+    
+                await new Promise((r) => setTimeout(r, 500));
+    
+                const opt = {
+                    margin: 0, // FULL WIDTH
+                    filename: `${allinvoiceDetails?.invoice_number || "invoice"}.pdf`,
+                    image: {
+                        type: "jpeg",
+                        quality: 0.7, // KB size
+                    },
+                    html2canvas: {
+                        scale: 1.2,
+                        useCORS: true,
+                        allowTaint: true,
+                        scrollX: 0,
+                        scrollY: 0,
+                        windowWidth: element.scrollWidth, // 🔥 VERY IMPORTANT
+                    },
+                    jsPDF: {
+                        unit: "mm",
+                        format: "a4",
+                        orientation: "portrait",
+                    },
+                    pagebreak: { mode: ["css", "legacy"] },
+                };
+    
+                const worker = html2pdf().set(opt).from(element);
+    
+                const pdfBlob = await worker.outputPdf("blob");
+    
+                const formData = new FormData();
+                formData.append(
+                    "clientInvoice",
+                    pdfBlob,
+                    `${allinvoiceDetails?.invoice_number || "invoice"}.pdf`
+                );
+                formData.append("id", invoiceId);
+                formData.append("invoice_document_type", "Performa Invoice");
+    
+                await axios.post(
+                    `${API_URL}/api/invoice/upload-client-invoice`,
+                    formData,
+                    {
+                        withCredentials: true,
+                        headers: { "Content-Type": "multipart/form-data" },
+                    }
+                );
+    
+                Swal.fire({
+                    icon: "success",
+                    title: "Invoice Generated",
+                    text: "Invoice generated & uploaded successfully",
+                });
+            } catch (err) {
+                console.error(err);
+                Swal.fire({
+                    icon: "error",
+                    title: "Failed",
+                    text: "PDF generation failed",
+                });
+            } finally {
+                setIsGenerating(false);
             }
-            );
-            console.log("PDF uploaded successfully:", response.data);
-
-            Swal.fire({
-                icon: "success",
-                title: "Invoice Generated",
-                text: "Invoice has been generated and uploaded successfully.",
-                confirmButtonColor: "#2563eb",
-            });
-
-            // Optional local download
-            // pdf.save(`${invoiceNumber}.pdf`);
-
-        } catch (error) {
-            console.error("Invoice generation failed:", error);
-
-            Swal.fire({
-                icon: "error",
-                title: "Generation Failed",
-                text: "Something went wrong while generating invoice.",
-            });
-        } finally {
-            setIsGenerating(false);
-        }
-    };
-
-
+        };
+      useImperativeHandle(ref, () => ({
+            downloadPDF
+        }));
 
     const amountInWords = (num) => {
         if (!num) return "Zero Rupees Only";
@@ -557,6 +643,6 @@ const Performa_invoice = () => {
             </div>
         </div>
     );
-};
+});
 
 export default Performa_invoice;

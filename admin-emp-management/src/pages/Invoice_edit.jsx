@@ -226,7 +226,7 @@ const Invoice_edit = () => {
   const [selected, setSelected] = useState("Select Invoice Type");
   const [paidDate, setPaidDate] = useState("");
 
-  const[invoiceNo, setInvoiceNo] = useState("");
+  const [invoiceNo, setInvoiceNo] = useState("");
 
 
   // console.log("selected", selected)
@@ -429,7 +429,7 @@ const Invoice_edit = () => {
         amount,
         paidDate,
         paymentType,
-        invoice_number:invoiceNo,
+        invoice_number: invoiceNo,
 
       };
 
@@ -451,7 +451,7 @@ const Invoice_edit = () => {
 
         setErrors({});
 
-        navigate("/invoice-details");
+        navigate(-1);
       }
 
     } catch (err) {
@@ -473,11 +473,11 @@ const Invoice_edit = () => {
   const [selectedLogs, setSelectedLogs] = useState([]);
 
   return (
-    <div className="flex flex-col justify-between bg-gray-100 w-screen  min-h-screen px-3 md:px-5 pt-2 md:pt-10">
+    <div className="flex flex-col justify-between bg-gray-100 w-screen  min-h-screen px-3 md:px-5 pt-2 md:pt-10 overflow-x-auto">
       <div className="">
-       <div>
-         <Mobile_Sidebar />
-       </div>
+        <div>
+          <Mobile_Sidebar />
+        </div>
 
         <div className="flex gap-2 items-center cursor-pointer">
           <p
@@ -488,7 +488,7 @@ const Invoice_edit = () => {
           </p>
           <p>{">"}</p>
 
-          <p className="text-sm text-gray-500" onClick={() => navigate("/invoice-details")}>Invoice List</p>
+          <p className="text-sm text-gray-500" onClick={() => navigate(-1)}>Invoice List</p>
           <p>{">"}</p>
 
           <p className="text-sm text-blue-500">Edit Invoice</p>
@@ -498,6 +498,14 @@ const Invoice_edit = () => {
           <div className="bg-white p-2 md:p-5 rounded-xl overflow-y-auto px-2 py-4 md:px-5 md:py-6">
             <div className="flex justify-between items-center gap-2 ">
               <h2 className="text-xl font-semibold mb-4">Edit Invoice</h2>
+
+              <button
+               onClick={() => navigate(-1)}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium"
+              >
+                ← Back
+              </button>
+
             </div>
             <div className="flex flex-wrap md:flex-nowrap">
               {/* left */}
@@ -598,26 +606,26 @@ const Invoice_edit = () => {
                   </div>
                 </div>
 
-                 <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3">
-    <div className="w-[50%]">
-      <label className="block text-sm font-medium mb-2">
-        Invoice No <span className="text-red-500">*</span>
-      </label>
+                <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3">
+                  <div className="w-[50%]">
+                    <label className="block text-sm font-medium mb-2">
+                      Invoice No <span className="text-red-500">*</span>
+                    </label>
 
-      <input
-        type="text"
-        value={invoiceNo}
-        onChange={(e) => setInvoiceNo(e.target.value)}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
+                    <input
+                      type="text"
+                      value={invoiceNo}
+                      onChange={(e) => setInvoiceNo(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
 
-      {errors.invoice_no && (
-        <p className="text-red-500 text-sm mt-1">
-          {errors.invoice_no}
-        </p>
-      )}
-    </div>
-  </div>
+                    {errors.invoice_no && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.invoice_no}
+                      </p>
+                    )}
+                  </div>
+                </div>
                 {/* item */}
                 <div className="mt-3">
                   <div className="flex justify-between">
@@ -842,6 +850,26 @@ const Invoice_edit = () => {
                             className="w-full px-3 py-2 border border-gray-300 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                           />
                         </div>
+                        {/* bablance */}
+
+                         {status && (
+                          <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
+                            <label className="block text-sm font-medium mb-2 w-[50%]">
+                              Balance
+                            </label>
+
+                            <input
+                              type="number"
+                              value={balance}
+
+                              disabled
+
+                              className="w-full h-11 px-3 border border-gray-300 rounded-lg bg-gray-100"
+                            />
+
+
+                          </div>
+                        )}
                         <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
                           <label
                             htmlFor="roleName"
@@ -852,7 +880,7 @@ const Invoice_edit = () => {
                           <select
                             name="status"
                             id="status"
-                            value={status}
+                            // value={status}
                             onChange={(e) => {
                               setStatus(e.target.value);
                               validateStatus(e.target.value);
@@ -864,6 +892,7 @@ const Invoice_edit = () => {
                               Payment Status
                             </option>
                             <option value="completed">Completed</option>
+                            <option value="invoice_raised">Invoice Raised</option>
                             <option value="advance_pending">Advance Pending</option>
                             <option value="partial_payment_pending">
                               Partial payment pending
@@ -892,31 +921,14 @@ const Invoice_edit = () => {
 
                             <input
                               type="date"
-                              value={paidDate}
+                              // value={paidDate}
                               onChange={(e) => setPaidDate(e.target.value)}
                               className="w-full h-11 px-3 border rounded-lg"
                             />
                           </div>
                         )}
 
-                        {status && (
-                          <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
-                            <label className="block text-sm font-medium mb-2 w-[50%]">
-                              Balance
-                            </label>
-
-                            <input
-                              type="number"
-                              value={balance}
-
-                              disabled
-
-                              className="w-full h-11 px-3 border border-gray-300 rounded-lg bg-gray-100"
-                            />
-
-
-                          </div>
-                        )}
+                       
 
                         {status && (
                           <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
@@ -926,7 +938,7 @@ const Invoice_edit = () => {
 
                             <input
                               type="number"
-                              value={amount}
+                              // value={amount}
                               onChange={(e) => {
                                 setAmount(e.target.value);
                                 setErrors((prev) => ({ ...prev, amount: "" }));
@@ -948,7 +960,7 @@ const Invoice_edit = () => {
                             </label>
 
                             <select
-                              value={paymentType}
+                              // value={paymentType}
                               onChange={(e) => {
                                 setPaymentType(e.target.value);
                                 setErrors((prev) => ({ ...prev, paymentType: "" }));
@@ -978,7 +990,7 @@ const Invoice_edit = () => {
               {/* right */}
 
               <div className="w-full md:w-[30%] md:border-l-4 p-3">
-                <div className=" w-[80%]">
+                <div className=" w-[100%]">
                   <button
                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 min-w-full h-10 font-semibold rounded"
                     onClick={handlesubmit}
@@ -1142,7 +1154,7 @@ const Invoice_edit = () => {
                   </div>
                   <hr className="mt-5"></hr>
 
-                  <div className="p-2">
+                  {/* <div className="p-2">
                     <button
                       onClick={() => {
                         setSelectedLogs(logdetails);
@@ -1153,8 +1165,58 @@ const Invoice_edit = () => {
                       <FaEye size={18} />
                       <span>View Payment History</span>
                     </button>
-                  </div>
+                  </div> */}
+                               <div className="p-2">
+                  {logdetails && logdetails.length > 0 ? (
+                    <table className="w-full text-sm border border-gray-200 rounded-xl overflow-hidden">
+                      <thead className="bg-blue-50">
+                        <tr>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                            Invoice / Date
+                          </th>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                            Status
+                          </th>
+                          <th className="px-4 py-3 text-right font-semibold text-gray-600">
+                            Amount (₹)
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {logdetails.map((log, i) => (
+                          <tr
+                            key={i}
+                            className={`border-b transition ${
+                              i % 2 === 0 ? "bg-white" : "bg-gray-50"
+                            } hover:bg-blue-50`}
+                          >
+                            <td className="px-4 py-3 font-medium text-gray-800">
+                              <div className="flex flex-col">
+                                <span>#{log.invoice_number || "-"}</span>
+                                <span className="text-gray-500 text-sm">
+                                  {new Date(log.paidDate).toLocaleDateString("en-IN")}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-gray-800">
+                              {capitalizeFirstLetter(log.status)}
+                            </td>
+                            <td className="px-4 py-3 text-right font-semibold text-green-600">
+                              ₹{log.amount}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <div className="text-gray-500 font-medium text-lg mt-2">
+                      No transactions available
+                    </div>
+                  )}
                 </div>
+                </div>
+
+                 
 
 
                 {openlog && (

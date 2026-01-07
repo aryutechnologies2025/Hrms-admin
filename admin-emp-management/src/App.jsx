@@ -1229,7 +1229,7 @@ function App() {
         <SettingsContext.Provider
           value={{ dynamicDateFormat, setDynamicDateFormat }}
         >
-          <SessionChecker />
+          {/* <SessionChecker /> */}
           <Routes>
             {routesConfig.map((r, i) => (
               <Route key={i} path={r.path} element={r.element} />
