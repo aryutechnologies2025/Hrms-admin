@@ -1,6 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState, useImperativeHandle, forwardRef, useEffect } from "react";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import html2pdf from "html2pdf.js";
+
 import Aryulogo from "../../assets/aryu_logo.png";
 import Sing from "../../assets/sign.png";
 import Steal from "../../assets/steal.png";
@@ -13,14 +15,17 @@ import Swal from "sweetalert2";
 
 
 
-const Export_invoice = () => {
+const Export_invoice = forwardRef(({ invoiceId }, ref) => {
     const invoiceRef = useRef();
 
+    useEffect(() => {
+        if (invoiceId) fetchInvoiceDetails(invoiceId);
+    }, [invoiceId]);
 
     const location = useLocation();
     // const { invoiceId } = location.state || {};
     const params = new URLSearchParams(window.location.search);
-    const invoiceId = params.get("invoiceId");
+    // const invoiceId = params.get("invoiceId");
 
     // console.log("invoiceId in Sales_invoice:", invoiceId);
 
@@ -111,72 +116,273 @@ const Export_invoice = () => {
     const [isGenerating, setIsGenerating] = useState(false);
 
 
+    //     const downloadPDF = async () => {
+    // if (!invoiceId) return;
+    //         setIsGenerating(true);
+
+    //         Swal.fire({
+    //             title: "Generating Invoice",
+    //             text: "Please wait while we generate your invoice...",
+    //             allowOutsideClick: false,
+    //             didOpen: () => {
+    //                 Swal.showLoading();
+    //             },
+    //         });
+    //         try {
+    //             const element = invoiceRef.current;
+
+    //             const canvas = await html2canvas(element, { scale: 1.5 });
+    //             const imgData = canvas.toDataURL("image/jpeg", 0.7);
+
+    //             const pdf = new jsPDF("p", "mm", "a4");
+    //             const pageWidth = pdf.internal.pageSize.getWidth();
+    //             const imgProps = pdf.getImageProperties(imgData);
+    //             const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
+
+    //             pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
+
+    //             const invoiceNumber =
+    //                 allinvoiceDetails?.invoice_number || `invoice_${Date.now()}`;
+
+    //             const pdfBlob = pdf.output("blob");
+
+
+    //             const formData = new FormData();
+    //             formData.append("clientInvoice", pdfBlob, `${invoiceNumber}.pdf`);
+    //             formData.append("id", invoiceId);
+    //             formData.append("invoice_document_type", "Export Invoice");
+
+
+
+    //             const response = await axios.post(
+    //                 `${API_URL}/api/invoice/upload-client-invoice`,
+    //                 formData,
+    //                 { withCredentials: true }, {
+    //                 headers: {
+    //                     "Content-Type": "multipart/form-data",
+    //                 },
+    //             }
+    //             );
+    //             console.log("PDF uploaded successfully:", response.data);
+
+    //             Swal.fire({
+    //                 icon: "success",
+    //                 title: "Invoice Generated",
+    //                 text: "Invoice has been generated and uploaded successfully.",
+    //                 confirmButtonColor: "#2563eb",
+    //             });
+
+    //             // Optional local download
+    //             // pdf.save(`${invoiceNumber}.pdf`);
+
+    //         } catch (error) {
+    //             console.error("Invoice generation failed:", error);
+
+    //             Swal.fire({
+    //                 icon: "error",
+    //                 title: "Generation Failed",
+    //                 text: "Something went wrong while generating invoice.",
+    //             });
+    //         } finally {
+    //             setIsGenerating(false);
+    //         }
+    //     };
+
+
+    // const downloadPDF = async () => {
+    //     if (!invoiceId) return;
+
+    //     setIsGenerating(true);
+
+    //     Swal.fire({
+    //       title: "Generating Invoice",
+    //       text: "Please wait while we generate your invoice...",
+    //       allowOutsideClick: false,
+    //       didOpen: () => Swal.showLoading(),
+    //     });
+
+    //     try {
+    //       // Wait to ensure images are loaded
+    //       await new Promise((resolve) => setTimeout(resolve, 500));
+
+    //       const element = invoiceRef.current;
+
+    //       const opt = {
+    //         margin: 0.5,
+    //         filename: `${allinvoiceDetails?.invoice_number || "invoice"}.pdf`,
+    //         image: { type: "png", quality: 1 },
+    //         html2canvas: { scale: 2, useCORS: true, allowTaint: false },
+    //         jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
+    //       };
+
+    //       const pdfBlob = await html2pdf().set(opt).from(element).outputPdf("blob");
+
+    //       // Upload PDF
+    //       const formData = new FormData();
+    //       formData.append("clientInvoice", pdfBlob, `${allinvoiceDetails?.invoice_number || "invoice"}.pdf`);
+    //       formData.append("id", invoiceId);
+    //       formData.append("invoice_document_type", "Export Invoice");
+
+    //       await axios.post(`${API_URL}/api/invoice/upload-client-invoice`, formData, {
+    //         withCredentials: true,
+    //         headers: { "Content-Type": "multipart/form-data" },
+    //       });
+
+    //       Swal.fire({
+    //         icon: "success",
+    //         title: "Invoice Generated",
+    //         text: "Invoice has been generated and uploaded successfully.",
+    //         confirmButtonColor: "#2563eb",
+    //       });
+    //     } catch (error) {
+    //       console.error("Invoice generation failed:", error);
+    //       Swal.fire({
+    //         icon: "error",
+    //         title: "Generation Failed",
+    //         text: "Something went wrong while generating invoice.",
+    //       });
+    //     } finally {
+    //       setIsGenerating(false);
+    //     }
+    //   };
+
+
+    //   const downloadPDF = async () => {
+    //     if (!invoiceId) return;
+
+    //     setIsGenerating(true);
+
+    //     Swal.fire({
+    //       title: "Generating Invoice",
+    //       text: "Please wait while we generate your invoice...",
+    //       allowOutsideClick: false,
+    //       didOpen: () => Swal.showLoading(),
+    //     });
+
+    //     try {
+    //       const element = invoiceRef.current;
+
+    //       // Wait for images to load
+    //       await new Promise((resolve) => setTimeout(resolve, 500));
+
+    //       const opt = {
+    //         margin: 0.5,
+    //         filename: `${allinvoiceDetails?.invoice_number || "invoice"}.pdf`,
+    //         image: { type: "jpeg", quality: 0.7 }, // smaller file size
+    //         html2canvas: { scale: 1.5, useCORS: true, allowTaint: false },
+    //         jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
+    //       };
+
+    //       const pdfBlob = await html2pdf().set(opt).from(element).outputPdf("blob");
+
+    //       // Upload PDF to server
+    //       const formData = new FormData();
+    //       formData.append(
+    //         "clientInvoice",
+    //         pdfBlob,
+    //         `${allinvoiceDetails?.invoice_number || "invoice"}.pdf`
+    //       );
+    //       formData.append("id", invoiceId);
+    //       formData.append("invoice_document_type", "Export Invoice");
+
+    //       await axios.post(`${API_URL}/api/invoice/upload-client-invoice`, formData, {
+    //         withCredentials: true,
+    //         headers: { "Content-Type": "multipart/form-data" },
+    //       });
+
+    //       Swal.fire({
+    //         icon: "success",
+    //         title: "Invoice Generated",
+    //         text: "Invoice has been generated and uploaded successfully.",
+    //         confirmButtonColor: "#2563eb",
+    //       });
+    //     } catch (error) {
+    //       console.error("Invoice generation failed:", error);
+    //       Swal.fire({
+    //         icon: "error",
+    //         title: "Generation Failed",
+    //         text: "Something went wrong while generating invoice.",
+    //       });
+    //     } finally {
+    //       setIsGenerating(false);
+    //     }
+    //   };
     const downloadPDF = async () => {
+        if (!invoiceId) return;
 
         setIsGenerating(true);
 
         Swal.fire({
             title: "Generating Invoice",
-            text: "Please wait while we generate your invoice...",
+            text: "Please wait...",
             allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            },
+            didOpen: () => Swal.showLoading(),
         });
+
         try {
             const element = invoiceRef.current;
 
-            const canvas = await html2canvas(element, { scale: 1.5 });
-            const imgData = canvas.toDataURL("image/jpeg", 0.7);
+            // IMPORTANT: element must be visible
+            element.style.display = "block";
 
-            const pdf = new jsPDF("p", "mm", "a4");
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const imgProps = pdf.getImageProperties(imgData);
-            const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
+            await new Promise((r) => setTimeout(r, 500));
 
-            pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
+            const opt = {
+                margin: 0, // FULL WIDTH
+                filename: `${allinvoiceDetails?.invoice_number || "invoice"}.pdf`,
+                image: {
+                    type: "jpeg",
+                    quality: 0.7, // KB size
+                },
+                html2canvas: {
+                    scale: 1.2,
+                    useCORS: true,
+                    allowTaint: true,
+                    scrollX: 0,
+                    scrollY: 0,
+                    windowWidth: element.scrollWidth, // 🔥 VERY IMPORTANT
+                },
+                jsPDF: {
+                    unit: "mm",
+                    format: "a4",
+                    orientation: "portrait",
+                },
+                pagebreak: { mode: ["css", "legacy"] },
+            };
 
-            const invoiceNumber =
-                allinvoiceDetails?.invoice_number || `invoice_${Date.now()}`;
+            const worker = html2pdf().set(opt).from(element);
 
-            const pdfBlob = pdf.output("blob");
-
+            const pdfBlob = await worker.outputPdf("blob");
 
             const formData = new FormData();
-            formData.append("clientInvoice", pdfBlob, `${invoiceNumber}.pdf`);
+            formData.append(
+                "clientInvoice",
+                pdfBlob,
+                `${allinvoiceDetails?.invoice_number || "invoice"}.pdf`
+            );
             formData.append("id", invoiceId);
             formData.append("invoice_document_type", "Export Invoice");
 
-
-
-            const response = await axios.post(
+            await axios.post(
                 `${API_URL}/api/invoice/upload-client-invoice`,
                 formData,
-                { withCredentials: true }, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            }
+                {
+                    withCredentials: true,
+                    headers: { "Content-Type": "multipart/form-data" },
+                }
             );
-            console.log("PDF uploaded successfully:", response.data);
 
             Swal.fire({
                 icon: "success",
                 title: "Invoice Generated",
-                text: "Invoice has been generated and uploaded successfully.",
-                confirmButtonColor: "#2563eb",
+                text: "Invoice generated & uploaded successfully",
             });
-
-            // Optional local download
-            // pdf.save(`${invoiceNumber}.pdf`);
-
-        } catch (error) {
-            console.error("Invoice generation failed:", error);
-
+        } catch (err) {
+            console.error(err);
             Swal.fire({
                 icon: "error",
-                title: "Generation Failed",
-                text: "Something went wrong while generating invoice.",
+                title: "Failed",
+                text: "PDF generation failed",
             });
         } finally {
             setIsGenerating(false);
@@ -184,6 +390,9 @@ const Export_invoice = () => {
     };
 
 
+    useImperativeHandle(ref, () => ({
+        downloadPDF
+    }));
 
 
 
@@ -214,22 +423,22 @@ const Export_invoice = () => {
         return convert(num) + " Rupees Only";
     };
 
-    
-const groupedItems = allinvoiceDetails?.items?.reduce((acc, item) => {
-  const hsn = item.hsnCode;
 
-  if (!acc[hsn]) {
-    acc[hsn] = {
-      hsnCode: hsn,
-      amount: Number(item.amount || 0),
-    };
-  } else {
-    acc[hsn].amount += Number(item.amount || 0);
-  }
+    const groupedItems = allinvoiceDetails?.items?.reduce((acc, item) => {
+        const hsn = item.hsnCode;
 
-  return acc;
-}, {});
-const finalItems = Object.values(groupedItems || {});
+        if (!acc[hsn]) {
+            acc[hsn] = {
+                hsnCode: hsn,
+                amount: Number(item.amount || 0),
+            };
+        } else {
+            acc[hsn].amount += Number(item.amount || 0);
+        }
+
+        return acc;
+    }, {});
+    const finalItems = Object.values(groupedItems || {});
 
 
     const data = [
@@ -272,13 +481,13 @@ const finalItems = Object.values(groupedItems || {});
                 <div className="flex justify-between  h-full border-black items-start  border-r-2 border-l-2">
                     <div className=" border-black w-[50%] border-r-2 ">
                         <div className="border-b-2   border-black px-[5%]">
-                            <img src={Aryulogo} alt="Company Logo" className="h-18 mb-2" />
+                            <img src={Aryulogo} alt="Company Logo" className="h-18 mb-2" crossOrigin="anonymous" />
                         </div>
                         <div className="p-1  text-[13px]   border-black">
                             <p>{line1}</p>
                             <p className="pt-1">{line2}</p>
                             <p className="pt-2">State Name - {settingData?.invoiceState}, Code - 33</p>
-                        
+
                         </div>
                     </div>
                     <div className="w-[50%]   border-black">
@@ -309,40 +518,40 @@ const finalItems = Object.values(groupedItems || {});
                                              MANGAL MURTI SQUARE, Ragado Building, TRIMURTI NAGAR, NAGPUR MH
                                              440022
                                            </p> */}
-                           
+
                         </div>
                     </div>
                 </div>
 
                 <div className="flex justify-between h-full border-black items-start border-b-2 border-r-2 border-l-2">
-          <div className=" border-black w-[50%] border-r-2 p-1 ">
-            <p className="pt-2">
-              <strong>GSTIN/UIN</strong>: {settingData?.invoiceGstin}
-            </p>
-            <p className="pt-2">
-              <strong>Email</strong>- {settingData?.invoiceEmail}/{" "}
-              <strong>PH</strong> - {settingData?.invoicePhone}
-            </p>{" "}
-            <div className="pt-1"></div>
-          </div>
+                    <div className=" border-black w-[50%] border-r-2 p-1 ">
+                        <p className="pt-2">
+                            <strong>GSTIN/UIN</strong>: {settingData?.invoiceGstin}
+                        </p>
+                        <p className="pt-2">
+                            <strong>Email</strong>- {settingData?.invoiceEmail}/{" "}
+                            <strong>PH</strong> - {settingData?.invoicePhone}
+                        </p>{" "}
+                        <div className="pt-1"></div>
+                    </div>
 
-          <div className="w-[50%]  border-black">
-
-
-            <div className="p-1 text-[12px]   border-black">
-
-              <p className="pt-2">
-                <strong>GSTIN/UIN</strong>: {allinvoiceDetails?.clientId?.gst}
-              </p>
-              <p className="pt-2">
-                <strong>Email</strong>- {allinvoiceDetails?.clientId?.email} / <strong>PH</strong>{" "}
-                - {allinvoiceDetails?.clientId?.phone_number}
-              </p>{" "}
-            </div>
-          </div>
+                    <div className="w-[50%]  border-black">
 
 
-        </div>
+                        <div className="p-1 text-[12px]   border-black">
+
+                            <p className="pt-2">
+                                <strong>GSTIN/UIN</strong>: {allinvoiceDetails?.clientId?.gst}
+                            </p>
+                            <p className="pt-2">
+                                <strong>Email</strong>- {allinvoiceDetails?.clientId?.email} / <strong>PH</strong>{" "}
+                                - {allinvoiceDetails?.clientId?.phone_number}
+                            </p>{" "}
+                        </div>
+                    </div>
+
+
+                </div>
                 {/* table */}
 
                 <div className=" ">
@@ -397,10 +606,10 @@ const finalItems = Object.values(groupedItems || {});
                                         {item.quantity}
                                     </td>
                                     <td className="no-line-bot p-1 border-r-2 align-middle   border-black">
-                    {NumberFormat(item.rate)}
+                                        {NumberFormat(item.rate)}
                                     </td>
                                     <td className="no-line-bot p-1 border-r-2  align-middle  border-black">
-                                                            {item.rate ? "Nos" : ""}
+                                        {item.rate ? "Nos" : ""}
 
                                     </td>
                                     <td className="no-line-bot p-1 border-r-2   align-middle border-black">
@@ -607,45 +816,45 @@ const finalItems = Object.values(groupedItems || {});
                             ))}
                         </tbody> */}
 
-                                   <tbody className="text-black font-semibold">
-                          {finalItems.map((item, index) => (
-                            <tr key={index}>
-                              <td className="p-1 pb-2 border-r-2 border-l-2 text-center border-black">
-                                {item.hsnCode}
-                              </td>
-                        
-                              <td className="p-1 border-r-2 text-right border-black">
-                                {NumberFormat(item.amount)}
-                              </td>
-                        
-                              <td className="p-1 border-r-2 text-right border-black">
-                                {/* {settingData?.cgst}.00% */}0
-                              </td>
-                        
-                              <td className="p-1 border-r-2 text-right border-black">
-                                0
-                              </td>
-                        
-                              <td className="p-1 border-r-2 text-right border-black">
-                                {NumberFormat(
-                                  (item.amount * Number(settingData?.cgst || 0)) / 100
-                                )}
-                              </td>
-                        
-                              <td className="p-1 border-r-2 text-right border-black">
-                                {NumberFormat(
-                                  (item.amount * Number(settingData?.sgst || 0)) / 100
-                                )}
-                              </td>
-                        
-                              <td className="p-1 border-r-2 text-right border-black">
-                                {NumberFormat(
-                                  (item.amount * Number(settingData?.cgst || 0)) / 100 +
-                                  (item.amount * Number(settingData?.sgst || 0)) / 100
-                                )}
-                              </td>
-                            </tr>
-                          ))}
+                        <tbody className="text-black font-semibold">
+                            {finalItems.map((item, index) => (
+                                <tr key={index}>
+                                    <td className="p-1 pb-2 border-r-2 border-l-2 text-center border-black">
+                                        {item.hsnCode}
+                                    </td>
+
+                                    <td className="p-1 border-r-2 text-right border-black">
+                                        {NumberFormat(item.amount)}
+                                    </td>
+
+                                    <td className="p-1 border-r-2 text-right border-black">
+                                        {/* {settingData?.cgst}.00% */}0
+                                    </td>
+
+                                    <td className="p-1 border-r-2 text-right border-black">
+                                        0
+                                    </td>
+
+                                    <td className="p-1 border-r-2 text-right border-black">
+                                        {NumberFormat(
+                                            (item.amount * Number(settingData?.cgst || 0)) / 100
+                                        )}
+                                    </td>
+
+                                    <td className="p-1 border-r-2 text-right border-black">
+                                        {NumberFormat(
+                                            (item.amount * Number(settingData?.sgst || 0)) / 100
+                                        )}
+                                    </td>
+
+                                    <td className="p-1 border-r-2 text-right border-black">
+                                        {NumberFormat(
+                                            (item.amount * Number(settingData?.cgst || 0)) / 100 +
+                                            (item.amount * Number(settingData?.sgst || 0)) / 100
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                         <tfoot className="border-b-2  border-black text-[14px]">
                             {/* taxable */}
@@ -742,19 +951,13 @@ const finalItems = Object.values(groupedItems || {});
                             {/* Stamp + Signature Row */}
                             <div className="flex items-center justify-between ">
                                 {/* Stamp */}
-                                <img
-                                    src={Steal}
-                                    alt="Company Stamp"
-                                    className="h-32  object-contain"
-                                />
+                                <img src={Steal} alt="Company Stamp" className="h-32 object-contain" crossOrigin="anonymous" />
+
 
                                 {/* Signature */}
                                 <div>
-                                    <img
-                                        src={Sing}
-                                        alt="Authorized Signatory"
-                                        className="h-24 object-contain"
-                                    />
+                                    <img src={Sing} alt="Authorized Signatory" className="h-24 object-contain" crossOrigin="anonymous" />
+
                                     <div className="text-right  font-medium text-sm">
                                         Authorized Signatory
                                     </div>
@@ -784,6 +987,6 @@ const finalItems = Object.values(groupedItems || {});
             </div>
         </div>
     );
-};
+});
 
 export default Export_invoice;

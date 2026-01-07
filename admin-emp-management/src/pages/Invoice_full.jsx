@@ -150,7 +150,7 @@ const Invoice_full = () => {
   const [invoicetype, setInvoiceType] = useState("");
   const [selected, setSelected] = useState("Select Invoice Type");
 
-  const[invoiceNo, setInvoiceNo] = useState("");
+  const [invoiceNo, setInvoiceNo] = useState("");
 
   const [amount, setAmount] = useState("");
   const [paymentType, setPaymentType] = useState("");
@@ -420,11 +420,11 @@ const Invoice_full = () => {
       errors.due_date = "Due date cannot be before invoice date";
     }
 
-     if (invoicetype === "Manual") {
-    if (!invoiceNo || invoiceNo.trim() === "") {
-      errors.invoice_no = "Invoice number is required";
+    if (invoicetype === "Manual") {
+      if (!invoiceNo || invoiceNo.trim() === "") {
+        errors.invoice_no = "Invoice number is required";
+      }
     }
-  }
 
     // Currency
     if (!currency || !currency.name) {
@@ -474,9 +474,10 @@ const Invoice_full = () => {
     }
 
     // Amount (not completed)
-    if (status && status !== "completed" && !amount) {
-      errors.amount = "Amount is required";
-    }
+  if (status && status !== "completed" && status !== "invoice_raised" && !amount) {
+  errors.amount = "Amount is required";
+}
+
 
     // Payment Type
     if (status && !paymentType) {
@@ -525,7 +526,7 @@ const Invoice_full = () => {
         amount,
         paidDate,
         paymentType,
-        invoice_number:invoiceNo,
+        invoice_number: invoiceNo,
 
 
       };
@@ -591,10 +592,10 @@ const Invoice_full = () => {
   };
 
   const [openlog, setOpenlog] = useState(false);
-  const [selectedLogs, setSelectedLogs] = useState([]);
+  // const [selectedLogs, setSelectedLogs] = useState(logdetails);
 
   return (
-    <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
+    <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10 overflow-x-auto">
       <div>
         <Mobile_Sidebar />
 
@@ -617,10 +618,16 @@ const Invoice_full = () => {
           <div className="bg-white p-2 md:p-5 rounded-xl overflow-y-auto px-2 py-4 md:px-5 md:py-6">
             <div className="flex justify-between items-center gap-2 ">
               <h2 className="text-xl font-semibold mb-4">Add Invoice</h2>
+                 <button
+               onClick={() => navigate(-1)}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium"
+              >
+                ← Back
+              </button>
             </div>
             <div className="flex flex-wrap md:flex-nowrap">
               {/* left */}
-              <div className="w-full border p-5 shadow-2xl rounded ">
+              <div className="w-full border p-5 md:w-[70%] shadow-2xl rounded ">
                 {" "}
                 {/* name and company */}
                 <div className="flex flex-wrap md:flex-nowrap justify-between gap-5">
@@ -718,28 +725,28 @@ const Invoice_full = () => {
 
 
                 {/* /invoice numbrf */}
-              {invoicetype === "Manual" && (
-  <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3">
-    <div className="w-[50%]">
-      <label className="block text-sm font-medium mb-2">
-        Invoice No <span className="text-red-500">*</span>
-      </label>
+                {invoicetype === "Manual" && (
+                  <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3">
+                    <div className="w-[50%]">
+                      <label className="block text-sm font-medium mb-2">
+                        Invoice No <span className="text-red-500">*</span>
+                      </label>
 
-      <input
-        type="text"
-        value={invoiceNo}
-        onChange={(e) => setInvoiceNo(e.target.value)}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
+                      <input
+                        type="text"
+                        value={invoiceNo}
+                        onChange={(e) => setInvoiceNo(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
 
-      {errors.invoice_no && (
-        <p className="text-red-500 text-sm mt-1">
-          {errors.invoice_no}
-        </p>
-      )}
-    </div>
-  </div>
-)}
+                      {errors.invoice_no && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.invoice_no}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 {/* item */}
                 <div className="mt-3">
@@ -986,6 +993,8 @@ const Invoice_full = () => {
                               Payment Status
                             </option>
                             <option value="completed">Completed</option>
+                            <option value="invoice_raised">Invoice Raised</option>
+
                             <option value="advance_pending">Advance Pending</option>
                             <option value="partial_payment_pending">
                               Partial payment pending
@@ -1028,7 +1037,7 @@ const Invoice_full = () => {
 
 
 
-                        {status && (
+                        {status && status !== "invoice_raised" && (
                           <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
                             <label className="block text-sm font-medium mb-2 w-[50%]">
                               Amount <span className="text-red-500">*</span>
@@ -1094,7 +1103,8 @@ const Invoice_full = () => {
 
               {/* right */}
 
-              <div className="w-full md:w-[35%] md:border-l-4 p-3">
+              <div className="w-full md:w-[30%] md:border-l-4 p-3">
+                <div className="w-full">
                 <button
                   className="bg-blue-600 hover:bg-blue-700 text-white px-4 min-w-full h-10 font-semibold rounded"
                   onClick={handlesubmit}
@@ -1264,7 +1274,7 @@ const Invoice_full = () => {
 
                 </div>
                 <hr className="mt-5"></hr>
-
+{/* 
                 <div className="p-2">
                   <button
                     onClick={() => {
@@ -1276,11 +1286,73 @@ const Invoice_full = () => {
                     <FaEye size={18} />
                     <span>View Payment History</span>
                   </button>
-                </div>
+                </div> */}
+
+                <div className="p-2">
+  {logdetails && logdetails.length > 0 ? (
+    <table className="w-full text-sm border border-gray-200 rounded-xl overflow-hidden">
+      <thead className="bg-blue-50">
+        <tr>
+          <th className="px-4 py-3 text-left font-semibold text-gray-600">
+            Invoice / Date
+          </th>
+          <th className="px-4 py-3 text-left font-semibold text-gray-600">
+            Status
+          </th>
+          <th className="px-4 py-3 text-right font-semibold text-gray-600">
+            Amount (₹)
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {logdetails.map((log, i) => (
+          <tr
+            key={i}
+            className={`border-b transition ${
+              i % 2 === 0 ? "bg-white" : "bg-gray-50"
+            } hover:bg-blue-50`}
+          >
+            <td className="px-4 py-3 font-medium text-gray-800">
+              <div className="flex flex-col">
+                <span>#{log.invoice_number || "-"}</span>
+                <span className="text-gray-500 text-sm">
+                  {new Date(log.paidDate).toLocaleDateString("en-IN")}
+                </span>
+              </div>
+            </td>
+            <td className="px-4 py-3 text-gray-800">
+              {capitalizeFirstLetter(log.status)}
+            </td>
+            <td className="px-4 py-3 text-right font-semibold text-green-600">
+              ₹{log.amount}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <div className="text-gray-500 font-medium text-lg mt-2">
+      No transactions available
+    </div>
+  )}
+</div>
+
+</div>
+
+
+                
 
 
 
-                {openlog && (
+
+
+
+
+
+
+
+              </div>
+              {openlog && (
                   <div
                     className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
                     onClick={() => setOpenlog(false)}
@@ -1360,17 +1432,6 @@ const Invoice_full = () => {
                   </div>
                 )}
 
-
-
-
-
-
-
-
-
-
-
-              </div>
             </div>
           </div>
         </div>
