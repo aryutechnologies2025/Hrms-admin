@@ -1294,7 +1294,7 @@ const Invoice_full = () => {
       <thead className="bg-blue-50">
         <tr>
           <th className="px-4 py-3 text-left font-semibold text-gray-600">
-            Invoice / Date
+             Date
           </th>
           <th className="px-4 py-3 text-left font-semibold text-gray-600">
             Status
@@ -1314,7 +1314,7 @@ const Invoice_full = () => {
           >
             <td className="px-4 py-3 font-medium text-gray-800">
               <div className="flex flex-col">
-                <span>#{log.invoice_number || "-"}</span>
+                {/* <span>#{log.invoice_number || "-"}</span> */}
                 <span className="text-gray-500 text-sm">
                   {new Date(log.paidDate).toLocaleDateString("en-IN")}
                 </span>
