@@ -1043,6 +1043,7 @@ const Invoice_full = () => {
 
 
                             <option value="completed">Completed</option>
+                            <option value="TDS">TDS</option>
 
                           </select>
 
@@ -1327,7 +1328,7 @@ const Invoice_full = () => {
                   </button>
                 </div> */}
 
-                 <div className="p-2">
+                 {/* <div className="p-2">
   {logdetails && logdetails.length > 0 ? (
     <div className="max-h-[500px] overflow-y-auto border border-gray-200 rounded-xl">
       <table className="w-full text-sm">
@@ -1376,7 +1377,7 @@ const Invoice_full = () => {
       No transactions available
     </div>
   )}
-</div>
+</div> */}
 
                 </div>
 
