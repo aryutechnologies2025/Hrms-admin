@@ -13,7 +13,7 @@ import NumberFormat from "../../utils/NumberFormat";
 import Swal from "sweetalert2";
 
 
-const Sales_invoice =  forwardRef(({ invoiceId }, ref) => {
+const Sales_invoice =  forwardRef(({ invoiceId, onSuccess }, ref) => {
   const invoiceRef = useRef();
 
   const location = useLocation();
@@ -250,7 +250,9 @@ const Sales_invoice =  forwardRef(({ invoiceId }, ref) => {
                 icon: "success",
                 title: "Invoice Generated",
                 text: "Invoice generated & uploaded successfully",
-            });
+            }).then(() => {
+  if (onSuccess) onSuccess();   
+});
         } catch (err) {
             console.error(err);
             Swal.fire({

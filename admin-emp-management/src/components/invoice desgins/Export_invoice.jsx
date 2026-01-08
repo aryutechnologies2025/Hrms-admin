@@ -15,7 +15,7 @@ import Swal from "sweetalert2";
 
 
 
-const Export_invoice = forwardRef(({ invoiceId }, ref) => {
+const Export_invoice = forwardRef(({ invoiceId, onSuccess }, ref) => {
     const invoiceRef = useRef();
 
     useEffect(() => {
@@ -376,7 +376,9 @@ const Export_invoice = forwardRef(({ invoiceId }, ref) => {
                 icon: "success",
                 title: "Invoice Generated",
                 text: "Invoice generated & uploaded successfully",
-            });
+            }).then(() => {
+  if (onSuccess) onSuccess();   
+});
         } catch (err) {
             console.error(err);
             Swal.fire({

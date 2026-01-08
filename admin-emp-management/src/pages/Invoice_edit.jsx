@@ -28,14 +28,15 @@ import { MdDelete } from "react-icons/md";
 import { use } from "react";
 import { MdClose } from "react-icons/md"; // nice rounded X icon
 import { capitalizeFirstLetter } from "../utils/StringCaps";
+import { useDateUtils } from "../hooks/useDateUtils";
 
 const Invoice_edit = () => {
-
+  const formatDateTime = useDateUtils();
   const { state } = useLocation();
   const rowData = state?.rowData;
+const dropdownRef = useRef(null);
 
-
-  console.log("rowdata", rowData)
+  // console.log("rowdata", rowData)
 
   const navigate = useNavigate();
 
@@ -208,7 +209,7 @@ const Invoice_edit = () => {
   const [status, setStatus] = useState("");
 
   const [invoiceDate, setInvoiceDate] = useState("");
-  console.log("invoiceDate", invoiceDate)
+  // console.log("invoiceDate", invoiceDate)
   const [dueDate, setDueDate] = useState("");
   // console.log("dueDate", dueDate)
   const [currency, setCurreny] = useState("");
@@ -318,14 +319,14 @@ const Invoice_edit = () => {
     setSubTotal(rowData.sub_total || "");
     setTax(rowData.tax || "");
     setNotes(rowData.notes || "");
-    setStatus(rowData.status);
+    // setStatus(rowData.status);
     setSelected(rowData.invoice_type);
     setIgst(rowData.igst);
     setCgst(rowData.cgst);
     setSgst(rowData.sgst);
     setPaidDate(rowData.paid_date?.split("T")[0]);
-    setAmount(rowData.amount);
-    setPaymentType(rowData?.paymentType);
+    // setAmount(rowData.amount);
+    // setPaymentType(rowData?.paymentType);
     setBalance(rowData?.balance);
     setInvoiceNo(rowData?.invoice_number);
   }, [rowData]);
@@ -386,6 +387,13 @@ const Invoice_edit = () => {
     setItems(updatedItems);
   };
 
+const skipPaymentFields = [
+  "invoice_raised",
+  "advance_pending",
+  "final_payment_pending",
+  "partial_payment_pending",
+  "completed",
+];
 
 
   const handlesubmit = async (e) => {
@@ -400,6 +408,14 @@ const Invoice_edit = () => {
     if (!status) {
       newErrors.status = "Status is required";
     }
+   if (status && !skipPaymentFields.includes(status) && !amount) {
+    newErrors.amount = "Amount is required";
+  }
+
+  // Payment Type
+  if (status && !skipPaymentFields.includes(status) && !paymentType) {
+    newErrors.paymentType = "Payment type is required";
+  }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -472,6 +488,29 @@ const Invoice_edit = () => {
   const [openlog, setOpenlog] = useState(false);
   const [selectedLogs, setSelectedLogs] = useState([]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
+        setOpen(false);
+        setTaxOpen(false);
+        setIntraOpen(false);
+        setInterOpen(false);
+      }
+    };
+  
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+  
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open]);
+  
+
   return (
     <div className="flex flex-col justify-between bg-gray-100 w-screen  min-h-screen px-3 md:px-5 pt-2 md:pt-10 overflow-x-auto">
       <div className="">
@@ -500,7 +539,7 @@ const Invoice_edit = () => {
               <h2 className="text-xl font-semibold mb-4">Edit Invoice</h2>
 
               <button
-               onClick={() => navigate(-1)}
+                onClick={() => navigate(-1)}
                 className="flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium"
               >
                 ← Back
@@ -524,6 +563,7 @@ const Invoice_edit = () => {
                       value={selectedClient}
                       onChange={(e) => setSelectedClient(e.value)}
                       options={clientOption}
+                      filter
                       optionLabel="label"
                       placeholder="Select a Client"
                       className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -546,6 +586,7 @@ const Invoice_edit = () => {
                       value={selectedProject}
                       onChange={(e) => setSelectedProject(e.value)}
                       options={projectOption}
+                      filter
                       optionLabel="label"
                       placeholder="Select a Project"
                       className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -837,7 +878,7 @@ const Invoice_edit = () => {
                         <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
                           <label
                             htmlFor="country"
-                            className="block text-sm font-medium mb-2 w-[50%]"
+                            className="block text-sm font-medium mb-2 w-[50%] mt-3"
                           >
                             Total Amount
                           </label>
@@ -852,9 +893,9 @@ const Invoice_edit = () => {
                         </div>
                         {/* bablance */}
 
-                         {status && (
+                        {/* {status && ( */}
                           <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
-                            <label className="block text-sm font-medium mb-2 w-[50%]">
+                            <label className="block text-sm font-medium mb-2 w-[50%] mt-3">
                               Balance
                             </label>
 
@@ -869,11 +910,11 @@ const Invoice_edit = () => {
 
 
                           </div>
-                        )}
+                        {/* /* )}  */}
                         <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
                           <label
                             htmlFor="roleName"
-                            className="block text-sm font-medium mb-2 w-[50%]"
+                            className="block text-sm font-medium mb-2 w-[50%] mt-3"
                           >
                             Status
                           </label>
@@ -891,19 +932,22 @@ const Invoice_edit = () => {
                             <option value="" disabled selected>
                               Payment Status
                             </option>
-                            <option value="completed">Completed</option>
                             <option value="invoice_raised">Invoice Raised</option>
+
                             <option value="advance_pending">Advance Pending</option>
+                            <option value="advance_received">Advance Received</option>
                             <option value="partial_payment_pending">
-                              Partial payment pending
+                              Partial Payment Pending
+                            </option>
+                            <option value="partial_payment_received">
+                              Partial Payment Received
                             </option>
                             <option value="final_payment_pending">
-                              Final payment pending
+                              Final payment Pending
                             </option>
-                            <option value="advance_received">Advance received</option>
-                            <option value="partial_payment_received">
-                              Partial payment received
-                            </option>
+
+
+                            <option value="completed">Completed</option>
 
                           </select>
                           {errors.status && (
@@ -913,27 +957,27 @@ const Invoice_edit = () => {
                           )}
                         </div>
 
-                        {status && (
+                        {status && !["invoice_raised", "advance_pending", "final_payment_pending", "partial_payment_pending"].includes(status) && (
                           <div className="w-full flex mt-3">
-                            <label className="w-[50%] text-sm font-medium">
-                              Date 
+                            <label className="w-[50%] text-sm font-medium mt-3" >
+                              Date
                             </label>
 
                             <input
                               type="date"
-                              // value={paidDate}
+                              value={paidDate}
                               onChange={(e) => setPaidDate(e.target.value)}
                               className="w-full h-11 px-3 border rounded-lg"
                             />
                           </div>
                         )}
 
-                       
 
-                        {status && (
+
+                        {status && !["invoice_raised", "advance_pending", "final_payment_pending", "partial_payment_pending"].includes(status) && (
                           <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
-                            <label className="block text-sm font-medium mb-2 w-[50%]">
-                              Amount 
+                            <label className="block text-sm font-medium mb-2 w-[50%] mt-3">
+                              Amount
                             </label>
 
                             <input
@@ -946,17 +990,18 @@ const Invoice_edit = () => {
                               className="w-full h-11 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
 
-                            {errors.amount && (
-                              <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
-                            )}
+                            
                           </div>
                         )}
+                        {errors.amount && (
+                              <p className="text-red-500 text-sm mt-1 text-end">{errors.amount}</p>
+                            )}
 
 
-                        {status && (
+                        {status && !["invoice_raised", "advance_pending", "final_payment_pending", "partial_payment_pending"].includes(status) && (
                           <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
-                            <label className="block text-sm font-medium mb-2 w-[50%]">
-                              Type 
+                            <label className="block text-sm font-medium  w-[50%] mt-4">
+                              Payment Type
                             </label>
 
                             <select
@@ -967,7 +1012,7 @@ const Invoice_edit = () => {
                               }}
                               className="w-full h-11 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
-                              <option value="" disabled>
+                              <option value="" disabled selected>
                                 Select Payment Type
                               </option>
                               <option value="gpay">GPay</option>
@@ -976,11 +1021,13 @@ const Invoice_edit = () => {
                               <option value="upi">UPI</option>
                             </select>
 
-                            {errors.paymentType && (
-                              <p className="text-red-500 text-sm mt-1">{errors.paymentType}</p>
-                            )}
+                          
                           </div>
+                          
                         )}
+                          {errors.paymentType && (
+                              <p className="text-red-500 text-sm mt-1 text-end">{errors.paymentType}</p>
+                            )}
                       </div>
                     </div>
                   </div>
@@ -1038,7 +1085,7 @@ const Invoice_edit = () => {
 
                         {/* Dropdown (DOWN-WISE) */}
                         {open && (
-                          <div className="mt-2 border rounded-xl bg-white shadow-md">
+                          <div ref={dropdownRef} className="mt-2 border rounded-xl bg-white shadow-md">
 
                             {/* WITHOUT GST */}
                             <div
@@ -1166,57 +1213,60 @@ const Invoice_edit = () => {
                       <span>View Payment History</span>
                     </button>
                   </div> */}
-                               <div className="p-2">
-                  {logdetails && logdetails.length > 0 ? (
-                    <table className="w-full text-sm border border-gray-200 rounded-xl overflow-hidden">
-                      <thead className="bg-blue-50">
-                        <tr>
-                          <th className="px-4 py-3 text-left font-semibold text-gray-600">
-                            Date
-                          </th>
-                          <th className="px-4 py-3 text-left font-semibold text-gray-600">
-                            Status
-                          </th>
-                          <th className="px-4 py-3 text-right font-semibold text-gray-600">
-                            Amount (₹)
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {logdetails.map((log, i) => (
-                          <tr
-                            key={i}
-                            className={`border-b transition ${
-                              i % 2 === 0 ? "bg-white" : "bg-gray-50"
-                            } hover:bg-blue-50`}
-                          >
-                            <td className="px-4 py-3 font-medium text-gray-800">
-                              <div className="flex flex-col">
-                                {/* <span>#{log.invoice_number || "-"}</span> */}
-                                <span className="text-gray-500 text-sm">
-                                  {new Date(log.paidDate).toLocaleDateString("en-IN")}
-                                </span>
-                              </div>
-                            </td>
-                            <td className="px-4 py-3 text-gray-800">
-                              {capitalizeFirstLetter(log.status)}
-                            </td>
-                            <td className="px-4 py-3 text-right font-semibold text-green-600">
-                              ₹{log.amount}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  ) : (
-                    <div className="text-gray-500 font-medium text-lg mt-2">
-                      No transactions available
-                    </div>
-                  )}
-                </div>
+                  <div className="p-2">
+  {logdetails && logdetails.length > 0 ? (
+    <div className="max-h-[500px] overflow-y-auto border border-gray-200 rounded-xl">
+      <table className="w-full text-sm">
+        <thead className="bg-blue-50 sticky top-0 z-10">
+          <tr>
+            <th className="px-4 py-3 text-left font-semibold text-gray-600">
+              Date
+            </th>
+            <th className="px-4 py-3 text-left font-semibold text-gray-600">
+              Status
+            </th>
+            <th className="px-4 py-3 text-right font-semibold text-gray-600">
+              Amount (₹)
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {logdetails.map((log, i) => (
+            <tr
+              key={i}
+              className={`border-b transition ${
+                i % 2 === 0 ? "bg-white" : "bg-gray-50"
+              } hover:bg-blue-50`}
+            >
+              <td className="px-4 py-3 font-medium text-gray-800">
+                <span className="text-gray-500 text-sm">
+                  {log.paidDate ? formatDateTime(log.paidDate) : "-"}
+                </span>
+              </td>
+
+              <td className="px-4 py-3 text-gray-800">
+                {capitalizeFirstLetter(log.status)}
+              </td>
+
+              <td className="px-4 py-3 text-right font-semibold text-green-600">
+                {log.amount ? `₹${log.amount}` : "-"}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ) : (
+    <div className="text-gray-500 font-medium text-lg mt-2">
+      No transactions available
+    </div>
+  )}
+</div>
+
                 </div>
 
-                 
+
 
 
                 {openlog && (
