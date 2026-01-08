@@ -1091,6 +1091,7 @@ const Invoice_details = () => {
 
 
               <option value="completed">Completed</option>
+               <option value="TDS">TDS</option>
             </select>
           </div>
 

@@ -29,11 +29,14 @@ import { use } from "react";
 import { MdClose } from "react-icons/md"; // nice rounded X icon
 import { capitalizeFirstLetter } from "../utils/StringCaps";
 import { useDateUtils } from "../hooks/useDateUtils";
+// import { FaEdit, FaTrash } from "react-icons/fa";
+
 
 const Invoice_edit = () => {
   const formatDateTime = useDateUtils();
   const { state } = useLocation();
   const rowData = state?.rowData;
+  console.log("rowData", rowData)
 const dropdownRef = useRef(null);
 
   // console.log("rowdata", rowData)
@@ -138,7 +141,7 @@ const dropdownRef = useRef(null);
 
   const [logdetails, setLogdetails] = useState([]);
 
-  // console.log("logdetails", logdetails)
+  console.log("logdetails", logdetails)
 
   const fetchaLogs = async () => {
     try {
@@ -146,8 +149,9 @@ const dropdownRef = useRef(null);
         `${API_URL}/api/invoice/client-invoice-by-project-wise`,
         {
           params: {
-            clientId: selectedClient,
-            project: selectedProject,
+            // clientId: selectedClient,
+            // project: selectedProject,
+            id:editid,
           },
           // headers: {
           //   Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -158,7 +162,7 @@ const dropdownRef = useRef(null);
 
       // console.log("responselogssss", response)
 
-      setLogdetails(response.data.data);
+      setLogdetails(response.data.data?.logs);
 
 
 
@@ -219,6 +223,9 @@ const dropdownRef = useRef(null);
 
   const [notes, setNotes] = useState("");
 
+  const[editid, setEditid] = useState("");
+
+  // console.log("editid", editid)
 
   const [open, setOpen] = useState(false);
   const [taxOpen, setTaxOpen] = useState(false);
@@ -291,7 +298,7 @@ const dropdownRef = useRef(null);
     if (!rowData) return;
 
     setTotalAmount(rowData?.total_amount || "");
-
+    setEditid(rowData._id);
     setSelectedClient(rowData.clientId?._id);
     setSelectedProject(rowData?.project?._id);
 
@@ -487,6 +494,130 @@ const skipPaymentFields = [
 
   const [openlog, setOpenlog] = useState(false);
   const [selectedLogs, setSelectedLogs] = useState([]);
+
+
+  // edit payment
+
+  const [isEditOpen, setIsEditOpen] = useState(false);
+const [editingLog, setEditingLog] = useState(null);
+
+const [editStatus, setEditStatus] = useState("");
+const [editPaidDate, setEditPaidDate] = useState("");
+const [editAmount, setEditAmount] = useState("");
+const [editPaymentType, setEditPaymentType] = useState("");
+
+const handleEdit = (log) => {
+  setEditingLog(log);
+
+  setEditStatus(log.status || "");
+  setEditPaidDate(log.paidDate ? log.paidDate.split("T")[0] : "");
+  setEditAmount(log.amount || "");
+  setEditPaymentType(log.paymentType || "");
+
+  setErrors({});
+  setIsEditOpen(true);
+};
+const handleUpdate = async (e) => {
+  e.preventDefault(); //  IMPORTANT
+
+  if (!editStatus) {
+    Swal.fire({
+      toast: true,
+      position: "top-end",
+      icon: "error",
+      title: "Status is required",
+      showConfirmButton: false,
+      timer: 2000,
+      width: "300px",
+    });
+    return;
+  }
+
+  try {
+    await axios.put(
+      `${API_URL}/api/invoice/edit-invoice-log/${editingLog._id}`,
+      {
+        status: editStatus,
+        paidDate: editPaidDate,
+        amount: editAmount,
+        paymentType: editPaymentType,
+      }
+    );
+
+    Swal.fire({
+      toast: true,
+      position: "top-end",
+      icon: "success",
+      title: "Updated successfully",
+      showConfirmButton: false,
+      timer: 2000,
+      width: "300px",
+    });
+
+    setIsEditOpen(false);
+    fetchaLogs();
+  } catch (err) {
+    Swal.fire({
+      toast: true,
+      position: "top-end",
+      icon: "error",
+      title: "Update failed",
+      showConfirmButton: false,
+      timer: 2000,
+      width: "300px",
+    });
+  }
+};
+
+
+const handleDelete = (id) => {
+  Swal.fire({
+    title: "Delete?",
+    text: "This entry will be removed",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Delete",
+    cancelButtonText: "Cancel",
+    width: "400px",         
+    padding: "1.2rem",
+    customClass: {
+      popup: "rounded-xl text-sm",
+      confirmButton: "bg-red-600",
+    },
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(
+          `${API_URL}/api/invoice/delete-invoice-log/${id}`
+        );
+
+        //  Small success toast
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "success",
+          title: "Deleted successfully",
+          showConfirmButton: false,
+          timer: 2000,
+          width: "280px",
+        });
+
+        fetchaLogs();
+      } catch (error) {
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "error",
+          title: "Delete failed",
+          showConfirmButton: false,
+          timer: 2000,
+          width: "280px",
+        });
+      }
+    }
+  });
+};
+
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -948,6 +1079,7 @@ const skipPaymentFields = [
 
 
                             <option value="completed">Completed</option>
+                             <option value="TDS">TDS</option>
 
                           </select>
                           {errors.status && (
@@ -1226,8 +1358,12 @@ const skipPaymentFields = [
               Status
             </th>
             <th className="px-4 py-3 text-right font-semibold text-gray-600">
-              Amount (₹)
+              Amount
             </th>
+            <th className="px-4 py-3 text-center font-semibold text-gray-600">
+  Action
+</th>
+
           </tr>
         </thead>
 
@@ -1252,6 +1388,28 @@ const skipPaymentFields = [
               <td className="px-4 py-3 text-right font-semibold text-green-600">
                 {log.amount ? `₹${log.amount}` : "-"}
               </td>
+              <td className="px-4 py-3 text-center">
+  <div className="flex justify-center gap-3">
+    {/* Edit */}
+    <button
+      onClick={() => handleEdit(log)}
+      className="text-blue-600 hover:text-blue-800 transition"
+      title="Edit"
+    >
+      <TfiPencilAlt size={16} />
+    </button>
+
+    {/* Delete */}
+    <button
+      onClick={() => handleDelete(log._id)}
+      className="text-red-500 hover:text-red-700 transition"
+      title="Delete"
+    >
+      <MdOutlineDeleteOutline size={16} />
+    </button>
+  </div>
+</td>
+
             </tr>
           ))}
         </tbody>
@@ -1349,6 +1507,122 @@ const skipPaymentFields = [
                   </div>
                 )}
 
+{isEditOpen && (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
+
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold text-gray-800">
+          Edit Payment
+        </h2>
+        <button
+          onClick={() => setIsEditOpen(false)}
+          className="text-gray-400 hover:text-gray-600 text-xl"
+        >
+          ✕
+        </button>
+      </div>
+
+      {/* STATUS */}
+      <div className="w-full flex mt-3">
+        <label className="w-[45%] text-sm font-medium mt-3">
+          Status
+        </label>
+
+        <select
+          value={editStatus}
+          onChange={(e) => setEditStatus(e.target.value)}
+          className="w-full h-11 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Payment Status</option>
+          <option value="invoice_raised">Invoice Raised</option>
+          <option value="advance_pending">Advance Pending</option>
+          <option value="advance_received">Advance Received</option>
+          <option value="partial_payment_pending">Partial Payment Pending</option>
+          <option value="partial_payment_received">Partial Payment Received</option>
+          <option value="final_payment_pending">Final Payment Pending</option>
+          <option value="completed">Completed</option>
+          <option value="TDS">TDS</option>
+        </select>
+      </div>
+
+      {/* DATE */}
+      {editStatus &&
+        !["invoice_raised", "advance_pending", "final_payment_pending", "partial_payment_pending"].includes(editStatus) && (
+          <div className="w-full flex mt-4">
+            <label className="w-[45%] text-sm font-medium mt-3">
+              Date
+            </label>
+
+            <input
+              type="date"
+              value={editPaidDate}
+              onChange={(e) => setEditPaidDate(e.target.value)}
+              className="w-full h-11 px-3 border border-gray-300 rounded-lg"
+            />
+          </div>
+        )}
+
+      {/* AMOUNT */}
+      {editStatus &&
+        !["invoice_raised", "advance_pending", "final_payment_pending", "partial_payment_pending"].includes(editStatus) && (
+          <div className="w-full flex mt-4">
+            <label className="w-[45%] text-sm font-medium mt-3">
+              Amount
+            </label>
+
+            <input
+              type="number"
+              value={editAmount}
+              onChange={(e) => setEditAmount(e.target.value)}
+              className="w-full h-11 px-3 border border-gray-300 rounded-lg"
+            />
+          </div>
+        )}
+
+      {/* PAYMENT TYPE */}
+      {editStatus &&
+        !["invoice_raised", "advance_pending", "final_payment_pending", "partial_payment_pending"].includes(editStatus) && (
+          <div className="w-full flex mt-4">
+            <label className="w-[45%] text-sm font-medium mt-4">
+              Payment Type
+            </label>
+
+            <select
+              value={editPaymentType}
+              onChange={(e) => setEditPaymentType(e.target.value)}
+              className="w-full h-11 px-3 border border-gray-300 rounded-lg"
+            >
+              <option value="">Select Payment Type</option>
+              <option value="gpay">GPay</option>
+              <option value="bank">Bank Transfer</option>
+              <option value="cash">Cash</option>
+              <option value="upi">UPI</option>
+            </select>
+          </div>
+        )}
+
+      {/* ACTION BUTTONS */}
+      <div className="flex justify-end gap-3 mt-6">
+        <button
+          onClick={() => setIsEditOpen(false)}
+          className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={handleUpdate}
+          className="px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+        >
+          Submit
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
 
 
               </div>
