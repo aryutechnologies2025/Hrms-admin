@@ -14,7 +14,7 @@ import Swal from "sweetalert2";
 
 
 
-const Invoice = forwardRef(({ invoiceId }, ref) => {
+const Invoice = forwardRef(({ invoiceId,onSuccess }, ref) => {
   const invoiceRef = useRef();
 
   const location = useLocation();
@@ -158,7 +158,9 @@ const Invoice = forwardRef(({ invoiceId }, ref) => {
                 icon: "success",
                 title: "Invoice Generated",
                 text: "Invoice generated & uploaded successfully",
-            });
+            }).then(() => {
+  if (onSuccess) onSuccess();   
+});
         } catch (err) {
             console.error(err);
             Swal.fire({
@@ -335,17 +337,12 @@ const Invoice = forwardRef(({ invoiceId }, ref) => {
                 <strong className=" w-[40%]  inline-block">Dated</strong>
                 <strong className="font-bold">:</strong> {new Date().toLocaleDateString("en-IN")}
               </div>
-              {/* <div className="pt-1 pb-1">
-                                      <strong className=" w-[40%]  inline-block">
-                                          Place of Supply
-                                      </strong>
-                                      <strong className="font-bold">:</strong> within 30 days
-                                  </div> */}
+             
             </div>
 
             <div className="p-1 text-[12px]   border-black">
-              <p className="font-bold pt-2">Buyer (Bill To)</p>
-              <p className="font-bold pt-3">{allinvoiceDetails?.clientId?.trader_name}</p>
+              <p className="font-bold pb-1">Buyer (Bill To)</p>
+              <p className="font-bold pb-1">{allinvoiceDetails?.clientId?.trader_name}</p>
               <p className="pt-1">
                 {allinvoiceDetails?.clientId?.address}
               </p>
