@@ -28,8 +28,12 @@ import { MdDelete } from "react-icons/md";
 import { use } from "react";
 import { MdClose } from "react-icons/md"; // nice rounded X icon
 import { capitalizeFirstLetter } from "../utils/StringCaps";
+import { useDateUtils } from "../hooks/useDateUtils";
 
 const Invoice_full = () => {
+  const dropdownRef = useRef(null);
+    const formatDateTime = useDateUtils();
+  
   const navigate = useNavigate();
 
 
@@ -149,6 +153,8 @@ const Invoice_full = () => {
   const [igst, setIgst] = useState("");
   const [invoicetype, setInvoiceType] = useState("");
   const [selected, setSelected] = useState("Select Invoice Type");
+
+  // console.log("selected", selected);
 
   const [invoiceNo, setInvoiceNo] = useState("");
 
@@ -469,18 +475,21 @@ const Invoice_full = () => {
     }
 
     // Paid Date (when status selected)
-    if (status && !paidDate) {
+    if (status && !["invoice_raised", "advance_received", "final_payment_pending", "partial_payment_pending"].includes(status) && !paidDate) {
       errors.paidDate = "Paid date is required";
     }
 
     // Amount (not completed)
-  if (status && status !== "completed" && status !== "invoice_raised" && !amount) {
-  errors.amount = "Amount is required";
-}
-
+    if (
+      status &&
+      !["invoice_raised", "advance_pending", "final_payment_pending", "partial_payment_pending", "completed"].includes(status) &&
+      !amount
+    ) {
+      errors.amount = "Amount is required";
+    }
 
     // Payment Type
-    if (status && !paymentType) {
+    if (status && !["invoice_raised", "advance_pending", "final_payment_pending", "partial_payment_pending"].includes(status) && !paymentType) {
       errors.paymentType = "Payment type is required";
     }
 
@@ -594,6 +603,30 @@ const Invoice_full = () => {
   const [openlog, setOpenlog] = useState(false);
   // const [selectedLogs, setSelectedLogs] = useState(logdetails);
 
+
+  useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target)
+    ) {
+      setOpen(false);
+      setTaxOpen(false);
+      setIntraOpen(false);
+      setInterOpen(false);
+    }
+  };
+
+  if (open) {
+    document.addEventListener("mousedown", handleClickOutside);
+  }
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [open]);
+
+
   return (
     <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10 overflow-x-auto">
       <div>
@@ -618,8 +651,8 @@ const Invoice_full = () => {
           <div className="bg-white p-2 md:p-5 rounded-xl overflow-y-auto px-2 py-4 md:px-5 md:py-6">
             <div className="flex justify-between items-center gap-2 ">
               <h2 className="text-xl font-semibold mb-4">Add Invoice</h2>
-                 <button
-               onClick={() => navigate(-1)}
+              <button
+                onClick={() => navigate(-1)}
                 className="flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium"
               >
                 ← Back
@@ -642,6 +675,7 @@ const Invoice_full = () => {
                       value={selectedClient}
                       onChange={(e) => setSelectedClient(e.value)}
                       options={clientOption}
+                      filter
                       optionLabel="label"
                       placeholder="Select a Client"
                       className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -664,6 +698,7 @@ const Invoice_full = () => {
                       value={selectedProject}
                       onChange={(e) => setSelectedProject(e.value)}
                       options={projectOption}
+                      filter
                       optionLabel="label"
                       placeholder="Select a Project"
                       className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -992,20 +1027,22 @@ const Invoice_full = () => {
                             <option value="" disabled selected>
                               Payment Status
                             </option>
-                            <option value="completed">Completed</option>
                             <option value="invoice_raised">Invoice Raised</option>
 
                             <option value="advance_pending">Advance Pending</option>
+                            <option value="advance_received">Advance Received</option>
                             <option value="partial_payment_pending">
-                              Partial payment pending
+                              Partial Payment Pending
+                            </option>
+                            <option value="partial_payment_received">
+                              Partial Payment Received
                             </option>
                             <option value="final_payment_pending">
-                              Final payment pending
+                              Final payment Pending
                             </option>
-                            <option value="advance_received">Advance received</option>
-                            <option value="partial_payment_received">
-                              Partial payment received
-                            </option>
+
+
+                            <option value="completed">Completed</option>
 
                           </select>
 
@@ -1015,7 +1052,8 @@ const Invoice_full = () => {
                             {errors.status}
                           </p>
                         )}
-                        {status && (
+                        {status && !["invoice_raised", "advance_pending", "final_payment_pending", "partial_payment_pending"].includes(status) && (
+
                           <div className="w-full flex mt-3">
                             <label className="w-[50%] text-sm font-medium">
                               Date <span className="text-red-500">*</span>
@@ -1037,7 +1075,7 @@ const Invoice_full = () => {
 
 
 
-                        {status && status !== "invoice_raised" && (
+                        {status && !["invoice_raised", "advance_pending", "final_payment_pending", "partial_payment_pending"].includes(status) && (
                           <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
                             <label className="block text-sm font-medium mb-2 w-[50%]">
                               Amount <span className="text-red-500">*</span>
@@ -1063,10 +1101,10 @@ const Invoice_full = () => {
 
 
 
-                        {status && (
+                        {status && !["invoice_raised", "advance_pending", "final_payment_pending", "partial_payment_pending"].includes(status) && (
                           <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
                             <label className="block text-sm font-medium mb-2 w-[50%]">
-                              Type <span className="text-red-500">*</span>
+                              Payment Type <span className="text-red-500">*</span>
                             </label>
 
                             <select
@@ -1105,176 +1143,177 @@ const Invoice_full = () => {
 
               <div className="w-full md:w-[30%] md:border-l-4 p-3">
                 <div className="w-full">
-                <button
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 min-w-full h-10 font-semibold rounded"
-                  onClick={handlesubmit}
-                >
-                  Save
-                </button>
+                  <button
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 min-w-full h-10 font-semibold rounded"
+                    onClick={handlesubmit}
+                  >
+                    Save
+                  </button>
 
-                <hr className="mt-5"></hr>
+                  <hr className="mt-5"></hr>
 
-                <div>
-                  {" "}
-                  <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3 p-2">
-                    <div className="w-full">
-                      <label
-                        htmlFor="country"
-                        className="block text-sm font-medium mb-2 text-gray-500"
-                      >
-                        Curreny
-                      </label>
-                      <Dropdown
-                        value={currency}
-                        onChange={(e) => setCurreny(e.value)}
-                        options={currencyOptions}
-                        optionLabel="name"
-                        placeholder="Select a Currency"
-                        className="border w-full border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
+                  <div>
+                    {" "}
+                    <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3 p-2">
+                      <div className="w-full">
+                        <label
+                          htmlFor="country"
+                          className="block text-sm font-medium mb-2 text-gray-500"
+                        >
+                          Curreny
+                        </label>
+                        <Dropdown
+                          value={currency}
+                          onChange={(e) => setCurreny(e.value)}
+                          options={currencyOptions}
+                          optionLabel="name"
+                          placeholder="Select a Currency"
+                          className="border w-full border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
 
-                      {errors.currency && (
-                        <p className="text-red-500 text-sm mb-4">
-                          {errors.currency}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3 p-2">
-
-                    <div className="w-[250px] ">
-                      <label className="block text-sm font-medium text-gray-500 mb-2">
-                        Invoice Type
-                      </label>
-
-                      {/* Trigger */}
-                      <div
-                        onClick={() => setOpen(!open)}
-                        className="flex justify-between items-center border border-gray-300 rounded-xl px-4 py-3 cursor-pointer bg-white"
-                      >
-                        <span className="text-gray-700 truncate">{selected}</span>
-                        <span className="text-gray-400">▾</span>
+                        {errors.currency && (
+                          <p className="text-red-500 text-sm mb-4">
+                            {errors.currency}
+                          </p>
+                        )}
                       </div>
+                    </div>
 
-                      {/* Dropdown (DOWN-WISE) */}
-                      {open && (
-                        <div className="mt-2 border rounded-xl bg-white shadow-md">
+                    <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3 p-2">
 
-                          {/* WITHOUT GST */}
-                          <div
-                            onClick={() => selectItem(["Without GST"])}
-                            className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
-                          >
-                            Without GST
-                          </div>
+                      <div className="w-full ">
+                        <label className="block text-sm font-medium text-gray-500 mb-2">
+                          Invoice Type
+                        </label>
 
-                          {/* TAX INVOICE */}
-                          <div className="px-4 py-2">
+                        {/* Trigger */}
+                        <div
+                          onClick={() => setOpen(!open)}
+                          className="flex justify-between items-center border border-gray-300 rounded-xl px-2 py-3 cursor-pointer bg-white"
+                        >
+                          <span className="text-gray-700 truncate">{selected}</span>
+                          <span className="text-gray-400">▾</span>
+                        </div>
+
+                        {/* Dropdown (DOWN-WISE) */}
+                        {open && (
+                          
+                          <div ref={dropdownRef} className="mt-2 border rounded-xl bg-white shadow-md">
+
+                            {/* WITHOUT GST */}
                             <div
-                              onClick={() => setTaxOpen(!taxOpen)}
-                              className="flex justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
+                              onClick={() => selectItem(["Without GST"])}
+                              className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
                             >
-                              <span>Tax Invoice</span>
-                              <span>{taxOpen ? "▲" : "▼"}</span>
+                              Without GST
                             </div>
 
-                            {/* INTRA / INTER */}
-                            {taxOpen && (
-                              <div className="ml-4 mt-2 space-y-1">
-
-                                {/* INTRA */}
-                                <div>
-                                  <div
-                                    onClick={() => {
-                                      setIntraOpen(!intraOpen);
-                                      setInterOpen(false);
-                                    }}
-                                    className="flex text-[16px] justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
-                                  >
-                                    <span>Intra</span>
-                                    <span>{intraOpen ? "▲" : "▼"}</span>
-                                  </div>
-
-                                  {intraOpen && (
-                                    <div className=" mt-2 space-y-1">
-                                      <div
-                                        onClick={() =>
-                                          selectItem(["Tax Invoice", "Intra", "Proforma Invoice"])
-                                        }
-                                        className=" py-2 text-[12px] px-2 hover:bg-blue-50 rounded cursor-pointer"
-                                      >
-                                        Proforma Invoice
-                                      </div>
-                                      <div
-                                        onClick={() =>
-                                          selectItem(["Tax Invoice", "Intra", "Tax Invoice"])
-                                        }
-                                        className=" py-2 text-[12px] px-2 hover:bg-blue-50 rounded cursor-pointer"
-                                      >
-                                        Tax Invoice
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-
-                                {/* INTER */}
-                                <div>
-                                  <div
-                                    onClick={() => {
-                                      setInterOpen(!interOpen);
-                                      setIntraOpen(false);
-                                    }}
-
-                                    className="flex text-[16px] justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
-                                  >
-                                    <span>Inter</span>
-                                    <span>{interOpen ? "▲" : "▼"}</span>
-                                  </div>
-
-                                  {interOpen && (
-                                    <div className=" mt-2 space-y-2">
-                                      <div
-                                        onClick={() =>
-                                          selectItem(["Tax Invoice", "Inter", "Proforma Invoice"])
-                                        }
-                                        className=" py-2 text-[12px] px-2 hover:bg-blue-50 rounded cursor-pointer"
-                                      >
-                                        Proforma Invoice
-                                      </div>
-                                      <div
-                                        onClick={() =>
-                                          selectItem(["Tax Invoice", "Inter", "Tax Invoice"])
-                                        }
-                                        className="py-2 text-[12px] px-2 hover:bg-blue-50 rounded cursor-pointer"
-                                      >
-                                        Tax Invoice
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-
+                            {/* TAX INVOICE */}
+                            <div className="px-4 py-2">
+                              <div
+                                onClick={() => setTaxOpen(!taxOpen)}
+                                className="flex justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
+                              >
+                                <span>Tax Invoice</span>
+                                <span>{taxOpen ? "▲" : "▼"}</span>
                               </div>
-                            )}
-                          </div>
 
-                          {/* EXPORT */}
-                          <div
-                            onClick={() => selectItem(["Export"])}
-                            className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
-                          >
-                            Export
-                          </div>
+                              {/* INTRA / INTER */}
+                              {taxOpen && (
+                                <div className="ml-4 mt-2 space-y-1">
 
-                        </div>
-                      )}
+                                  {/* INTRA */}
+                                  <div>
+                                    <div
+                                      onClick={() => {
+                                        setIntraOpen(!intraOpen);
+                                        setInterOpen(false);
+                                      }}
+                                      className="flex text-[16px] justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
+                                    >
+                                      <span>Intra</span>
+                                      <span>{intraOpen ? "▲" : "▼"}</span>
+                                    </div>
+
+                                    {intraOpen && (
+                                      <div className=" mt-2 space-y-1">
+                                        <div
+                                          onClick={() =>
+                                            selectItem(["Tax Invoice", "Intra", "Proforma Invoice"])
+                                          }
+                                          className=" py-2 text-[12px] px-2 hover:bg-blue-50 rounded cursor-pointer"
+                                        >
+                                          Proforma Invoice
+                                        </div>
+                                        <div
+                                          onClick={() =>
+                                            selectItem(["Tax Invoice", "Intra", "Tax Invoice"])
+                                          }
+                                          className=" py-2 text-[12px] px-2 hover:bg-blue-50 rounded cursor-pointer"
+                                        >
+                                          Tax Invoice
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {/* INTER */}
+                                  <div>
+                                    <div
+                                      onClick={() => {
+                                        setInterOpen(!interOpen);
+                                        setIntraOpen(false);
+                                      }}
+
+                                      className="flex text-[16px] justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
+                                    >
+                                      <span>Inter</span>
+                                      <span>{interOpen ? "▲" : "▼"}</span>
+                                    </div>
+
+                                    {interOpen && (
+                                      <div className=" mt-2 space-y-2">
+                                        <div
+                                          onClick={() =>
+                                            selectItem(["Tax Invoice", "Inter", "Proforma Invoice"])
+                                          }
+                                          className=" py-2 text-[12px] px-2 hover:bg-blue-50 rounded cursor-pointer"
+                                        >
+                                          Proforma Invoice
+                                        </div>
+                                        <div
+                                          onClick={() =>
+                                            selectItem(["Tax Invoice", "Inter", "Tax Invoice"])
+                                          }
+                                          className="py-2 text-[12px] px-2 hover:bg-blue-50 rounded cursor-pointer"
+                                        >
+                                          Tax Invoice
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                </div>
+                              )}
+                            </div>
+
+                            {/* EXPORT */}
+                            <div
+                              onClick={() => selectItem(["Export"])}
+                              className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
+                            >
+                              Export
+                            </div>
+
+                          </div>
+                        )}
+                      </div>
                     </div>
+
+
                   </div>
-
-
-                </div>
-                <hr className="mt-5"></hr>
-{/* 
+                  <hr className="mt-5"></hr>
+                  {/* 
                 <div className="p-2">
                   <button
                     onClick={() => {
@@ -1288,48 +1327,50 @@ const Invoice_full = () => {
                   </button>
                 </div> */}
 
-                <div className="p-2">
+                 <div className="p-2">
   {logdetails && logdetails.length > 0 ? (
-    <table className="w-full text-sm border border-gray-200 rounded-xl overflow-hidden">
-      <thead className="bg-blue-50">
-        <tr>
-          <th className="px-4 py-3 text-left font-semibold text-gray-600">
-             Date
-          </th>
-          <th className="px-4 py-3 text-left font-semibold text-gray-600">
-            Status
-          </th>
-          <th className="px-4 py-3 text-right font-semibold text-gray-600">
-            Amount (₹)
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {logdetails.map((log, i) => (
-          <tr
-            key={i}
-            className={`border-b transition ${
-              i % 2 === 0 ? "bg-white" : "bg-gray-50"
-            } hover:bg-blue-50`}
-          >
-            <td className="px-4 py-3 font-medium text-gray-800">
-              <div className="flex flex-col">
-                {/* <span>#{log.invoice_number || "-"}</span> */}
-                <span className="text-gray-500 text-sm">
-                  {new Date(log.paidDate).toLocaleDateString("en-IN")}
-                </span>
-              </div>
-            </td>
-            <td className="px-4 py-3 text-gray-800">
-              {capitalizeFirstLetter(log.status)}
-            </td>
-            <td className="px-4 py-3 text-right font-semibold text-green-600">
-              ₹{log.amount}
-            </td>
+    <div className="max-h-[500px] overflow-y-auto border border-gray-200 rounded-xl">
+      <table className="w-full text-sm">
+        <thead className="bg-blue-50 sticky top-0 z-10">
+          <tr>
+            <th className="px-4 py-3 text-left font-semibold text-gray-600">
+              Date
+            </th>
+            <th className="px-4 py-3 text-left font-semibold text-gray-600">
+              Status
+            </th>
+            <th className="px-4 py-3 text-right font-semibold text-gray-600">
+              Amount (₹)
+            </th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+
+        <tbody>
+          {logdetails.map((log, i) => (
+            <tr
+              key={i}
+              className={`border-b transition ${
+                i % 2 === 0 ? "bg-white" : "bg-gray-50"
+              } hover:bg-blue-50`}
+            >
+              <td className="px-4 py-3 font-medium text-gray-800">
+                <span className="text-gray-500 text-sm">
+                  {log.paidDate ? formatDateTime(log.paidDate) : "-"}
+                </span>
+              </td>
+
+              <td className="px-4 py-3 text-gray-800">
+                {capitalizeFirstLetter(log.status)}
+              </td>
+
+              <td className="px-4 py-3 text-right font-semibold text-green-600">
+                {log.amount ? `₹${log.amount}` : "-"}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   ) : (
     <div className="text-gray-500 font-medium text-lg mt-2">
       No transactions available
@@ -1337,10 +1378,10 @@ const Invoice_full = () => {
   )}
 </div>
 
-</div>
+                </div>
 
 
-                
+
 
 
 
@@ -1353,84 +1394,84 @@ const Invoice_full = () => {
 
               </div>
               {openlog && (
+                <div
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+                  onClick={() => setOpenlog(false)}
+                >
                   <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-                    onClick={() => setOpenlog(false)}
+                    className="bg-white rounded-2xl w-[60%] max-w-6xl h-[85vh] shadow-2xl flex flex-col"
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    <div
-                      className="bg-white rounded-2xl w-[60%] max-w-6xl h-[85vh] shadow-2xl flex flex-col"
-                      onClick={(e) => e.stopPropagation()}
-                    >
 
-                      {/* Header */}
-                      <div className="flex items-center justify-between px-6 py-4 border-b">
-                        <h2 className="text-xl font-semibold text-gray-800">
-                          Payment Log Details
-                        </h2>
-                        <button
-                          onClick={() => setOpenlog(false)}
-                          className="text-gray-400 hover:text-gray-700 text-2xl"
-                        >
-                          ✕
-                        </button>
-                      </div>
+                    {/* Header */}
+                    <div className="flex items-center justify-between px-6 py-4 border-b">
+                      <h2 className="text-xl font-semibold text-gray-800">
+                        Payment Log Details
+                      </h2>
+                      <button
+                        onClick={() => setOpenlog(false)}
+                        className="text-gray-400 hover:text-gray-700 text-2xl"
+                      >
+                        ✕
+                      </button>
+                    </div>
 
-                      {/* Table Wrapper */}
-                      <div className="flex-1 overflow-y-auto px-6 py-4">
-                        {selectedLogs && selectedLogs.length > 0 ? (
-                          <table className="w-full text-sm border border-gray-200 rounded-xl overflow-hidden">
-                            {/* Table Head */}
-                            <thead className="bg-blue-50 sticky top-0 z-10">
-                              <tr>
-                                <th className="px-4 py-3 text-left font-semibold text-gray-600">
-                                  Invoice No
-                                </th>
-                                <th className="px-4 py-3 text-left font-semibold text-gray-600">
-                                  Status
-                                </th>
-                                <th className="px-4 py-3 text-left font-semibold text-gray-600">
-                                  Paid Date
-                                </th>
-                                <th className="px-4 py-3 text-right font-semibold text-gray-600">
-                                  Amount (₹)
-                                </th>
-                              </tr>
-                            </thead>
+                    {/* Table Wrapper */}
+                    <div className="flex-1 overflow-y-auto px-6 py-4">
+                      {selectedLogs && selectedLogs.length > 0 ? (
+                        <table className="w-full text-sm border border-gray-200 rounded-xl overflow-hidden">
+                          {/* Table Head */}
+                          <thead className="bg-blue-50 sticky top-0 z-10">
+                            <tr>
+                              <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                                Invoice No
+                              </th>
+                              <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                                Status
+                              </th>
+                              <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                                Paid Date
+                              </th>
+                              <th className="px-4 py-3 text-right font-semibold text-gray-600">
+                                Amount (₹)
+                              </th>
+                            </tr>
+                          </thead>
 
-                            {/* Table Body */}
-                            <tbody>
-                              {selectedLogs.map((log, i) => (
-                                <tr
-                                  key={i}
-                                  className={`border-b transition
+                          {/* Table Body */}
+                          <tbody>
+                            {selectedLogs.map((log, i) => (
+                              <tr
+                                key={i}
+                                className={`border-b transition
                     ${i % 2 === 0 ? "bg-white" : "bg-gray-50"}
                     hover:bg-blue-50`}
-                                >
-                                  <td className="px-4 py-3 font-medium text-gray-800">
-                                    #{log.invoice_number || "-"}
-                                  </td>
-                                  <td className="px-4 py-3 text-gray-800">
-                                    {capitalizeFirstLetter(log.status)}
-                                  </td>
-                                  <td className="px-4 py-3 text-gray-600">
-                                    {new Date(log.paidDate).toLocaleDateString("en-IN")}
-                                  </td>
-                                  <td className="px-4 py-3 text-right font-semibold text-green-600">
-                                    ₹{log.amount}
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        ) : (
-                          <div className="flex items-center justify-center h-full text-gray-500 font-medium text-lg">
-                            No transactions available
-                          </div>
-                        )}
-                      </div>
+                              >
+                                <td className="px-4 py-3 font-medium text-gray-800">
+                                  #{log.invoice_number || "-"}
+                                </td>
+                                <td className="px-4 py-3 text-gray-800">
+                                  {capitalizeFirstLetter(log.status)}
+                                </td>
+                                <td className="px-4 py-3 text-gray-600">
+                                  {new Date(log.paidDate).toLocaleDateString("en-IN")}
+                                </td>
+                                <td className="px-4 py-3 text-right font-semibold text-green-600">
+                                  ₹{log.amount}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      ) : (
+                        <div className="flex items-center justify-center h-full text-gray-500 font-medium text-lg">
+                          No transactions available
+                        </div>
+                      )}
                     </div>
                   </div>
-                )}
+                </div>
+              )}
 
             </div>
           </div>

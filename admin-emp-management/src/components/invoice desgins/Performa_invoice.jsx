@@ -14,7 +14,7 @@ import NumberFormat from "../../utils/NumberFormat";
 import Swal from "sweetalert2";
 
 
-const Performa_invoice = forwardRef(({ invoiceId }, ref) => {
+const Performa_invoice = forwardRef(({ invoiceId, onSuccess }, ref) => {
     const invoiceRef = useRef();
     const params = new URLSearchParams(window.location.search);
     // const invoiceId = params.get("invoiceId");
@@ -250,7 +250,9 @@ const Performa_invoice = forwardRef(({ invoiceId }, ref) => {
                     icon: "success",
                     title: "Invoice Generated",
                     text: "Invoice generated & uploaded successfully",
-                });
+                }).then(() => {
+  if (onSuccess) onSuccess();   
+});
             } catch (err) {
                 console.error(err);
                 Swal.fire({
