@@ -32,7 +32,7 @@ import { use } from "react";
 import { useDateUtils } from "../../hooks/useDateUtils";
 import { createRoot } from "react-dom/client";
 import { capitalizeFirstLetter } from "../../utils/StringCaps";
-
+import { useSearchParams } from "react-router-dom";
 
 const Client_invoice_details = () => {
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ const Client_invoice_details = () => {
 
   const userid = user ? user._id : null;
 
-  //   console.log("user", userid);
+  console.log("user", userid);
 
   // Fetch roles from the API
   useEffect(() => {
@@ -53,22 +53,69 @@ const Client_invoice_details = () => {
 
   // console.log("roles", roles);
 
-
-
-
   const [errors, setErrors] = useState({});
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [clientdetails, setClientdetails] = useState([]);
+  const [projectOption, setProjectOption] = useState(null);
+  console.log("projectOption", projectOption);
+  const [projectFilter, setProjectFilter] = useState(
+    searchParams.get("project") || ""
+  );
+  console.log("projectFilter", projectFilter);
+  const [submittedProject, setSubmittedProject] = useState("");
+  const handleSubmit = () => {
+    // Set submitted labels separately
+    setSubmittedProject(
+      projectOption.find((p) => p.value === projectFilter)?.label || ""
+    );
+
+    fetchProject(projectFilter);
+  };
+  const fetchaProjectList = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/invoice/get-project-name-with-client`,
+        {
+          params: {
+            project: userid,
+          },
+          // headers: {
+          //   Authorization: `Bearer ${localStorage.getItem("token")}`,
+          // },
+        }
+      );
+
+      console.log("response123", response);
+
+      const ProjectOptions = response.data.data.map((emp) => ({
+        label: emp.name,
+        value: emp._id,
+      }));
+
+      setProjectOption(ProjectOptions);
+
+      // const clientName = response.data.data.map((emp) => emp.name);
+      // // console.log("client name", clientName);
+      // setProjectOption(clientName);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchaProjectList();
+  }, []);
 
   const fetchProject = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/invoice/client-invoice-dashboard`,
+      const response = await axios.get(
+        `${API_URL}/api/invoice/client-invoice-dashboard`,
         {
-          params: { clientId: userid }
+          params: { clientId: userid, project: projectFilter },
         },
         { withCredentials: true }
       );
-      console.log(response);
+      console.log("response", response);
       if (response.data.success) {
         // const formattedData = response.data.data.map(item => ({
         //   ...item,
@@ -94,23 +141,20 @@ const Client_invoice_details = () => {
 
   //   if (!document) return;
   // //   const link = document.createElement("a");
-  //   link.href = `${API_URL}/api/uploads/clientInvoices/${document.filename}`; 
+  //   link.href = `${API_URL}/api/uploads/clientInvoices/${document.filename}`;
   //   link.download = document.originalName || "invoice.pdf";
   //   link.click();
   // };
-
 
   // const downloadPDF = (documents) => {
   //   if (!documents || documents.length === 0) return;
 
   //   const doc = documents[0];
-  //   if (!doc.path) return; 
-
+  //   if (!doc.path) return;
 
   // //   const url = `${API_URL}/api/uploads/clientInvoices/${doc.filename}`;
 
   //   const url = `http://192.168.0.110:5009/api/uploads/clientInvoices/${doc.filename}`;
-
 
   //   const link = document.createElement("a");
   //   link.href = url;
@@ -136,25 +180,22 @@ const Client_invoice_details = () => {
   //   link.click();
   //   document.body.removeChild(link);
   // };
-const downloadPDF = (doc) => {
+  const downloadPDF = (doc) => {
+    // console.log("doc", doc);
+    if (!doc || !doc.path) return;
 
-  // console.log("doc", doc);
-  if (!doc || !doc.path) return;
+    const url = `${API_URL}/api/uploads/clientInvoices/${doc.filename}`;
 
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = doc.originalName || "invoice.pdf";
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
 
-
-  const url = `${API_URL}/api/uploads/clientInvoices/${doc.filename}`;
-
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = doc.originalName || "invoice.pdf";
-  link.target = "_blank";
-  link.rel = "noopener noreferrer";
-
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const [isOpenClient, setIsOpenClient] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
@@ -167,7 +208,6 @@ const downloadPDF = (doc) => {
   const [selectedPayments, setSelectedPayments] = useState([]);
   console.log("selectedPayments", selectedPayments);
 
-
   const columns = [
     {
       title: "Sno",
@@ -177,22 +217,20 @@ const downloadPDF = (doc) => {
       },
     },
 
-    {
-      title: "Client Name",
-      data: "clientName",
-      //   render: (data) => data?.client_name || "-"
-    },
+    // {
+    //   title: "Client Name",
+    //   data: "clientName",
+    //   //   render: (data) => data?.client_name || "-"
+    // },
 
     {
       title: "Project",
       data: "projectName",
-
     },
     {
       title: "Invoice Number",
       data: "invoiceNumber",
-      render: (data) => data ? (data) : "-"
-
+      render: (data) => (data ? data : "-"),
     },
 
     // {
@@ -205,64 +243,175 @@ const downloadPDF = (doc) => {
     {
       title: "Invoice Date",
       data: "invoiceDate",
-      render: (data) => data ? formatDateTime(data) : "-"
+      render: (data) => (data ? formatDateTime(data) : "-"),
     },
 
     {
       title: "Due Date",
       data: "due",
-      render: (data) => data ? formatDateTime(data) : "-"
+      render: (data) => (data ? formatDateTime(data) : "-"),
     },
 
     {
-      title: "Paid Date",
-      data: "paid_date",
-      render: (data) => data ? formatDateTime(data) : "-"
+      key: "total",
+      title: "Total Amount",
+      data: "total_amount", // if value directly exists
+      render: (totalAmount, type, row) => {
+        const id = `payments-${row.sno || Math.random()}`;
+
+        setTimeout(() => {
+          const container = document.getElementById(id);
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+
+            container._root.render(
+              <span
+                className=""
+                title="View Payments"
+                // onClick={() => {
+                //   setSelectedPayments1(row || []);
+                //   setPaymentVisible1(true);
+                // }}
+              >
+                {/* ₹{totalAmount ?? 0} */}₹
+                {Number(totalAmount ?? 0).toLocaleString("en-IN", {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                })}
+              </span>
+            );
+          }
+        }, 0);
+
+        return `<div id="${id}"></div>`;
+      },
     },
 
+    {
+      key: "received",
+      title: "Received Amount",
+      data: "totalPaymentAmount", // if value directly exists
+      render: (totalPaymentAmount, type, row) => {
+        const id = `payments-${row.sno || Math.random()}`;
 
-     {
-          title: "Payment",
-          data: null,
-          render: (payments, type, row) => {
-            const id = `payments-${row.sno || Math.random()}`;
-    
-            setTimeout(() => {
-              const container = document.getElementById(id);
-              if (container) {
-                if (!container._root) {
-                  container._root = createRoot(container);
-                }
-                container._root.render(
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <FaMoneyCheckAlt 
-                      className="cursor-pointer text-black text-xl"
-                      title="View Payments"
-                      onClick={() => {
-                        setSelectedPayments(row || []);
-                        setPaymentVisible(true);
-                      }}
-                    />
-                  </div>,
-    
-                );
-              }
-            }, 0);
-    
-            return `<div id="${id}"></div>`;
-          },
-        },
+        setTimeout(() => {
+          const container = document.getElementById(id);
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+
+            container._root.render(
+              <span
+                className="cursor-pointer   hover:underline"
+                title="View Payments"
+                onClick={() => {
+                  setSelectedPayments(row || []);
+                  setPaymentVisible(true);
+                }}
+              >
+                {/* ₹{totalPaymentAmount ?? 0} */}₹
+                {Number(totalPaymentAmount ?? 0).toLocaleString("en-IN", {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                })}
+              </span>
+            );
+          }
+        }, 0);
+
+        return `<div id="${id}"></div>`;
+      },
+    },
+
+    {
+      key: "balance",
+      title: "Balance Amount",
+      data: "balance",
+      render: (balance, type, row) => {
+        const id = `payments-${row.sno || Math.random()}`;
+
+        setTimeout(() => {
+          const container = document.getElementById(id);
+          if (container) {
+            if (!container._root) {
+              container._root = createRoot(container);
+            }
+
+            container._root.render(
+              <span
+                className="cursor-pointer   hover:underline"
+                title="View Payments"
+                onClick={() => {
+                  setSelectedPayments(row || []);
+                  setPaymentVisible(true);
+                }}
+              >
+                {/* ₹{(balance ?? 0) ? Number(balance).toLocaleString("en-IN", { minimumFractionDigits: 0 }) : 0} */}
+                ₹
+                {Number(balance ?? 0).toLocaleString("en-IN", {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                })}
+              </span>
+            );
+          }
+        }, 0);
+
+        return `<div id="${id}"></div>`;
+      },
+    },
+
+    // {
+    //   title: "Paid Date",
+    //   data: "paid_date",
+    //   render: (data) => data ? formatDateTime(data) : "-"
+    // },
+
+    //  {
+    //       title: "Payment",
+    //       data: null,
+    //       render: (payments, type, row) => {
+    //         const id = `payments-${row.sno || Math.random()}`;
+
+    //         setTimeout(() => {
+    //           const container = document.getElementById(id);
+    //           if (container) {
+    //             if (!container._root) {
+    //               container._root = createRoot(container);
+    //             }
+    //             container._root.render(
+    //               <div
+    //                 style={{
+    //                   display: "flex",
+    //                   justifyContent: "center",
+    //                   alignItems: "center",
+    //                 }}
+    //               >
+    //                 <FaMoneyCheckAlt
+    //                   className="cursor-pointer text-black text-xl"
+    //                   title="View Payments"
+    //                   onClick={() => {
+    //                     setSelectedPayments(row || []);
+    //                     setPaymentVisible(true);
+    //                   }}
+    //                 />
+    //               </div>,
+
+    //             );
+    //           }
+    //         }, 0);
+
+    //         return `<div id="${id}"></div>`;
+    //       },
+    //     },
 
     {
       title: "Status",
       data: "status",
-      render: capitalizeFirstLetter
+      render: capitalizeFirstLetter,
     },
 
     {
@@ -303,16 +452,11 @@ const downloadPDF = (doc) => {
     },
   ];
 
-
-
   return (
     <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
       <div>
-
-
         <div className="cursor-pointer">
           <Mobile_Sidebar />
-
         </div>
         <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
           <p
@@ -326,7 +470,40 @@ const downloadPDF = (doc) => {
           <p className="text-sm text-blue-500">Invoice List</p>
         </div>
 
+        <div className="flex flex-wrap gap-6 mb-6 items-end">
+          {/* Project Filter */}
+          <div className="flex flex-col">
+            <label className="text-sm font-semibold mb-1 text-gray-700">
+              Project
+            </label>
+            <Dropdown
+              value={projectFilter}
+              onChange={(e) => setProjectFilter(e.value)}
+              options={projectOption}
+              filter
+              optionLabel="label"
+              placeholder="Select a Project"
+              className="w-[300px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
+          {/* Buttons */}
+          <div className="flex gap-2 mt-5">
+            <button
+              onClick={handleSubmit}
+              // onClick={() => fetchProject()}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium shadow"
+            >
+              Submit
+            </button>
+            <button
+              onClick={fetchProject}
+              className="border  px-6 py-2 rounded-lg hover:bg-gray-400 bg-gray-500 text-white text-sm font-medium"
+            >
+              Reset
+            </button>
+          </div>
+        </div>
 
         <div className="datatable-container">
           {/* Responsive wrapper for the table */}
@@ -346,63 +523,59 @@ const downloadPDF = (doc) => {
             />
           </div>
         </div>
-      
 
-{isOpenClient && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
-    <div className="bg-white rounded-2xl shadow-2xl w-[25%] p-6 relative max-h-[90vh] overflow-y-auto">
-
-      {/* Close button */}
-      <button
-        className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl transition"
-        onClick={() => setIsOpenClient(false)}
-      >
-        ✖
-      </button>
-
-      {/* Header */}
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">
-          Client Invoices
-        </h2>
-      </div>
-
-      {/* Documents */}
-      <div className="space-y-3">
-        {selectedClient?.documents?.length > 0 ? (
-          selectedClient.documents.map((doc, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition"
-            >
-              {/* Invoice Name */}
-              <span className="text-gray-700 font-medium">
-                {doc.invoice_document_type}
-              </span>
-
-              {/* Download Icon */}
+        {isOpenClient && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-[25%] p-6 relative max-h-[90vh] overflow-y-auto">
+              {/* Close button */}
               <button
-                onClick={() => downloadPDF(doc)}
-                className="text-blue-600 hover:text-blue-800 transition"
-                title="Download Invoice"
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl transition"
+                onClick={() => setIsOpenClient(false)}
               >
-                <FaFileDownload />
+                ✖
               </button>
+
+              {/* Header */}
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Client Invoices
+                </h2>
+              </div>
+
+              {/* Documents */}
+              <div className="space-y-3">
+                {selectedClient?.documents?.length > 0 ? (
+                  selectedClient.documents.map((doc, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition"
+                    >
+                      {/* Invoice Name */}
+                      <span className="text-gray-700 font-medium">
+                        {doc.invoice_document_type}
+                      </span>
+
+                      {/* Download Icon */}
+                      <button
+                        onClick={() => downloadPDF(doc)}
+                        className="text-blue-600 hover:text-blue-800 transition"
+                        title="Download Invoice"
+                      >
+                        <FaFileDownload />
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-400 text-center">
+                    No documents available
+                  </p>
+                )}
+              </div>
             </div>
-          ))
-        ) : (
-          <p className="text-gray-400 text-center">
-            No documents available
-          </p>
+          </div>
         )}
-      </div>
-    </div>
-  </div>
-)}
 
-
-
- {paymentVisible && (
+        {paymentVisible && (
           <div
             onClick={() => setPaymentVisible(false)}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
@@ -426,21 +599,29 @@ const downloadPDF = (doc) => {
                 <div className="p-4">
                   <p className="text-xs uppercase text-gray-500">Amount</p>
                   <p className="mt-1 text-lg font-semibold text-gray-800">
-
-                    ₹{selectedPayments?.total_amount}
-
+                    ₹
+                    {Number(selectedPayments?.total_amount).toLocaleString(
+                      "en-IN",
+                      { maximumFractionDigits: 0 }
+                    )}
                   </p>
                 </div>
                 <div className="p-4">
                   <p className="text-xs uppercase text-gray-500">Received</p>
                   <p className="mt-1 text-lg font-semibold text-green-600">
-                    ₹{selectedPayments?.totalPaymentAmount}
+                    ₹
+                    {Number(
+                      selectedPayments?.totalPaymentAmount
+                    ).toLocaleString("en-IN", { maximumFractionDigits: 0 })}
                   </p>
                 </div>
                 <div className="p-4">
                   <p className="text-xs uppercase text-gray-500">Balance</p>
                   <p className="mt-1 text-lg font-semibold text-red-600">
-                    ₹{selectedPayments?.balance}
+                    ₹
+                    {Number(selectedPayments?.balance).toLocaleString("en-IN", {
+                      maximumFractionDigits: 0,
+                    })}
                   </p>
                 </div>
               </div>
@@ -499,7 +680,9 @@ const downloadPDF = (doc) => {
                             Payment {index + 1}
                           </p>
                           <p className="text-xs text-gray-500">
-                            {capitalizeFirstLetter(log.status)} • {formatDateTime(log.paidDate || "-")} • {capitalizeFirstLetter(log.paymentType)}
+                            {capitalizeFirstLetter(log.status)} •{" "}
+                            {formatDateTime(log.paidDate || "-")} •{" "}
+                            {capitalizeFirstLetter(log.paymentType)}
                           </p>
                         </div>
 
@@ -512,15 +695,9 @@ const downloadPDF = (doc) => {
                   </ul>
                 )}
               </div>
-
             </div>
           </div>
         )}
-
-
-
-
-
       </div>
 
       <Footer />

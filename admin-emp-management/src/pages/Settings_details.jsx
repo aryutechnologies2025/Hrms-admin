@@ -553,6 +553,18 @@ const Settings_details = () => {
                         />
                         <label htmlFor="yyyy/MM/dd" className="cursor-pointer">YYYY/MM/DD</label>
                       </div>
+                      <div className="flex gap-3">
+                        <input
+                          id="MM/dd/yy"
+                          name="dateformat"
+                          type="radio"
+                          value="MM/dd/yy"
+                          className="cursor-pointer"
+                          checked={dateFormat === "MM/dd/yy"}
+                          onClick={(e) => setDateFormat(e.target.value)}
+                        />
+                        <label htmlFor="MM/dd/yy" className="cursor-pointer">MM/DD/YY</label>
+                      </div>
                     </div>
                   </div>
                   {/* Save button */}
