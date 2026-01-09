@@ -751,6 +751,9 @@ export default function Slack() {
   dm: [],
   channels: [],
 });
+const [activeThread, setActiveThread] = useState(null);
+// activeThread = parent message object
+
 
   /* LOAD CURRENT USER */
   useEffect(() => {
@@ -867,7 +870,7 @@ useEffect(() => {
     // Load channel unread from 
   useEffect(() => {
   if (currentUser && !currentUser?._id) return;
-
+try{
   axios
     .get(`${API_URL}/api/messages/channels/unread/${currentUser?._id}`)
     .then((res) => {
@@ -875,6 +878,12 @@ useEffect(() => {
         setChannelUnread(res.data.data);
       }
     });
+
+}
+catch(err){
+  console.error(err);
+}
+  
 }, [currentUser]);
 
 // CHANNEL UNREAD INCREMENT
@@ -1031,14 +1040,26 @@ console.log("channelUnread",channelUnread);
   channelUnread={channelUnread}
   favorites={favorites}
   setFavorites={setFavorites}
+  
 />
 
 
       <Slack_chatwindow
+       users={users}
+     channels={chaneel}
         socket={socket}
         currentUser={currentUser}
         selectedUser={selectedUser}
         selectedChannel={selectedChannel}
+         onSelectUser={handleSelectUser}
+   onSelectChannel={(ch) => {
+    setSelectedChannel(ch);
+    setSelectedUser(null);
+  }}
+    setChannelUnread={setChannelUnread}
+    activeThread={activeThread}
+    setActiveThread={setActiveThread}
+
       />
     </div>
   );

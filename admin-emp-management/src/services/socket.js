@@ -36,6 +36,7 @@ export function connectSocket(token) {
 
   socket = io(SOCKET_URL, {
     transports: ["websocket"],
+      timeout: 20000,
     // withCredentials: true,
 
     // 🔐 enable later when JWT ready
