@@ -653,7 +653,11 @@ const Invoice_details = () => {
                 //   setPaymentVisible1(true);
                 // }}
               >
-                ₹{totalAmount ?? 0}
+                {/* ₹{totalAmount ?? 0} */}
+                 ₹{Number(totalAmount ?? 0).toLocaleString("en-IN", {
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
+})}
               </span>
             );
           }
@@ -688,7 +692,11 @@ const Invoice_details = () => {
                   setPaymentVisible(true);
                 }}
               >
-                ₹{totalPaymentAmount ?? 0}
+                {/* ₹{totalPaymentAmount ?? 0} */}
+                 ₹{Number(totalPaymentAmount ?? 0).toLocaleString("en-IN", {
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
+})}
               </span>
             );
           }
@@ -721,7 +729,11 @@ const Invoice_details = () => {
                   setPaymentVisible(true);
                 }}
               >
-                ₹{balance ?? 0}
+                {/* ₹{balance ?? 0} */}
+                ₹{Number(balance ?? 0).toLocaleString("en-IN", {
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
+})}
               </span>
             );
           }
@@ -1426,20 +1438,20 @@ const Invoice_details = () => {
                   <p className="text-xs uppercase text-gray-500">Amount</p>
                   <p className="mt-1 text-lg font-semibold text-gray-800">
 
-                    ₹{selectedPayments?.total_amount.toLocaleString(2)}
+                    ₹{Number(selectedPayments?.total_amount).toLocaleString("en-IN",{ maximumFractionDigits: 0 })}
 
                   </p>
                 </div>
                 <div className="p-4">
                   <p className="text-xs uppercase text-gray-500">Received</p>
                   <p className="mt-1 text-lg font-semibold text-green-600">
-                    ₹{selectedPayments?.totalPaymentAmount.toLocaleString(2)}
+                    ₹{Number(selectedPayments?.totalPaymentAmount).toLocaleString("en-IN",{ maximumFractionDigits: 0 })}
                   </p>
                 </div>
                 <div className="p-4">
                   <p className="text-xs uppercase text-gray-500">Balance</p>
                   <p className="mt-1 text-lg font-semibold text-red-600">
-                    ₹{selectedPayments?.balance.toLocaleString(2)}
+                    ₹{Number(selectedPayments?.balance).toLocaleString("en-IN",{ maximumFractionDigits: 0 })}
                   </p>
                 </div>
               </div>
