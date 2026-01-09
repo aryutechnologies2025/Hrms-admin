@@ -180,6 +180,14 @@ const Client_invoice_details = () => {
   //   link.click();
   //   document.body.removeChild(link);
   // };
+   const downloadPDFOpen = (doc) => {
+      if (!doc || !doc.path) return;
+  
+      const url = `${API_URL}/api/uploads/clientInvoices/${doc.filename}`;
+  
+      // Open in new tab
+      window.open(url, "_blank", "noopener,noreferrer");
+    };
   const downloadPDF = (doc) => {
     // console.log("doc", doc);
     if (!doc || !doc.path) return;
@@ -551,7 +559,9 @@ const Client_invoice_details = () => {
                       className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition"
                     >
                       {/* Invoice Name */}
-                      <span className="text-gray-700 font-medium">
+                      <span className="text-gray-700 font-medium"
+                      onClick={() => downloadPDFOpen(doc)}
+                      >
                         {doc.invoice_document_type}
                       </span>
 
