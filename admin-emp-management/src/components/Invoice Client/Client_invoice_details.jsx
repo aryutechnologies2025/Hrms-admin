@@ -180,14 +180,14 @@ const Client_invoice_details = () => {
   //   link.click();
   //   document.body.removeChild(link);
   // };
-   const downloadPDFOpen = (doc) => {
-      if (!doc || !doc.path) return;
-  
-      const url = `${API_URL}/api/uploads/clientInvoices/${doc.filename}`;
-  
-      // Open in new tab
-      window.open(url, "_blank", "noopener,noreferrer");
-    };
+  const downloadPDFOpen = (doc) => {
+    if (!doc || !doc.path) return;
+
+    const url = `${API_URL}/api/uploads/clientInvoices/${doc.filename}`;
+
+    // Open in new tab
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
   const downloadPDF = (doc) => {
     // console.log("doc", doc);
     if (!doc || !doc.path) return;
@@ -559,8 +559,9 @@ const Client_invoice_details = () => {
                       className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition"
                     >
                       {/* Invoice Name */}
-                      <span className="text-gray-700 font-medium"
-                      onClick={() => downloadPDFOpen(doc)}
+                      <span
+                        className="text-gray-700 font-medium"
+                        onClick={() => downloadPDFOpen(doc)}
                       >
                         {doc.invoice_document_type}
                       </span>
@@ -592,7 +593,7 @@ const Client_invoice_details = () => {
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
+              className="relative w-full max-w-[35%] bg-white rounded-2xl shadow-2xl overflow-hidden"
             >
               <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 bg-blue-600">
                 <h2 className="text-2xl font-semibold text-white">
@@ -670,7 +671,7 @@ const Client_invoice_details = () => {
                         )}
                       </div> */}
 
-              <div className="px-6 py-6 max-h-[60vh] overflow-y-auto">
+              {/* <div className="px-6 py-6 max-h-[60vh] overflow-y-auto">
                 <h3 className="mb-3 text-lg font-semibold text-gray-800">
                   Payment History
                 </h3>
@@ -684,7 +685,7 @@ const Client_invoice_details = () => {
                         key={log._id}
                         className="flex justify-between items-center border-b pb-2 text-sm"
                       >
-                        {/* LEFT */}
+                      
                         <div>
                           <p className="font-medium text-gray-800">
                             Payment {index + 1}
@@ -696,13 +697,82 @@ const Client_invoice_details = () => {
                           </p>
                         </div>
 
-                        {/* RIGHT */}
+                      
                         <div className="font-semibold text-gray-900">
                           ₹ {Number(log.amount).toLocaleString("en-IN")}
                         </div>
                       </li>
                     ))}
                   </ul>
+                )}
+              </div> */}
+              <div className="px-6 py-6">
+                <h3 className="mb-3 text-lg font-semibold text-gray-800">
+                  Payment History
+                </h3>
+
+                {selectedPayments?.invoiceLogs?.length > 0 ? (
+                  <div className="max-h-[60vh] overflow-y-auto border border-gray-200 rounded-xl">
+                    <table className="w-full text-sm">
+                      {/* TABLE HEADER */}
+                      <thead className="bg-blue-50 sticky top-0 z-10">
+                        <tr>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                            Date
+                          </th>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                            Status
+                          </th>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                            Payment Type
+                          </th>
+                          <th className="px-4 py-3 text-right font-semibold text-gray-600">
+                            Amount
+                          </th>
+                        </tr>
+                      </thead>
+
+                      {/* TABLE BODY */}
+                      <tbody>
+                        {selectedPayments.invoiceLogs.map((log, index) => (
+                          <tr
+                            key={log._id}
+                            className={`border-b transition ${
+                              index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                            } hover:bg-blue-50`}
+                          >
+                            {/* DATE */}
+                            <td className="px-4 py-3 text-gray-700">
+                              {log.paidDate
+                                ? formatDateTime(log.paidDate)
+                                : "-"}
+                            </td>
+
+                            {/* STATUS */}
+                            <td className="px-4 py-3 text-gray-800 font-medium">
+                              {capitalizeFirstLetter(log.status)}
+                            </td>
+
+                            {/* PAYMENT TYPE */}
+                            <td className="px-4 py-3 text-gray-700">
+                              {capitalizeFirstLetter(log.paymentType)}
+                            </td>
+
+                            {/* AMOUNT */}
+                            <td className="px-5 py-4 text-right font-semibold text-green-600">
+                              ₹
+                              {Number(log.amount).toLocaleString("en-IN", {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                              })}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="text-gray-700">No payments found.</p>
                 )}
               </div>
             </div>
