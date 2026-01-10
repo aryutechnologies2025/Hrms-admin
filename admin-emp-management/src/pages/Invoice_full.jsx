@@ -489,9 +489,9 @@ const Invoice_full = () => {
     }
 
     // Payment Type
-    if (status && !["invoice_raised", "advance_pending", "final_payment_pending", "partial_payment_pending"].includes(status) && !paymentType) {
-      errors.paymentType = "Payment type is required";
-    }
+    // if (status && !["invoice_raised", "advance_pending", "final_payment_pending", "partial_payment_pending"].includes(status) && !paymentType) {
+    //   errors.paymentType = "Payment type is required";
+    // }
 
     return errors;
   };
