@@ -1,4 +1,10 @@
-import React, { useRef, useState, useImperativeHandle, forwardRef, useEffect } from "react";
+import React, {
+  useRef,
+  useState,
+  useImperativeHandle,
+  forwardRef,
+  useEffect,
+} from "react";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import html2pdf from "html2pdf.js";
@@ -12,13 +18,12 @@ import { API_URL } from "../../config";
 import NumberFormat from "../../utils/NumberFormat";
 import Swal from "sweetalert2";
 
-
-const Sales_invoice =  forwardRef(({ invoiceId, onSuccess }, ref) => {
+const Sales_invoice = forwardRef(({ invoiceId, onSuccess }, ref) => {
   const invoiceRef = useRef();
 
   const location = useLocation();
   const params = new URLSearchParams(window.location.search);
-// const invoiceId = params.get("invoiceId");
+  // const invoiceId = params.get("invoiceId");
 
   // const { invoiceId } = location.state || {};
 
@@ -41,7 +46,8 @@ const Sales_invoice =  forwardRef(({ invoiceId, onSuccess }, ref) => {
 
   const fetchInvoiceDetails = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/invoice/client-invoice`,
+      const response = await axios.get(
+        `${API_URL}/api/invoice/client-invoice`,
         {
           params: { id: invoiceId },
         },
@@ -51,15 +57,11 @@ const Sales_invoice =  forwardRef(({ invoiceId, onSuccess }, ref) => {
 
       setAllinvoiceDetails(response.data?.data);
       setSettingData(response.data?.setting);
-
-
-
     } catch (err) {
-      console.log("error")
+      console.log("error");
       // setErrors("Failed to fetch roles.");
     }
   };
-
 
   const invoiceAddress = settingData?.invoiceAddress || "";
 
@@ -85,10 +87,6 @@ const Sales_invoice =  forwardRef(({ invoiceId, onSuccess }, ref) => {
 
   // console.log("totalAmount", totalAmount);
 
-
-
-
-
   // const downloadPDF = async () => {
   //   const element = invoiceRef.current;
 
@@ -109,196 +107,233 @@ const Sales_invoice =  forwardRef(({ invoiceId, onSuccess }, ref) => {
   //   pdf.save(fileName);
   // };
 
-//   const downloadPDF = async () => {
+  //   const downloadPDF = async () => {
 
-//     setIsGenerating(true);
+  //     setIsGenerating(true);
 
-//     Swal.fire({
-//       title: "Generating Invoice",
-//       text: "Please wait while we generate your invoice...",
-//       allowOutsideClick: false,
-//       didOpen: () => {
-//         Swal.showLoading();
-//       },
-//     });
-//     try {
-//       const element = invoiceRef.current;
+  //     Swal.fire({
+  //       title: "Generating Invoice",
+  //       text: "Please wait while we generate your invoice...",
+  //       allowOutsideClick: false,
+  //       didOpen: () => {
+  //         Swal.showLoading();
+  //       },
+  //     });
+  //     try {
+  //       const element = invoiceRef.current;
 
-//       const canvas = await html2canvas(element, { scale: 1.5 });
-//       const imgData = canvas.toDataURL("image/jpeg", 0.7);
+  //       const canvas = await html2canvas(element, { scale: 1.5 });
+  //       const imgData = canvas.toDataURL("image/jpeg", 0.7);
 
-//       const pdf = new jsPDF("p", "mm", "a4");
-//       const pageWidth = pdf.internal.pageSize.getWidth();
-//       const imgProps = pdf.getImageProperties(imgData);
-//       const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
+  //       const pdf = new jsPDF("p", "mm", "a4");
+  //       const pageWidth = pdf.internal.pageSize.getWidth();
+  //       const imgProps = pdf.getImageProperties(imgData);
+  //       const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
 
-//       pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
+  //       pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
 
-//       const invoiceNumber =
-//         allinvoiceDetails?.invoice_number || `invoice_${Date.now()}`;
+  //       const invoiceNumber =
+  //         allinvoiceDetails?.invoice_number || `invoice_${Date.now()}`;
 
-//       const pdfBlob = pdf.output("blob");
+  //       const pdfBlob = pdf.output("blob");
 
+  //       const formData = new FormData();
+  //       formData.append("clientInvoice", pdfBlob, `${invoiceNumber}.pdf`);
+  //       formData.append("id", invoiceId);
+  //       formData.append("invoice_document_type", "Sales Invoice");
 
-//       const formData = new FormData();
-//       formData.append("clientInvoice", pdfBlob, `${invoiceNumber}.pdf`);
-//       formData.append("id", invoiceId);
-//       formData.append("invoice_document_type", "Sales Invoice");
+  //         const response = await axios.post(
+  //           `${API_URL}/api/invoice/upload-client-invoice`,
+  //           formData,
+  //           { withCredentials: true }, {
+  //           headers: {
+  //             "Content-Type": "multipart/form-data",
+  //           },
+  //         }
+  //         );
+  //   console.log("PDF uploaded successfully:", response.data);
 
+  //     Swal.fire({
+  //       icon: "success",
+  //       title: "Invoice Generated",
+  //       text: "Invoice has been generated and uploaded successfully.",
+  //       confirmButtonColor: "#2563eb",
+  //     });
 
-     
-//         const response = await axios.post(
-//           `${API_URL}/api/invoice/upload-client-invoice`,
-//           formData,
-//           { withCredentials: true }, {
-//           headers: {
-//             "Content-Type": "multipart/form-data",
-//           },
-//         }
-//         );
-//   console.log("PDF uploaded successfully:", response.data);
+  //     // Optional local download
+  //     // pdf.save(`${invoiceNumber}.pdf`);
 
-//     Swal.fire({
-//       icon: "success",
-//       title: "Invoice Generated",
-//       text: "Invoice has been generated and uploaded successfully.",
-//       confirmButtonColor: "#2563eb",
-//     });
+  //   } catch (error) {
+  //     console.error("Invoice generation failed:", error);
 
-//     // Optional local download
-//     // pdf.save(`${invoiceNumber}.pdf`);
+  //     Swal.fire({
+  //       icon: "error",
+  //       title: "Generation Failed",
+  //       text: "Something went wrong while generating invoice.",
+  //     });
+  //   } finally {
+  //     setIsGenerating(false);
+  //   }
+  // };
 
-//   } catch (error) {
-//     console.error("Invoice generation failed:", error);
+  const downloadPDF = async () => {
+    if (!invoiceId) return;
 
-//     Swal.fire({
-//       icon: "error",
-//       title: "Generation Failed",
-//       text: "Something went wrong while generating invoice.",
-//     });
-//   } finally {
-//     setIsGenerating(false);
-//   }
-// };
+    setIsGenerating(true);
 
-   const downloadPDF = async () => {
-        if (!invoiceId) return;
+    Swal.fire({
+      title: "Generating Invoice",
+      text: "Please wait...",
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    });
 
-        setIsGenerating(true);
+    try {
+      const element = invoiceRef.current;
 
-        Swal.fire({
-            title: "Generating Invoice",
-            text: "Please wait...",
-            allowOutsideClick: false,
-            didOpen: () => Swal.showLoading(),
-        });
+      // IMPORTANT: element must be visible
+      element.style.display = "block";
 
-        try {
-            const element = invoiceRef.current;
+      await new Promise((r) => setTimeout(r, 500));
 
-            // IMPORTANT: element must be visible
-            element.style.display = "block";
+      const opt = {
+        margin: 0, // FULL WIDTH
+        filename: `${allinvoiceDetails?.invoice_number || "invoice"}.pdf`,
+        image: {
+          type: "jpeg",
+          quality: 0.7, // KB size
+        },
+        html2canvas: {
+          scale: 1.2,
+          useCORS: true,
+          allowTaint: true,
+          scrollX: 0,
+          scrollY: 0,
+          windowWidth: element.scrollWidth, // 🔥 VERY IMPORTANT
+        },
+        jsPDF: {
+          unit: "mm",
+          format: "a4",
+          orientation: "portrait",
+        },
+        pagebreak: { mode: ["css", "legacy"] },
+      };
 
-            await new Promise((r) => setTimeout(r, 500));
+      const worker = html2pdf().set(opt).from(element);
 
-            const opt = {
-                margin: 0, // FULL WIDTH
-                filename: `${allinvoiceDetails?.invoice_number || "invoice"}.pdf`,
-                image: {
-                    type: "jpeg",
-                    quality: 0.7, // KB size
-                },
-                html2canvas: {
-                    scale: 1.2,
-                    useCORS: true,
-                    allowTaint: true,
-                    scrollX: 0,
-                    scrollY: 0,
-                    windowWidth: element.scrollWidth, // 🔥 VERY IMPORTANT
-                },
-                jsPDF: {
-                    unit: "mm",
-                    format: "a4",
-                    orientation: "portrait",
-                },
-                pagebreak: { mode: ["css", "legacy"] },
-            };
+      const pdfBlob = await worker.outputPdf("blob");
 
-            const worker = html2pdf().set(opt).from(element);
+      const formData = new FormData();
+      formData.append(
+        "clientInvoice",
+        pdfBlob,
+        `${allinvoiceDetails?.invoice_number || "invoice"}.pdf`
+      );
+      formData.append("id", invoiceId);
+      formData.append("invoice_document_type", "Sales Invoice");
 
-            const pdfBlob = await worker.outputPdf("blob");
-
-            const formData = new FormData();
-            formData.append(
-                "clientInvoice",
-                pdfBlob,
-                `${allinvoiceDetails?.invoice_number || "invoice"}.pdf`
-            );
-            formData.append("id", invoiceId);
-            formData.append("invoice_document_type", "Sales Invoice");
-
-            await axios.post(
-                `${API_URL}/api/invoice/upload-client-invoice`,
-                formData,
-                {
-                    withCredentials: true,
-                    headers: { "Content-Type": "multipart/form-data" },
-                }
-            );
-
-            Swal.fire({
-                icon: "success",
-                title: "Invoice Generated",
-                text: "Invoice generated & uploaded successfully",
-            }).then(() => {
-  if (onSuccess) onSuccess();   
-});
-        } catch (err) {
-            console.error(err);
-            Swal.fire({
-                icon: "error",
-                title: "Failed",
-                text: "PDF generation failed",
-            });
-        } finally {
-            setIsGenerating(false);
+      await axios.post(
+        `${API_URL}/api/invoice/upload-client-invoice`,
+        formData,
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
         }
-    };
+      );
 
+      Swal.fire({
+        icon: "success",
+        title: "Invoice Generated",
+        text: "Invoice generated & uploaded successfully",
+      }).then(() => {
+        if (onSuccess) onSuccess();
+      });
+    } catch (err) {
+      console.error(err);
+      Swal.fire({
+        icon: "error",
+        title: "Failed",
+        text: "PDF generation failed",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
-    useImperativeHandle(ref, () => ({
-        downloadPDF
-    }));
-
-
+  useImperativeHandle(ref, () => ({
+    downloadPDF,
+  }));
 
   const amountInWords = (num) => {
     if (!num) return "Zero Rupees Only";
 
     const a = [
-      "", "One", "Two", "Three", "Four", "Five", "Six",
-      "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve",
-      "Thirteen", "Fourteen", "Fifteen", "Sixteen",
-      "Seventeen", "Eighteen", "Nineteen"
+      "",
+      "One",
+      "Two",
+      "Three",
+      "Four",
+      "Five",
+      "Six",
+      "Seven",
+      "Eight",
+      "Nine",
+      "Ten",
+      "Eleven",
+      "Twelve",
+      "Thirteen",
+      "Fourteen",
+      "Fifteen",
+      "Sixteen",
+      "Seventeen",
+      "Eighteen",
+      "Nineteen",
     ];
 
-    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+    const b = [
+      "",
+      "",
+      "Twenty",
+      "Thirty",
+      "Forty",
+      "Fifty",
+      "Sixty",
+      "Seventy",
+      "Eighty",
+      "Ninety",
+    ];
 
     const convert = (n) => {
       if (n < 20) return a[n];
-      if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
+      if (n < 100)
+        return b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
       if (n < 1000)
-        return a[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " " + convert(n % 100) : "");
+        return (
+          a[Math.floor(n / 100)] +
+          " Hundred" +
+          (n % 100 ? " " + convert(n % 100) : "")
+        );
       if (n < 100000)
-        return convert(Math.floor(n / 1000)) + " Thousand" + (n % 1000 ? " " + convert(n % 1000) : "");
+        return (
+          convert(Math.floor(n / 1000)) +
+          " Thousand" +
+          (n % 1000 ? " " + convert(n % 1000) : "")
+        );
       if (n < 10000000)
-        return convert(Math.floor(n / 100000)) + " Lakh" + (n % 100000 ? " " + convert(n % 100000) : "");
-      return convert(Math.floor(n / 10000000)) + " Crore" + (n % 10000000 ? " " + convert(n % 10000000) : "");
+        return (
+          convert(Math.floor(n / 100000)) +
+          " Lakh" +
+          (n % 100000 ? " " + convert(n % 100000) : "")
+        );
+      return (
+        convert(Math.floor(n / 10000000)) +
+        " Crore" +
+        (n % 10000000 ? " " + convert(n % 10000000) : "")
+      );
     };
 
     return convert(num) + " Rupees Only";
   };
-
 
   return (
     <div className="p-6">
@@ -316,11 +351,18 @@ const Sales_invoice =  forwardRef(({ invoiceId, onSuccess }, ref) => {
               {/* <img src={Aryulogo} alt="Company Logo" className="h-18 mb-2" /> */}
               <div className="pt-1">
                 <strong className=" w-[40%]  inline-block">Invoice No</strong>
-                <strong className="font-bold">:</strong> {allinvoiceDetails?.invoice_number}
+                <strong className="font-bold">:</strong>{" "}
+                {allinvoiceDetails?.invoice_number}
               </div>
               <div className="pt-1">
                 <strong className=" w-[40%]  inline-block">Dated</strong>
-                <strong className="font-bold">:</strong> {new Date().toLocaleDateString("en-IN")}
+                <strong className="font-bold">:</strong>{" "}
+                {allinvoiceDetails?.invoice_date
+                  ? new Date(allinvoiceDetails.invoice_date).toLocaleDateString(
+                      "en-IN"
+                    )
+                  : ""}
+                {/* <strong className="font-bold">:</strong> {new Date().toLocaleDateString("en-IN")} */}
               </div>
             </div>
             <div className="p-1  text-[13px]   border-black pb-1">
@@ -328,13 +370,13 @@ const Sales_invoice =  forwardRef(({ invoiceId, onSuccess }, ref) => {
 
               <p>{line1}</p>
               <p className="pt-1">{line2}</p>
-              <p className="pt-2">State Name - {settingData?.invoiceState}, Code - 33</p>
-            
+              <p className="pt-2">
+                State Name - {settingData?.invoiceState}, Code - 33
+              </p>
             </div>
           </div>
           <div className="w-[50%]   border-black">
             <div className="text-left p-1 pt-4 border-b-2  border-black">
-
               <div className="pt-1 pb-1">
                 <strong className=" w-[40%]  inline-block">
                   Payment Terms
@@ -350,19 +392,16 @@ const Sales_invoice =  forwardRef(({ invoiceId, onSuccess }, ref) => {
               </div>
             </div>
 
-
-
             <div className="p-1 text-[12px]   border-black">
-             <p className="font-bold pb-1">Buyer (Bill To)</p>
-              <p className="font-bold pb-1">{allinvoiceDetails?.clientId?.trader_name}</p>
-              <p className="pt-1">
-                {allinvoiceDetails?.clientId?.address}
+              <p className="font-bold pb-1">Buyer (Bill To)</p>
+              <p className="font-bold pb-1">
+                {allinvoiceDetails?.clientId?.trader_name}
               </p>
+              <p className="pt-1">{allinvoiceDetails?.clientId?.address}</p>
               {/* <p >
                 MANGAL MURTI SQUARE, Ragado Building, TRIMURTI NAGAR, NAGPUR MH
                 440022
               </p> */}
-              
             </div>
           </div>
         </div>
@@ -380,21 +419,17 @@ const Sales_invoice =  forwardRef(({ invoiceId, onSuccess }, ref) => {
           </div>
 
           <div className="w-[50%]  border-black">
-
-
             <div className="p-1 text-[12px]   border-black">
-
               <p className="pt-2">
                 <strong>GSTIN/UIN</strong>: {allinvoiceDetails?.clientId?.gst}
               </p>
               <p className="pt-2">
-                <strong>Email</strong>- {allinvoiceDetails?.clientId?.email} / <strong>PH</strong>{" "}
-                - {allinvoiceDetails?.clientId?.phone_number}
+                <strong>Email</strong>- {allinvoiceDetails?.clientId?.email} /{" "}
+                <strong>PH</strong> -{" "}
+                {allinvoiceDetails?.clientId?.phone_number}
               </p>{" "}
             </div>
           </div>
-
-
         </div>
         {/* table */}
 
@@ -453,8 +488,7 @@ const Sales_invoice =  forwardRef(({ invoiceId, onSuccess }, ref) => {
                     {NumberFormat(item.rate)}
                   </td>
                   <td className="no-line-bot p-1 border-r-2  align-middle pb-2  border-black">
-                                        {item.rate ? "Nos" : ""}
-
+                    {item.rate ? "Nos" : ""}
                   </td>
                   <td className="no-line-bot p-1 border-r-2 pb-2  align-middle border-black">
                     {NumberFormat(item.amount)}
@@ -463,7 +497,6 @@ const Sales_invoice =  forwardRef(({ invoiceId, onSuccess }, ref) => {
               ))}
             </tbody>
             <tfoot className="border-b-2  border-black text-[14px] ">
-
               {/* value */}
               <tr className="border-t-2  border-black  ">
                 <td className="no-line-bot p-1 border-r-2  border-l-2 align-middle  border-black"></td>
@@ -485,13 +518,8 @@ const Sales_invoice =  forwardRef(({ invoiceId, onSuccess }, ref) => {
         {/* Amount in Words */}
         <div className="border-b-2 border-r-2 border-l-2 p-1 border-black">
           <p className="">Amount Chargeable (in Words)</p>
-          <p className="font-semibold pb-1">
-            {" "}
-            {amountInWords(totalAmount)}
-          </p>
+          <p className="font-semibold pb-1"> {amountInWords(totalAmount)}</p>
         </div>
-
-
 
         {/* Footer */}
         <div className="flex w-full  ">
@@ -525,41 +553,38 @@ const Sales_invoice =  forwardRef(({ invoiceId, onSuccess }, ref) => {
               </p>
               <div className=" border-black border-r-2 p-1">
                 <p className=" text-black">
-                  <span className="w-[20%] inline-block ">Ac Name</span>: {settingData?.accountName}
+                  <span className="w-[20%] inline-block ">Ac Name</span>:{" "}
+                  {settingData?.accountName}
                 </p>
                 <p className=" text-black">
-                  <span className="w-[20%] inline-block">Bank Name</span>: {settingData?.bankName}
+                  <span className="w-[20%] inline-block">Bank Name</span>:{" "}
+                  {settingData?.bankName}
                 </p>
                 <p className="pt-1 text-black">
-                  <span className="w-[20%] inline-block">A/c No</span>: {settingData?.accountNumber}
+                  <span className="w-[20%] inline-block">A/c No</span>:{" "}
+                  {settingData?.accountNumber}
                 </p>
                 <p className="pt-1 text-black pb-1">
-                  <span className="w-[20%] inline-block">IFSC / BR</span>: {settingData?.ifscCode}
+                  <span className="w-[20%] inline-block">IFSC / BR</span>:{" "}
+                  {settingData?.ifscCode}
                 </p>
               </div>
             </div>
-
           </div>
         </div>
 
         {/* footer pss */}
 
-
         <div className="flex w-full  ">
           <div className="w-full border-b-2  border-l-2   border-black">
-
-
             <div className="">
               <p className="font-semibold border-b-2  border-black  underline underline-offset-4 text-[16px] p-1 pb-2">
                 Declaration
               </p>
-              <p className="pt-1 p-1">
-                {settingData?.declaration}
-              </p>
+              <p className="pt-1 p-1">{settingData?.declaration}</p>
             </div>
           </div>
           <div className="w-full border-b-2 border-black">
-
             <div className="border-x-2 border-black p-3">
               {/* Top Text */}
               <div className="text-right  text-sm">

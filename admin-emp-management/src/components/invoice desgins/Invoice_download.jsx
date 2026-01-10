@@ -1,4 +1,10 @@
-import React, { useRef, useState, useImperativeHandle, forwardRef, useEffect } from "react";
+import React, {
+  useRef,
+  useState,
+  useImperativeHandle,
+  forwardRef,
+  useEffect,
+} from "react";
 import { jsPDF } from "jspdf";
 import html2pdf from "html2pdf.js";
 
@@ -12,9 +18,7 @@ import { API_URL } from "../../config";
 import NumberFormat from "../../utils/NumberFormat";
 import Swal from "sweetalert2";
 
-
-
-const Invoice = forwardRef(({ invoiceId,onSuccess }, ref) => {
+const Invoice = forwardRef(({ invoiceId, onSuccess }, ref) => {
   const invoiceRef = useRef();
 
   const location = useLocation();
@@ -39,7 +43,8 @@ const Invoice = forwardRef(({ invoiceId,onSuccess }, ref) => {
 
   const fetchInvoiceDetails = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/invoice/client-invoice`,
+      const response = await axios.get(
+        `${API_URL}/api/invoice/client-invoice`,
         {
           params: { id: invoiceId },
         },
@@ -49,15 +54,11 @@ const Invoice = forwardRef(({ invoiceId,onSuccess }, ref) => {
 
       setAllinvoiceDetails(response.data?.data);
       setSettingData(response.data?.setting);
-
-
-
     } catch (err) {
-      console.log("error")
+      console.log("error");
       // setErrors("Failed to fetch roles.");
     }
   };
-
 
   const invoiceAddress = settingData?.invoiceAddress || "";
 
@@ -73,7 +74,6 @@ const Invoice = forwardRef(({ invoiceId,onSuccess }, ref) => {
 
   // console.log("totalAmount", totalAmount)
 
-
   useEffect(() => {
     const total =
       allinvoiceDetails?.items?.reduce(
@@ -88,97 +88,93 @@ const Invoice = forwardRef(({ invoiceId,onSuccess }, ref) => {
 
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const downloadPDF = async () => {
+    if (!invoiceId) return;
 
-    const downloadPDF = async () => {
-        if (!invoiceId) return;
+    setIsGenerating(true);
 
-        setIsGenerating(true);
+    Swal.fire({
+      title: "Generating Invoice",
+      text: "Please wait...",
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    });
 
-        Swal.fire({
-            title: "Generating Invoice",
-            text: "Please wait...",
-            allowOutsideClick: false,
-            didOpen: () => Swal.showLoading(),
-        });
+    try {
+      const element = invoiceRef.current;
 
-        try {
-            const element = invoiceRef.current;
+      // IMPORTANT: element must be visible
+      element.style.display = "block";
 
-            // IMPORTANT: element must be visible
-            element.style.display = "block";
+      await new Promise((r) => setTimeout(r, 500));
 
-            await new Promise((r) => setTimeout(r, 500));
+      const opt = {
+        margin: 0, // FULL WIDTH
+        filename: `${allinvoiceDetails?.invoice_number || "invoice"}.pdf`,
+        image: {
+          type: "jpeg",
+          quality: 0.7, // KB size
+        },
+        html2canvas: {
+          scale: 1.2,
+          useCORS: true,
+          allowTaint: true,
+          scrollX: 0,
+          scrollY: 0,
+          windowWidth: element.scrollWidth, // 🔥 VERY IMPORTANT
+        },
+        jsPDF: {
+          unit: "mm",
+          format: "a4",
+          orientation: "portrait",
+        },
+        pagebreak: { mode: ["css", "legacy"] },
+      };
 
-            const opt = {
-                margin: 0, // FULL WIDTH
-                filename: `${allinvoiceDetails?.invoice_number || "invoice"}.pdf`,
-                image: {
-                    type: "jpeg",
-                    quality: 0.7, // KB size
-                },
-                html2canvas: {
-                    scale: 1.2,
-                    useCORS: true,
-                    allowTaint: true,
-                    scrollX: 0,
-                    scrollY: 0,
-                    windowWidth: element.scrollWidth, // 🔥 VERY IMPORTANT
-                },
-                jsPDF: {
-                    unit: "mm",
-                    format: "a4",
-                    orientation: "portrait",
-                },
-                pagebreak: { mode: ["css", "legacy"] },
-            };
+      const worker = html2pdf().set(opt).from(element);
 
-            const worker = html2pdf().set(opt).from(element);
+      const pdfBlob = await worker.outputPdf("blob");
 
-            const pdfBlob = await worker.outputPdf("blob");
+      const formData = new FormData();
+      formData.append(
+        "clientInvoice",
+        pdfBlob,
+        `${allinvoiceDetails?.invoice_number || "invoice"}.pdf`
+      );
+      formData.append("id", invoiceId);
+      formData.append("invoice_document_type", "Tax Invoice");
 
-            const formData = new FormData();
-            formData.append(
-                "clientInvoice",
-                pdfBlob,
-                `${allinvoiceDetails?.invoice_number || "invoice"}.pdf`
-            );
-            formData.append("id", invoiceId);
-            formData.append("invoice_document_type", "Tax Invoice");
-
-            await axios.post(
-                `${API_URL}/api/invoice/upload-client-invoice`,
-                formData,
-                {
-                    withCredentials: true,
-                    headers: { "Content-Type": "multipart/form-data" },
-                }
-            );
-
-            Swal.fire({
-                icon: "success",
-                title: "Invoice Generated",
-                text: "Invoice generated & uploaded successfully",
-            }).then(() => {
-  if (onSuccess) onSuccess();   
-});
-        } catch (err) {
-            console.error(err);
-            Swal.fire({
-                icon: "error",
-                title: "Failed",
-                text: "PDF generation failed",
-            });
-        } finally {
-            setIsGenerating(false);
+      await axios.post(
+        `${API_URL}/api/invoice/upload-client-invoice`,
+        formData,
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
         }
-    };
+      );
 
+      Swal.fire({
+        icon: "success",
+        title: "Invoice Generated",
+        text: "Invoice generated & uploaded successfully",
+      }).then(() => {
+        if (onSuccess) onSuccess();
+      });
+    } catch (err) {
+      console.error(err);
+      Swal.fire({
+        icon: "error",
+        title: "Failed",
+        text: "PDF generation failed",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
-    useImperativeHandle(ref, () => ({
-        downloadPDF
-    }));
-
-
+  useImperativeHandle(ref, () => ({
+    downloadPDF,
+  }));
 
   // const downloadPDF = async () => {
   //   const element = invoiceRef.current;
@@ -200,64 +196,98 @@ const Invoice = forwardRef(({ invoiceId,onSuccess }, ref) => {
   //   pdf.save(fileName);
   // };
 
- 
-
-
-
   const amountInWords = (num) => {
     if (!num) return "Zero Rupees Only";
 
     const a = [
-      "", "One", "Two", "Three", "Four", "Five", "Six",
-      "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve",
-      "Thirteen", "Fourteen", "Fifteen", "Sixteen",
-      "Seventeen", "Eighteen", "Nineteen"
+      "",
+      "One",
+      "Two",
+      "Three",
+      "Four",
+      "Five",
+      "Six",
+      "Seven",
+      "Eight",
+      "Nine",
+      "Ten",
+      "Eleven",
+      "Twelve",
+      "Thirteen",
+      "Fourteen",
+      "Fifteen",
+      "Sixteen",
+      "Seventeen",
+      "Eighteen",
+      "Nineteen",
     ];
 
-    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+    const b = [
+      "",
+      "",
+      "Twenty",
+      "Thirty",
+      "Forty",
+      "Fifty",
+      "Sixty",
+      "Seventy",
+      "Eighty",
+      "Ninety",
+    ];
 
     const convert = (n) => {
       if (n < 20) return a[n];
-      if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
+      if (n < 100)
+        return b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
       if (n < 1000)
-        return a[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " " + convert(n % 100) : "");
+        return (
+          a[Math.floor(n / 100)] +
+          " Hundred" +
+          (n % 100 ? " " + convert(n % 100) : "")
+        );
       if (n < 100000)
-        return convert(Math.floor(n / 1000)) + " Thousand" + (n % 1000 ? " " + convert(n % 1000) : "");
+        return (
+          convert(Math.floor(n / 1000)) +
+          " Thousand" +
+          (n % 1000 ? " " + convert(n % 1000) : "")
+        );
       if (n < 10000000)
-        return convert(Math.floor(n / 100000)) + " Lakh" + (n % 100000 ? " " + convert(n % 100000) : "");
-      return convert(Math.floor(n / 10000000)) + " Crore" + (n % 10000000 ? " " + convert(n % 10000000) : "");
+        return (
+          convert(Math.floor(n / 100000)) +
+          " Lakh" +
+          (n % 100000 ? " " + convert(n % 100000) : "")
+        );
+      return (
+        convert(Math.floor(n / 10000000)) +
+        " Crore" +
+        (n % 10000000 ? " " + convert(n % 10000000) : "")
+      );
     };
 
     return convert(num) + " Rupees Only";
   };
 
-
   // gst calucateion
-
 
   const totalCgstAmount =
     allinvoiceDetails?.items?.reduce((sum, item) => {
       const amount = Number(item.amount || 0);
       const cgstPercent = Number(settingData?.cgst || 0);
 
-      const cgst =
-        (amount * cgstPercent) / (100);
+      const cgst = (amount * cgstPercent) / 100;
 
       return sum + cgst;
     }, 0) || 0;
-
 
   const totalSgstAmount =
     allinvoiceDetails?.items?.reduce((sum, item) => {
       const amount = Number(item.amount || 0);
       const sgstPercent = Number(settingData?.sgst || 0);
 
-      const sgst =
-        (amount * sgstPercent) / (100);
+      const sgst = (amount * sgstPercent) / 100;
 
       return sum + sgst;
     }, 0) || 0;
-
 
   const grandTotalTax = totalCgstAmount + totalSgstAmount;
 
@@ -276,7 +306,6 @@ const Invoice = forwardRef(({ invoiceId,onSuccess }, ref) => {
     return acc;
   }, {});
   const finalItems = Object.values(groupedItems || {});
-
 
   const data = [
     {
@@ -323,29 +352,36 @@ const Invoice = forwardRef(({ invoiceId,onSuccess }, ref) => {
             <div className="p-1  text-[13px]   border-black">
               <p>{line1}</p>
               <p className="pt-1">{line2}</p>
-              <p className="pt-2">State Name - {settingData?.invoiceState}, Code - 33</p>
-
+              <p className="pt-2">
+                State Name - {settingData?.invoiceState}, Code - 33
+              </p>
             </div>
           </div>
           <div className="w-[50%]   border-black">
             <div className="text-left p-1 pt-4 border-b-2  border-black">
               <div className="pt-1">
                 <strong className=" w-[40%]  inline-block">Invoice No</strong>
-                <strong className="font-bold">:</strong> {allinvoiceDetails?.invoice_number}
+                <strong className="font-bold">:</strong>{" "}
+                {allinvoiceDetails?.invoice_number}
               </div>
               <div className="pt-1 pb-5">
+                {/* <strong className=" w-[40%]  inline-block">Dated</strong> */}
+                {/* <strong className="font-bold">:</strong> {new Date().toLocaleDateString("en-IN")} */}
                 <strong className=" w-[40%]  inline-block">Dated</strong>
-                <strong className="font-bold">:</strong> {new Date().toLocaleDateString("en-IN")}
+                {allinvoiceDetails?.invoice_date
+                  ? new Date(allinvoiceDetails.invoice_date).toLocaleDateString(
+                      "en-IN"
+                    )
+                  : ""}
               </div>
-             
             </div>
 
             <div className="p-1 text-[12px]   border-black">
               <p className="font-bold pb-1">Buyer (Bill To)</p>
-              <p className="font-bold pb-1">{allinvoiceDetails?.clientId?.trader_name}</p>
-              <p className="pt-1">
-                {allinvoiceDetails?.clientId?.address}
+              <p className="font-bold pb-1">
+                {allinvoiceDetails?.clientId?.trader_name}
               </p>
+              <p className="pt-1">{allinvoiceDetails?.clientId?.address}</p>
               {/* <p >
                                                    MANGAL MURTI SQUARE, Ragado Building, TRIMURTI NAGAR, NAGPUR MH
                                                    440022
@@ -361,7 +397,6 @@ const Invoice = forwardRef(({ invoiceId,onSuccess }, ref) => {
           </div>
         </div>
 
-
         {/* gst in both side */}
         <div className="flex justify-between h-full border-black items-start  border-r-2 border-l-2">
           <div className=" border-black w-[50%] border-r-2 p-1  ">
@@ -376,21 +411,17 @@ const Invoice = forwardRef(({ invoiceId,onSuccess }, ref) => {
           </div>
 
           <div className="w-[50%]  border-black ">
-
-
             <div className="p-1 text-[12px]   border-black">
-
               <p className="pt-2">
                 <strong>GSTIN/UIN</strong>: {allinvoiceDetails?.clientId?.gst}
               </p>
               <p className="pt-2">
-                <strong>Email</strong>- {allinvoiceDetails?.clientId?.email} / <strong>PH</strong>{" "}
-                - {allinvoiceDetails?.clientId?.phone_number}
+                <strong>Email</strong>- {allinvoiceDetails?.clientId?.email} /{" "}
+                <strong>PH</strong> -{" "}
+                {allinvoiceDetails?.clientId?.phone_number}
               </p>{" "}
             </div>
           </div>
-
-
         </div>
         {/* table */}
 
@@ -486,7 +517,10 @@ const Invoice = forwardRef(({ invoiceId,onSuccess }, ref) => {
                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
                 <td className="no-line-bot p-1 border-r-2    border-black font-bold">
                   {NumberFormat(
-                    (Number(totalAmount || 0) * Number(settingData?.cgst || 0)) / 100)}
+                    (Number(totalAmount || 0) *
+                      Number(settingData?.cgst || 0)) /
+                      100
+                  )}
                 </td>
               </tr>
               {/* sgst */}
@@ -502,7 +536,11 @@ const Invoice = forwardRef(({ invoiceId,onSuccess }, ref) => {
                 </td>
                 <td className="no-line-bot p-1 border-r-2    border-black"></td>
                 <td className="no-line-bot p-1 border-r-2    border-black font-bold">
-                  {NumberFormat((Number(totalAmount || 0) * Number(settingData?.sgst || 0)) / 100)}
+                  {NumberFormat(
+                    (Number(totalAmount || 0) *
+                      Number(settingData?.sgst || 0)) /
+                      100
+                  )}
                 </td>
               </tr>
 
@@ -683,9 +721,7 @@ const Invoice = forwardRef(({ invoiceId,onSuccess }, ref) => {
                     {NumberFormat(settingData?.igst)}%
                   </td>
 
-                  <td className="p-1 border-r-2 text-right border-black">
-                    0
-                  </td>
+                  <td className="p-1 border-r-2 text-right border-black">0</td>
 
                   <td className="p-1 border-r-2 text-right border-black">
                     {NumberFormat(
@@ -702,7 +738,7 @@ const Invoice = forwardRef(({ invoiceId,onSuccess }, ref) => {
                   <td className="p-1 border-r-2 text-right border-black">
                     {NumberFormat(
                       (item.amount * Number(settingData?.cgst || 0)) / 100 +
-                      (item.amount * Number(settingData?.sgst || 0)) / 100
+                        (item.amount * Number(settingData?.sgst || 0)) / 100
                     )}
                   </td>
                 </tr>
@@ -729,11 +765,9 @@ const Invoice = forwardRef(({ invoiceId,onSuccess }, ref) => {
                 </td>
                 <td className="no-line-bot p-1 border-r-2    border-black text-right font-bold">
                   {NumberFormat(totalSgstAmount.toFixed(2))}
-
                 </td>
                 <td className="no-line-bot p-1 border-r-2    border-black text-right font-bold">
                   {NumberFormat(grandTotalTax.toFixed(2))}
-
                 </td>
               </tr>
             </tfoot>
@@ -742,9 +776,10 @@ const Invoice = forwardRef(({ invoiceId,onSuccess }, ref) => {
         {/* .word ampount */}
         <div className=" border-r-2 border-l-2 p-1 border-black">
           <p>
-            <span className="w-[30%] inline-block pb-1">Tax amount (in words)</span>
-            <strong>:  {amountInWords(grandTotalTax)}
-            </strong>
+            <span className="w-[30%] inline-block pb-1">
+              Tax amount (in words)
+            </span>
+            <strong>: {amountInWords(grandTotalTax)}</strong>
           </p>
           <p>
             <span className="w-[30%] inline-block pb-2">Company's PAN No</span>
@@ -784,41 +819,38 @@ const Invoice = forwardRef(({ invoiceId,onSuccess }, ref) => {
               </p>
               <div className=" border-black  p-1">
                 <p className=" text-black">
-                  <span className="w-[20%] inline-block ">Ac Name</span>: {settingData?.accountName}
+                  <span className="w-[20%] inline-block ">Ac Name</span>:{" "}
+                  {settingData?.accountName}
                 </p>
                 <p className=" text-black">
-                  <span className="w-[20%] inline-block">Bank Name</span>: {settingData?.bankName}
+                  <span className="w-[20%] inline-block">Bank Name</span>:{" "}
+                  {settingData?.bankName}
                 </p>
                 <p className="pt-1 text-black">
-                  <span className="w-[20%] inline-block">A/c No</span>: {settingData?.accountNumber}
+                  <span className="w-[20%] inline-block">A/c No</span>:{" "}
+                  {settingData?.accountNumber}
                 </p>
                 <p className="pt-1 text-black pb-1">
-                  <span className="w-[20%] inline-block">IFSC / BR</span>: {settingData?.ifscCode}
+                  <span className="w-[20%] inline-block">IFSC / BR</span>:{" "}
+                  {settingData?.ifscCode}
                 </p>
               </div>
             </div>
-
           </div>
         </div>
 
         {/* footer pss */}
 
-
         <div className="flex w-full  ">
           <div className="w-full border-b-2  border-l-2   border-black">
-
-
             <div className="">
               <p className="font-semibold border-b-2  border-black  underline underline-offset-4  text-[16px] p-1 pb-2">
                 Declaration
               </p>
-              <p className="pt-1 p-1">
-                {settingData?.declaration}
-              </p>
+              <p className="pt-1 p-1">{settingData?.declaration}</p>
             </div>
           </div>
           <div className="w-full border-b-2 border-black">
-
             <div className="border-x-2 border-black p-3">
               {/* Top Text */}
               <div className="text-right  text-sm">
