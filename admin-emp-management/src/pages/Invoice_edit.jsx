@@ -211,7 +211,7 @@ const dropdownRef = useRef(null);
   // console.log("items",items)
 
   const [status, setStatus] = useState("");
-
+  console.log("status", status);
   const [invoiceDate, setInvoiceDate] = useState("");
   // console.log("invoiceDate", invoiceDate)
   const [dueDate, setDueDate] = useState("");
@@ -412,17 +412,17 @@ const skipPaymentFields = [
       newErrors.paidDate = "Paid date is required when status is Paid";
     }
 
-    if (!status) {
-      newErrors.status = "Status is required";
-    }
+    // if (!status) {
+    //   newErrors.status = "Status is required";
+    // }
    if (status && !skipPaymentFields.includes(status) && !amount) {
     newErrors.amount = "Amount is required";
   }
 
   // Payment Type
-  if (status && !skipPaymentFields.includes(status) && !paymentType) {
-    newErrors.paymentType = "Payment type is required";
-  }
+  // if (status && !skipPaymentFields.includes(status) && !paymentType) {
+  //   newErrors.paymentType = "Payment type is required";
+  // }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
