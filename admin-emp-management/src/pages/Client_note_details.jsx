@@ -76,7 +76,7 @@ const Client_note_details = () => {
                 projectId: _id,
             };
 
-            const response = await axios.post(`${API_URL}/api/projectNotes/create-projectNotes`, formData, {withCredentials: true});
+            const response = await axios.post(`${API_URL}/api/projectNotes/create-projectNotes`, formData, { withCredentials: true });
             // console.log("response", response)
             toast.success("Notes Created Successfully!");
             fetchNotes();
@@ -100,7 +100,7 @@ const Client_note_details = () => {
         try {
             setLoading(true);
             const resp = await axios.get(`${API_URL}/api/projectNotes/projectNotes/${_id}`,
-                {withCredentials: true}
+                { withCredentials: true }
             );
 
             // console.log("resp.data.data :", resp.data.data);
@@ -139,7 +139,7 @@ const Client_note_details = () => {
                 // projectId: _id,
             };
 
-            const response = await axios.put(`${API_URL}/api/projectNotes/edit-projectNotesdetails/${editid}`, formData, {withCredentials: true});
+            const response = await axios.put(`${API_URL}/api/projectNotes/edit-projectNotesdetails/${editid}`, formData, { withCredentials: true });
             // console.log("response", response)
             toast.success("Notes Edit Successfully!");
             fetchNotes();
@@ -214,7 +214,7 @@ const Client_note_details = () => {
             if (result.isConfirmed) {
                 axios
                     .delete(`${API_URL}/api/projectNotes/delete-projectNotesDelete/${roleId}`,
-                        {withCredentials: true}
+                        { withCredentials: true }
                     )
                     .then((response) => {
                         if (response.data.success) {
@@ -253,10 +253,10 @@ const Client_note_details = () => {
                 setTimeout(() => {
                     const container = document.getElementById(id);
                     if (container) {
-            if (!container._root) {
-              container._root = createRoot(container);
-            }
-            container._root.render(
+                        if (!container._root) {
+                            container._root = createRoot(container);
+                        }
+                        container._root.render(
                             <div
                                 className="action-container"
                                 style={{
@@ -310,10 +310,10 @@ const Client_note_details = () => {
                 setTimeout(() => {
                     const container = document.getElementById(id);
                     if (container) {
-            if (!container._root) {
-              container._root = createRoot(container);
-            }
-            container._root.render(
+                        if (!container._root) {
+                            container._root = createRoot(container);
+                        }
+                        container._root.render(
                             <div
                                 className="action-container"
                                 style={{
@@ -404,11 +404,11 @@ const Client_note_details = () => {
                     </button>
                 </div>
 
-              <div className="flex justify-between mt-4 mb-3">
-  <h1 className="text-2xl font-normal">
-    Project Name: {row?.name}
-  </h1>
-</div>
+                <div className="flex justify-between mt-4 mb-3">
+                    <h1 className="text-2xl font-normal">
+                        Project Name: {row?.name}
+                    </h1>
+                </div>
 
 
 
@@ -561,9 +561,15 @@ const Client_note_details = () => {
                     </div>
 
                     {showPopup && (
-                        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                            <div className="bg-white p-6 rounded-xl shadow-xl w-[450px] relative">
-
+                        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-3">
+                            <div
+                                className="
+        bg-white rounded-xl shadow-xl relative
+        w-full max-w-[450px]
+        max-h-[90vh]
+        flex flex-col
+      "
+                            >
                                 {/* Close Button */}
                                 <button
                                     onClick={() => setShowPopup(false)}
@@ -573,16 +579,19 @@ const Client_note_details = () => {
                                 </button>
 
                                 {/* Title */}
-                                <h2 className="text-xl font-semibold mb-3">Description</h2>
+                                <h2 className="text-xl font-semibold p-4 border-b">
+                                    Description
+                                </h2>
 
-                                {/* Render HTML Safely */}
+                                {/* Scrollable Content */}
                                 <div
-                                    className="text-gray-700 prose"
+                                    className="p-4 text-gray-700 overflow-y-auto overflow-x-auto prose max-w-none "
                                     dangerouslySetInnerHTML={{ __html: descView }}
                                 />
                             </div>
                         </div>
                     )}
+
 
 
 

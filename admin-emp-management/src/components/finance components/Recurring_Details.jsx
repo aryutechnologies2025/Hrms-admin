@@ -139,14 +139,14 @@ function Recurring_Details() {
 
                 <div className="mt-5 flex justify-between items-center">
                   <label className="block text-md font-medium mb-2">
-                    Account <span className="text-red-500">*</span>
+                    Amount <span className="text-red-500">*</span>
                   </label>
                   <div className="w-[70%] md:w-[50%]">
                     <input
                       type="text"
                       // value={name}
                       // onChange={(e) => setName(e.target.value)}
-                      placeholder="Enter Your Name "
+                      placeholder="Enter Amount "
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     {/* {errors.name && (
