@@ -42,16 +42,13 @@ import Performa_invoice from "../components/invoice desgins/Performa_invoice";
 import Invoice from "../components/invoice desgins/Invoice_download";
 import Loader from "../components/Loader";
 
-
 // customize table
 
 // import { MultiSelect } from "primereact/multiselect";
 
-
 const Invoice_details = () => {
   const navigate = useNavigate();
   const formatDateTime = useDateUtils();
-
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -70,7 +67,6 @@ const Invoice_details = () => {
   // useEffect(() => {
   //   fetchProject();
   // }, []);
-
 
   //   useEffect(() => {
   //   if (clientFilter || projectFilter || statusFilter) {
@@ -96,21 +92,18 @@ const Invoice_details = () => {
   // console.log("clientOption", clientOption);
   const [projectOption, setProjectOption] = useState(null);
 
-
-
-
-
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const [clientFilter, setClientFilter] = useState(
+    searchParams.get("client") || ""
+  );
 
-
-
-  const [clientFilter, setClientFilter] = useState(searchParams.get("client") || "");
-
-  const [projectFilter, setProjectFilter] = useState(searchParams.get("project") || "");
-  const [statusFilter, setStatusFilter] = useState(searchParams.get("status") || "");
-
-
+  const [projectFilter, setProjectFilter] = useState(
+    searchParams.get("project") || ""
+  );
+  const [statusFilter, setStatusFilter] = useState(
+    searchParams.get("status") || ""
+  );
 
   useEffect(() => {
     fetchClientList();
@@ -121,7 +114,6 @@ const Invoice_details = () => {
       fetchaProjectList(clientFilter);
     }
   }, [clientFilter]);
-
 
   useEffect(() => {
     const client = searchParams.get("client");
@@ -149,12 +141,15 @@ const Invoice_details = () => {
 
   const handleSubmit = () => {
     // Set submitted labels separately
-    setSubmittedClient(clientOption.find(c => c.value === clientFilter)?.label || "");
-    setSubmittedProject(projectOption.find(p => p.value === projectFilter)?.label || "");
+    setSubmittedClient(
+      clientOption.find((c) => c.value === clientFilter)?.label || ""
+    );
+    setSubmittedProject(
+      projectOption.find((p) => p.value === projectFilter)?.label || ""
+    );
 
     fetchProject(clientFilter, projectFilter, statusFilter);
   };
-
 
   const fetchClientList = async () => {
     try {
@@ -167,14 +162,12 @@ const Invoice_details = () => {
         }
       );
 
-      const clientOptions = response.data.data.map(emp => ({
-
+      const clientOptions = response.data.data.map((emp) => ({
         label: emp.client_name,
         value: emp._id,
       }));
 
       setClientOption(clientOptions);
-
     } catch (error) {
       console.log(error);
     }
@@ -191,14 +184,12 @@ const Invoice_details = () => {
           // headers: {
           //   Authorization: `Bearer ${localStorage.getItem("token")}`,
           // },
-
         }
       );
 
-      console.log("response", response)
+      console.log("response", response);
 
-      const ProjectOptions = response.data.data.map(emp => ({
-
+      const ProjectOptions = response.data.data.map((emp) => ({
         label: emp.name,
         value: emp._id,
       }));
@@ -215,10 +206,9 @@ const Invoice_details = () => {
 
   const fetchAllProjects = async () => {
     try {
-      const response = await axios.get(
-        `${API_URL}/api/invoice/view-invoice`,
-        { withCredentials: true }
-      );
+      const response = await axios.get(`${API_URL}/api/invoice/view-invoice`, {
+        withCredentials: true,
+      });
 
       if (response.data.success) {
         setClientdetails(response.data.data);
@@ -228,13 +218,11 @@ const Invoice_details = () => {
     }
   };
 
-
   const fetchProject = async (
     client = clientFilter,
     project = projectFilter,
     status = statusFilter
   ) => {
-
     setSearchParams({
       client: client || "",
       project: project || "",
@@ -242,27 +230,20 @@ const Invoice_details = () => {
     });
 
     try {
-      const response = await axios.get(
-        `${API_URL}/api/invoice/view-invoice`,
-        {
-          params: { client, project, status },
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${API_URL}/api/invoice/view-invoice`, {
+        params: { client, project, status },
+        withCredentials: true,
+      });
 
       if (response.data.success) {
         setClientdetails(response.data.data);
         setLoading(false);
-
       }
-
     } catch (err) {
       setErrors("Failed to fetch invoices.");
       setLoading(false);
-
     }
   };
-
 
   const handleReset = async () => {
     try {
@@ -273,17 +254,16 @@ const Invoice_details = () => {
       setSearchParams({});
 
       // Fetch all data without filters
-      const response = await axios.get(
-        `${API_URL}/api/invoice/view-invoice`,
-        { withCredentials: true }
-      );
+      const response = await axios.get(`${API_URL}/api/invoice/view-invoice`, {
+        withCredentials: true,
+      });
 
       if (response.data.success) {
-        const formattedData = response.data.data.map(item => ({
+        const formattedData = response.data.data.map((item) => ({
           ...item,
           invoice_date: item.invoice_date
             ? formatDateTime(item.invoice_date)
-            : "-"
+            : "-",
         }));
 
         setClientdetails(formattedData);
@@ -293,7 +273,6 @@ const Invoice_details = () => {
     }
   };
 
-
   // Open and close modals
   const openAddModal = () => {
     setIsAddModalOpen(true);
@@ -301,7 +280,6 @@ const Invoice_details = () => {
   const closeAddModal = () => {
     setIsAddModalOpen(false);
   };
-
 
   // edit page id passing
   // const handleEdit = (row) => {
@@ -311,21 +289,20 @@ const Invoice_details = () => {
   // };
   const handleEdit = (row) => {
     navigate(
-      `/invoice-edit?client=${clientFilter || ""}&project=${projectFilter || ""}&status=${statusFilter || ""}`,
+      `/invoice-edit?client=${clientFilter || ""}&project=${
+        projectFilter || ""
+      }&status=${statusFilter || ""}`,
       {
-        state: { rowData: row }
+        state: { rowData: row },
       }
     );
   };
-
-
 
   //   console.log("edit modal", roleDetails);
 
   const [isOpen, setIsOpen] = useState(false);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState(null);
   // console.log("selectedInvoiceId", selectedInvoiceId);
-
 
   const [isOpenClient, setIsOpenClient] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
@@ -351,13 +328,10 @@ const Invoice_details = () => {
 
   // const handleClosePopup = () => {
   //   setIsOpen(false);
-  //    await fetchProject(); 
+  //    await fetchProject();
   // };
 
   // console.log("checkedDocs", checkedDocs);
-
-
-
 
   const handlesubmit = async (e) => {
     e.preventDefault();
@@ -375,13 +349,12 @@ const Invoice_details = () => {
       const formData = {
         invoiceId: selectedClient?._id,
         documentId: checkedDocs,
-
       };
-
 
       const response = await axios.post(
         `${API_URL}/api/invoice/select-invoice-document`,
-        formData, { withCredentials: true }
+        formData,
+        { withCredentials: true }
       );
 
       Swal.fire({
@@ -393,8 +366,6 @@ const Invoice_details = () => {
       }).then(() => {
         setIsOpenClient(false);
       });
-
-
 
       setErrors({});
     } catch (err) {
@@ -413,17 +384,11 @@ const Invoice_details = () => {
         setErrors(err.response.data.errors);
       } else {
         console.error("Error submitting form:", err);
-
       }
     }
   };
 
-
-
-
-
   const [selectedInvoiceTitle, setSelectedInvoiceTitle] = useState(null);
-
 
   const items = [
     { title: "Sales Invoice" },
@@ -431,8 +396,6 @@ const Invoice_details = () => {
     { title: "Export Invoice" },
     { title: "Tax Invoice" },
   ];
-
-
 
   const invoiceComponents = {
     "Sales Invoice": Sales_invoice,
@@ -468,7 +431,6 @@ const Invoice_details = () => {
   const [isOpeninvoice, setIsOpeninvoice] = useState(false);
   const [selectedinvoice, setSelectedinvoice] = useState(null);
 
-
   const handleOpeninvoicePopup = (documents) => {
     // console.log("documents", documents);
     setSelectedinvoice({ documents });
@@ -479,8 +441,6 @@ const Invoice_details = () => {
 
   //   // console.log("doc", doc);
   //   if (!doc || !doc.path) return;
-
-
 
   //   const url = `${API_URL}/api/uploads/clientInvoices/${doc.filename}`;
 
@@ -494,7 +454,6 @@ const Invoice_details = () => {
   //   link.click();
   //   document.body.removeChild(link);
   // };
-
 
   const downloadPDF = async (doc) => {
     if (!doc || !doc.path) return;
@@ -530,9 +489,6 @@ const Invoice_details = () => {
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
-
-
-
   const columns = [
     {
       key: "sno",
@@ -547,15 +503,14 @@ const Invoice_details = () => {
       key: "client",
       title: "Client Name",
       data: "clientId",
-      render: (data) => data?.client_name || "-"
+      render: (data) => data?.client_name || "-",
     },
 
     {
       key: "project",
       title: "Project",
       data: "project",
-      render: (data) => data?.name || "-"
-
+      render: (data) => data?.name || "-",
     },
     {
       key: "invoice_no",
@@ -574,16 +529,14 @@ const Invoice_details = () => {
       key: "invoice_date",
       title: "Invoice Date",
       data: "invoice_date",
-      render: (data) => data ? formatDateTime(data) : "-"
-
-
+      render: (data) => (data ? formatDateTime(data) : "-"),
     },
 
     {
       key: "due_date",
       title: "Due Date",
       data: "due_date",
-      render: (data) => data ? formatDateTime(data) : "-"
+      render: (data) => (data ? formatDateTime(data) : "-"),
     },
 
     // {
@@ -653,11 +606,11 @@ const Invoice_details = () => {
                 //   setPaymentVisible1(true);
                 // }}
               >
-                {/* ₹{totalAmount ?? 0} */}
-                 ₹{Number(totalAmount ?? 0).toLocaleString("en-IN", {
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0,
-})}
+                {/* ₹{totalAmount ?? 0} */}₹
+                {Number(totalAmount ?? 0).toLocaleString("en-IN", {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                })}
               </span>
             );
           }
@@ -666,7 +619,6 @@ const Invoice_details = () => {
         return `<div id="${id}"></div>`;
       },
     },
-
 
     // balance
     {
@@ -692,11 +644,11 @@ const Invoice_details = () => {
                   setPaymentVisible(true);
                 }}
               >
-                {/* ₹{totalPaymentAmount ?? 0} */}
-                 ₹{Number(totalPaymentAmount ?? 0).toLocaleString("en-IN", {
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0,
-})}
+                {/* ₹{totalPaymentAmount ?? 0} */}₹
+                {Number(totalPaymentAmount ?? 0).toLocaleString("en-IN", {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                })}
               </span>
             );
           }
@@ -729,11 +681,11 @@ const Invoice_details = () => {
                   setPaymentVisible(true);
                 }}
               >
-                {/* ₹{balance ?? 0} */}
-                ₹{Number(balance ?? 0).toLocaleString("en-IN", {
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0,
-})}
+                {/* ₹{balance ?? 0} */}₹
+                {Number(balance ?? 0).toLocaleString("en-IN", {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                })}
               </span>
             );
           }
@@ -747,7 +699,7 @@ const Invoice_details = () => {
       key: "status",
       title: "Status",
       data: "status",
-      render: capitalizeFirstLetter
+      render: capitalizeFirstLetter,
       // render: (data) => data === "paid" ? "Paid" : data === "pending" ? "Pending" : "OverDue"
       // title: "Status",
       // data: "status",
@@ -787,8 +739,7 @@ const Invoice_details = () => {
                 <div
                   className="cursor-pointer"
                   title="View Invoice"
-                  onClick={() => handleOpeninvoicePopup(row.documents
-                  )}
+                  onClick={() => handleOpeninvoicePopup(row.documents)}
                 >
                   <FaEye />
                 </div>
@@ -831,9 +782,7 @@ const Invoice_details = () => {
                       setIsOpenClient(true);
                     }}
                   />
-
                 </div>
-
 
                 {/* <div className="modula-icon-del" style={{
                   color: "red"
@@ -842,7 +791,7 @@ const Invoice_details = () => {
                     onClick={() => handleDelete(row.id)}
                   />
                 </div> */}
-              </div>,
+              </div>
               // container
             );
           }
@@ -882,7 +831,6 @@ const Invoice_details = () => {
                       setIsOpen(true);
                     }}
                   />
-
                 </div>
                 <div
                   className="modula-icon-edit  flex gap-2"
@@ -907,7 +855,7 @@ const Invoice_details = () => {
                     onClick={() => handleDelete(row.id)}
                   />
                 </div> */}
-              </div>,
+              </div>
               // container
             );
           }
@@ -917,10 +865,6 @@ const Invoice_details = () => {
     },
   ];
 
-
-
-
-
   // const normalize = (val) =>
   //   typeof val === "string" ? val.trim() : val;
 
@@ -929,14 +873,12 @@ const Invoice_details = () => {
   //   Boolean(normalize(projectFilter)) ||
   //   Boolean(normalize(statusFilter));
 
-
   //   console.log("isFilterApplied", isFilterApplied);
 
   // const activeColumns = useMemo(() => (isFilterApplied ? columnsfilter : columns), [isFilterApplied]);
 
   // Force DataTable re-mount whenever filters change
   // const tableKey = `${clientFilter}-${projectFilter}-${statusFilter}-${isFilterApplied}`;
-
 
   const handleDelete = async (id) => {
     // console.log("editid", id);
@@ -961,7 +903,6 @@ const Invoice_details = () => {
         // setNotedetails((prev) => prev.filter((item) => item._id !== _id));
         // fetchProject();
         fetchProject();
-
       } catch (err) {
         console.error("Failed to delete:", err);
         Swal.fire("Error", "There was an error deleting the Invoice.", "error");
@@ -991,14 +932,14 @@ const Invoice_details = () => {
   });
 
   const filteredColumns = useMemo(() => {
-    return columns.filter(col => visibleCols[col.key]);
+    return columns.filter((col) => visibleCols[col.key]);
   }, [visibleCols]);
 
   // Table force refresh
   const [tableKey, setTableKey] = useState(0);
   const handleToggleColumn = (key) => {
-    setVisibleCols(prev => ({ ...prev, [key]: !prev[key] }));
-    setTableKey(prev => prev + 1); // 🔥 Force DataTable remount
+    setVisibleCols((prev) => ({ ...prev, [key]: !prev[key] }));
+    setTableKey((prev) => prev + 1); // 🔥 Force DataTable remount
   };
 
   const dropdownRef = useRef(null);
@@ -1020,10 +961,8 @@ const Invoice_details = () => {
       ) : (
         <> */}
 
-
       <div className="cursor-pointer">
         <Mobile_Sidebar />
-
 
         <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
           <p
@@ -1052,7 +991,9 @@ const Invoice_details = () => {
         <div className="flex flex-wrap gap-6 mb-6 items-end">
           {/* Client Filter */}
           <div className="flex flex-col">
-            <label className="text-sm font-semibold mb-1 text-gray-700">Client</label>
+            <label className="text-sm font-semibold mb-1 text-gray-700">
+              Client
+            </label>
             <Dropdown
               value={clientFilter}
               onChange={(e) => setClientFilter(e.value)}
@@ -1066,7 +1007,9 @@ const Invoice_details = () => {
 
           {/* Project Filter */}
           <div className="flex flex-col">
-            <label className="text-sm font-semibold mb-1 text-gray-700">Project</label>
+            <label className="text-sm font-semibold mb-1 text-gray-700">
+              Project
+            </label>
             <Dropdown
               value={projectFilter}
               onChange={(e) => setProjectFilter(e.value)}
@@ -1080,7 +1023,9 @@ const Invoice_details = () => {
 
           {/* Status Filter */}
           <div className="flex flex-col">
-            <label className="text-sm font-semibold mb-1 text-gray-700">Status</label>
+            <label className="text-sm font-semibold mb-1 text-gray-700">
+              Status
+            </label>
             <select
               className="border w-[300px] border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               value={statusFilter}
@@ -1101,9 +1046,8 @@ const Invoice_details = () => {
                 Final payment Pending
               </option>
 
-
               <option value="completed">Completed</option>
-               <option value="TDS">TDS</option>
+              <option value="TDS">TDS</option>
             </select>
           </div>
 
@@ -1111,7 +1055,6 @@ const Invoice_details = () => {
           <div className="flex gap-2 mt-5">
             <button
               onClick={handleSubmit}
-
               // onClick={() => fetchProject()}
               className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium shadow"
             >
@@ -1158,7 +1101,6 @@ const Invoice_details = () => {
           )}
         </div> */}
 
-
         <div className="flex flex-wrap items-center gap-4 ">
           {/* Client Badge */}
           {submittedClient && (
@@ -1185,7 +1127,9 @@ const Invoice_details = () => {
 
             {showDropdown && (
               <div className="absolute z-20 mt-2 w-60 bg-white border border-blue-500 rounded-lg shadow-lg p-3 transition-all duration-300">
-                <h3 className="text-blue-600 font-semibold mb-2 text-sm">Toggle Columns</h3>
+                <h3 className="text-blue-600 font-semibold mb-2 text-sm">
+                  Toggle Columns
+                </h3>
                 <div className="flex flex-col gap-2 max-h-60 overflow-y-auto">
                   {columns.map((col) => (
                     <label
@@ -1207,7 +1151,6 @@ const Invoice_details = () => {
           </div>
         </div>
 
-
         <div className="datatable-container">
           {/* Responsive wrapper for the table */}
           <div className="table-scroll-container" id="datatable">
@@ -1217,7 +1160,6 @@ const Invoice_details = () => {
               data={clientdetails}
               // columns={columns}
               columns={filteredColumns}
-
               // columns={activeColumns}
 
               options={{
@@ -1272,7 +1214,6 @@ const Invoice_details = () => {
         {isOpenClient && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
             <div className="bg-white rounded-2xl  shadow-2xl w-[100%] md:w-[25%] p-6 relative overflow-y-auto max-h-[90vh]">
-
               {/* Close button */}
               <button
                 className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl transition"
@@ -1309,7 +1250,9 @@ const Invoice_details = () => {
                     </label>
                   ))
                 ) : (
-                  <p className="text-gray-400 text-center">No documents available</p>
+                  <p className="text-gray-400 text-center">
+                    No documents available
+                  </p>
                 )}
               </div>
               <button
@@ -1318,20 +1261,13 @@ const Invoice_details = () => {
               >
                 Show Client
               </button>
-
-
-
-
-
             </div>
           </div>
         )}
 
-
         {isOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
             <div className="bg-white rounded-2xl shadow-2xl w-[100%] md:w-[50%] p-6 relative overflow-y-auto max-h-[90vh]">
-
               {/* Close button */}
               <button
                 className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl transition"
@@ -1342,7 +1278,9 @@ const Invoice_details = () => {
 
               {/* Header */}
               <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Invoice Summary</h2>
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Invoice Summary
+                </h2>
                 {/* <p className="text-gray-500 mt-1 text-sm">Quick overview of invoice details</p> */}
               </div>
 
@@ -1350,34 +1288,46 @@ const Invoice_details = () => {
               <div className="grid grid-cols-2 gap-6 mb-6">
                 <div className="flex flex-col">
                   <span className="text-gray-500 text-sm">Client</span>
-                  <span className="text-gray-900 font-semibold">{selectedInvoiceId.clientId.client_name}</span>
+                  <span className="text-gray-900 font-semibold">
+                    {selectedInvoiceId.clientId.client_name}
+                  </span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-gray-500 text-sm">Project</span>
-                  <span className="text-gray-900 font-semibold">{selectedInvoiceId.project.name}</span>
+                  <span className="text-gray-900 font-semibold">
+                    {selectedInvoiceId.project.name}
+                  </span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-gray-500 text-sm">Invoice #</span>
-                  <span className="text-gray-900 font-semibold">{selectedInvoiceId.invoice_number}</span>
+                  <span className="text-gray-900 font-semibold">
+                    {selectedInvoiceId.invoice_number}
+                  </span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-gray-500 text-sm">Status</span>
-                  <span className="text-gray-900 font-semibold">{capitalizeFirstLetter(selectedInvoiceId.status)}</span>
-
-
+                  <span className="text-gray-900 font-semibold">
+                    {capitalizeFirstLetter(selectedInvoiceId.status)}
+                  </span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-gray-500 text-sm">Invoice Date</span>
-                  <span className="text-gray-900 font-semibold">{formatDateTime(selectedInvoiceId.invoice_date)}</span>
+                  <span className="text-gray-900 font-semibold">
+                    {formatDateTime(selectedInvoiceId.invoice_date)}
+                  </span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-gray-500 text-sm">Due Date</span>
-                  <span className="text-gray-900 font-semibold">{formatDateTime(selectedInvoiceId.due_date)}</span>
+                  <span className="text-gray-900 font-semibold">
+                    {formatDateTime(selectedInvoiceId.due_date)}
+                  </span>
                 </div>
               </div>
 
               {/* Items List */}
-              <h3 className="text-gray-700 font-semibold mb-3">Invoice Types</h3>
+              <h3 className="text-gray-700 font-semibold mb-3">
+                Invoice Types
+              </h3>
               <div className="flex flex-wrap gap-2">
                 {items.map((item, index) => (
                   <div
@@ -1391,18 +1341,18 @@ const Invoice_details = () => {
                     <FaEye className="text-blue-600 text-xs" />
                   </div>
                 ))}
-
               </div>
-
             </div>
             {CurrentInvoiceComponent && (
-              <div style={{
-                position: "absolute",
-                top: "-9999px",
-                left: "-9999px",
-                width: "210mm",
-                background: "#fff"
-              }}>
+              <div
+                style={{
+                  position: "absolute",
+                  top: "-9999px",
+                  left: "-9999px",
+                  width: "210mm",
+                  background: "#fff",
+                }}
+              >
                 <CurrentInvoiceComponent
                   ref={invoiceRef}
                   invoiceId={selectedInvoiceId._id}
@@ -1420,7 +1370,7 @@ const Invoice_details = () => {
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
+              className="relative w-full max-w-[35%] bg-white rounded-2xl shadow-2xl overflow-hidden"
             >
               <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 bg-blue-600">
                 <h2 className="text-2xl font-semibold text-white">
@@ -1437,21 +1387,29 @@ const Invoice_details = () => {
                 <div className="p-4">
                   <p className="text-xs uppercase text-gray-500">Amount</p>
                   <p className="mt-1 text-lg font-semibold text-gray-800">
-
-                    ₹{Number(selectedPayments?.total_amount).toLocaleString("en-IN",{ maximumFractionDigits: 0 })}
-
+                    ₹
+                    {Number(selectedPayments?.total_amount).toLocaleString(
+                      "en-IN",
+                      { maximumFractionDigits: 0 }
+                    )}
                   </p>
                 </div>
                 <div className="p-4">
                   <p className="text-xs uppercase text-gray-500">Received</p>
                   <p className="mt-1 text-lg font-semibold text-green-600">
-                    ₹{Number(selectedPayments?.totalPaymentAmount).toLocaleString("en-IN",{ maximumFractionDigits: 0 })}
+                    ₹
+                    {Number(
+                      selectedPayments?.totalPaymentAmount
+                    ).toLocaleString("en-IN", { maximumFractionDigits: 0 })}
                   </p>
                 </div>
                 <div className="p-4">
                   <p className="text-xs uppercase text-gray-500">Balance</p>
                   <p className="mt-1 text-lg font-semibold text-red-600">
-                    ₹{Number(selectedPayments?.balance).toLocaleString("en-IN",{ maximumFractionDigits: 0 })}
+                    ₹
+                    {Number(selectedPayments?.balance).toLocaleString("en-IN", {
+                      maximumFractionDigits: 0,
+                    })}
                   </p>
                 </div>
               </div>
@@ -1490,7 +1448,7 @@ const Invoice_details = () => {
                         )}
                       </div> */}
 
-              <div className="px-6 py-6 max-h-[60vh] overflow-y-auto">
+              {/* <div className="px-6 py-6 max-h-[60vh] overflow-y-auto">
                 <h3 className="mb-3 text-lg font-semibold text-gray-800">
                   Payment History
                 </h3>
@@ -1504,7 +1462,7 @@ const Invoice_details = () => {
                         key={log._id}
                         className="flex justify-between items-center border-b pb-2 text-sm"
                       >
-                        {/* LEFT */}
+                     
                         <div>
                           <p className="font-medium text-gray-800">
                             Payment {index + 1}
@@ -1514,7 +1472,6 @@ const Invoice_details = () => {
                           </p>
                         </div>
 
-                        {/* RIGHT */}
                         <div className="font-semibold text-gray-900">
                           ₹ {Number(log.amount).toLocaleString("en-IN")}
                         </div>
@@ -1522,8 +1479,76 @@ const Invoice_details = () => {
                     ))}
                   </ul>
                 )}
-              </div>
+              </div> */}
+              <div className="px-6 py-6">
+                <h3 className="mb-3 text-lg font-semibold text-gray-800">
+                  Payment History
+                </h3>
 
+                {selectedPayments?.invoiceLogs?.length > 0 ? (
+                  <div className="max-h-[60vh] overflow-y-auto border border-gray-200 rounded-xl">
+                    <table className="w-full text-sm">
+                      {/* TABLE HEADER */}
+                      <thead className="bg-blue-50 sticky top-0 z-10">
+                        <tr>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                            Date
+                          </th>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                            Status
+                          </th>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                            Payment Type
+                          </th>
+                          <th className="px-4 py-3 text-right font-semibold text-gray-600">
+                            Amount
+                          </th>
+                        </tr>
+                      </thead>
+
+                      {/* TABLE BODY */}
+                      <tbody>
+                        {selectedPayments.invoiceLogs.map((log, index) => (
+                          <tr
+                            key={log._id}
+                            className={`border-b transition ${
+                              index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                            } hover:bg-blue-50`}
+                          >
+                            {/* DATE */}
+                            <td className="px-4 py-3 text-gray-700">
+                              {log.paidDate
+                                ? formatDateTime(log.paidDate)
+                                : "-"}
+                            </td>
+
+                            {/* STATUS */}
+                            <td className="px-4 py-3 text-gray-800 font-medium">
+                              {capitalizeFirstLetter(log.status)}
+                            </td>
+
+                            {/* PAYMENT TYPE */}
+                            <td className="px-4 py-3 text-gray-700">
+                              {capitalizeFirstLetter(log.paymentType)}
+                            </td>
+
+                            {/* AMOUNT */}
+                            <td className="px-5 py-4 text-right font-semibold text-green-600">
+                              ₹
+                              {Number(log.amount).toLocaleString("en-IN", {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                              })}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="text-gray-700">No payments found.</p>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -1552,21 +1577,39 @@ const Invoice_details = () => {
                 <div className="p-4">
                   <p className="text-xs uppercase text-gray-500">Amount</p>
                   <p className="mt-1 text-lg font-semibold text-gray-800">
-
-                    ₹{selectedPayments1?.total_amount.toLocaleString(2)}
-
+                    ₹
+                    {Number(selectedPayments1?.total_amount).toLocaleString(
+                      "en-IN",
+                      {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      }
+                    )}
                   </p>
                 </div>
                 <div className="p-4">
                   <p className="text-xs uppercase text-gray-500">Received</p>
                   <p className="mt-1 text-lg font-semibold text-green-600">
-                    ₹{selectedPayments1?.totalPaymentAmount.toLocaleString(2)}
+                    ₹
+                    {Number(
+                      selectedPayments1?.totalPaymentAmount
+                    ).toLocaleString("en-IN", {
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
+                    })}
                   </p>
                 </div>
                 <div className="p-4">
                   <p className="text-xs uppercase text-gray-500">Balance</p>
                   <p className="mt-1 text-lg font-semibold text-red-600">
-                    ₹{selectedPayments1?.balance.toLocaleString(2)}
+                    ₹
+                    {Number(selectedPayments1?.balance).toLocaleString(
+                      "en-IN",
+                      {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      }
+                    )}
                   </p>
                 </div>
               </div>
@@ -1605,17 +1648,13 @@ const Invoice_details = () => {
                         )}
                       </div> */}
               {/*  */}
-
             </div>
           </div>
         )}
 
-
-
         {isOpeninvoice && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
             <div className="bg-white rounded-2xl shadow-2xl w-[100%] md:w-[25%] p-6 relative max-h-[90vh] overflow-y-auto">
-
               {/* Close button */}
               <button
                 className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl transition"
@@ -1626,9 +1665,7 @@ const Invoice_details = () => {
 
               {/* Header */}
               <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">
-                  Invoices
-                </h2>
+                <h2 className="text-2xl font-bold text-gray-800">Invoices</h2>
               </div>
 
               {/* Documents */}
@@ -1640,7 +1677,8 @@ const Invoice_details = () => {
                       className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition"
                     >
                       {/* Invoice Name */}
-                      <span className="text-gray-700 font-medium"
+                      <span
+                        className="text-gray-700 font-medium"
                         onClick={() => downloadPDFOpen(doc)}
                       >
                         {doc.invoice_document_type}
@@ -1665,12 +1703,10 @@ const Invoice_details = () => {
             </div>
           </div>
         )}
-
       </div>
       {/* </> */}
 
       {/* )} */}
-
 
       <Footer />
     </div>
