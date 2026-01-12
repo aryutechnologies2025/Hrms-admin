@@ -250,14 +250,20 @@ function BillingsAndEarnings() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left">Job name</th>
-                      <th className="px-6 py-3 text-right">Fees & taxes</th>
                       <th className="px-6 py-3 text-right">Billed</th>
+                      <th className="px-6 py-3 text-right">Fees & taxes</th>
+                      <th className="px-6 py-3 text-right">Earnings</th>
                     </tr>
                   </thead>
                   <tbody>
                     {data?.transactions?.map((job, index) => (
                       <tr key={index} className="border-t hover:bg-gray-50">
                         <td className="px-6 text-left py-4">{job.title}</td>
+                        <td className="px-6 py-4 text-right align-top">
+                          <p className="text-sm font-semibold text-gray-500">
+                            ${Number(job.earnings).toFixed(0)}
+                          </p>
+                        </td>
                         <td className="px-6 py-4 text-right align-top">
                           <div className="leading-tight">
                             <p className="text-sm font-medium text-gray-500">
@@ -275,9 +281,11 @@ function BillingsAndEarnings() {
 
                         <td className="px-6 py-4 text-right align-top">
                           <p className="text-sm font-semibold text-gray-500">
-                            ${Number(job.earnings).toFixed(0)}
+                            ${Number(job.netTotal)}
                           </p>
                         </td>
+
+                        
                       </tr>
                     ))}
                   </tbody>
