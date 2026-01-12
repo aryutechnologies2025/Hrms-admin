@@ -28,7 +28,7 @@ import { io } from "socket.io-client";
 
 // const SOCKET_URL = "http://192.168.0.116:5000";
 
-const SOCKET_URL = "https://hrms.aryuprojects.com/";
+const SOCKET_URL = "https://hrms.aryuprojects.com";
 
 let socket = null;
 
