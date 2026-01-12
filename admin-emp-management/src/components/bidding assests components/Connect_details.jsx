@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef,useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 
 import DataTable from "datatables.net-react";
 import DT from "datatables.net-dt";
@@ -9,6 +9,8 @@ import axios from "../../api/axiosConfig";
 import { API_URL } from "../../config";
 // import { capitalizeFirstLetter } from "../../StringCaps";
 import { TfiPencilAlt } from "react-icons/tfi";
+import { GoProjectSymlink } from "react-icons/go";
+import { VscTasklist } from "react-icons/vsc";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { createRoot } from "react-dom/client";
 import Swal from "sweetalert2";
@@ -25,7 +27,7 @@ import { Dropdown } from "primereact/dropdown";
 import { useNavigate } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
 import Loader from "../Loader";
-import { useDateUtils  } from "../../hooks/useDateUtils";
+import { useDateUtils } from "../../hooks/useDateUtils";
 
 const Connect_details = () => {
   const navigate = useNavigate();
@@ -35,13 +37,26 @@ const Connect_details = () => {
 
   const employeeIds = window.location.pathname.split("/")[2];
   //   console.log("window.location.pathname", employeeIds);
+  const getFirstDayOfMonth = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
 
+    return `${year}-${month}-01`;
+  };
+
+  const getTodays = () => {
+    return new Date().toISOString().split("T")[0];
+  };
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
   const [isAnimating, setIsAnimating] = useState(false);
-
+  const [fromDate, setFromDate] = useState(getFirstDayOfMonth());
+  const [toDate, setToDate] = useState(getTodays());
+  const [accountBidderOptions, setAccountBidderOptions] = useState(null);
+  
   const openAddModal = () => {
     setIsAddModalOpen(true);
     setTimeout(() => setIsAnimating(true), 10); // Delay to trigger animation
@@ -73,16 +88,28 @@ const Connect_details = () => {
   const [accountdetails, setAccountdetails] = useState([]);
   //   console.log("accountdetails", accountdetails);
   const [loading, setLoading] = useState(true);
-
+  const [connect, setConnect] = useState([]);
+  const [amountBidder, setAmountBidder] = useState([]);
+  const [accountfilter, setAccountfilter] = useState("");
+  console.log("accountfilter", accountfilter);
   const fetchProject = async () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/bidder/view-connect-purchased`,
-        {withCredentials: true}
+        {
+          withCredentials: true,
+          params: {
+            fromDate: fromDate,
+            toDate: toDate,
+            account: accountfilter,
+          },
+        }
       );
       // console.log(response);
       if (response.data.success) {
         setAccountdetails(response.data.data);
+        setConnect(response.data.totalNoOfConnections);
+        setAmountBidder(response.data.totalAmount);
         setLoading(false);
       } else {
         setErrors("Failed to fetch roles.");
@@ -92,11 +119,37 @@ const Connect_details = () => {
       setLoading(false);
     }
   };
+  
+  const fetchAccTechList = async () => {
+      try {
+        const response = await axios.get(
+          `${API_URL}/api/bidder/view-account-technology-bidder`,
+          { withCredentials: true }
+        );
+  
+        console.log("responseAccount", response);
+  
+        const accountBidderOptions = response.data.data?.accountBidder?.map(
+          (data) => ({
+            label: data.name,
+            value: data._id,
+          })
+        );
+      
+  
+        setAccountBidderOptions(accountBidderOptions);
+      } catch (err) {
+        setErrors("Failed to fetch biddingList.");
+      }
+    };
+     useEffect(() => {
+      fetchAccTechList();
+    }, []);
 
   const [accountoption, setAccountOption] = useState(null);
 
   // const [date, setDate] = useState("");
-   const getToday = () => {
+  const getToday = () => {
     const today = new Date();
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, "0"); // Months start at 0
@@ -114,7 +167,7 @@ const Connect_details = () => {
       const response = await axios.get(
         `${API_URL}/api/bidder/view-account-technology-bidder`,
         {
-         withCredentials: true,
+          withCredentials: true,
         }
       );
       // console.log("response", response.data.data);
@@ -149,7 +202,8 @@ const Connect_details = () => {
 
       const response = await axios.post(
         `${API_URL}/api/bidder/create-connect-purchased`,
-        formData, {withCredentials: true}
+        formData,
+        { withCredentials: true }
       );
       // console.log("response:", response);
       Swal.fire({
@@ -220,7 +274,8 @@ const Connect_details = () => {
 
       const response = await axios.put(
         `${API_URL}/api/bidder/edit-connect-purchased/${editid}`,
-        formData, {withCredentials: true}
+        formData,
+        { withCredentials: true }
       );
       // console.log("response:", response);
       Swal.fire({
@@ -262,7 +317,7 @@ const Connect_details = () => {
       try {
         const res = await axios.delete(
           `${API_URL}/api/bidder/delete-connect-purchased/${id}`,
-          {withCredentials: true}
+          { withCredentials: true }
         );
         Swal.fire("Deleted!", "The Status has been deleted.", "success");
         // console.log("res", res);
@@ -277,50 +332,47 @@ const Connect_details = () => {
     }
   };
 
-    const [filters, setFilters] = useState({
-      account: "",
-      
-      date: "",
-      
-    });
+  const [filters, setFilters] = useState({
+    account: "",
 
+    fromDate: "",
+    toDate: "",
+  });
 
-  
-    // Temporary values before submit
-    const [temp, setTemp] = useState(filters);
+  // Temporary values before submit
+  const [temp, setTemp] = useState(filters);
 
-      const accounts = [
+  const accounts = [
     ...new Set(accountdetails.map((r) => r.account?.name).filter(Boolean)),
   ];
-    const filteredData = useMemo(() => {
-      return accountdetails.filter(
-        (r) =>
-          (!filters.account || r.account?.name === filters.account) &&
-      
-          (!filters.date ||
-            new Date(r.date).toLocaleDateString("en-GB") ===
-              new Date(filters.date).toLocaleDateString("en-GB")) 
-      
-      );
-    }, [accountdetails, filters]);
-  
-    const handleSubmit = () => setFilters(temp);
-    const handleReset = () => {
-      setTemp({
-        account: "",
-        
-        
-        date: "",
-     
-      });
-      setFilters({
-        account: "",
-        
-        
-        date: "",
-     
-      });
-    };
+  const filteredData = useMemo(() => {
+    return accountdetails.filter(
+      (r) =>
+        (!filters.account || r.account?.name === filters.account) &&
+        (!filters.fromDate ||
+          new Date(r.date).toLocaleDateString("en-GB") ===
+            new Date(filters.fromDate).toLocaleDateString("en-GB")) &&
+        (!filters.toDate || new Date(r.date) <= new Date(filters.toDate))
+    );
+  }, [accountdetails, filters]);
+  console.log("filteredData", filteredData);
+
+  const handleReset = () => {
+    setFromDate("");
+    setToDate("");
+    setAccountfilter("");
+    setTemp({
+      accountfilter: "",
+
+      fromDate: "",
+      toDate: "",
+    });
+    setFilters({
+      accountfilter: "",
+      fromDate: "",
+      toDate: "",
+    });
+  };
 
   const columns = [
     {
@@ -430,11 +482,8 @@ const Connect_details = () => {
       ) : (
         <>
           <div>
-            
-
             <div className="cursor-pointer">
               <Mobile_Sidebar />
-              
             </div>
             <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
               <p
@@ -446,7 +495,7 @@ const Connect_details = () => {
               <p>{">"}</p>
               <p className="text-sm text-blue-500">Connects</p>
               <p>{">"}</p>
-              </div>
+            </div>
 
             {/* Add Button */}
             <div className="flex justify-between mt-1 md:mt-4 mb-2 md:mb-3">
@@ -459,26 +508,24 @@ const Connect_details = () => {
               </button>
             </div>
 
-             <div className=" p-1  flex flex-wrap gap-4 items-end mb-6">
+            <div className=" p-1  flex flex-wrap gap-4 items-end mb-6">
               {/* Account Filter */}
-              <div className="flex flex-col w-40 md:w-48">
+              <div className="flex flex-col w-full md:w-48">
                 <label className="text-sm font-medium text-gray-700 mb-1">
                   Account
                 </label>
-                <select
-                  value={temp.account}
-                  onChange={(e) =>
-                    setTemp({ ...temp, account: e.target.value })
-                  }
-                  className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">All Accounts</option>
-                  {accounts.map((a) => (
-                    <option key={a}>{a}</option>
-                  ))}
-                </select>
+                <Dropdown
+                  value={accountfilter}
+                  onChange={(e) => setAccountfilter(e.value)}
+                  options={accountBidderOptions}
+                  optionLabel="label"
+                  appendTo="self"
+                  placeholder="Select an Account"
+                  className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
               </div>
-               <div className="flex flex-col w-40 md:w-48">
+              {/* <div className="flex flex-col w-40 md:w-48">
                 <label className="text-sm font-medium text-gray-700 mb-1">
                   Date
                 </label>
@@ -488,14 +535,38 @@ const Connect_details = () => {
                   onChange={(e) => setTemp({ ...temp, date: e.target.value })}
                   className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+              </div> */}
+
+              <div className="flex flex-col w-full md:w-48">
+                <label className="text-sm font-medium text-gray-700 mb-1">
+                  From Date
+                </label>
+                <input
+                  type="date"
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
+                  className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
               </div>
 
-          
+              {/* To Date Filter */}
+              <div className="flex flex-col w-full md:w-48">
+                <label className="text-sm font-medium text-gray-700 mb-1">
+                  To Date
+                </label>
+                <input
+                  type="date"
+                  min={fromDate}
+                  value={toDate}
+                  onChange={(e) => setToDate(e.target.value)}
+                  className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
 
               {/* Buttons */}
               <div className="flex gap-3 mt-3 sm:mt-6">
                 <button
-                  onClick={handleSubmit}
+                  onClick={fetchProject}
                   className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg shadow transition duration-150"
                 >
                   Submit
@@ -506,6 +577,40 @@ const Connect_details = () => {
                 >
                   Reset
                 </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 my-8 text-gray-700">
+              {/* Card 1 */}
+              <div className="flex items-center gap-5 bg-white border rounded-xl px-6 py-5 shadow-sm hover:shadow-md transition">
+                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 text-xl">
+                  <GoProjectSymlink />
+                </div>
+                <div>
+                  <h2 className="text-sm font-medium text-gray-500">
+                    Total Connects
+                  </h2>
+                  <p className="text-xl font-semibold text-gray-600 mt-1">
+                    {connect}
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 2 */}
+              <div className="flex items-center gap-5 bg-white border rounded-xl px-6 py-5 shadow-sm hover:shadow-md transition">
+                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-green-100 text-green-600 text-xl">
+                  <VscTasklist />
+                </div>
+                <div>
+                  <h2 className="text-sm font-medium text-gray-500">
+                    Total Amount
+                  </h2>
+                  <p className="text-xl font-semibold text-gray-600 mt-1">
+                    {Number(amountBidder).toLocaleString("en-IN", {
+                      maximumFractionDigits: 0,
+                    })}
+                  </p>
+                </div>
               </div>
             </div>
 
