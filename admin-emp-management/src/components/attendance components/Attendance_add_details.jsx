@@ -71,6 +71,8 @@ const Attendance_add_details = () => {
   const userid = parsedDetails ? parsedDetails.id : null;
   const [errors, setErrors] = useState({});
 
+  console.log("errors::", errors);
+
   const [clientdetails, setClientdetails] = useState([]);
   console.log("clientdetails", clientdetails);
 
@@ -130,29 +132,62 @@ const Attendance_add_details = () => {
 
   // Top of your component
   const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null);
+  
   const [date, setDate] = useState("");
   const [loginTime, setLoginTime] = useState("");
   const [logoutTime, setLogoutTime] = useState("");
   const [notes, setNotes] = useState("");
 
+  console.log("alldata",selectedEmployeeDetails,date,loginTime)
+
   //   const [errors, setErrors] = useState({});
 
   const handlesubmit = async (e) => {
+        // console.log("chevdjghlkk;")
     e.preventDefault();
-    try {
-      const loginDateObj = new Date(`${date}T${loginTime}`);
-      const logoutDateObj = new Date(`${date}T${logoutTime}`);
-      // console.log("dates", loginDateObj, logoutDateObj);
 
-      const formData = {
-        employeeId: selectedEmployeeDetails,
-        dateTime: date,
-        shift: "Day Shift",
-        workType: "OD",
-        login: loginDateObj.toISOString(),
-        logout: logoutDateObj.toISOString(),
-        comments: notes,
-      };
+
+    try {
+      // const loginDateObj = new Date(`${date}T${loginTime}`);
+      // const logoutDateObj = new Date(`${date}T${logoutTime}`);
+      // // console.log("dates", loginDateObj, logoutDateObj);
+
+      // const formData = {
+      //   employeeId: selectedEmployeeDetails,
+      //   dateTime: date,
+      //   shift: "Day Shift",
+      //   workType: "OD",
+      //   login: loginDateObj.toISOString(),
+      //   logout: logoutDateObj.toISOString(),
+      //   comments: notes,
+      // };
+
+       const formData = {
+      employeeId: selectedEmployeeDetails || null,
+      dateTime: date || null,
+      shift: "Day Shift",
+      workType: "OD",
+      comments: notes?.trim() || "",
+    };
+
+    // Login (optional)
+    if (loginTime) {
+      const loginDateTime = new Date(`${date}T${loginTime}`);
+      if (!isNaN(loginDateTime.getTime())) {
+        formData.login = loginDateTime.toISOString();
+      }
+    }
+
+    // Logout (optional)
+    if (logoutTime) {
+      const logoutDateTime = new Date(`${date}T${logoutTime}`);
+      if (!isNaN(logoutDateTime.getTime())) {
+        formData.logout = logoutDateTime.toISOString();
+      }
+    }
+
+
+      // console.log("formDatadd", formData);
 
       const response = await axios.post(
         `${API_URL}/api/attendance/mark-by-admin`,
@@ -178,7 +213,7 @@ const Attendance_add_details = () => {
       //   fetchProject();
       setErrors({});
     } catch (err) {
-      setErrors(err.response.data.errors);
+      setErrors(err.response);
       // if (err.response?.data?.errors) {
       //   setErrors(err.response.data.errors);
       // } else {
@@ -523,9 +558,9 @@ const Attendance_add_details = () => {
                         className="w-[50%]   border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         display="chip"
                       />
-                      {errors.type && (
+                      {/* {errors.type && (
                         <p className="text-red-500 text-sm mb-4">{errors.type}</p>
-                      )}
+                      )} */}
                     </div>
 
                     {/* date */}
@@ -540,11 +575,11 @@ const Attendance_add_details = () => {
                         onChange={(e) => setDate(e.target.value)}
                         className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
-                      {errors.shotKey && (
+                      {/* {errors.shotKey && (
                         <p className="text-red-500 text-sm mb-4">
                           {errors.shotKey}
                         </p>
-                      )}
+                      )} */}
                     </div>
 
                     <div className="mb-3 flex justify-between">
@@ -557,11 +592,11 @@ const Attendance_add_details = () => {
                         onChange={(e) => setLoginTime(e.target.value)}
                         className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
-                      {errors.shotKey && (
+                      {/* {errors.shotKey && (
                         <p className="text-red-500 text-sm mb-4">
                           {errors.shotKey}
                         </p>
-                      )}
+                      )} */}
                     </div>
 
                     <div className="mb-3 flex justify-between">
@@ -574,9 +609,9 @@ const Attendance_add_details = () => {
                         onChange={(e) => setLogoutTime(e.target.value)}
                         className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
-                      {errors.status && (
+                      {/* {errors.status && (
                         <p className="text-red-500 text-sm mb-4">{errors.status}</p>
-                      )}
+                      )} */}
                     </div>
 
                     <div className="mb-3 flex justify-between">
@@ -589,9 +624,9 @@ const Attendance_add_details = () => {
                         onChange={(e) => setNotes(e.target.value)}
                         className="w-[50%] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
-                      {errors.status && (
+                      {/* {errors.status && (
                         <p className="text-red-500 text-sm mb-4">{errors.status}</p>
-                      )}
+                      )} */}
                     </div>
 
                     {/* Buttons */}

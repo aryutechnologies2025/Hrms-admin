@@ -329,11 +329,11 @@ table.dataTable {
 
 
 }
-
+/* 
 #datatable .dataTables_info,
 #datatable .dt-info {
   display: none !important;
-}
+} */
 
 
 
@@ -545,3 +545,86 @@ table.dataTable {
 .animate-slideDown {
   animation: slideDown 0.18s ease-out;
 }
+
+
+/* custom multi select */
+
+/* Panel styling */
+.txn-panel {
+  
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Checkbox box default */
+.txn-panel .p-checkbox-box {
+  border: 1px solid #d1d5db; /* gray-300 */
+  background: #f9fafb;        /* gray-50 */
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+/* Checkbox when selected (blue) */
+.txn-panel .p-checkbox.p-highlight .p-checkbox-box {
+  background-color: #2563eb; /* blue-600 */
+  border-color: #2563eb;
+}
+
+/* Check icon color */
+.txn-panel .p-checkbox.p-highlight .p-checkbox-icon {
+  color: #ffffff;
+}
+
+/* Hover on item */
+.txn-panel .p-multiselect-item:hover {
+  background: #f3f4f6; /* gray-100 */
+}
+
+/* Selected item background */
+.txn-panel .p-multiselect-item.p-highlight {
+  background: #eff6ff; /* blue-50 */
+}
+
+
+
+.payslip-table {
+  color: #000 !important; 
+  align-items: center !important;
+  justify-content: center !important;
+  
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+}
+
+
+/* payroll check box  */
+
+/* Checkbox base */
+.p-checkbox-box {
+  position: relative;                
+  width: 18px;
+  height: 18px;
+  border: 2px solid #9ca3af !important; 
+}
+
+/* Checked state */
+.p-checkbox-box.p-highlight {
+  background-color: #3b82f6 !important; /* blue */
+  border:2px solid #3b82f6 !important;     /* keep gray border */
+}
+
+/* REAL tick using mask-image */
+.p-checkbox-box.p-highlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: #3b82f6;
+    border:2px solid #3b82f6 !important;     /* keep gray border */
+
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M5.5 10.5L2 7l1.4-1.4L5.5 7.7 10.6 2.6 12 4z'/%3E%3C/svg%3E")
+    no-repeat center;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M5.5 10.5L2 7l1.4-1.4L5.5 7.7 10.6 2.6 12 4z'/%3E%3C/svg%3E")
+    no-repeat center;
+}
+
+/* Hide PrimeReact default icon */

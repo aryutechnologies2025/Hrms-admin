@@ -1359,7 +1359,7 @@ function Task_view_All_client() {
 
     }
     if (SavFormats.includes(type)) {
-      return <img src={Sav} className={commonClass} alt="Image" />;
+      return <img src={Sav} className={commonClass} alt="Image" />; 
     }
 
     if (excelFormats.includes(type)) {

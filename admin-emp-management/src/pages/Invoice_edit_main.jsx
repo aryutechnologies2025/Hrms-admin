@@ -6,7 +6,7 @@ import Invoice_edit from './Invoice_edit'
 
 const Invoice_edit_main = () => {
   return (
-    <div className="flex">
+    <div className="flex ">
       <div className="bg-gray-100 md:bg-white">
         <Sidebar />
       </div>

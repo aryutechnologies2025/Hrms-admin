@@ -71,24 +71,24 @@ const Employees_Card = () => {
   const [roleFilter, setRoleFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
 
-  const calculateTillDate = (joiningDate) => {
-    if (!joiningDate) return "-";
+  // const calculateTillDate = (joiningDate) => {
+  //   if (!joiningDate) return "-";
 
-    const start = new Date(joiningDate);
-    const end = new Date();
+  //   const start = new Date(joiningDate);
+  //   const end = new Date();
 
-    let years = end.getFullYear() - start.getFullYear();
-    let months = end.getMonth() - start.getMonth();
+  //   let years = end.getFullYear() - start.getFullYear();
+  //   let months = end.getMonth() - start.getMonth();
 
-    if (months < 0) {
-      years--;
-      months += 12;
-    }
+  //   if (months < 0) {
+  //     years--;
+  //     months += 12;
+  //   }
 
-    if (years > 0 && months > 0) return `${years} Years ${months} Months`;
-    if (years > 0) return `${years} Years`;
-    return `${months} Months`;
-  };
+  //   if (years > 0 && months > 0) return `${years} Years ${months} Months`;
+  //   if (years > 0) return `${years} Years`;
+  //   return `${months} Months`;
+  // };
 
   const fetchEmployees = async () => {
     try {
@@ -119,9 +119,7 @@ const Employees_Card = () => {
           employee_dutyStatus: employee.dutyStatus,
           employee_dateofjoining: employee.dateOfJoining,
           employee_role: employee.role?.name,
-
-          // ✅ ADD THIS
-          experienceText: calculateTillDate(employee.dateOfJoining),
+          employee_TotalExperienceTillNow: employee?.TotalExperienceTillJoining,
         }));
 
         const sortedData = transformedData.sort((a, b) =>
@@ -326,11 +324,11 @@ const Employees_Card = () => {
 
     {
       title: "Till Date",
-      data: "employee_experienceText",
+      data: "employee_TotalExperienceTillNow",
       render: function (data) {
         if (!data) return "-";
 
-        return formatDateTime(data)
+        return(data)
       },
     },
 

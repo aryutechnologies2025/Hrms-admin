@@ -1,104 +1,241 @@
-/**
- * Formats a date into a readable date & time string.
- * @param {Date} date - The date to format.
- * @param {Object} [options] - Optional formatting options.
- * @param {boolean} [options.includeTime=true] - Whether to include time in the output.
- * @param {boolean} [options.includeSeconds=false] - Whether to include seconds in the time.
- * @param {string} [options.locale='en-US'] - The locale to use for formatting.
- * @returns {string} Formatted date-time string.
- */
+// import { useCallback, useContext } from "react";
+// import { SettingsContext } from "../App";
+
+// export const useDateUtils = () => {
+//   const { dynamicDateFormat } = useContext(SettingsContext);
+
+//   const formatDateTime = useCallback(
+//     (
+//       inputDate,
+//       { includeTime = false, includeSeconds = false, timeOnly = false } = {}
+//     ) => {
+//       if (!inputDate) return "";
+
+//       /* ---------------- NORMALIZE FORMAT TOKENS ---------------- */
+//       const normalizeFormat = (format = "") =>
+//         format
+//           .replace(/YYYY/g, "yyyy")
+//           .replace(/DD/g, "dd");
+
+//       const format =
+//         typeof dynamicDateFormat === "string"
+//           ? {
+//               dateFormat: normalizeFormat(dynamicDateFormat),
+//               timeFormat: "HH:mm:ss",
+//             }
+//           : {
+//               dateFormat: normalizeFormat(dynamicDateFormat?.dateFormat),
+//               timeFormat: dynamicDateFormat?.timeFormat || "HH:mm:ss",
+//             };
+
+//       /* ---------------- DATE PARSING (UTC SAFE) ---------------- */
+//       let date;
+
+//       // Time-only string (e.g. "10:39:20")
+//       if (
+//         typeof inputDate === "string" &&
+//         /^\d{1,2}:\d{2}(:\d{2})?$/.test(inputDate)
+//       ) {
+//         const [h, m, s = 0] = inputDate.split(":").map(Number);
+//         date = new Date();
+//         date.setHours(h, m, s, 0);
+//       }
+//       // ISO string with UTC (Z)
+//       else if (typeof inputDate === "string" && inputDate.includes("T")) {
+//         const d = new Date(inputDate);
+//         date = new Date(
+//           d.getUTCFullYear(),
+//           d.getUTCMonth(),
+//           d.getUTCDate(),
+//           d.getUTCHours(),
+//           d.getUTCMinutes(),
+//           d.getUTCSeconds()
+//         );
+//       }
+//       // Date object or other string
+//       else {
+//         date = new Date(inputDate);
+//       }
+
+//       if (isNaN(date.getTime())) return "";
+
+//       /* ---------------- FORMAT ENGINE ---------------- */
+//       const formatPattern = (pattern, d) => {
+//         const hours = d.getHours();
+//         const isPM = hours >= 12;
+
+//         const map = {
+//           yyyy: d.getFullYear(),
+//           yy: String(d.getFullYear()).slice(-2),
+//           MM: String(d.getMonth() + 1).padStart(2, "0"),
+//           M: d.getMonth() + 1,
+//           dd: String(d.getDate()).padStart(2, "0"),
+//           d: d.getDate(),
+//           HH: String(hours).padStart(2, "0"),
+//           H: hours,
+//           hh: String(hours % 12 || 12).padStart(2, "0"),
+//           h: hours % 12 || 12,
+//           mm: String(d.getMinutes()).padStart(2, "0"),
+//           m: d.getMinutes(),
+//           ss: String(d.getSeconds()).padStart(2, "0"),
+//           s: d.getSeconds(),
+//           a: isPM ? "PM" : "AM",
+//         };
+
+//         return pattern.replace(
+//           /(yyyy|yy|MM|M|dd|d|HH|H|hh|h|mm|m|ss|s|a)/g,
+//           (token) => map[token]
+//         );
+//       };
+
+//       /* ---------------- TIME ONLY ---------------- */
+//       if (timeOnly) {
+//         let timePattern = format.timeFormat;
+//         if (!includeSeconds) {
+//           timePattern = timePattern.replace(/:ss?/g, "");
+//         }
+//         return formatPattern(timePattern, date);
+//       }
+
+//       /* ---------------- DATE + TIME ---------------- */
+//       if (includeTime) {
+//         let timePattern = format.timeFormat;
+//         if (!includeSeconds) {
+//           timePattern = timePattern.replace(/:ss?/g, "");
+//         }
+
+//         return `${formatPattern(
+//           format.dateFormat,
+//           date
+//         )} ${formatPattern(timePattern, date)}`;
+//       }
+
+//       /* ---------------- DATE ONLY ---------------- */
+//       return formatPattern(format.dateFormat, date);
+//     },
+//     [dynamicDateFormat]
+//   );
+
+//   return formatDateTime;
+// };
+
+
+
+
 
 import { useCallback, useContext } from "react";
 import { SettingsContext } from "../App";
 
-export const useDateUtils  = () => {
+const DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+const DEFAULT_TIME_FORMAT = "HH:mm:ss";
+
+export const useDateUtils = () => {
   const { dynamicDateFormat } = useContext(SettingsContext);
 
-  const formatDateTime = useCallback((
-    date,
-    { includeTime = false, includeSeconds = false, timeOnly = false } = {}
-  ) => {
-    const format =
-      typeof dynamicDateFormat === "string"
-        ? { dateFormat: dynamicDateFormat, timeFormat: "HH:mm:ss" }
-        : dynamicDateFormat;
+  const formatDateTime = useCallback(
+    (
+      inputDate,
+      { includeTime = false, includeSeconds = false, timeOnly = false } = {}
+    ) => {
+      if (!inputDate) return "";
 
-    if (!(date instanceof Date)) {
-      // Handle string time formats like "10:39:20"
-      if (typeof date === "string" && /^\d{1,2}:\d{2}(:\d{2})?$/.test(date)) {
-        const [hours, minutes, seconds] = date.split(":").map(Number);
-        const newDate = new Date();
-        newDate.setHours(hours, minutes, seconds || 0, 0);
-        date = newDate;
+      /* ---------------- NORMALIZE FORMAT TOKENS ---------------- */
+      const normalizeFormat = (format = "") =>
+        format.replace(/YYYY/g, "yyyy").replace(/DD/g, "dd");
+
+      const format =
+        typeof dynamicDateFormat === "string"
+          ? {
+              dateFormat: normalizeFormat(
+                dynamicDateFormat || DEFAULT_DATE_FORMAT
+              ),
+              timeFormat: DEFAULT_TIME_FORMAT,
+            }
+          : {
+              dateFormat: normalizeFormat(
+                dynamicDateFormat?.dateFormat || DEFAULT_DATE_FORMAT
+              ),
+              timeFormat:
+                dynamicDateFormat?.timeFormat || DEFAULT_TIME_FORMAT,
+            };
+
+      /* ---------------- DATE PARSING ---------------- */
+      let date;
+
+      // Time-only string (e.g. "10:39" or "10:39:20")
+      if (
+        typeof inputDate === "string" &&
+        /^\d{1,2}:\d{2}(:\d{2})?$/.test(inputDate)
+      ) {
+        const [h, m, s = 0] = inputDate.split(":").map(Number);
+        date = new Date();
+        date.setHours(h, m, s, 0);
       } else {
-        date = new Date(date);
+        date = new Date(inputDate);
       }
-    }
 
-    // Parse format patterns from config
-    const formatPattern = (pattern, date) => {
-      const hours = date.getHours();
-      const isPM = hours >= 12;
+      if (isNaN(date.getTime())) {
+        console.warn("Invalid date input:", inputDate);
+        return "";
+      }
 
-      const replacements = {
-        yyyy: date.getFullYear(),
-        yy: String(date.getFullYear()).slice(-2),
-        MM: String(date.getMonth() + 1).padStart(2, "0"),
-        M: date.getMonth() + 1,
-        dd: String(date.getDate()).padStart(2, "0"),
-        d: date.getDate(),
-        HH: String(hours).padStart(2, "0"), // 24-hour, leading zero
-        H: hours, // 24-hour, no leading zero
-        hh: String(hours % 12 || 12).padStart(2, "0"), // 12-hour, leading zero
-        h: hours % 12 || 12, // 12-hour, no leading zero
-        mm: String(date.getMinutes()).padStart(2, "0"),
-        m: date.getMinutes(),
-        ss: String(date.getSeconds()).padStart(2, "0"),
-        s: date.getSeconds(),
-        a: isPM ? "PM" : "AM",
+      /* ---------------- FORMAT ENGINE ---------------- */
+      const formatPattern = (pattern, d) => {
+        const hours = d.getHours();
+        const isPM = hours >= 12;
+
+        const map = {
+          yyyy: d.getFullYear(),
+          yy: String(d.getFullYear()).slice(-2),
+          MM: String(d.getMonth() + 1).padStart(2, "0"),
+          M: d.getMonth() + 1,
+          dd: String(d.getDate()).padStart(2, "0"),
+          d: d.getDate(),
+          HH: String(hours).padStart(2, "0"),
+          H: hours,
+          hh: String(hours % 12 || 12).padStart(2, "0"),
+          h: hours % 12 || 12,
+          mm: String(d.getMinutes()).padStart(2, "0"),
+          m: d.getMinutes(),
+          ss: String(d.getSeconds()).padStart(2, "0"),
+          s: d.getSeconds(),
+          a: isPM ? "PM" : "AM",
+        };
+
+        return pattern.replace(
+          /(yyyy|yy|MM|M|dd|d|HH|H|hh|h|mm|m|ss|s|a)/g,
+          (token) => map[token]
+        );
       };
 
-      return pattern.replace(
-        /(yyyy|yy|MM|M|dd|d|HH|H|hh|h|mm|m|ss|s|a)/g,
-        (match) => replacements[match] || match
-      );
-    };
-
-    // Time only output
-    if (timeOnly) {
-      let timePattern = format.timeFormat;
-      if (!includeSeconds) {
-        // More precise replacement - only remove :ss or :s with their preceding colon
-        timePattern = timePattern.replace(/:ss?/g, "");
-        // Remove standalone seconds without colon (less common)
-        timePattern = timePattern.replace(/(^|\s)ss?(\s|$)/g, "$1$2");
-        // Clean up any remaining double colons or trailing separators
-        timePattern = timePattern
-          .replace(/::/g, ":")
-          .replace(/(\s|^):|:(\s|$)/g, "$1$2");
-      }
-      return formatPattern(timePattern, date);
-    }
-
-    if (includeTime) {
-      // Use dateFormat and timeFormat from config
-      const dateStr = formatPattern(format.dateFormat, date);
-
-      // Handle time format - remove seconds if includeSeconds is false
-      let timePattern = format.timeFormat;
-      if (!includeSeconds) {
-        timePattern = timePattern.replace(/[:\\/]?ss?/g, "");
-        // Clean up any remaining double colons
-        timePattern = timePattern.replace(/::/g, ":").replace(/:$/, "");
+      /* ---------------- TIME ONLY ---------------- */
+      if (timeOnly) {
+        let timePattern = format.timeFormat;
+        if (!includeSeconds) {
+          timePattern = timePattern.replace(/:ss?/g, "");
+        }
+        return formatPattern(timePattern, date);
       }
 
-      const timeStr = formatPattern(timePattern, date);
-      return `${dateStr} ${timeStr}`;
-    } else {
-      // Date only
+      /* ---------------- DATE + TIME ---------------- */
+      if (includeTime) {
+        let timePattern = format.timeFormat;
+        if (!includeSeconds) {
+          timePattern = timePattern.replace(/:ss?/g, "");
+        }
+
+        return `${formatPattern(
+          format.dateFormat,
+          date
+        )} ${formatPattern(timePattern, date)}`;
+      }
+
+      /* ---------------- DATE ONLY ---------------- */
       return formatPattern(format.dateFormat, date);
-    }
-  }, [dynamicDateFormat] );
+    },
+    [dynamicDateFormat]
+  );
 
   return formatDateTime;
 };
+

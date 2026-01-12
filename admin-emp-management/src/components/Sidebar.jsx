@@ -93,12 +93,12 @@ const Sidebar = () => {
   //   const logingname = parsedDetails ? parsedDetails.name : "";
   //   setAdminName(logingname);
   // }, []);
-  
+
   const user = JSON.parse(localStorage.getItem("hrmsuser"));
   const email = user?.email ? user?.email : "";
   const id = user?._id ? user?._id : "";
   const client =
-  user?.type === "client" || user?.type === "subuser" ? true : false;
+    user?.type === "client" || user?.type === "subuser" ? true : false;
   const name = user?.name ? user?.name : "";
 
   const clientView = (id) => {
@@ -128,7 +128,7 @@ const Sidebar = () => {
     try {
       const response = await axios.put(
         `${API_URL}/api/auth/change-password`,
-        payload, {withCredentials: true}
+        payload, { withCredentials: true }
       );
       setAdminPassword("");
       setChangePasswordIsOpen(false);
@@ -160,15 +160,13 @@ const Sidebar = () => {
   return (
     <div className="">
       <section
-        className={`bg-white dark:md:bg-gray-900  max-md:hidden max-h-dvh  transition-all duration-500 flex flex-col  ${
-          arrowClicked ? "w-[60px]" : "w-52 dark:w-48"
-        }`}
+        className={`bg-white dark:md:bg-gray-900  max-md:hidden max-h-dvh  transition-all duration-500 flex flex-col  ${arrowClicked ? "w-[60px]" : "w-52 dark:w-48"
+          }`}
       >
         <ToastContainer />
         <div
-          className={`fixed flex flex-col  h-full dark:bg-gray-900 ${
-            arrowClicked ? "w-[50px]" : "w-48"
-          }`}
+          className={`fixed flex flex-col  h-full dark:bg-gray-900 ${arrowClicked ? "w-[50px]" : "w-48"
+            }`}
         >
           {/* Toggle Button */}
           <div
@@ -177,9 +175,8 @@ const Sidebar = () => {
             title="Toggle Sidebar"
           >
             <div
-              className={`${
-                arrowClicked ? "-me-3" : "-me-8"
-              } w-6 h-6 rounded-full   border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer`}
+              className={`${arrowClicked ? "-me-3" : "-me-8"
+                } w-6 h-6 rounded-full   border-2 transition-all duration-500 bg-white border-gray-300 flex items-center justify-center cursor-pointer`}
             >
               {arrowClicked ? (
                 <IoIosArrowForward className="w-3 h-3 " />
@@ -218,60 +215,53 @@ const Sidebar = () => {
             }}
           >
             <div
-              className={`flex gap-1 mt-4 mx-2  flex-col ${
-                arrowClicked ? "items-center" : "items-start"
-              }  `}
+              className={`flex gap-1 mt-4 mx-2  flex-col ${arrowClicked ? "items-center" : "items-start"
+                }  `}
             >
               {/* dashboard */}
               {!client && (
                 <div
                   onClick={() => onClickSidebarMenu("Dashboard")}
-                  className={`flex items-center h-10 w-full flex-grow ${
-                    arrowClicked ? "justify-center  " : "justify-normal"
-                  } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                    currentPath === "/dashboard"
+                  className={`flex items-center h-10 w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                    } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/dashboard"
                       ? "bg-blue-100 text-[#4F46E5]"
                       : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                  }`}
+                    }`}
                 >
                   <CiBoxList />
                   {!arrowClicked && <p className="text-sm">Dashboard</p>}
                 </div>
               )}
-              
+
               {/* links */}
               {!client && hasPermission("Links") && (
-                    <div
-                      onClick={() => onClickSidebarMenu("links")}
-                      className={`flex w-full items-center flex-grow ${
-                        arrowClicked ? "justify-center  " : "justify-normal"
-                      } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                        currentPath === "/links"
-                          ? "bg-blue-100 text-[#4F46E5]"
-                          : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                      }`}
-                    >
-                      <FaLinkSlash />
-                      {!arrowClicked && <p className="text-sm">Links</p>}
-                    </div>
-                  )}
+                <div
+                  onClick={() => onClickSidebarMenu("links")}
+                  className={`flex w-full items-center flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                    } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/links"
+                      ? "bg-blue-100 text-[#4F46E5]"
+                      : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
+                    }`}
+                >
+                  <FaLinkSlash />
+                  {!arrowClicked && <p className="text-sm">Links</p>}
+                </div>
+              )}
 
-                  {/*complaince*/}
+              {/*complaince*/}
               {hasPermission("Complaince") && (
-                    <div
-                      onClick={() => onClickSidebarMenu("complaince")}
-                      className={`flex w-full items-center flex-grow ${
-                        arrowClicked ? "justify-center  " : "justify-normal"
-                      } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                        currentPath === "/complaince"
-                          ? "bg-blue-100 text-[#4F46E5]"
-                          : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                      }`}
-                    >
-                      <GiDiscussion />
-                      {!arrowClicked && <p className="text-sm">Complaince</p>}
-                    </div>
-                  )}
+                <div
+                  onClick={() => onClickSidebarMenu("complaince")}
+                  className={`flex w-full items-center flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                    } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/complaince"
+                      ? "bg-blue-100 text-[#4F46E5]"
+                      : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
+                    }`}
+                >
+                  <GiDiscussion />
+                  {!arrowClicked && <p className="text-sm">Complaince</p>}
+                </div>
+              )}
 
               {/* client dashboard */}
 
@@ -279,13 +269,11 @@ const Sidebar = () => {
                 <>
                   <div
                     onClick={() => onClickSidebarMenu("client-dashboard")}
-                    className={`flex items-center h-10 w-full flex-grow ${
-                      arrowClicked ? "justify-center  " : "justify-normal"
-                    } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                      currentPath === "/client-dashboard"
+                    className={`flex items-center h-10 w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                      } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/client-dashboard"
                         ? "bg-blue-100 text-[#4F46E5]"
                         : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                    }`}
+                      }`}
                   >
                     <CiBoxList />
                     {!arrowClicked && <p className="text-sm">Dashboard</p>}
@@ -293,13 +281,11 @@ const Sidebar = () => {
 
                   <div
                     onClick={() => onClickSidebarMenu("task-list-client")}
-                    className={`flex items-center h-10 w-full flex-grow ${
-                      arrowClicked ? "justify-center  " : "justify-normal"
-                    } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                      currentPath === "/task-list-client"
+                    className={`flex items-center h-10 w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                      } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/task-list-client"
                         ? "bg-blue-100 text-[#4F46E5]"
                         : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                    }`}
+                      }`}
                   >
                     <VscGithubProject />
                     {!arrowClicked && <p className="text-sm">Project</p>}
@@ -307,27 +293,23 @@ const Sidebar = () => {
 
                   <div
                     onClick={() => onClickSidebarMenu("mom-details")}
-                    className={`flex items-center h-10 w-full flex-grow ${
-                      arrowClicked ? "justify-center  " : "justify-normal"
-                    } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                      currentPath === "/mom-details"
+                    className={`flex items-center h-10 w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                      } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/mom-details"
                         ? "bg-blue-100 text-[#4F46E5]"
                         : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                    }`}
+                      }`}
                   >
                     <FaBusinessTime />
                     {!arrowClicked && <p className="text-sm">MOM</p>}
                   </div>
 
-                   <div
+                  <div
                     onClick={() => onClickSidebarMenu("invoice_clients")}
-                    className={`flex items-center h-10 w-full flex-grow ${
-                      arrowClicked ? "justify-center  " : "justify-normal"
-                    } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                      currentPath === "/invoice_clients"
+                    className={`flex items-center h-10 w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                      } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/invoice_clients"
                         ? "bg-blue-100 text-[#4F46E5]"
                         : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                    }`}
+                      }`}
                   >
                     <FaBusinessTime />
                     {!arrowClicked && <p className="text-sm">Invoice Details</p>}
@@ -337,13 +319,11 @@ const Sidebar = () => {
               {user.type === "client" && !user.subType && (
                 <div
                   onClick={() => onClickSidebarMenu("client-subuser")}
-                  className={`flex items-center h-10 w-full flex-grow ${
-                    arrowClicked ? "justify-center" : "justify-normal"
-                  } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                    currentPath === "/client-subuser"
+                  className={`flex items-center h-10 w-full flex-grow ${arrowClicked ? "justify-center" : "justify-normal"
+                    } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/client-subuser"
                       ? "bg-blue-100 text-[#4F46E5]"
                       : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                  }`}
+                    }`}
                 >
                   <LuUserSearch />
                   {!arrowClicked && <p className="text-sm">Users</p>}
@@ -358,22 +338,20 @@ const Sidebar = () => {
                       <div
                         // onClick={() => setOnBoardOpen(!onBoardOpen)}
                         onClick={() => toggleMenu("onboarding")}
-                        className={`flex items-center h-10 w-full flex-grow ${
-                          arrowClicked ? "justify-center  " : "justify-normal"
-                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer
-                 ${
-                   [
-                     "/employees",
-                     "/roles",
-                     "/departments",
-                     "/joining-list",
-                     "/releiving-letter",
-                     "/Declaration-deatils",
-                     "/letters-form",
-                   ].includes(currentPath)
-                     ? "bg-blue-100 text-[#4F46E5]"
-                     : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                 }`}
+                        className={`flex items-center h-10 w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                          } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer
+                 ${[
+                            "/employees",
+                            "/roles",
+                            "/departments",
+                            "/joining-list",
+                            "/releiving-letter",
+                            "/Declaration-deatils",
+                            "/letters-form",
+                          ].includes(currentPath)
+                            ? "bg-blue-100 text-[#4F46E5]"
+                            : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
+                          }`}
                       >
                         <FaRegAddressCard />
                         {!arrowClicked && (
@@ -381,15 +359,15 @@ const Sidebar = () => {
                             On Boarding
                             <span>
                               {currentOpen === "onboarding" ||
-                              [
-                                "/employees",
-                                "/roles",
-                                "/departments",
-                                "/joining-list",
-                                "/releiving-letter",
-                                "/Declaration-deatils",
-                                "/letters-form",
-                              ].includes(currentPath) ? (
+                                [
+                                  "/employees",
+                                  "/roles",
+                                  "/departments",
+                                  "/joining-list",
+                                  "/releiving-letter",
+                                  "/Declaration-deatils",
+                                  "/letters-form",
+                                ].includes(currentPath) ? (
                                 <IoIosArrowUp />
                               ) : (
                                 <IoIosArrowDown />
@@ -399,32 +377,30 @@ const Sidebar = () => {
                         )}
                       </div>
                       <div
-                        className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${
-                          currentOpen === "onboarding" ||
-                          [
-                            "/employees",
-                            "/roles",
-                            "/departments",
-                            "/joining-list",
-                            "/releiving-letter",
-                            "/relieved-list",
-                            "/Declaration-deatils",
-                            "/letters-form",
-                            "/inter",
-                          ].includes(currentPath)
+                        className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "onboarding" ||
+                            [
+                              "/employees",
+                              "/roles",
+                              "/departments",
+                              "/joining-list",
+                              "/releiving-letter",
+                              "/relieved-list",
+                              "/Declaration-deatils",
+                              "/letters-form",
+                              "/inter",
+                            ].includes(currentPath)
                             ? "max-h-72 opacity-100"
                             : "max-h-0 opacity-0"
-                        }`}
+                          }`}
                       >
                         <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
                           <button
                             onClick={() => navigate("/departments")}
                             className={`px-2 py-1 rounded-full 
-                        ${
-                          currentPath === "/departments"
-                            ? " text-[#4F46E5]"
-                            : "hover:bg-blue-100 text-gray-500"
-                        }`}
+                        ${currentPath === "/departments"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Departments
                           </button>
@@ -432,23 +408,32 @@ const Sidebar = () => {
                           <button
                             onClick={() => navigate("/roles")}
                             className={`px-2 py-1 rounded-full 
-                        ${
-                          currentPath === "/roles"
-                            ? " text-[#4F46E5]"
-                            : "hover:bg-blue-100 text-gray-500"
-                        }`}
+                        ${currentPath === "/roles"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Roles
                           </button>
 
                           <button
+                            onClick={() => navigate("/customer-dashboard")}
+                            className={`px-2 py-1 rounded-full 
+                        ${currentPath === "/customer-dashboard"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
+                          >
+                            Customer
+                          </button>
+
+                          <button
                             onClick={() => navigate("/employees")}
                             className={`px-2 py-1 rounded-full 
-                        ${
-                          currentPath === "/employees"
-                            ? " text-[#4F46E5]"
-                            : "hover:bg-blue-100 text-gray-500"
-                        }`}
+                        ${currentPath === "/employees"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Employees
                           </button>
@@ -456,11 +441,10 @@ const Sidebar = () => {
                           <button
                             onClick={() => navigate("/inter")}
                             className={`px-2 py-1 rounded-full 
-                        ${
-                          currentPath === "/inter"
-                            ? " text-[#4F46E5]"
-                            : "hover:bg-blue-100 text-gray-500"
-                        }`}
+                        ${currentPath === "/inter"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Internship
                           </button>
@@ -468,11 +452,10 @@ const Sidebar = () => {
                           <button
                             onClick={() => navigate("/Declaration-deatils")}
                             className={`px-2 py-1 rounded-full 
-                        ${
-                          currentPath === "/Declaration-deatils"
-                            ? " text-[#4F46E5]"
-                            : "hover:bg-blue-100 text-gray-500"
-                        }`}
+                        ${currentPath === "/Declaration-deatils"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Declaration
                           </button>
@@ -480,11 +463,10 @@ const Sidebar = () => {
                           <button
                             onClick={() => navigate("/releiving-letter")}
                             className={`px-2 py-1 rounded-full 
-                        ${
-                          currentPath === "/releiving-letter"
-                            ? " text-[#4F46E5]"
-                            : "hover:bg-blue-100 text-gray-500"
-                        }`}
+                        ${currentPath === "/releiving-letter"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Relieving List
                           </button>
@@ -492,11 +474,10 @@ const Sidebar = () => {
                           <button
                             onClick={() => navigate("/relieved-list")}
                             className={`px-2 py-1 rounded-full 
-                        ${
-                          currentPath === "/relieved-list"
-                            ? " text-[#4F46E5]"
-                            : "hover:bg-blue-100 text-gray-500"
-                        }`}
+                        ${currentPath === "/relieved-list"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Relieved List
                           </button>
@@ -504,11 +485,10 @@ const Sidebar = () => {
                           <button
                             onClick={() => navigate("/letters-form")}
                             className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/letters-form"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/letters-form"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Letter list
                           </button>
@@ -525,10 +505,8 @@ const Sidebar = () => {
                         onClick={() => toggleMenu("employee")}
                         onMouseEnter={() => setDropdownShow(true)}
                         onMouseLeave={() => setDropdownShow(false)}
-                        className={`flex items-center h-10 w-full flex-grow ${
-                          arrowClicked ? "justify-center  " : "justify-normal"
-                        } hover:bg-blue-100 hover:text-[#4F46E5] h-10  px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                          [
+                        className={`flex items-center h-10 w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                          } hover:bg-blue-100 hover:text-[#4F46E5] h-10  px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${[
                             "/attendance",
                             "/leaves",
                             "/wfh",
@@ -536,7 +514,7 @@ const Sidebar = () => {
                           ].includes(currentPath)
                             ? " text-[#4F46E5]"
                             : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                        }`}
+                          }`}
                       >
                         <IoPeopleOutline className="" />
                         {arrowClicked ? (
@@ -548,12 +526,12 @@ const Sidebar = () => {
                               <span>Employee</span>{" "}
                               <span>
                                 {currentOpen === "employee" ||
-                                [
-                                  "/attendance",
-                                  "/leaves",
-                                  "/wfh",
-                                  "/requestdetails",
-                                ].includes(currentPath) ? (
+                                  [
+                                    "/attendance",
+                                    "/leaves",
+                                    "/wfh",
+                                    "/requestdetails",
+                                  ].includes(currentPath) ? (
                                   <IoIosArrowUp />
                                 ) : (
                                   <IoIosArrowDown />
@@ -565,38 +543,35 @@ const Sidebar = () => {
                       </div>
                       {!arrowClicked && (
                         <div
-                          className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${
-                            currentOpen === "employee" ||
-                            [
-                              "/attendance",
-                              "/leaves",
-                              "/wfh",
-                              "/requestdetails",
-                            ].includes(currentPath)
+                          className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "employee" ||
+                              [
+                                "/attendance",
+                                "/leaves",
+                                "/wfh",
+                                "/requestdetails",
+                              ].includes(currentPath)
                               ? "max-h-40 opacity-100"
                               : "max-h-0 opacity-0"
-                          }`}
+                            }`}
                         >
                           <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500   ">
                             <button
                               onClick={() => navigate("/attendance")}
                               className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/attendance"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/attendance"
+                                  ? " text-[#4F46E5]"
+                                  : "hover:bg-blue-100 text-gray-500"
+                                }`}
                             >
                               Attendance
                             </button>
                             <button
                               onClick={() => navigate("/leaves")}
                               className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/leaves"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/leaves"
+                                  ? " text-[#4F46E5]"
+                                  : "hover:bg-blue-100 text-gray-500"
+                                }`}
                             >
                               Leaves
                             </button>
@@ -613,22 +588,20 @@ const Sidebar = () => {
                             <button
                               onClick={() => navigate("/wfh")}
                               className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/wfh"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/wfh"
+                                  ? " text-[#4F46E5]"
+                                  : "hover:bg-blue-100 text-gray-500"
+                                }`}
                             >
                               WFH
                             </button>
                             <button
                               onClick={() => navigate("/requestdetails")}
                               className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/requestdetails"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/requestdetails"
+                                  ? " text-[#4F46E5]"
+                                  : "hover:bg-blue-100 text-gray-500"
+                                }`}
                             >
                               Request
                             </button>
@@ -656,19 +629,17 @@ const Sidebar = () => {
                           <div
                             // onClick={() => setProjectOpen(!projectOpen)}
                             onClick={() => toggleMenu("projects")}
-                            className={`flex items-center h-10 w-full flex-grow ${
-                              arrowClicked
+                            className={`flex items-center h-10 w-full flex-grow ${arrowClicked
                                 ? "justify-center  "
                                 : "justify-normal"
-                            } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${
-                              [
+                              } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${[
                                 "/project-list",
                                 "/task-list",
                                 "/reports",
                               ].includes(currentPath)
                                 ? " text-[#4F46E5]"
                                 : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                            }`}
+                              }`}
                           >
                             <VscGithubProject />
                             {!arrowClicked && (
@@ -684,11 +655,11 @@ const Sidebar = () => {
                             </span> */}
                                 <span>
                                   {currentOpen === "projects" ||
-                                  [
-                                    "/project-list",
-                                    "/task-list",
-                                    "/reports",
-                                  ].includes(currentPath) ? (
+                                    [
+                                      "/project-list",
+                                      "/task-list",
+                                      "/reports",
+                                    ].includes(currentPath) ? (
                                     <IoIosArrowUp />
                                   ) : (
                                     <IoIosArrowDown />
@@ -698,48 +669,44 @@ const Sidebar = () => {
                             )}
                           </div>
                           <div
-                            className={`overflow-hidden w-full transition-all  duration-700 ease-in-out ${
-                              currentOpen === "projects" ||
-                              [
-                                "/project-list",
-                                "/task-list",
-                                "/reports",
-                              ].includes(currentPath)
+                            className={`overflow-hidden w-full transition-all  duration-700 ease-in-out ${currentOpen === "projects" ||
+                                [
+                                  "/project-list",
+                                  "/task-list",
+                                  "/reports",
+                                ].includes(currentPath)
                                 ? "max-h-40 opacity-100"
                                 : "max-h-0 opacity-0"
-                            }`}
+                              }`}
                           >
                             <div className="flex gap-2  items-start  ms-10 flex-col text-sm font-medium text-gray-500">
                               <button
                                 onClick={() => navigate("/project-list")}
                                 className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/project-list"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/project-list"
+                                    ? " text-[#4F46E5]"
+                                    : "hover:bg-blue-100 text-gray-500"
+                                  }`}
                               >
                                 Project
                               </button>
                               <button
                                 onClick={() => navigate("/task-list")}
                                 className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/task-list"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/task-list"
+                                    ? " text-[#4F46E5]"
+                                    : "hover:bg-blue-100 text-gray-500"
+                                  }`}
                               >
                                 Task
                               </button>
                               <button
                                 onClick={() => navigate("/reports")}
                                 className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/reports"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/reports"
+                                    ? " text-[#4F46E5]"
+                                    : "hover:bg-blue-100 text-gray-500"
+                                  }`}
                               >
                                 Reports
                               </button>
@@ -781,17 +748,15 @@ const Sidebar = () => {
                           <div
                             // onClick={() => setClientOpen(!clientOpen)}
                             onClick={() => toggleMenu("clients")}
-                            className={`flex items-center h-10 w-full flex-grow ${
-                              arrowClicked
+                            className={`flex items-center h-10 w-full flex-grow ${arrowClicked
                                 ? "justify-center  "
                                 : "justify-normal"
-                            } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${
-                              ["/client-details", "/invoice-details"].includes(
+                              } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${["/client-details", "/invoice-details"].includes(
                                 currentPath
                               )
                                 ? " text-[#4F46E5]"
                                 : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                            }`}
+                              }`}
                           >
                             <FaBuildingUser />
                             {!arrowClicked && (
@@ -799,16 +764,16 @@ const Sidebar = () => {
                                 Clients
                                 <span>
                                   {currentOpen === "clients" ||
-                                  [
-                                    "/client-details",
-                                    "/invoice-details",
-                                    "/mom-details",
-                                    // "/document-details",
-                                    // "/asset-document",
+                                    [
+                                      "/client-details",
+                                      "/invoice-details",
+                                      "/mom-details",
+                                      // "/document-details",
+                                      // "/asset-document",
 
-                                    // "/client-note-details"
- 
-                                  ].includes(currentPath) ? (
+                                      // "/client-note-details"
+
+                                    ].includes(currentPath) ? (
                                     <IoIosArrowUp />
                                   ) : (
                                     <IoIosArrowDown />
@@ -819,39 +784,36 @@ const Sidebar = () => {
                           </div>
                           {/*  */}
                           <div
-                            className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${
-                              currentOpen === "clients" ||
-                              [
-                                "/client-details",
-                                "/invoice-details",
-                                "/mom-details",
-                                // "/document-details",
-                                // "/client-note-details",
-                              ].includes(currentPath)
+                            className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "clients" ||
+                                [
+                                  "/client-details",
+                                  "/invoice-details",
+                                  "/mom-details",
+                                  // "/document-details",
+                                  // "/client-note-details",
+                                ].includes(currentPath)
                                 ? "max-h-50 opacity-100"
                                 : "max-h-0 opacity-0"
-                            }`}
+                              }`}
                           >
                             <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
                               <button
                                 onClick={() => navigate("/client-details")}
                                 className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/client-details"
-        ? "text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/client-details"
+                                    ? "text-[#4F46E5]"
+                                    : "hover:bg-blue-100 text-gray-500"
+                                  }`}
                               >
                                 Client List
                               </button>
                               <button
                                 onClick={() => navigate("/invoice-details")}
                                 className={`px-2 py-1 rounded-full 
-                                    ${
-                                      currentPath === "/invoice-details"
-                                        ? " text-[#4F46E5]"
-                                        : "hover:bg-blue-100 text-gray-500"
-                                    }`}
+                                    ${currentPath === "/invoice-details"
+                                    ? " text-[#4F46E5]"
+                                    : "hover:bg-blue-100 text-gray-500"
+                                  }`}
                               >
                                 Invoice List
                               </button>
@@ -859,11 +821,10 @@ const Sidebar = () => {
                               <button
                                 onClick={() => navigate("/mom-details")}
                                 className={`px-2 py-1 rounded-full 
-                                    ${
-                                      currentPath === "/mom-details"
-                                        ? " text-[#4F46E5]"
-                                        : "hover:bg-blue-100 text-gray-500"
-                                    }`}
+                                    ${currentPath === "/mom-details"
+                                    ? " text-[#4F46E5]"
+                                    : "hover:bg-blue-100 text-gray-500"
+                                  }`}
                               >
                                 MOM
                               </button>
@@ -879,7 +840,7 @@ const Sidebar = () => {
                               >
                                 Document
                               </button> */}
-                               {/* <button
+                              {/* <button
                                 onClick={() => navigate("/asset-document")}
                                 className={`px-2 py-1 rounded-full 
                                     ${
@@ -936,12 +897,10 @@ const Sidebar = () => {
                           <div
                             // onClick={() => setFinace(!finace)}
                             onClick={() => toggleMenu("finance")}
-                            className={`flex items-center h-10 w-full flex-grow ${
-                              arrowClicked
+                            className={`flex items-center h-10 w-full flex-grow ${arrowClicked
                                 ? "justify-center  "
                                 : "justify-normal"
-                            } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${
-                              [
+                              } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${[
                                 "/finance-account",
                                 "/income/details",
                                 "/expense/details",
@@ -951,7 +910,7 @@ const Sidebar = () => {
                               ].includes(currentPath)
                                 ? "bg-blue-100 text-[#4F46E5]"
                                 : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                            }`}
+                              }`}
                           >
                             <BsBank2 />
                             {!arrowClicked && (
@@ -959,14 +918,14 @@ const Sidebar = () => {
                                 Finance
                                 <span>
                                   {currentOpen === "finance" ||
-                                  [
-                                    "/finance-account",
-                                    "/income/details",
-                                    "/expense/details",
-                                    "/payment-type",
-                                    "/bankstatement",
-                                    "/recurring",
-                                  ].includes(currentPath) ? (
+                                    [
+                                      "/finance-account",
+                                      "/income/details",
+                                      "/expense/details",
+                                      "/payment-type",
+                                      "/bankstatement",
+                                      "/recurring",
+                                    ].includes(currentPath) ? (
                                     <IoIosArrowUp />
                                   ) : (
                                     <IoIosArrowDown />
@@ -976,84 +935,77 @@ const Sidebar = () => {
                             )}
                           </div>
                           <div
-                            className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${
-                              currentOpen === "finance" ||
-                              [
-                                "/finance-account",
-                                "/income/details",
-                                "/expense/details",
-                                "/payment-type",
-                                "/bankstatement",
-                                "/recurring",
-                              ].includes(currentPath)
+                            className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "finance" ||
+                                [
+                                  "/finance-account",
+                                  "/income/details",
+                                  "/expense/details",
+                                  "/payment-type",
+                                  "/bankstatement",
+                                  "/recurring",
+                                ].includes(currentPath)
                                 ? "max-h-50 opacity-100"
                                 : "max-h-0 opacity-0"
-                            }`}
+                              }`}
                           >
                             <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
                               <button
                                 onClick={() => navigate("/finance-account")}
                                 className={`px-2 py-1 rounded-full 
-                            ${
-                              currentPath === "/finance-account"
-                                ? " text-[#4F46E5]"
-                                : "hover:bg-blue-100 text-gray-500"
-                            }`}
+                            ${currentPath === "/finance-account"
+                                    ? " text-[#4F46E5]"
+                                    : "hover:bg-blue-100 text-gray-500"
+                                  }`}
                               >
                                 Account
                               </button>
                               <button
                                 onClick={() => navigate("/income/details")}
                                 className={`px-2 py-1 rounded-full 
-                            ${
-                              currentPath === "/income/details"
-                                ? " text-[#4F46E5]"
-                                : "hover:bg-blue-100 text-gray-500"
-                            }`}
+                            ${currentPath === "/income/details"
+                                    ? " text-[#4F46E5]"
+                                    : "hover:bg-blue-100 text-gray-500"
+                                  }`}
                               >
                                 Income List
                               </button>
                               <button
                                 onClick={() => navigate("/expense/details")}
                                 className={`px-2 py-1 rounded-full 
-                            ${
-                              currentPath === "/expense/details"
-                                ? " text-[#4F46E5]"
-                                : "hover:bg-blue-100 text-gray-500"
-                            }`}
+                            ${currentPath === "/expense/details"
+                                    ? " text-[#4F46E5]"
+                                    : "hover:bg-blue-100 text-gray-500"
+                                  }`}
                               >
                                 Expense List
                               </button>
                               <button
                                 onClick={() => navigate("/payment-type")}
                                 className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/payment-type"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/payment-type"
+                                    ? " text-[#4F46E5]"
+                                    : "hover:bg-blue-100 text-gray-500"
+                                  }`}
                               >
                                 Payments
                               </button>
                               <button
                                 onClick={() => navigate("/bankstatement")}
                                 className={`px-2 py-1 rounded-full 
-                            ${
-                              currentPath === "/bankstatement"
-                                ? " text-[#4F46E5]"
-                                : "hover:bg-blue-100 text-gray-500"
-                            }`}
+                            ${currentPath === "/bankstatement"
+                                    ? " text-[#4F46E5]"
+                                    : "hover:bg-blue-100 text-gray-500"
+                                  }`}
                               >
                                 Bank Statement
                               </button>
                               <button
                                 onClick={() => navigate("/recurring")}
                                 className={`px-2 py-1 rounded-full 
-                            ${
-                              currentPath === "/recurring"
-                                ? " text-[#4F46E5]"
-                                : "hover:bg-blue-100 text-gray-500"
-                            }`}
+                            ${currentPath === "/recurring"
+                                    ? " text-[#4F46E5]"
+                                    : "hover:bg-blue-100 text-gray-500"
+                                  }`}
                               >
                                 Recurring
                               </button>
@@ -1092,19 +1044,19 @@ const Sidebar = () => {
                       <div
                         // onClick={() => setClientOpen(!clientOpen)}
                         onClick={() => toggleMenu("bidding")}
-                        className={`flex items-center h-10 w-full flex-grow ${
-                          arrowClicked ? "justify-center  " : "justify-normal"
-                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${
-                          [
+                        className={`flex items-center h-10 w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                          } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${[
                             "/account-bidding",
                             "/tech-bidding",
                             "/bidding-details",
                             "/connect-details",
                             "/bidding-reports",
+                            "/bidding-transaction_history",
+                            "/billing_details"
                           ].includes(currentPath)
                             ? "bg-blue-100 text-[#4F46E5]"
                             : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                        }`}
+                          }`}
                       >
                         <GiCrystalGrowth />{" "}
                         {!arrowClicked && (
@@ -1112,13 +1064,15 @@ const Sidebar = () => {
                             Bidding
                             <span>
                               {currentOpen === "bidding" ||
-                              [
-                                "/account-bidding",
-                                "/tech-bidding",
-                                "/bidding-details",
-                                "/connect-details",
-                                "/bidding-reports",
-                              ].includes(currentPath) ? (
+                                [
+                                  "/account-bidding",
+                                  "/tech-bidding",
+                                  "/bidding-details",
+                                  "/connect-details",
+                                  "/bidding-reports",
+                                  "/bidding-transaction_history",
+                                  "/billing_details"
+                                ].includes(currentPath) ? (
                                 <IoIosArrowUp />
                               ) : (
                                 <IoIosArrowDown />
@@ -1129,50 +1083,48 @@ const Sidebar = () => {
                       </div>
                       {/*  */}
                       <div
-                        className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${
-                          currentOpen === "bidding" ||
-                          [
-                            "/account-bidding",
-                            "/tech-bidding",
-                            "/bidding-details",
-                            "/connect-details",
-                            "/bidding-reports",
-                          ].includes(currentPath)
-                            ? "max-h-52 opacity-100"
+                        className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "bidding" ||
+                            [
+                              "/account-bidding",
+                              "/tech-bidding",
+                              "/bidding-details",
+                              "/connect-details",
+                              "/bidding-reports",
+                              "/bidding-transaction_history",
+                              "/billing_details",
+                            ].includes(currentPath)
+                            ? "max-h-60 opacity-100"
                             : "max-h-0 opacity-0"
-                        }`}
+                          }`}
                       >
-                        <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
+                        <div className="flex gap-2  items-start  ms-4 flex-col text-sm font-medium text-gray-500">
                           <button
                             onClick={() => navigate("/account-bidding")}
                             className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/account-bidding"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/account-bidding"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Account
                           </button>
                           <button
                             onClick={() => navigate("/tech-bidding")}
                             className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/tech-bidding"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/tech-bidding"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Technology
                           </button>
                           <button
                             onClick={() => navigate("/bidding-details")}
                             className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/bidding-details"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/bidding-details"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Bidding Details
                           </button>
@@ -1180,25 +1132,45 @@ const Sidebar = () => {
                           <button
                             onClick={() => navigate("/connect-details")}
                             className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/connect-details"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/connect-details"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Connects Details
                           </button>
 
-                          <button
+                          {/* <button
                             onClick={() => navigate("/bidding-reports")}
                             className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/bidding-reports"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/bidding-reports"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Bidding Reports
+                          </button> */}
+
+                          <button
+                            onClick={() => navigate("/bidding-transaction_history")}
+                            className={`px-2 py-1 rounded-full 
+    ${currentPath === "/bidding-transaction_history"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
+                          >
+                            Transaction History
+                          </button>
+
+                          <button
+                            onClick={() => navigate("/billing_details")}
+                            className={`px-2 py-1 rounded-full 
+    ${currentPath === "/billing_details"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
+                          >
+                            Billing Details
                           </button>
                         </div>
                       </div>
@@ -1212,15 +1184,13 @@ const Sidebar = () => {
                       <div
                         // onClick={() => setClientOpen(!clientOpen)}
                         onClick={() => toggleMenu("socialmedia")}
-                        className={`flex items-center h-10 w-full flex-grow ${
-                          arrowClicked ? "justify-center  " : "justify-normal"
-                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${
-                          ["/social-account", "/social-credentials"].includes(
+                        className={`flex items-center h-10 w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                          } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${["/social-account", "/social-credentials", "/social-contentmaster"].includes(
                             currentPath
                           )
                             ? "bg-blue-100 text-[#4F46E5]"
                             : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                        }`}
+                          }`}
                       >
                         <BsFillCameraReelsFill />{" "}
                         {!arrowClicked && (
@@ -1228,10 +1198,11 @@ const Sidebar = () => {
                             Social Media
                             <span>
                               {currentOpen === "socialmedia" ||
-                              [
-                                "/social-account",
-                                "/social-credentials",
-                              ].includes(currentPath) ? (
+                                [
+                                  "/social-account",
+                                  "/social-credentials",
+                                  "/social-contentmaster",
+                                ].includes(currentPath) ? (
                                 <IoIosArrowUp />
                               ) : (
                                 <IoIosArrowDown />
@@ -1242,24 +1213,22 @@ const Sidebar = () => {
                       </div>
                       {/*  */}
                       <div
-                        className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${
-                          currentOpen === "socialmedia" ||
-                          ["/social-account", "/social-credentials"].includes(
-                            currentPath
-                          )
+                        className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "socialmedia" ||
+                            ["/social-account", "/social-credentials", "/social-contentmaster",].includes(
+                              currentPath
+                            )
                             ? "max-h-52 opacity-100"
                             : "max-h-0 opacity-0"
-                        }`}
+                          }`}
                       >
                         <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
                           <button
                             onClick={() => navigate("/social-account")}
                             className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/social-account"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/social-account"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Social Account
                           </button>
@@ -1267,13 +1236,23 @@ const Sidebar = () => {
                           <button
                             onClick={() => navigate("/social-credentials")}
                             className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/social-credentials"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/social-credentials"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Credentials
+                          </button>
+
+                          <button
+                            onClick={() => navigate("/social-contentmaster")}
+                            className={`px-2 py-1 rounded-full 
+    ${currentPath === "/social-contentmaster"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
+                          >
+                            Content Master
                           </button>
                         </div>
                       </div>
@@ -1287,10 +1266,8 @@ const Sidebar = () => {
                       <div
                         // onClick={() => setClientOpen(!clientOpen)}
                         onClick={() => toggleMenu("Recruitment")}
-                        className={`flex items-center h-10 w-full flex-grow ${
-                          arrowClicked ? "justify-center  " : "justify-normal"
-                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${
-                          [
+                        className={`flex items-center h-10 w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                          } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${[
                             "/jobtype-Recruitment",
                             "/jobopening-Recruitment",
                             "/interview-Recruitment",
@@ -1300,7 +1277,7 @@ const Sidebar = () => {
                           ].includes(currentPath)
                             ? "bg-blue-100 text-[#4F46E5]"
                             : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                        }`}
+                          }`}
                       >
                         <LuUserSearch />{" "}
                         {!arrowClicked && (
@@ -1308,14 +1285,14 @@ const Sidebar = () => {
                             Recruitment
                             <span>
                               {currentOpen === "Recruitment" ||
-                              [
-                                "/jobtype-Recruitment",
-                                "/jobopening-Recruitment",
-                                "/interview-Recruitment",
-                                "/technologies-Recruitment",
-                                "/Candidate-Recruitment",
-                                "/dashboard-Recruitment",
-                              ].includes(currentPath) ? (
+                                [
+                                  "/jobtype-Recruitment",
+                                  "/jobopening-Recruitment",
+                                  "/interview-Recruitment",
+                                  "/technologies-Recruitment",
+                                  "/Candidate-Recruitment",
+                                  "/dashboard-Recruitment",
+                                ].includes(currentPath) ? (
                                 <IoIosArrowUp />
                               ) : (
                                 <IoIosArrowDown />
@@ -1326,29 +1303,27 @@ const Sidebar = () => {
                       </div>
                       {/*  */}
                       <div
-                        className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${
-                          currentOpen === "Recruitment" ||
-                          [
-                            "/jobtype-Recruitment",
-                            "/jobopening-Recruitment",
-                            "/interview-Recruitment",
-                            "/technologies-Recruitment",
-                            "/Candidate-Recruitment",
-                            "/dashboard-Recruitment",
-                          ].includes(currentPath)
+                        className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "Recruitment" ||
+                            [
+                              "/jobtype-Recruitment",
+                              "/jobopening-Recruitment",
+                              "/interview-Recruitment",
+                              "/technologies-Recruitment",
+                              "/Candidate-Recruitment",
+                              "/dashboard-Recruitment",
+                            ].includes(currentPath)
                             ? "max-h-60 opacity-100"
                             : "max-h-0 opacity-0"
-                        }`}
+                          }`}
                       >
                         <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
                           <button
                             onClick={() => navigate("/dashboard-Recruitment")}
                             className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/dashboard-Recruitment"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/dashboard-Recruitment"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             DashBoard
                           </button>
@@ -1356,33 +1331,30 @@ const Sidebar = () => {
                           <button
                             onClick={() => navigate("/jobtype-Recruitment")}
                             className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/jobtype-Recruitment"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/jobtype-Recruitment"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Job Type
                           </button>
                           <button
                             onClick={() => navigate("/jobopening-Recruitment")}
                             className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/jobopening-Recruitment"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/jobopening-Recruitment"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Job Opening
                           </button>
                           <button
                             onClick={() => navigate("/interview-Recruitment")}
                             className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/interview-Recruitment"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/interview-Recruitment"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Interview Status
                           </button>
@@ -1392,11 +1364,10 @@ const Sidebar = () => {
                               navigate("/technologies-Recruitment")
                             }
                             className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/technologies-Recruitment"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/technologies-Recruitment"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Technologies
                           </button>
@@ -1404,11 +1375,10 @@ const Sidebar = () => {
                           <button
                             onClick={() => navigate("/source-Recruitment")}
                             className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/source-Recruitment"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/source-Recruitment"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Source
                           </button>
@@ -1416,11 +1386,10 @@ const Sidebar = () => {
                           <button
                             onClick={() => navigate("/Candidate-Recruitment")}
                             className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/Candidate-Recruitment"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/Candidate-Recruitment"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Candidate
                           </button>
@@ -1435,13 +1404,11 @@ const Sidebar = () => {
                     <>
                       <div
                         onClick={() => onClickSidebarMenu("announcement")}
-                        className={`flex items-center w-full flex-grow ${
-                          arrowClicked ? "justify-center  " : "justify-normal"
-                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                          currentPath === "/payroll"
+                        className={`flex items-center w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                          } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/announcement"
                             ? "bg-blue-100 text-[#4F46E5]"
                             : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                        }`}
+                          }`}
                       >
                         <GrAnnounce />
                         {!arrowClicked && (
@@ -1457,13 +1424,11 @@ const Sidebar = () => {
                     <>
                       <div
                         onClick={() => onClickSidebarMenu("payroll")}
-                        className={`flex items-center w-full flex-grow ${
-                          arrowClicked ? "justify-center  " : "justify-normal"
-                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                          currentPath === "/payroll"
+                        className={`flex items-center w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                          } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/payroll"
                             ? "bg-blue-100 text-[#4F46E5]"
                             : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                        }`}
+                          }`}
                       >
                         <FaAmazonPay />
                         {!arrowClicked && <p className="text-sm">Payroll</p>}
@@ -1475,13 +1440,11 @@ const Sidebar = () => {
                     <>
                       <div
                         onClick={() => onClickSidebarMenu("Privileges")}
-                        className={`flex items-center w-full flex-grow ${
-                          arrowClicked ? "justify-center  " : "justify-normal"
-                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                          currentPath === "/privileges"
+                        className={`flex items-center w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                          } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/privileges"
                             ? "bg-blue-100 text-[#4F46E5]"
                             : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                        }`}
+                          }`}
                       >
                         <MdOutlineHideImage />
                         {!arrowClicked && <p className="text-sm">Privileges</p>}
@@ -1493,13 +1456,11 @@ const Sidebar = () => {
                     <>
                       <div
                         onClick={() => onClickSidebarMenu("assetmanagement")}
-                        className={`flex items-center w-full flex-grow ${
-                          arrowClicked ? "justify-center  " : "justify-normal"
-                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                          currentPath === "/assetmanagement"
+                        className={`flex items-center w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                          } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/assetmanagement"
                             ? "bg-blue-100 text-[#4F46E5]"
                             : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                        }`}
+                          }`}
                       >
                         <MdManageAccounts />
                         {!arrowClicked && (
@@ -1509,18 +1470,16 @@ const Sidebar = () => {
                     </>
                   )}
 
-                  
+
 
                   {hasPermission("Holidays") && (
                     <div
                       onClick={() => onClickSidebarMenu("Holidays")}
-                      className={`flex items-center w-full flex-grow ${
-                        arrowClicked ? "justify-center  " : "justify-normal"
-                      } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                        currentPath === "/Holidays"
+                      className={`flex items-center w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/Holidays"
                           ? "bg-blue-100 text-[#4F46E5]"
                           : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                      }`}
+                        }`}
                     >
                       <BiSolidHomeHeart />
                       {!arrowClicked && <p className="text-sm">Holidays</p>}
@@ -1562,20 +1521,18 @@ const Sidebar = () => {
                   )} */}
 
 
-                    {hasPermission("Settings") && (
+                  {hasPermission("Settings") && (
                     <>
                       <div
                         // onClick={() => setClientOpen(!clientOpen)}
                         onClick={() => toggleMenu("settings")}
-                        className={`flex items-center h-10 w-full flex-grow ${
-                          arrowClicked ? "justify-center  " : "justify-normal"
-                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${
-                          ["/settings", "/settings-invoice"].includes(
+                        className={`flex items-center h-10 w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                          } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${["/settings", "/settings-invoice"].includes(
                             currentPath
                           )
                             ? "bg-blue-100 text-[#4F46E5]"
                             : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                        }`}
+                          }`}
                       >
                         <IoSettings />{" "}
                         {!arrowClicked && (
@@ -1583,10 +1540,10 @@ const Sidebar = () => {
                             Settings
                             <span>
                               {currentOpen === "settings" ||
-                              [
-                                "/settings",
-                                "/settings-invoice",
-                              ].includes(currentPath) ? (
+                                [
+                                  "/settings",
+                                  "/settings-invoice",
+                                ].includes(currentPath) ? (
                                 <IoIosArrowUp />
                               ) : (
                                 <IoIosArrowDown />
@@ -1597,36 +1554,33 @@ const Sidebar = () => {
                       </div>
                       {/*  */}
                       <div
-                        className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${
-                          currentOpen === "settings" ||
-                          ["/settings", "/settings-invoice"].includes(
-                            currentPath
-                          )
+                        className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "settings" ||
+                            ["/settings", "/settings-invoice"].includes(
+                              currentPath
+                            )
                             ? "max-h-52 opacity-100"
                             : "max-h-0 opacity-0"
-                        }`}
+                          }`}
                       >
                         <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
                           <button
                             onClick={() => navigate("/settings")}
                             className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/settings"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/settings"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
-                           General Settings
+                            General Settings
                           </button>
 
                           <button
                             onClick={() => navigate("/settings-invoice")}
                             className={`px-2 py-1 rounded-full 
-    ${
-      currentPath === "/settings-invoice"
-        ? " text-[#4F46E5]"
-        : "hover:bg-blue-100 text-gray-500"
-    }`}
+    ${currentPath === "/settings-invoice"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
                           >
                             Invoice Settings
                           </button>
@@ -1635,29 +1589,86 @@ const Sidebar = () => {
                     </>
                   )}
 
+{/* new module */}
+                  {hasPermission("leads") && (
+                    <>
+                      <div
+                        // onClick={() => setClientOpen(!clientOpen)}
+                        onClick={() => toggleMenu("leads")}
+                        className={`flex items-center h-10 w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                          } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${["/leads"].includes(
+                            currentPath
+                          )
+                            ? "bg-blue-100 text-[#4F46E5]"
+                            : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
+                          }`}
+                      >
+                        <IoSettings />{" "}
+                        {!arrowClicked && (
+                          <p className="text-sm flex items-center gap-2">
+                            Leads Management
+                            <span>
+                              {currentOpen === "leads" ||
+                                [
+                                  "/leads",
+                                ].includes(currentPath) ? (
+                                <IoIosArrowUp />
+                              ) : (
+                                <IoIosArrowDown />
+                              )}
+                            </span>
+                          </p>
+                        )}
+                      </div>
+                      <div
+                        className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "leads" ||
+                            ["/leads",].includes(
+                              currentPath
+                            )
+                            ? "max-h-52 opacity-100"
+                            : "max-h-0 opacity-0"
+                          }`}
+                      >
+                        <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
+                          <button
+                            onClick={() => navigate("/leads")}
+                            className={`px-2 py-1 rounded-full 
+    ${currentPath === "/leads"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
+                          >
+                            Leads
+                          </button>
+
+                         
+                        </div>
+                      </div>
+                    </>
+                  )}
 
 
-                   {/* permission  */}
-                   {/* hasPermission("slack") && */}
-                   { (
-
-                  
 
 
+                  {/* permission  */}
+                  {/* hasPermission("slack") && */}
+                  {(
 
-                  //  {hasPermission("slack") && (
+
+
+
+
+                    //  {hasPermission("slack") && (
 
                     <div
                       onClick={() => onClickSidebarMenu("slack")}
-                      className={`flex items-center w-full flex-grow ${
-                        arrowClicked ? "justify-center  " : "justify-normal"
-                      } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                        currentPath === "/slack"
+                      className={`flex items-center w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/slack"
                           ? "bg-blue-100 text-[#4F46E5]"
                           : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                      }`}
+                        }`}
                     >
-                      <FaSlack  />
+                      <FaSlack />
 
                       {!arrowClicked && <p className="text-sm">Slack</p>}
                     </div>
@@ -1695,11 +1706,9 @@ const Sidebar = () => {
               <hr className="my-2 mx-4 w-40 border-gray-300" />
               <div
                 onClick={() => onClickSidebarMenu("/")}
-                className={`flex mx-2 items-center ${
-                  arrowClicked ? "justify-center" : "justify-normal w-44"
-                } ${
-                  buttonLoading ? "justify-center" : "justify-normal"
-                } px-3 py-3 gap-3 items-center mt-1 h-10  bg-blue-600 hover:bg-blue-700  rounded-full cursor-pointer`}
+                className={`flex mx-2 items-center ${arrowClicked ? "justify-center" : "justify-normal w-44"
+                  } ${buttonLoading ? "justify-center" : "justify-normal"
+                  } px-3 py-3 gap-3 items-center mt-1 h-10  bg-blue-600 hover:bg-blue-700  rounded-full cursor-pointer`}
               >
                 {buttonLoading ? (
                   <Button_Loader />
@@ -1738,9 +1747,8 @@ const Sidebar = () => {
           </div>
           {/* User Section */}
           <div
-            className={`fixed bottom-0  bg-white dark:bg-gray-900 ${
-              arrowClicked ? "w-[60px]" : "w-52"
-            }`}
+            className={`fixed bottom-0  bg-white dark:bg-gray-900 ${arrowClicked ? "w-[60px]" : "w-52"
+              }`}
           >
             <hr className="border-gray-300" />
             <div className="flex items-center gap-1 px-2 py-4">

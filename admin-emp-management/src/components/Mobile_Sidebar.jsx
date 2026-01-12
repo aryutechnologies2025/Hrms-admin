@@ -707,6 +707,14 @@ const Mobile_Sidebar = () => {
                             >
                               Credentials
                             </button>
+                            <button
+                              onClick={() =>
+                                onClickSidebarMenu("social-contentmaster")
+                              }
+                              className="hover:bg-blue-100 px-2 py-1 rounded-full"
+                            >
+                              Content Master
+                            </button>
                           </div>
                         </div>
                       )}
@@ -798,6 +806,49 @@ const Mobile_Sidebar = () => {
                           </div>
                         </div>
                       )}
+
+                      {/* Lead management */}
+                      <div
+                        // onClick={() => setSelectAnyOneSocialMedia(!selectAnyOneSocialMedia)}
+                        onClick={() =>
+                          setOpenSection(
+                            openSection === "leads" ? null : "leads"
+                          )
+                        }
+                        className="flex items-center w-full hover:bg-blue-100 hover:text-[#4F46E5] px-3 py-2 rounded-lg gap-2 text-gray-500 text-sm font-medium cursor-pointer"
+                      >
+                        <div className="flex items-center justify-center h-5 w-5">
+                          <BsFillCameraReelsFill />
+                        </div>
+                        <p>Leads Management</p>
+                        {openSection === "leads" ? (
+                          <IoIosArrowUp />
+                        ) : (
+                          <IoIosArrowDown />
+                        )}{" "}
+                      </div>
+                      {openSection === "leads" && (
+                        <div
+                          className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${
+                            openSection === "leads"
+                              ? "max-h-40 opacity-100"
+                              : "max-h-0 opacity-0"
+                          }`}
+                        >
+                          <div className="flex gap-2  items-start  ms-10 flex-col text-sm font-medium text-gray-500">
+                            <button
+                              onClick={() =>
+                                onClickSidebarMenu("leads")
+                              }
+                              className="hover:bg-blue-100 px-2 py-1 rounded-full"
+                            >
+                              Leads
+                            </button>
+                           
+                          </div>
+                        </div>
+                      )}
+
                       {/* announcement */}
                       <div
                         onClick={() => onClickSidebarMenu("Announcement")}

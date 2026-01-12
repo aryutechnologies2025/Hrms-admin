@@ -27,8 +27,13 @@ import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { use } from "react";
 import { MdClose } from "react-icons/md"; // nice rounded X icon
+import { capitalizeFirstLetter } from "../utils/StringCaps";
+import { useDateUtils } from "../hooks/useDateUtils";
 
 const Invoice_full = () => {
+  const dropdownRef = useRef(null);
+    const formatDateTime = useDateUtils();
+  
   const navigate = useNavigate();
 
 
@@ -74,6 +79,8 @@ const Invoice_full = () => {
 
 
   const [status, setStatus] = useState("");
+
+
 
 
   // Validate Status dynamically
@@ -127,7 +134,7 @@ const Invoice_full = () => {
   //   add items
 
   const [items, setItems] = useState([
-    { description: "", hsn: "", qty: "", rate: "", total: "" },
+    { description: "", hsnCode: "", qty: "", rate: "", total: "" },
   ]);
 
   const [selectedClient, setSelectedClient] = useState(null);
@@ -144,8 +151,19 @@ const Invoice_full = () => {
   const [cgst, setCgst] = useState("");
   const [sgst, setSgst] = useState("");
   const [igst, setIgst] = useState("");
+  const [invoicetype, setInvoiceType] = useState("");
   const [selected, setSelected] = useState("Select Invoice Type");
 
+  // console.log("selected", selected);
+
+  const [invoiceNo, setInvoiceNo] = useState("");
+
+  const [amount, setAmount] = useState("");
+  const [paymentType, setPaymentType] = useState("");
+  // const [paidDate, setPaidDate] = useState("");
+  const [paidDate, setPaidDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
 
 
   const [open, setOpen] = useState(false);
@@ -192,6 +210,12 @@ const Invoice_full = () => {
       fetchaProjectList(selectedClient);
     }
   }, [selectedClient]);
+
+  useEffect(() => {
+    if (selectedProject) {
+      fetchaLogs(selectedProject);
+    }
+  }, [selectedProject]);
 
 
   const fetchClientList = async () => {
@@ -259,17 +283,56 @@ const Invoice_full = () => {
 
       );
 
-      console.log("response", response)
+      console.log("responseseettibg", response)
 
       setIgst(response.data.data[0]?.igst || "");
       setCgst(response.data.data[0]?.cgst || "");
       setSgst(response.data.data[0]?.sgst || "");
+      setInvoiceType(response.data.data[0]?.invoiceId_option || "");
 
 
     } catch (error) {
       console.log(error);
     }
   };
+
+
+  // invoice details for client previous log
+
+  const [logdetails, setLogdetails] = useState([]);
+
+  // console.log("logdetails", logdetails)
+
+  const fetchaLogs = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/invoice/client-invoice-by-project-wise`,
+        {
+          params: {
+            clientId: selectedClient,
+            project: selectedProject,
+          },
+          // headers: {
+          //   Authorization: `Bearer ${localStorage.getItem("token")}`,
+          // },
+
+        }
+      );
+
+      // console.log("responselogssss", response)
+
+      setLogdetails(response.data.data);
+
+
+
+      // setProjectOption(ProjectOptions);
+
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
 
   const handleChange = (index, field, value) => {
     const updatedItems = [...items];
@@ -338,9 +401,111 @@ const Invoice_full = () => {
   };
 
 
+  const validateInvoiceForm = () => {
+    let errors = {};
+
+    // Client & Project
+    if (!selectedClient) {
+      errors.client = "Client is required";
+    }
+
+    if (!selectedProject) {
+      errors.project = "Project is required";
+    }
+
+    // Dates
+    if (!invoiceDate) {
+      errors.invoice_date = "Invoice date is required";
+    }
+
+    if (!dueDate) {
+      errors.due_date = "Due date is required";
+    }
+
+    if (invoiceDate && dueDate && new Date(dueDate) < new Date(invoiceDate)) {
+      errors.due_date = "Due date cannot be before invoice date";
+    }
+
+    if (invoicetype === "Manual") {
+      if (!invoiceNo || invoiceNo.trim() === "") {
+        errors.invoice_no = "Invoice number is required";
+      }
+    }
+
+    // Currency
+    if (!currency || !currency.name) {
+      errors.currency = "Currency is required";
+    }
+
+    // Items validation
+    // if (!items || items.length === 0) {
+    //   errors.items = "At least one item is required";
+    // } else {
+    //   items.forEach((item, index) => {
+    //     if (!item.description) {
+    //       errors[`item_description_${index}`] = "Description is required";
+    //     }
+    //     if (!item.qty || item.qty <= 0) {
+    //       errors[`item_qty_${index}`] = "Quantity must be greater than 0";
+    //     }
+    //     if (!item.rate || item.rate <= 0) {
+    //       errors[`item_rate_${index}`] = "Rate must be greater than 0";
+    //     }
+    //   });
+    // }
+
+    // // Invoice Type
+    // if (!selected || selected === "Select Invoice Type") {
+    //   errors.invoice_type = "Invoice type is required";
+    // }
+
+    // // GST validation
+    // if (isIntraInvoice) {
+    //   if (!cgst && cgst !== 0) errors.cgst = "CGST is required";
+    //   if (!sgst && sgst !== 0) errors.sgst = "SGST is required";
+    // }
+
+    // if (isInterInvoice) {
+    //   if (!igst && igst !== 0) errors.igst = "IGST is required";
+    // }
+
+    // Status
+    if (!status) {
+      errors.status = "Status is required";
+    }
+
+    // Paid Date (when status selected)
+    if (status && !["invoice_raised", "advance_received", "final_payment_pending", "partial_payment_pending"].includes(status) && !paidDate) {
+      errors.paidDate = "Paid date is required";
+    }
+
+    // Amount (not completed)
+    if (
+      status &&
+      !["invoice_raised", "advance_pending", "final_payment_pending", "partial_payment_pending", "completed"].includes(status) &&
+      !amount
+    ) {
+      errors.amount = "Amount is required";
+    }
+
+    // Payment Type
+    // if (status && !["invoice_raised", "advance_pending", "final_payment_pending", "partial_payment_pending"].includes(status) && !paymentType) {
+    //   errors.paymentType = "Payment type is required";
+    // }
+
+    return errors;
+  };
+
+
 
   const handlesubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = validateInvoiceForm();
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
 
     try {
       const formData = {
@@ -351,20 +516,27 @@ const Invoice_full = () => {
         currency: currency.name,
         items: items.map((item) => ({
           description: item.description,
-          hsn: item.hsn,
+          hsnCode: item.hsnCode,
           quantity: item.qty,
           rate: item.rate,
           amount: item.total,
         })),
+
         sub_total: subTotal,
         tax: tax,
         total_amount: totalAmount,
         status: status,
+        paid_date: paidDate,
         notes: notes,
         invoice_type: selected,
         igst,
         cgst,
         sgst,
+        amount,
+        paidDate,
+        paymentType,
+        invoice_number: invoiceNo,
+
 
       };
 
@@ -403,7 +575,11 @@ const Invoice_full = () => {
       setTax(18);
       setTotalAmount(0);
       setNotes("");
+      setPaidDate("");
       setStatus("");
+      setAmount("");
+      setPaidDate("");
+      setPaymentType("");
 
       fetchProject();
       setSelected("Select Invoice Type");
@@ -424,8 +600,35 @@ const Invoice_full = () => {
     }
   };
 
+  const [openlog, setOpenlog] = useState(false);
+  // const [selectedLogs, setSelectedLogs] = useState(logdetails);
+
+
+  useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target)
+    ) {
+      setOpen(false);
+      setTaxOpen(false);
+      setIntraOpen(false);
+      setInterOpen(false);
+    }
+  };
+
+  if (open) {
+    document.addEventListener("mousedown", handleClickOutside);
+  }
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [open]);
+
+
   return (
-    <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10">
+    <div className="flex flex-col justify-between bg-gray-100 w-screen min-h-screen px-3 md:px-5 pt-2 md:pt-10 overflow-x-auto">
       <div>
         <Mobile_Sidebar />
 
@@ -445,13 +648,19 @@ const Invoice_full = () => {
         </div>
 
         <div className="">
-          <div className="bg-white p-2 md:p-5 rounded-xl overflow-y-auto px-2 py-4 md:px-8 md:py-6">
+          <div className="bg-white p-2 md:p-5 rounded-xl overflow-y-auto px-2 py-4 md:px-5 md:py-6">
             <div className="flex justify-between items-center gap-2 ">
               <h2 className="text-xl font-semibold mb-4">Add Invoice</h2>
+              <button
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium"
+              >
+                ← Back
+              </button>
             </div>
             <div className="flex flex-wrap md:flex-nowrap">
               {/* left */}
-              <div className="w-full border p-5 shadow-2xl rounded ">
+              <div className="w-full border p-5 md:w-[70%] shadow-2xl rounded ">
                 {" "}
                 {/* name and company */}
                 <div className="flex flex-wrap md:flex-nowrap justify-between gap-5">
@@ -466,6 +675,7 @@ const Invoice_full = () => {
                       value={selectedClient}
                       onChange={(e) => setSelectedClient(e.value)}
                       options={clientOption}
+                      filter
                       optionLabel="label"
                       placeholder="Select a Client"
                       className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -488,6 +698,7 @@ const Invoice_full = () => {
                       value={selectedProject}
                       onChange={(e) => setSelectedProject(e.value)}
                       options={projectOption}
+                      filter
                       optionLabel="label"
                       placeholder="Select a Project"
                       className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -546,6 +757,32 @@ const Invoice_full = () => {
                     )}
                   </div>
                 </div>
+
+
+                {/* /invoice numbrf */}
+                {invoicetype === "Manual" && (
+                  <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3">
+                    <div className="w-[50%]">
+                      <label className="block text-sm font-medium mb-2">
+                        Invoice No <span className="text-red-500">*</span>
+                      </label>
+
+                      <input
+                        type="text"
+                        value={invoiceNo}
+                        onChange={(e) => setInvoiceNo(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+
+                      {errors.invoice_no && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.invoice_no}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* item */}
                 <div className="mt-3">
                   <div className="flex justify-between">
@@ -594,9 +831,9 @@ const Invoice_full = () => {
                           type="text"
                           placeholder="Hsn"
                           className="border p-2 rounded"
-                          value={item.hsn}
+                          value={item.hsnCode}
                           onChange={(e) =>
-                            handleChange(index, "hsn", e.target.value)
+                            handleChange(index, "hsnCode", e.target.value)
                           }
                         />
                       </div>
@@ -786,31 +1023,116 @@ const Invoice_full = () => {
                             }}
                             className="w-full h-11 px-2 py-2  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                           >
-                            <option value="">Select a status</option>
-                            <option value="paid">Paid</option>
-                            <option value="pending">Pending</option>
-                            <option value="overdue">Overdue</option>
+                            {/* <option value="">Select a status</option> */}
+                            <option value="" disabled selected>
+                              Payment Status
+                            </option>
+                            <option value="invoice_raised">Invoice Raised</option>
+
+                            <option value="advance_pending">Advance Pending</option>
+                            <option value="advance_received">Advance Received</option>
+                            <option value="partial_payment_pending">
+                              Partial Payment Pending
+                            </option>
+                            <option value="partial_payment_received">
+                              Partial Payment Received
+                            </option>
+                            <option value="final_payment_pending">
+                              Final payment Pending
+                            </option>
+
+
+                            <option value="completed">Completed</option>
+                            <option value="TDS">TDS</option>
 
                           </select>
-                          {errors.status && (
-                            <p className="text-red-500 text-sm mb-4">
-                              {errors.status}
-                            </p>
-                          )}
+
                         </div>
-                        {/* {status === "paid" && (
-  <div className="mt-4">
-    <label className="block text-sm font-medium text-gray-700 mb-1">
-      Paid Date
-    </label>
-    <input
-      type="date"
-      value={paidDate}
-      onChange={(e) => setPaidDate(e.target.value)}
-      className="w-full h-11 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-    />
-  </div>
-)} */}
+                        {errors.status && (
+                          <p className="text-red-500 text-sm mb-4 flex justify-end">
+                            {errors.status}
+                          </p>
+                        )}
+                        {status && !["invoice_raised", "advance_pending", "final_payment_pending", "partial_payment_pending"].includes(status) && (
+
+                          <div className="w-full flex mt-3">
+                            <label className="w-[50%] text-sm font-medium">
+                              Date <span className="text-red-500">*</span>
+                            </label>
+
+                            <input
+                              type="date"
+                              value={paidDate}
+                              onChange={(e) => setPaidDate(e.target.value)}
+                              className="w-full h-11 px-3 border rounded-lg"
+                            />
+                          </div>
+                        )}
+
+                        {errors.paidDate && (
+                          <p className="text-red-500 text-sm mt-1 text-end">{errors.paidDate}</p>
+                        )}
+
+
+
+
+                        {status && !["invoice_raised", "advance_pending", "final_payment_pending", "partial_payment_pending"].includes(status) && (
+                          <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
+                            <label className="block text-sm font-medium mb-2 w-[50%]">
+                              Amount <span className="text-red-500">*</span>
+                            </label>
+
+                            <input
+                              type="number"
+                              value={amount}
+                              onChange={(e) => {
+                                setAmount(e.target.value);
+                                setErrors((prev) => ({ ...prev, amount: "" }));
+                              }}
+                              className="w-full h-11 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+
+
+                          </div>
+                        )}
+
+                        {errors.amount && (
+                          <p className="text-red-500 text-sm mt-1 text-end">{errors.amount}</p>
+                        )}
+
+
+
+                        {status && !["invoice_raised", "advance_pending", "final_payment_pending", "partial_payment_pending"].includes(status) && (
+                          <div className="w-full flex flex-wrap md:flex-nowrap mt-3">
+                            <label className="block text-sm font-medium mb-2 w-[50%]">
+                              Payment Type <span className="text-red-500">*</span>
+                            </label>
+
+                            <select
+                              value={paymentType}
+                              onChange={(e) => {
+                                setPaymentType(e.target.value);
+                                setErrors((prev) => ({ ...prev, paymentType: "" }));
+                              }}
+                              className="w-full h-11 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="" disabled>
+                                Select Payment Type
+                              </option>
+                              <option value="gpay">GPay</option>
+                              <option value="bank">Bank Transfer</option>
+                              <option value="cash">Cash</option>
+                              <option value="upi">UPI</option>
+                            </select>
+
+
+                          </div>
+                        )}
+                        {errors.paymentType && (
+                          <p className="text-red-500 text-sm mt-1 text-end">{errors.paymentType}</p>
+                        )}
+
+
 
                       </div>
                     </div>
@@ -821,168 +1143,337 @@ const Invoice_full = () => {
               {/* right */}
 
               <div className="w-full md:w-[30%] md:border-l-4 p-3">
-                <button
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 min-w-full h-10 font-semibold rounded"
-                  onClick={handlesubmit}
-                >
-                  Save
-                </button>
-                <hr className="mt-5"></hr>
+                <div className="w-full">
+                  <button
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 min-w-full h-10 font-semibold rounded"
+                    onClick={handlesubmit}
+                  >
+                    Save
+                  </button>
 
-                <div>
-                  {" "}
-                  <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3 p-2">
-                    <div className="w-full">
-                      <label
-                        htmlFor="country"
-                        className="block text-sm font-medium mb-2 text-gray-500"
-                      >
-                        Curreny
-                      </label>
-                      <Dropdown
-                        value={currency}
-                        onChange={(e) => setCurreny(e.value)}
-                        options={currencyOptions}
-                        optionLabel="name"
-                        placeholder="Select a Currency"
-                        className="border w-full border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                  </div>
+                  <hr className="mt-5"></hr>
 
-                  <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3 p-2">
+                  <div>
+                    {" "}
+                    <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3 p-2">
+                      <div className="w-full">
+                        <label
+                          htmlFor="country"
+                          className="block text-sm font-medium mb-2 text-gray-500"
+                        >
+                          Curreny
+                        </label>
+                        <Dropdown
+                          value={currency}
+                          onChange={(e) => setCurreny(e.value)}
+                          options={currencyOptions}
+                          optionLabel="name"
+                          placeholder="Select a Currency"
+                          className="border w-full border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
 
-                    <div className="w-[100%]">
-                      <label className="block text-sm font-medium text-gray-500 mb-2">
-                        Invoice Type
-                      </label>
-
-                      {/* Trigger */}
-                      <div
-                        onClick={() => setOpen(!open)}
-                        className="flex justify-between items-center border border-gray-300 rounded-xl px-4 py-3 cursor-pointer bg-white"
-                      >
-                        <span className="text-gray-700 truncate">{selected}</span>
-                        <span className="text-gray-400">▾</span>
+                        {errors.currency && (
+                          <p className="text-red-500 text-sm mb-4">
+                            {errors.currency}
+                          </p>
+                        )}
                       </div>
+                    </div>
 
-                      {/* Dropdown (DOWN-WISE) */}
-                      {open && (
-                        <div className="mt-2 border rounded-xl bg-white shadow-md">
+                    <div className="flex flex-wrap md:flex-nowrap justify-between gap-5 mt-3 p-2">
 
-                          {/* WITHOUT GST */}
-                          <div
-                            onClick={() => selectItem(["Without GST"])}
-                            className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
-                          >
-                            Without GST
-                          </div>
+                      <div className="w-full ">
+                        <label className="block text-sm font-medium text-gray-500 mb-2">
+                          Invoice Type
+                        </label>
 
-                          {/* TAX INVOICE */}
-                          <div className="px-4 py-2">
+                        {/* Trigger */}
+                        <div
+                          onClick={() => setOpen(!open)}
+                          className="flex justify-between items-center border border-gray-300 rounded-xl px-2 py-3 cursor-pointer bg-white"
+                        >
+                          <span className="text-gray-700 truncate">{selected}</span>
+                          <span className="text-gray-400">▾</span>
+                        </div>
+
+                        {/* Dropdown (DOWN-WISE) */}
+                        {open && (
+                          
+                          <div ref={dropdownRef} className="mt-2 border rounded-xl bg-white shadow-md">
+
+                            {/* WITHOUT GST */}
                             <div
-                              onClick={() => setTaxOpen(!taxOpen)}
-                              className="flex justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
+                              onClick={() => selectItem(["Without GST"])}
+                              className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
                             >
-                              <span>Tax Invoice</span>
-                              <span>{taxOpen ? "▲" : "▼"}</span>
+                              Without GST
                             </div>
 
-                            {/* INTRA / INTER */}
-                            {taxOpen && (
-                              <div className="ml-4 mt-2 space-y-1">
-
-                                {/* INTRA */}
-                                <div>
-                                  <div
-                                    onClick={() => {
-                                      setIntraOpen(!intraOpen);
-                                      setInterOpen(false);
-                                    }}
-                                    className="flex text-[16px] justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
-                                  >
-                                    <span>Intra</span>
-                                    <span>{intraOpen ? "▲" : "▼"}</span>
-                                  </div>
-
-                                  {intraOpen && (
-                                    <div className=" mt-2 space-y-1">
-                                      <div
-                                        onClick={() =>
-                                          selectItem(["Tax Invoice", "Intra", "Proforma Invoice"])
-                                        }
-                                        className=" py-2 text-[14px] hover:bg-green-50 rounded cursor-pointer"
-                                      >
-                                        Proforma Invoice
-                                      </div>
-                                      <div
-                                        onClick={() =>
-                                          selectItem(["Tax Invoice", "Intra", "Tax Invoice"])
-                                        }
-                                        className=" py-2 text-[14px] hover:bg-green-50 rounded cursor-pointer"
-                                      >
-                                        Tax Invoice
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-
-                                {/* INTER */}
-                                <div>
-                                  <div
-                                    onClick={() => {
-                                      setInterOpen(!interOpen);
-                                      setIntraOpen(false);
-                                    }}
-
-                                    className="flex text-[16px] justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
-                                  >
-                                    <span>Inter</span>
-                                    <span>{interOpen ? "▲" : "▼"}</span>
-                                  </div>
-
-                                  {interOpen && (
-                                    <div className=" mt-2 space-y-2">
-                                      <div
-                                        onClick={() =>
-                                          selectItem(["Tax Invoice", "Inter", "Proforma Invoice"])
-                                        }
-                                        className=" py-2 text-[14px] hover:bg-green-50 rounded cursor-pointer"
-                                      >
-                                        Proforma Invoice
-                                      </div>
-                                      <div
-                                        onClick={() =>
-                                          selectItem(["Tax Invoice", "Inter", "Tax Invoice"])
-                                        }
-                                        className="py-2 text-[14px] hover:bg-green-50 rounded cursor-pointer"
-                                      >
-                                        Tax Invoice
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-
+                            {/* TAX INVOICE */}
+                            <div className="px-4 py-2">
+                              <div
+                                onClick={() => setTaxOpen(!taxOpen)}
+                                className="flex justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
+                              >
+                                <span>Tax Invoice</span>
+                                <span>{taxOpen ? "▲" : "▼"}</span>
                               </div>
-                            )}
-                          </div>
 
-                          {/* EXPORT */}
-                          <div
-                            onClick={() => selectItem(["Export"])}
-                            className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
-                          >
-                            Export
-                          </div>
+                              {/* INTRA / INTER */}
+                              {taxOpen && (
+                                <div className="ml-4 mt-2 space-y-1">
 
+                                  {/* INTRA */}
+                                  <div>
+                                    <div
+                                      onClick={() => {
+                                        setIntraOpen(!intraOpen);
+                                        setInterOpen(false);
+                                      }}
+                                      className="flex text-[16px] justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
+                                    >
+                                      <span>Intra</span>
+                                      <span>{intraOpen ? "▲" : "▼"}</span>
+                                    </div>
+
+                                    {intraOpen && (
+                                      <div className=" mt-2 space-y-1">
+                                        <div
+                                          onClick={() =>
+                                            selectItem(["Tax Invoice", "Intra", "Proforma Invoice"])
+                                          }
+                                          className=" py-2 text-[12px] px-2 hover:bg-blue-50 rounded cursor-pointer"
+                                        >
+                                          Proforma Invoice
+                                        </div>
+                                        <div
+                                          onClick={() =>
+                                            selectItem(["Tax Invoice", "Intra", "Tax Invoice"])
+                                          }
+                                          className=" py-2 text-[12px] px-2 hover:bg-blue-50 rounded cursor-pointer"
+                                        >
+                                          Tax Invoice
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {/* INTER */}
+                                  <div>
+                                    <div
+                                      onClick={() => {
+                                        setInterOpen(!interOpen);
+                                        setIntraOpen(false);
+                                      }}
+
+                                      className="flex text-[16px] justify-between items-center cursor-pointer hover:bg-gray-50  py-2 rounded-lg"
+                                    >
+                                      <span>Inter</span>
+                                      <span>{interOpen ? "▲" : "▼"}</span>
+                                    </div>
+
+                                    {interOpen && (
+                                      <div className=" mt-2 space-y-2">
+                                        <div
+                                          onClick={() =>
+                                            selectItem(["Tax Invoice", "Inter", "Proforma Invoice"])
+                                          }
+                                          className=" py-2 text-[12px] px-2 hover:bg-blue-50 rounded cursor-pointer"
+                                        >
+                                          Proforma Invoice
+                                        </div>
+                                        <div
+                                          onClick={() =>
+                                            selectItem(["Tax Invoice", "Inter", "Tax Invoice"])
+                                          }
+                                          className="py-2 text-[12px] px-2 hover:bg-blue-50 rounded cursor-pointer"
+                                        >
+                                          Tax Invoice
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                </div>
+                              )}
+                            </div>
+
+                            {/* EXPORT */}
+                            <div
+                              onClick={() => selectItem(["Export"])}
+                              className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
+                            >
+                              Export
+                            </div>
+
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+
+                  </div>
+                  <hr className="mt-5"></hr>
+                  {/* 
+                <div className="p-2">
+                  <button
+                    onClick={() => {
+                      setSelectedLogs(logdetails);
+                      setOpenlog(true);
+                    }}
+                    className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    <FaEye size={18} />
+                    <span>View Payment History</span>
+                  </button>
+                </div> */}
+
+                 {/* <div className="p-2">
+  {logdetails && logdetails.length > 0 ? (
+    <div className="max-h-[500px] overflow-y-auto border border-gray-200 rounded-xl">
+      <table className="w-full text-sm">
+        <thead className="bg-blue-50 sticky top-0 z-10">
+          <tr>
+            <th className="px-4 py-3 text-left font-semibold text-gray-600">
+              Date
+            </th>
+            <th className="px-4 py-3 text-left font-semibold text-gray-600">
+              Status
+            </th>
+            <th className="px-4 py-3 text-right font-semibold text-gray-600">
+              Amount (₹)
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {logdetails.map((log, i) => (
+            <tr
+              key={i}
+              className={`border-b transition ${
+                i % 2 === 0 ? "bg-white" : "bg-gray-50"
+              } hover:bg-blue-50`}
+            >
+              <td className="px-4 py-3 font-medium text-gray-800">
+                <span className="text-gray-500 text-sm">
+                  {log.paidDate ? formatDateTime(log.paidDate) : "-"}
+                </span>
+              </td>
+
+              <td className="px-4 py-3 text-gray-800">
+                {capitalizeFirstLetter(log.status)}
+              </td>
+
+              <td className="px-4 py-3 text-right font-semibold text-green-600">
+                {log.amount ? `₹${log.amount}` : "-"}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ) : (
+    <div className="text-gray-500 font-medium text-lg mt-2">
+      No transactions available
+    </div>
+  )}
+</div> */}
+
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+              </div>
+              {openlog && (
+                <div
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+                  onClick={() => setOpenlog(false)}
+                >
+                  <div
+                    className="bg-white rounded-2xl w-[60%] max-w-6xl h-[85vh] shadow-2xl flex flex-col"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+
+                    {/* Header */}
+                    <div className="flex items-center justify-between px-6 py-4 border-b">
+                      <h2 className="text-xl font-semibold text-gray-800">
+                        Payment Log Details
+                      </h2>
+                      <button
+                        onClick={() => setOpenlog(false)}
+                        className="text-gray-400 hover:text-gray-700 text-2xl"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    {/* Table Wrapper */}
+                    <div className="flex-1 overflow-y-auto px-6 py-4">
+                      {selectedLogs && selectedLogs.length > 0 ? (
+                        <table className="w-full text-sm border border-gray-200 rounded-xl overflow-hidden">
+                          {/* Table Head */}
+                          <thead className="bg-blue-50 sticky top-0 z-10">
+                            <tr>
+                              <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                                Invoice No
+                              </th>
+                              <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                                Status
+                              </th>
+                              <th className="px-4 py-3 text-left font-semibold text-gray-600">
+                                Paid Date
+                              </th>
+                              <th className="px-4 py-3 text-right font-semibold text-gray-600">
+                                Amount (₹)
+                              </th>
+                            </tr>
+                          </thead>
+
+                          {/* Table Body */}
+                          <tbody>
+                            {selectedLogs.map((log, i) => (
+                              <tr
+                                key={i}
+                                className={`border-b transition
+                    ${i % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                    hover:bg-blue-50`}
+                              >
+                                <td className="px-4 py-3 font-medium text-gray-800">
+                                  #{log.invoice_number || "-"}
+                                </td>
+                                <td className="px-4 py-3 text-gray-800">
+                                  {capitalizeFirstLetter(log.status)}
+                                </td>
+                                <td className="px-4 py-3 text-gray-600">
+                                  {new Date(log.paidDate).toLocaleDateString("en-IN")}
+                                </td>
+                                <td className="px-4 py-3 text-right font-semibold text-green-600">
+                                  ₹{log.amount}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      ) : (
+                        <div className="flex items-center justify-center h-full text-gray-500 font-medium text-lg">
+                          No transactions available
                         </div>
                       )}
                     </div>
                   </div>
-
-
                 </div>
-              </div>
+              )}
+
             </div>
           </div>
         </div>

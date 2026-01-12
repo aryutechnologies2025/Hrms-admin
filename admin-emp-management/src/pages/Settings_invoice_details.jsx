@@ -49,52 +49,58 @@ const Settings_invoice_details = () => {
   const [invoiceTerms, setInvoiceTerms] = useState("");
 
   const [igst, setIgst] = useState("");
-const [sgst, setSgst] = useState("");
-const [cgst, setCgst] = useState("");
+  const [sgst, setSgst] = useState("");
+  const [cgst, setCgst] = useState("");
+
+  const [declarationNo, setDeclarationNo] = useState("");
+  // const [declarationDate, setDeclarationDate] = useState("");
 
 
+  const [invoiceType, setInvoiceType] = useState("Automatic");
 
 
-
- const fetchSettings = async () => {
+  const fetchSettings = async () => {
     setLoading(true);
     try {
       const response = await axios.get(`${API_URL}/api/setting/view-invoice-setting`,
-        {withCredentials: true}
+        { withCredentials: true }
       );
       // console.log("response", response);
-    
+
       if (response.data.success) {
 
-          const data = response.data.data?.[0]; 
+        const data = response.data.data?.[0];
 
-          console.log("data",data)
+        console.log("data", data)
 
-      // Invoice details
-      setInvoiceAddress(data.invoiceAddress || "");
-      setInvoiceState(data.invoiceState || "");
-      setInvoiceCity(data.invoiceCity || "");
-      setInvoiceGstin(data.invoiceGstin || "");
-      setInvoiceEmail(data.invoiceEmail || "");
-      setInvoicePhone(data.invoicePhone || "");
+        // Invoice details
+        setInvoiceAddress(data.invoiceAddress || "");
+        setInvoiceState(data.invoiceState || "");
+        setInvoiceCity(data.invoiceCity || "");
+        setInvoiceGstin(data.invoiceGstin || "");
+        setInvoiceEmail(data.invoiceEmail || "");
+        setInvoicePhone(data.invoicePhone || "");
 
-      // Bank details
-      setAccountName(data.accountName || "");
-      setBankName(data.bankName || "");
-      setAccountNumber(data.accountNumber || "");
-      setIfscCode(data.ifscCode || "");
-      setBranchName(data.branchName || "");
-      setInvoiceTerms(data.invoiceTerms || "");
+        // Bank details
+        setAccountName(data.accountName || "");
+        setBankName(data.bankName || "");
+        setAccountNumber(data.accountNumber || "");
+        setIfscCode(data.ifscCode || "");
+        setBranchName(data.branchName || "");
+        setInvoiceTerms(data.invoiceTerms || "");
+        setDeclarationNo(data.declaration || "");
+        setInvoiceType(data?.invoiceId_option || "");
+        // setDeclarationDate(data.declarationDate || "");
 
-      // GST details
-      setIgst(data.igst || "");
-      setSgst(data.sgst || "");
-      setCgst(data.cgst || "");
-        
+        // GST details
+        setIgst(data.igst || "");
+        setSgst(data.sgst || "");
+        setCgst(data.cgst || "");
 
-      // dynamic update date format in context
-   
-       setLoading(false); 
+
+        // dynamic update date format in context
+
+        setLoading(false);
       } else {
         setErrors("Failed to fetch roles.");
       }
@@ -108,35 +114,38 @@ const [cgst, setCgst] = useState("");
     e.preventDefault();
     try {
       const formData = {
-         invoiceAddress,
-      invoiceState,
-      invoiceCity,
-      invoiceGstin,
-      invoiceEmail,
-      invoicePhone,
+        invoiceAddress,
+        invoiceState,
+        invoiceCity,
+        invoiceGstin,
+        invoiceEmail,
+        invoicePhone,
 
-      accountName,
-      bankName,
-      accountNumber,
-      ifscCode,
-      branchName,
-      invoiceTerms,
+        accountName,
+        bankName,
+        accountNumber,
+        ifscCode,
+        branchName,
+        invoiceTerms,
 
-      igst,
-      sgst,
-      cgst,
+        igst,
+        sgst,
+        cgst,
+
+        declaration: declarationNo,
+        invoiceId_option:invoiceType,
       };
 
       const response = await axios.post(
-      
+
         `${API_URL}/api/setting/create-invoice-setting`,
-        formData,{withCredentials: true}
+        formData, { withCredentials: true }
       );
       console.log("response:", response);
       toast.success("Settings updated successfully!");
 
-      
-      
+
+
       setErrors({});
     } catch (err) {
       setErrors(err.response.data.errors);
@@ -351,6 +360,35 @@ const [cgst, setCgst] = useState("");
                               className="border w-[50%] border-gray-300 rounded-lg p-2 text-sm"
                             />
                           </div>
+
+                          {/* mannal and automatv */}
+                          <div className="flex flex-col gap-2 w-full">
+                            <div className="flex flex-col gap-2 w-full md:w-[40%]">
+                              <label
+                                htmlFor="invoiceNumber"
+                                className="block text-sm font-medium text-gray-700"
+                              >
+                                INVOICE NUMBER TYPE
+                              </label>
+
+                              {/* Toggle Switch */}
+                              <div
+                                onClick={() =>
+                                  setInvoiceType(invoiceType === "Automatic" ? "Manual" : "Automatic")
+                                }
+                                className={`w-14 h-8 flex items-center rounded-full p-1 cursor-pointer transition ${invoiceType === "Manual" ? "bg-green-500" : "bg-gray-300"
+                                  }`}
+                              >
+                                <div
+                                  className={`bg-white w-6 h-6 rounded-full shadow-md transform transition ${invoiceType === "Manual" ? "translate-x-6" : ""
+                                    }`}
+                                />
+                              </div>
+                              <span className="text-sm text-gray-600">{invoiceType}</span>
+
+
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -369,6 +407,20 @@ const [cgst, setCgst] = useState("");
                         value={invoiceTerms}
                         onChange={(e) => setInvoiceTerms(e.target.value)}
                         placeholder="Enter terms & conditions"
+                        rows={4}
+                        className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition resize-none"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2 w-full">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Declaration
+                      </label>
+
+                      <textarea
+                        value={declarationNo}
+                        onChange={(e) => setDeclarationNo(e.target.value)}
+                        placeholder="Enter Declaration"
                         rows={4}
                         className="border w-[50%] border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-2 text-sm outline-none transition resize-none"
                       />

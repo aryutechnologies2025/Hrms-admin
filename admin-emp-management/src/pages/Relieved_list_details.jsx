@@ -48,21 +48,30 @@ const Relieved_list_details = () => {
   const [alldatarow, setAlldatarow] = useState("");
   const EmpolyeeId = alldatarow.id;
 
-  // console.log("EmpolyeeId",EmpolyeeId);
-  window.onClickCard = function (id) {
-    navigate(`/employeedetails/${id}`);
-  };
+  console.log("EmpolyeeId",EmpolyeeId);
+  useEffect(() => {
+    window.onClickCard = (id) => {
+      if (!id) return;
+
+      console.log("Navigating to employee:", id); 
+      navigate(`/employeedetails/${id}`);
+    };
+
+    return () => {
+      delete window.onClickCard; 
+    };
+  }, [navigate]);
 
 
   const openAddModal = (row) => {
     setAlldatarow(row);
     setIsAddModalOpen(true);
-    setTimeout(() => setIsAnimating(true), 10); // Delay to trigger animation
+    setTimeout(() => setIsAnimating(true), 10); 
   };
 
   const closeAddModal = () => {
     setIsAnimating(false);
-    setTimeout(() => setIsAddModalOpen(false), 250); // Delay to trigger animation
+    setTimeout(() => setIsAddModalOpen(false), 250); 
   };
 
   const closeEditModal = () => {
@@ -86,6 +95,7 @@ const Relieved_list_details = () => {
   const userid = parsedDetails ? parsedDetails.id : null;
   const [errors, setErrors] = useState({});
   const [clientdetails, setClientdetails] = useState([]);
+  // console.log("clientdetails",clientdetails);
   // const [employeeid ,setEmployeeid] =useState([]);
 
   const [letterlistdetails, setLetterlistdetails] = useState([]);
@@ -101,7 +111,7 @@ const Relieved_list_details = () => {
         withCredentials: true,
       }
       );
-      // console.log("re", response);
+      // console.log("re 1", response);
       if (response.data.success) {
         setClientdetails(response.data.data);
         setLoading(false);
@@ -121,7 +131,7 @@ const Relieved_list_details = () => {
         `${API_URL}/api/employees/reliving-list,${EmpolyeeId}`,
         { withCredentials: true }
       );
-      // console.log("re", response);
+      // console.log("re 2", response);
       if (response.data.success) {
         setLetterlistdetails(response);
         setLoading(false);
@@ -173,11 +183,14 @@ const Relieved_list_details = () => {
         employeeName: alldatarow?.employeeName,
         employeeId: alldatarow?.employeeId,
         role: alldatarow?.role,
-        dateOfJoining: alldatarow?.dateOfBirth
-          ? new Date(alldatarow.dateOfBirth).toISOString()
+        dateOfJoining: alldatarow?.dateOfJoining
+          ? new Date(alldatarow.dateOfJoining).toISOString()
           : null,
         lastRelivingDate: alldatarow?.lastDate
           ? new Date(alldatarow.lastDate).toISOString()
+          : null,
+        totalDays: alldatarow?.totalDays
+          ? new Date(alldatarow.totalDays).toISOString()
           : null,
         verification,
         status: alldatarow.status,
@@ -237,10 +250,11 @@ const Relieved_list_details = () => {
       title: "Employee",
       data: null,
       render: function (data, type, row) {
-        if (!row.employeeId) return "-";
+        if (!row.id) return "-";
 
         return `
-      <div class="cursor-pointer" onclick="onClickCard('${row.employeeId._id}')">
+      <div class="cursor-pointer"
+           onclick="window.onClickCard('${row.id}')">
         ${row.employeeName}
         <br/>
         <span class="text-blue-600 text-sm">
@@ -253,7 +267,7 @@ const Relieved_list_details = () => {
 
     {
       title: "Joining Date",
-      data: "relievingCheckList.dateOfJoining",
+      data: "dateOfJoining",
       render: (data) => {
         if (!data) return "-";
         return formatDateTime(data);
@@ -271,9 +285,6 @@ const Relieved_list_details = () => {
     {
       title: "Notice period",
       data: "noticePeriod",
-      // render: (data) => {
-      //   return data || "-";
-      // },
     },
 
     {
@@ -286,12 +297,8 @@ const Relieved_list_details = () => {
     },
 
     {
-      title: "Total working date",
-      data: "totalDays",
-      render: (data) => {
-        if (!data) return "-";
-        return formatDateTime(data);
-      },
+      title: "Total working Period",
+      data: "TotalExperienceTillJoining",
     },
 
     {
@@ -444,6 +451,8 @@ const Relieved_list_details = () => {
     // },
   ];
 
+  // console.log("columns", columns);
+
   //   all buttons
 
   const step2Fields = [
@@ -473,6 +482,7 @@ const Relieved_list_details = () => {
         `${API_URL}/api/reliving/view-relivinglist`,
         { withCredentials: true }
       );
+      console.log("re 3", response);
       if (response.data.success) {
         // const list = response.data.data;
         setFields(response.data.data);
@@ -580,17 +590,21 @@ const Relieved_list_details = () => {
     container.style.position = "absolute";
     container.style.left = "-9999px";
     document.body.appendChild(container);
-
-    await new Promise((resolve) => {
+    const root = createRoot(container);
+    const contentReady = new Promise((resolve) => {
       root.render(
         <Letters_download
           letterTitle={letterTitle._id}
           employeeId={employeeId.id}
-          onReady={resolve} // called after mount
+          onReady={() => {
+            // Give a small delay to ensure DOM is fully updated
+            setTimeout(resolve, 300);
+          }}
         />
       );
     });
-
+    await contentReady;
+    await new Promise(resolve => setTimeout(resolve, 500));
     // capture canvas
     const canvas = await html2canvas(container, { scale: 1.5 });
 
@@ -723,17 +737,21 @@ const Relieved_list_details = () => {
     document.body.appendChild(container);
 
     // Wait for component to finish loading
-
-    await new Promise((resolve) => {
+    const root = createRoot(container);
+    const contentReady = new Promise((resolve) => {
       root.render(
         <Letters_download
           letterTitle={letterTitle._id}
           employeeId={employeeId.id}
-          onReady={resolve} // called after mount
+          onReady={() => {
+            // Give a small delay to ensure DOM is fully updated
+            setTimeout(resolve, 300);
+          }}
         />
       );
     });
-
+    await contentReady;
+    await new Promise(resolve => setTimeout(resolve, 500));
     // Capture the component
     const canvas = await html2canvas(container, { scale: 1.5 });
     const imgData = canvas.toDataURL("image/jpeg", 0.7);
@@ -808,7 +826,6 @@ const Relieved_list_details = () => {
             </div>
             {/* Add Button */}
             <div className="flex justify-between mt-2 mb-3">
-              <h1 className="text-2xl md:text-3xl font-semibold">Relieved List</h1>
               <div className="flex gap-3">
                 {" "}
                 {/* <button
@@ -844,11 +861,12 @@ const Relieved_list_details = () => {
                     paging: true,
                     searching: true,
                     ordering: true,
+                    order: [],    
                     scrollX: true,
                     responsive: true,
                     autoWidth: false,
                   }}
-                  className="display nowrap bg-white"
+                  className="display nowrap bg-white "
                 />
               </div>
             </div>
@@ -940,13 +958,13 @@ const Relieved_list_details = () => {
                     {/* date of join */}
                     <div className="mb-3 flex justify-between">
                       <label className="block text-sm font-medium mb-2">
-                        Date of Joinig
+                        Date of Joining
                       </label>
                       <input
                         type="text"
                         // value={alldatarow?.dateOfBirth}
                         value={
-                          formatDateTime(alldatarow?.dateOfBirth)
+                          formatDateTime(alldatarow?.dateOfJoining)
                         }
                         disabled
                         className="w-[50%] px-3 py-2 border border-gray-300 bg-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"

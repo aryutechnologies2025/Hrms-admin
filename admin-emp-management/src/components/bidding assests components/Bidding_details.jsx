@@ -29,7 +29,11 @@ import { VscTasklist } from "react-icons/vsc";
 import { FaTasks } from "react-icons/fa";
 import { GoProjectSymlink } from "react-icons/go";
 import { LuLink } from "react-icons/lu";
-import { useDateUtils  } from "../../hooks/useDateUtils";
+import { useDateUtils } from "../../hooks/useDateUtils";
+import { capitalizeFirstLetter } from "../../utils/StringCaps";
+// import { set } from "react-datepicker/dist/date_utils";
+// import { set } from "react-datepicker/dist/date_utils";
+
 
 
 
@@ -64,6 +68,11 @@ const Bidding_details = () => {
   // Fetch roles from the API
   useEffect(() => {
     fetchProject();
+
+  }, []);
+
+  useEffect(() => {
+    fetchAccTechList();
   }, []);
 
   //   const [status, setStatus] = useState("");
@@ -78,16 +87,44 @@ const Bidding_details = () => {
   const [carddata, setCarddata] = useState([]);
   // console.log("carddata", carddata);
 
+
+  const [accountBidderOptions, setAccountBidderOptions] = useState(null);
+  const [technologyBidderOptions, setTechnologyBidderOptions] = useState(null);
+  const [accountBidder, setAccountBidder] = useState(null);
+  // console.log("technologyBidderOptions", technologyBidderOptions);
+  const [accountfilter, setAccountfilter] = useState("");
+  const [techfilter, setTechfilter] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [createdBy, setCreatedBy] = useState("");
+  const [statusfilter, setStatusfilter] = useState("");
+
+   const [isOpen, setIsOpen] = useState(false);
+    const [selectedInvoiceId, setSelectedInvoiceId] = useState(null);
+
+    // console.log("selectedInvoiceId", selectedInvoiceId);
+  
+
   const fetchProject = async () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/bidder/view-employee-bidder`,
-        {withCredentials: true}
+        {
+          withCredentials: true,
+          params: {
+            account: accountfilter,
+            technology: techfilter,
+            status: statusfilter,
+            fromDate: fromDate,
+            toDate: toDate,
+            createdBy: createdBy,
+          },
+        }
       );
       // console.log(response);
       if (response.data.success) {
         setAccountdetails(response.data.data);
-        setCarddata(response.data);
+        setCarddata(response.data?.AllTotalDetails);
         setLoading(false);
       } else {
         setErrors("Failed to fetch roles.");
@@ -114,7 +151,7 @@ const Bidding_details = () => {
       try {
         const res = await axios.delete(
           `${API_URL}/api/bidder/delete-employee-bidder/${id}`,
-          {withCredentials: true}
+          { withCredentials: true }
         );
         Swal.fire("Deleted!", "The Status has been deleted.", "success");
         // console.log("res", res);
@@ -129,74 +166,103 @@ const Bidding_details = () => {
     }
   };
 
-  // filter
-  const [filters, setFilters] = useState({
-    account: "",
-    technology: "",
-    createdBy: "",
-    date: "",
-    status: "",
-    reply: "",
-  });
 
-  // Temporary values before submit
-  const [temp, setTemp] = useState(filters);
+  // all account anf tech filietr
 
-  // unique values
-  const accounts = [
-    ...new Set(accountdetails.map((r) => r.account?.name).filter(Boolean)),
-  ];
-  const techs = [
-    ...new Set(accountdetails.map((r) => r.technology?.name).filter(Boolean)),
-  ];
-  const creators = [
-    ...new Set(
-      accountdetails.map((r) => r.createdBy?.employeeName).filter(Boolean)
-    ),
-  ];
-  const statusOptions = [
-    ...new Set(accountdetails.map((r) => r.status).filter(Boolean)),
-  ];
-  const replyOptions = [
-    ...new Set(accountdetails.map((r) => r.reply).filter(Boolean)),
-  ];
+  const fetchAccTechList = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/bidder/view-account-technology-bidder`,
+        { withCredentials: true }
+      );
 
-  // Filter data after submit
-  const filteredData = useMemo(() => {
-    return accountdetails.filter(
-      (r) =>
-        (!filters.account || r.account?.name === filters.account) &&
-        (!filters.technology || r.technology?.name === filters.technology) &&
-        (!filters.createdBy ||
-          r.createdBy?.employeeName === filters.createdBy) &&
-        (!filters.date ||
-          new Date(r.date).toLocaleDateString("en-GB") ===
-          new Date(filters.date).toLocaleDateString("en-GB")) &&
-        (!filters.status || r.status === filters.status) &&
-        (!filters.reply ||
-          r.reply?.toLowerCase().includes(filters.reply.toLowerCase())) // New line
-    );
-  }, [accountdetails, filters]);
+      // console.log("response", response);
 
-  const handleSubmit = () => setFilters(temp);
-  const handleReset = () => {
-    setTemp({
-      account: "",
-      technology: "",
-      createdBy: "",
-      date: "",
-      status: "",
-      reply: "",
-    });
-    setFilters({
-      account: "",
-      technology: "",
-      createdBy: "",
-      date: "",
-      status: "",
-      reply: "",
-    });
+      const accountBidderOptions = response.data.data?.accountBidder?.map(
+        (data) => ({
+          label: data.name,
+          value: data._id,
+        })
+      );
+      const technologyBidderOptions = response.data.data?.technologyBidder?.map(
+        (data) => ({
+          label: data.name,
+          value: data._id,
+        })
+      );
+
+      const bidderEmp = response.data.data?.bidder?.map((data) => ({
+        label: data.employeeName,
+        value: data._id,
+      }));
+
+
+      setTechnologyBidderOptions(technologyBidderOptions);
+      setAccountBidderOptions(accountBidderOptions);
+      setAccountBidder(bidderEmp);
+    } catch (err) {
+      setErrors("Failed to fetch biddingList.");
+    }
   };
+
+  const handleReset = async () => {
+    setAccountfilter("");
+    setTechfilter("");
+    setStatusfilter("");
+    setFromDate("");
+    setToDate("");
+    setCreatedBy("");
+
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/bidder/view-employee-bidder`,
+        {
+          withCredentials: true,
+          params: {
+            account: "",
+            technology: "",
+            status: "",
+            fromDate: "",
+            toDate: "",
+            createdBy: "",
+          },
+        }
+      );
+      // console.log(response);
+      if (response.data.success) {
+        setAccountdetails(response.data.data);
+        setCarddata(response.data?.AllTotalDetails);
+        setLoading(false);
+      } else {
+        setErrors("Failed to fetch roles.");
+      }
+    } catch (err) {
+      setErrors("Failed to fetch roles.");
+      setLoading(false);
+    }
+  };
+
+  // filter
+
+
+  const statusOptions = [
+    { label: "Submitted", value: "submitted" },
+    { label: "Responded", value: "responded" },
+    { label: "Requirements", value: "requirements" },
+    { label: "Follow-Up", value: "follow_up" },
+    { label: "Sales Converted", value: "sales_converted" },
+    { label: "Unqualified", value: "unqualified" },
+  ];
+
+
+
+
+
+
+
+
+
+
   const columns = [
     {
       title: "Sno",
@@ -230,11 +296,11 @@ const Bidding_details = () => {
       render: (row) => row.technology?.name || "-",
     },
 
-    {
-      title: "Reply",
-      data: null,
-      render: (row) => row.reply || "-",
-    },
+    // {
+    //   title: "Reply",
+    //   data: null,
+    //   render: (row) => row.reply || "-",
+    // },
     {
       title: "Link",
       data: "link",
@@ -255,7 +321,7 @@ const Bidding_details = () => {
               >
                 <LuLink className="text-blue-600 size-5 items-center cursor-pointer" />
               </a>,
-              container
+
             );
           }
         }, 0);
@@ -281,20 +347,26 @@ const Bidding_details = () => {
       render: (row) => row.createdBy?.employeeName || "-",
     },
 
-    {
-      title: "Status",
-      data: "status",
-      render: (data, type, row) => {
-        const textColor =
-          data === "Completed"
-            ? "text-green-600 border rounded-full border-green-600"
-            : "text-red-600 border rounded-full border-red-600";
+    // {
+    //   title: "Status",
+    //   data: "status",
+    //   render: (data, type, row) => {
+    //     const textColor =
+    //       data === "Completed"
+    //         ? "text-green-600 border rounded-full border-green-600"
+    //         : "text-red-600 border rounded-full border-red-600";
 
-        return `<div class="${textColor}" style="display: inline-block; padding: 2px; color: ${textColor}; border: 1px solid ${textColor}; text-align: center; width:100px; font-size: 16px;">
-                  ${data === "Completed" ? "Completed" : "Pending"}
-                </div>`;
-      },
-    },
+    //     return `<div class="${textColor}" style="display: inline-block; padding: 2px; color: ${textColor}; border: 1px solid ${textColor}; text-align: center; width:100px; font-size: 16px;">
+    //               ${data === "Completed" ? "Completed" : "Pending"}
+    //             </div>`;
+    //   },
+    // },
+     {
+          title: "Status",
+          data: "status",
+          render: (data) => capitalizeFirstLetter(data) || "-",
+    
+        },
     {
       title: "Action",
       data: null,
@@ -327,6 +399,14 @@ const Bidding_details = () => {
                     color: "#000",
                   }}
                 >
+                  <FaEye
+                    className="cursor-pointer"
+                    title="Edit"
+                    onClick={() => {
+                      setSelectedInvoiceId(row);
+                      setIsOpen(true);
+                    }}
+                  />
                   <MdOutlineDeleteOutline
                     className="text-red-600 text-xl cursor-pointer"
                     onClick={() => handleDelete(row._id)}
@@ -341,7 +421,7 @@ const Bidding_details = () => {
                       />
                     </div> */}
               </div>,
-              container
+
             );
           }
         }, 0);
@@ -412,11 +492,11 @@ const Bidding_details = () => {
       ) : (
         <>
           <div>
-           
+
 
             <div className="cursor-pointer">
-               <Mobile_Sidebar />
-               
+              <Mobile_Sidebar />
+
             </div>
             <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
               <p
@@ -428,16 +508,16 @@ const Bidding_details = () => {
               <p>{">"}</p>
               <p className="text-sm text-blue-500">Bidding Details</p>
               <p>{">"}</p>
-              </div>
+            </div>
             <h1 className="text-2xl md:text-3xl font-semibold mt-1 md:mt-4 mb-2 md:mb-3">
               Bidding Details
             </h1>
 
-            <div className="flex  flex-wrap  md:flex-nowrap justify-around  gap-5 my-8 text-[#6b7280] ">
+            {/* <div className="flex  flex-wrap  md:flex-nowrap justify-around  gap-5 my-8 text-[#6b7280] ">
               <div className="flex justify-between bg-[#f3f4f610]    border px-8 py-6 rounded-lg shadow-sm w-full">
                 <div className="">
-                  <h2 className="text-[16px]  font-semibold">No Of Connects</h2>
-                  <p className="text-[14px]  mt-2 ">{carddata.noOfConnects}</p>
+                  <h2 className="text-[16px]  font-semibold">Total Connects Spent</h2>
+                  <p className="text-[14px]  mt-2 ">{carddata.totalConnections}</p>
                 </div>
                 <div className="flex ">
                   <span className="text-blue-500 w-12 h-12 text-2xl bg-blue-200/30  rounded-full flex justify-center items-center">
@@ -450,7 +530,7 @@ const Bidding_details = () => {
                   <h2 className="text-[16px]   font-semibold">
                     How Many Reply
                   </h2>
-                  <p className="text-[14px]  mt-2">{carddata.reply}</p>
+                  <p className="text-[14px]  mt-2">{carddata.replyYes}</p>
                 </div>
                 <div className="flex">
                   <span className="text-blue-500 w-12 h-12 text-2xl bg-blue-200/30  rounded-full flex justify-center items-center">
@@ -464,7 +544,7 @@ const Bidding_details = () => {
                   <h2 className="text-[16px]  font-semibold ">
                     No Of Sales Converted
                   </h2>
-                  <p className="ext-[14px]  mt-2">12</p>
+                  <p className="ext-[14px]  mt-2">{carddata.salesConverted}</p>
                 </div>
                 <div className="flex">
                   <span className="text-blue-500 w-12 h-12 text-2xl bg-blue-200/30  rounded-full flex justify-center items-center">
@@ -476,7 +556,7 @@ const Bidding_details = () => {
               <div className="flex justify-between bg-[#f3f4f610]  border px-8 py-6 rounded-lg shadow-sm w-full">
                 <div className="">
                   <h2 className="text-[16px]  font-semibold">No Of Boost</h2>
-                  <p className="ext-[14px]  mt-2">{carddata.noOfBoosts}</p>
+                  <p className="ext-[14px]  mt-2">{carddata.totalBoost}</p>
                 </div>
                 <div className="flex">
                   <span className="text-blue-500 w-12 h-12 text-2xl bg-blue-200/30  rounded-full flex justify-center items-center">
@@ -485,7 +565,72 @@ const Bidding_details = () => {
                   </span>
                 </div>
               </div>
-            </div>
+            </div> */}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 my-8 text-gray-700">
+
+  {/* Card 1 */}
+  <div className="flex items-center gap-5 bg-white border rounded-xl px-6 py-5 shadow-sm hover:shadow-md transition">
+    <div className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 text-xl">
+      <GoProjectSymlink />
+    </div>
+    <div>
+      <h2 className="text-sm font-medium text-gray-500">
+        Total Connects Spent
+      </h2>
+      <p className="text-xl font-semibold text-gray-600 mt-1">
+        {carddata.totalConnections}
+      </p>
+    </div>
+  </div>
+
+  {/* Card 2 */}
+  <div className="flex items-center gap-5 bg-white border rounded-xl px-6 py-5 shadow-sm hover:shadow-md transition">
+    <div className="w-12 h-12 flex items-center justify-center rounded-full bg-green-100 text-green-600 text-xl">
+      <VscTasklist />
+    </div>
+    <div>
+      <h2 className="text-sm font-medium text-gray-500">
+        Replies Received
+      </h2>
+      <p className="text-xl font-semibold text-gray-600 mt-1">
+        {carddata.replyYes}
+      </p>
+    </div>
+  </div>
+
+  {/* Card 3 */}
+  <div className="flex items-center gap-5 bg-white border rounded-xl px-6 py-5 shadow-sm hover:shadow-md transition">
+    <div className="w-12 h-12 flex items-center justify-center rounded-full bg-purple-100 text-purple-600 text-xl">
+      <FaTasks />
+    </div>
+    <div>
+      <h2 className="text-sm font-medium text-gray-500">
+        Sales Converted
+      </h2>
+      <p className="text-xl font-semibold text-gray-600 mt-1">
+        {carddata.salesConverted}
+      </p>
+    </div>
+  </div>
+
+  {/* Card 4 */}
+  <div className="flex items-center gap-5 bg-white border rounded-xl px-6 py-5 shadow-sm hover:shadow-md transition">
+    <div className="w-12 h-12 flex items-center justify-center rounded-full bg-orange-100 text-orange-600 text-xl">
+      <FaTasks />
+    </div>
+    <div>
+      <h2 className="text-sm font-medium text-gray-500">
+        Total Boosts
+      </h2>
+      <p className="text-xl font-semibold text-gray-600 mt-1">
+        {carddata.totalBoost}
+      </p>
+    </div>
+  </div>
+
+</div>
+
             {/* filter */}
             <div className=" p-1  flex flex-wrap gap-4 items-end mb-6">
               {/* Account Filter */}
@@ -493,18 +638,16 @@ const Bidding_details = () => {
                 <label className="text-sm font-medium text-gray-700 mb-1">
                   Account
                 </label>
-                <select
-                  value={temp.account}
-                  onChange={(e) =>
-                    setTemp({ ...temp, account: e.target.value })
-                  }
-                  className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">All Accounts</option>
-                  {accounts.map((a) => (
-                    <option key={a}>{a}</option>
-                  ))}
-                </select>
+                <Dropdown
+                  value={accountfilter}
+                  onChange={(e) => setAccountfilter(e.value)}
+                  options={accountBidderOptions}
+                  optionLabel="label"
+                  appendTo="self"
+                  placeholder="Select an Account"
+                  className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
               </div>
 
               {/* Technology Filter */}
@@ -512,62 +655,64 @@ const Bidding_details = () => {
                 <label className="text-sm font-medium text-gray-700 mb-1">
                   Technology
                 </label>
-                <select
-                  value={temp.technology}
-                  onChange={(e) =>
-                    setTemp({ ...temp, technology: e.target.value })
-                  }
-                  className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">All Technologies</option>
-                  {techs.map((t) => (
-                    <option key={t}>{t}</option>
-                  ))}
-                </select>
+                <Dropdown
+                  value={techfilter}
+                  onChange={(e) => setTechfilter(e.value)}
+                  options={technologyBidderOptions}
+                  optionLabel="label"
+                  appendTo="self"
+                  placeholder="Select an Account"
+                  className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
               </div>
 
               {/* Created By Filter */}
               <div className="flex flex-col w-full md:w-48">
                 <label className="text-sm font-medium text-gray-700 mb-1">
-                  Created By
+                  Bidder
                 </label>
-                <select
-                  value={temp.createdBy}
-                  onChange={(e) =>
-                    setTemp({ ...temp, createdBy: e.target.value })
-                  }
-                  className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">All Creators</option>
-                  {creators.map((c) => (
-                    <option key={c}>{c}</option>
-                  ))}
-                </select>
+                <Dropdown
+                  value={createdBy}
+                  onChange={(e) => setCreatedBy(e.value)}
+                  options={accountBidder}
+                  optionLabel="label"
+                  appendTo="self"
+                  placeholder="Select an Bidder"
+                  className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
               </div>
 
-              {/* Reply Filter */}
+
+              {/* Date Filter */}
+              {/* From Date Filter */}
               <div className="flex flex-col w-full md:w-48">
                 <label className="text-sm font-medium text-gray-700 mb-1">
-                  Reply
+                  From Date
                 </label>
                 <input
-                  type="text"
-                  value={temp.reply}
-                  onChange={(e) => setTemp({ ...temp, reply: e.target.value })}
-                  placeholder="Search reply"
+                  type="date"
+                  value={fromDate}
+                  onChange={(e) =>
+                    setFromDate(e.target.value)
+                  }
                   className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
-              {/* Date Filter */}
+              {/* To Date Filter */}
               <div className="flex flex-col w-full md:w-48">
                 <label className="text-sm font-medium text-gray-700 mb-1">
-                  Date
+                  To Date
                 </label>
                 <input
                   type="date"
-                  value={temp.date}
-                  onChange={(e) => setTemp({ ...temp, date: e.target.value })}
+                  min={fromDate}
+                  value={toDate}
+                  onChange={(e) =>
+                    setToDate(e.target.value)
+                  }
                   className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -577,22 +722,22 @@ const Bidding_details = () => {
                 <label className="text-sm font-medium text-gray-700 mb-1">
                   Status
                 </label>
-                <select
-                  value={temp.status}
-                  onChange={(e) => setTemp({ ...temp, status: e.target.value })}
-                  className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select Status</option>
-                  {statusOptions.map((c) => (
-                    <option key={c}>{c}</option>
-                  ))}
-                </select>
+                <Dropdown
+                  value={statusfilter}
+                  onChange={(e) => setStatusfilter(e.value)}
+                  options={statusOptions}
+                  optionLabel="label"
+                  appendTo="self"
+                  placeholder="Select Status"
+                  className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
               </div>
 
               {/* Buttons */}
               <div className="flex gap-3 mt-3 sm:mt-6">
                 <button
-                  onClick={handleSubmit}
+                  onClick={fetchProject}
                   className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg shadow transition duration-150"
                 >
                   Submit
@@ -604,6 +749,7 @@ const Bidding_details = () => {
                   Reset
                 </button>
               </div>
+
             </div>
 
             {/* Add Button */}
@@ -621,7 +767,7 @@ const Bidding_details = () => {
               {/* Responsive wrapper for the table */}
               <div className="table-scroll-container" id="datatable">
                 <DataTable
-                  data={filteredData}
+                  data={accountdetails}
                   columns={columns}
                   options={{
                     paging: true,
@@ -630,11 +776,183 @@ const Bidding_details = () => {
                     scrollX: true,
                     responsive: true,
                     autoWidth: false,
+                      
                   }}
+       
                   className="display nowrap bg-white"
                 />
               </div>
             </div>
+
+             {isOpen && selectedInvoiceId && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3">
+                <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl">
+            
+                  {/* Header */}
+                  <div className="flex items-center justify-between px-4 py-2 border-b">
+                    <h2 className="text-base font-semibold text-gray-800">
+                      Bidding Details
+                    </h2>
+                    <button
+                      onClick={() => setIsOpen(false)}
+                      className="text-gray-400 hover:text-gray-700 text-lg"
+                    >
+                      ✕
+                    </button>
+                  </div>
+            
+                  {/* Body */}
+                  <div className="px-4 py-3 max-h-[75vh] overflow-y-auto">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
+            
+                      {/* Item */}
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase text-gray-500">
+                          Client
+                        </p>
+                        <p className="text-gray-900 font-medium truncate">
+                          {capitalizeFirstLetter(selectedInvoiceId.client || "-")}
+                        </p>
+                      </div>
+            
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase text-gray-500">
+                          Account
+                        </p>
+                        <p className="text-gray-900 font-medium truncate">
+                          {selectedInvoiceId.account?.name || "-"}
+                        </p>
+                      </div>
+            
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase text-gray-500">
+                          Date
+                        </p>
+                        <p className="text-gray-900 font-medium">
+                          {selectedInvoiceId.date
+                            ? new Date(selectedInvoiceId.date).toLocaleDateString("en-GB")
+                            : "-"}
+                        </p>
+                      </div>
+            
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase text-gray-500">
+                          Created By
+                        </p>
+                        <p className="text-gray-900 font-medium">
+                          {selectedInvoiceId.createdBy?.employeeName}
+                            
+                        </p>
+                      </div>
+            
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase text-gray-500">
+                          Status
+                        </p>
+                        <span className="inline-block text-xs px-2 py-[2px] rounded bg-blue-100 text-blue-700 capitalize">
+                          {selectedInvoiceId.status || "-"}
+                        </span>
+                      </div>
+            
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase text-gray-500">
+                          Technology
+                        </p>
+                        <p className="text-gray-900 font-medium truncate">
+                          {selectedInvoiceId.technology?.name || "-"}
+                        </p>
+                      </div>
+            
+                      {/* Full width */}
+                      <div className="sm:col-span-2">
+                        <p className="text-[11px] font-semibold uppercase text-gray-500">
+                          Link
+                        </p>
+                        {selectedInvoiceId.link ? (
+                          <a
+                            href={selectedInvoiceId.link}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-blue-600 hover:underline break-all font-medium"
+                          >
+                            {selectedInvoiceId.link}
+                          </a>
+                        ) : (
+                          <p className="text-gray-900 font-medium">-</p>
+                        )}
+                      </div>
+            
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase text-gray-500">
+                          Boost
+                        </p>
+                        <p className="text-gray-900 font-medium">
+                          {selectedInvoiceId.noOfBoost || "-"}
+                        </p>
+                      </div>
+            
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase text-gray-500">
+                          Connections
+                        </p>
+                        <p className="text-gray-900 font-medium">
+                          {selectedInvoiceId.noOfConnections || "-"}
+                        </p>
+                      </div>
+            
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase text-gray-500">
+                          Country
+                        </p>
+                        <p className="text-gray-900 font-medium">
+                          {selectedInvoiceId.country || "-"}
+                        </p>
+                      </div>
+            
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase text-gray-500">
+                          State
+                        </p>
+                        <p className="text-gray-900 font-medium">
+                          {selectedInvoiceId.state || "-"}
+                        </p>
+                      </div>
+            
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase text-gray-500">
+                          Timezone
+                        </p>
+                        <p className="text-gray-900 font-medium">
+                          {selectedInvoiceId.timezone || "-"}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase text-gray-500">
+                          Sales Date
+                        </p>
+                        <p className="text-gray-900 font-medium">
+                          {selectedInvoiceId.salesdate
+                            ? new Date(selectedInvoiceId.salesdate).toLocaleDateString("en-GB")
+                            : "-"}
+                        </p>
+                      </div>
+            
+                    </div>
+                  </div>
+            
+                  {/* Footer */}
+                  <div className="px-4 py-2 border-t flex justify-end">
+                    <button
+                      onClick={() => setIsOpen(false)}
+                      className="px-4 py-1.5 text-sm rounded bg-gray-800 text-white hover:bg-gray-900"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <Footer />
