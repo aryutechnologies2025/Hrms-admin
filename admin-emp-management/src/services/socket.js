@@ -26,7 +26,9 @@
 // src/services/socket.js
 import { io } from "socket.io-client";
 
-const SOCKET_URL = "http://192.168.0.116:5000";
+// const SOCKET_URL = "http://192.168.0.116:5000";
+
+const SOCKET_URL = "https://hrms.aryuprojects.com/";
 
 let socket = null;
 
@@ -36,6 +38,7 @@ export function connectSocket(token) {
 
   socket = io(SOCKET_URL, {
     transports: ["websocket"],
+      timeout: 20000,
     // withCredentials: true,
 
     // 🔐 enable later when JWT ready

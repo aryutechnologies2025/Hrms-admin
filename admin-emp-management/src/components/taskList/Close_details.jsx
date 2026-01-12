@@ -1408,7 +1408,7 @@ const Close_details = () => {
   //   const [status, setStatus] = useState("");
   const storedDetatis = localStorage.getItem("hrmsuser");
   const parsedDetails = JSON.parse(null);
-  const userid = parsedDetails ? parsedDetails.id : null;
+  const userid = parsedDetails ? parsedDetails?.id : null;
 
   const [taskdetails, setTaskdetails] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -1830,172 +1830,291 @@ const Close_details = () => {
     });
   }
 
-  const columns = [
-    {
-      title: "Sno",
-      data: null,
-      render: function (data, type, row, meta) {
-        return (currentPage - 1) * limit + (meta.row + 1);
-      },
-    },
+  // const columns = [
+  //   {
+  //     title: "Sno",
+  //     data: null,
+  //     render: function (data, type, row, meta) {
+  //       return (currentPage - 1) * limit + (meta.row + 1);
+  //     },
+  //   },
+  //   {
+  //     title: "Task ID",
+  //     data: "taskId",
+  //     render: function (data, type, row) {
+  //       return `<a 
+  //             href="/tasklist-details/${row.taskId}" 
+  //             target="_blank" 
+  //             style="color: #2563eb; text-decoration: underline; cursor: pointer;"
+  //           >
+  //             ${row.taskId}
+  //           </a>`;
+  //     },
+  //   },
+  //   {
+  //     title: "Project Name",
+  //     data: "projectName",
+  //     render: function (data, type, row) {
+  //       return `<div>${row?.projectId?.name}</div>`;
+  //     },
+  //   },
+  //   {
+  //     title: "Assigned To",
+  //     data: null, // Changed from "employeeName" to null since we're handling data manually
+  //     render: (data, type, row) => {
+  //       // Safely access properties with optional chaining
+  //       const displayName =
+  //         [row?.assignedTo?.employeeName].find(
+  //           (value) => value && value.trim()
+  //         ) || "N/A";
 
-    {
-      title: "Task ID",
-      data: "taskId",
-      render: function (data, type, row) {
-        return `<a 
-              href="/tasklist-details/${row.taskId}" 
-              target="_blank" 
-              style="color: #2563eb; text-decoration: underline; cursor: pointer;"
-            >
-              ${row.taskId}
-            </a>`;
-      },
-    },
-    {
-      title: "Project Name",
-      data: "projectName",
-      render: function (data, type, row) {
-        return `<div>${row?.projectId?.name}</div>`;
-      },
-    },
-    {
-      title: "Assigned To",
-      data: null, // Changed from "employeeName" to null since we're handling data manually
-      render: (data, type, row) => {
-        // Safely access properties with optional chaining
-        const displayName =
-          [row?.assignedTo?.employeeName].find(
-            (value) => value && value.trim()
-          ) || "N/A";
+  //       const id = `assigned-to-${
+  //         row?.assignedTo?.employeeName || row?.id || Date.now()
+  //       }`;
 
-        const id = `assigned-to-${
-          row?.assignedTo?.employeeName || row?.id || Date.now()
-        }`;
+  //       return `<div id="${id}">${displayName}</div>`;
+  //     },
+  //     createdCell: (td, cellData, rowData, row, col) => {
+  //       const displayName =
+  //         [rowData?.assignedTo?.employeeName].find(
+  //           (value) => value && value.trim()
+  //         ) || "N/A";
 
-        return `<div id="${id}">${displayName}</div>`;
-      },
-      createdCell: (td, cellData, rowData, row, col) => {
-        const displayName =
-          [rowData?.assignedTo?.employeeName].find(
-            (value) => value && value.trim()
-          ) || "N/A";
+  //        const root = createRoot(td); 
+  //       root.render(
+  //         <span
+  //           style={{ cursor: "pointer", color: "black" }}
+  //           onMouseOver={(e) => (e.target.style.color = "blue")}
+  //           onMouseOut={(e) => (e.target.style.color = "black")}
+  //           onClick={() => onClickCard(rowData?.assignedTo?._id)}
+  //         >
+  //           {displayName}
+  //         </span>,
+  //         td
+  //       );
+  //     },
+  //   },
 
-         const root = createRoot(container); 
-        root.render(
-          <span
-            style={{ cursor: "pointer", color: "black" }}
-            onMouseOver={(e) => (e.target.style.color = "blue")}
-            onMouseOut={(e) => (e.target.style.color = "black")}
-            onClick={() => onClickCard(rowData?.assignedTo?._id)}
-          >
-            {displayName}
-          </span>,
-          td
-        );
-      },
-    },
+  //   {
+  //     title: "Title",
+  //     data: "title",
+  //   },
+  //   {
+  //     title: "Status",
+  //     data: "status",
+  //   },
+  //   {
+  //     title: "Priority",
+  //     data: "priority",
+  //     render: function (data, type, row) {
+  //       let color = "";
+  //       let text = "";
+  //       switch (data.toLowerCase()) {
+  //         case "high":
+  //           color = "bg-red-50";
+  //           text = "text-red-600";
+  //           break;
+  //         case "medium":
+  //           color = "bg-orange-50";
+  //           text = "text-orange-600";
+  //           break;
+  //         case "low":
+  //           color = "bg-yellow-50";
+  //           text = "text-yellow-600";
+  //           break;
+  //         default:
+  //           color = "gray";
+  //       }
+  //       return `<span class="${color} ${text} text-md font-extralight" style="padding: 4px 8px; border-radius: 6px;">${data}</span>`;
+  //     },
+  //   },
 
-    {
-      title: "Title",
-      data: "title",
-    },
-    {
-      title: "Status",
-      data: "status",
-    },
-    {
-      title: "Priority",
-      data: "priority",
-      render: function (data, type, row) {
-        let color = "";
-        let text = "";
-        switch (data.toLowerCase()) {
-          case "high":
-            color = "bg-red-50";
-            text = "text-red-600";
-            break;
-          case "medium":
-            color = "bg-orange-50";
-            text = "text-orange-600";
-            break;
-          case "low":
-            color = "bg-yellow-50";
-            text = "text-yellow-600";
-            break;
-          default:
-            color = "gray";
-        }
-        return `<span class="${color} ${text} text-md font-extralight" style="padding: 4px 8px; border-radius: 6px;">${data}</span>`;
-      },
-    },
+  //   // {
+  //   //   title: "Status",
+  //   //   data: "status",
+  //   //   render: (data, type, row) => {
+  //   //     const textColor = data === "1" ? "green" : "red";
+  //   //     return `<div style="display: inline-block; padding: 4px 8px; color: ${textColor}; border: 1px solid ${textColor}; border-radius: 50px; text-align: center; width:100px; font-size: 10px; font-weight: 700;">
+  //   //               ${data === "1" ? "Active" : "InActive"}
+  //   //             </div>`;
+  //   //   },
+  //   // },
 
-    // {
-    //   title: "Status",
-    //   data: "status",
-    //   render: (data, type, row) => {
-    //     const textColor = data === "1" ? "green" : "red";
-    //     return `<div style="display: inline-block; padding: 4px 8px; color: ${textColor}; border: 1px solid ${textColor}; border-radius: 50px; text-align: center; width:100px; font-size: 10px; font-weight: 700;">
-    //               ${data === "1" ? "Active" : "InActive"}
-    //             </div>`;
-    //   },
-    // },
-
-    {
-      title: "Action",
-      data: null,
-      render: (data, type, row) => {
-        const id = `actions-${row.sno || Math.random()}`;
-        setTimeout(() => {
-          const container = document.getElementById(id);
-          if (container && !container.hasChildNodes()) {
-            ReactDOM.render(
-              <div
-                className="action-container"
-                style={{
-                  display: "flex",
-                  gap: "15px",
-                  alignItems: "flex-end",
-                  justifyContent: "center",
-                }}
-              >
-                {/* <div className="cursor-pointer">
-                  <FaEye
+  //   {
+  //     title: "Action",
+  //     data: null,
+  //     render: (data, type, row) => {
+  //       const id = `actions-${row.sno || Math.random()}`;
+  //       setTimeout(() => {
+  //         const container = document.getElementById(id);
+  //         if (container && !container.hasChildNodes()) {
+  //           ReactDOM.render(
+  //             <div
+  //               className="action-container"
+  //               style={{
+  //                 display: "flex",
+  //                 gap: "15px",
+  //                 alignItems: "flex-end",
+  //                 justifyContent: "center",
+  //               }}
+  //             >
+  //               {/* <div className="cursor-pointer">
+  //                 <FaEye
                     
-                  />
-                </div> */}
-                <div
-                  className="modula-icon-edit  flex gap-2"
-                  style={{
-                    color: "#000",
-                  }}
-                >
-                  <TfiPencilAlt
-                    className="cursor-pointer"
-                    onClick={() => openEditModal(row)}
-                  />
-                  <MdOutlineDeleteOutline
-                    className="text-red-600 text-xl cursor-pointer"
-                    onClick={() => handleDelete(row._id)}
-                  />
-                </div>
+  //                 />
+  //               </div> */}
+  //               <div
+  //                 className="modula-icon-edit  flex gap-2"
+  //                 style={{
+  //                   color: "#000",
+  //                 }}
+  //               >
+  //                 <TfiPencilAlt
+  //                   className="cursor-pointer"
+  //                   onClick={() => openEditModal(row)}
+  //                 />
+  //                 <MdOutlineDeleteOutline
+  //                   className="text-red-600 text-xl cursor-pointer"
+  //                   onClick={() => handleDelete(row._id)}
+  //                 />
+  //               </div>
 
-                {/* <div className="modula-icon-del" style={{
-                  color: "red"
-                }}>
-                  <RiDeleteBin6Line
-                    onClick={() => handleDelete(row.id)}
-                  />
-                </div> */}
-              </div>,
-              container
-            );
-          }
-        }, 0);
-        return `<div id="${id}"></div>`;
-      },
+  //               {/* <div className="modula-icon-del" style={{
+  //                 color: "red"
+  //               }}>
+  //                 <RiDeleteBin6Line
+  //                   onClick={() => handleDelete(row.id)}
+  //                 />
+  //               </div> */}
+  //             </div>,
+  //             container
+  //           );
+  //         }
+  //       }, 0);
+  //       return `<div id="${id}"></div>`;
+  //     },
+  //   },
+  // ];
+
+  const columns = [
+  {
+    title: "Sno",
+    data: null,
+    render: (data, type, row, meta) =>
+      (currentPage - 1) * limit + (meta.row + 1),
+  },
+
+  {
+    title: "Task ID",
+    data: "taskId",
+    render: (data, type, row) => `
+      <a 
+        href="/tasklist-details/${row.taskId}" 
+        target="_blank" 
+        style="color:#2563eb;text-decoration:underline;cursor:pointer;"
+      >
+        ${row.taskId}
+      </a>
+    `,
+  },
+
+  {
+    title: "Project Name",
+    data: null,
+    render: (_, __, row) => row?.projectId?.name || "N/A",
+  },
+
+  /* ================= ASSIGNED TO (REACT CELL) ================= */
+  {
+    title: "Assigned To",
+    data: null,
+    render: () => "", // ⛔ important: empty
+    createdCell: (td, cellData, rowData) => {
+      td.innerHTML = ""; // clear cell
+
+      const displayName =
+        rowData?.assignedTo?.employeeName?.trim() || "N/A";
+
+      const root = createRoot(td);
+      root.render(
+        <span
+          style={{ cursor: "pointer", color: "#000" }}
+          onMouseEnter={(e) => (e.target.style.color = "#2563eb")}
+          onMouseLeave={(e) => (e.target.style.color = "#000")}
+          onClick={() => onClickCard(rowData?.assignedTo?._id)}
+        >
+          {displayName}
+        </span>
+      );
     },
-  ];
+  },
+
+  {
+    title: "Title",
+    data: "title",
+  },
+
+  {
+    title: "Status",
+    data: "status",
+  },
+
+  {
+    title: "Priority",
+    data: "priority",
+    render: (data) => {
+      let bg = "", text = "";
+
+      switch (data?.toLowerCase()) {
+        case "high":
+          bg = "bg-red-50"; text = "text-red-600"; break;
+        case "medium":
+          bg = "bg-orange-50"; text = "text-orange-600"; break;
+        case "low":
+          bg = "bg-yellow-50"; text = "text-yellow-600"; break;
+        default:
+          bg = "bg-gray-50"; text = "text-gray-600";
+      }
+
+      return `
+        <span class="${bg} ${text}" 
+              style="padding:4px 8px;border-radius:6px;">
+          ${data}
+        </span>`;
+    },
+  },
+
+  /* ================= ACTION COLUMN (REACT CELL) ================= */
+  {
+    title: "Action",
+    data: null,
+    render: () => "", // ⛔ important
+    createdCell: (td, cellData, rowData) => {
+      td.innerHTML = "";
+
+      const root = createRoot(td);
+      root.render(
+        <div
+          style={{
+            display: "flex",
+            gap: "14px",
+            justifyContent: "center",
+          }}
+        >
+          <TfiPencilAlt
+            className="cursor-pointer"
+            onClick={() => openEditModal(rowData)}
+          />
+
+          <MdOutlineDeleteOutline
+            className="text-red-600 text-xl cursor-pointer"
+            onClick={() => handleDelete(rowData._id)}
+          />
+        </div>
+      );
+    },
+  },
+];
 
   const header = (
     <>

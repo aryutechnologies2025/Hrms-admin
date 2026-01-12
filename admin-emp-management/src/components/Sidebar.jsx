@@ -1185,7 +1185,7 @@ const Sidebar = () => {
                         // onClick={() => setClientOpen(!clientOpen)}
                         onClick={() => toggleMenu("socialmedia")}
                         className={`flex items-center h-10 w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
-                          } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${["/social-account", "/social-credentials"].includes(
+                          } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${["/social-account", "/social-credentials", "/social-contentmaster"].includes(
                             currentPath
                           )
                             ? "bg-blue-100 text-[#4F46E5]"
@@ -1201,6 +1201,7 @@ const Sidebar = () => {
                                 [
                                   "/social-account",
                                   "/social-credentials",
+                                  "/social-contentmaster",
                                 ].includes(currentPath) ? (
                                 <IoIosArrowUp />
                               ) : (
@@ -1213,7 +1214,7 @@ const Sidebar = () => {
                       {/*  */}
                       <div
                         className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "socialmedia" ||
-                            ["/social-account", "/social-credentials"].includes(
+                            ["/social-account", "/social-credentials", "/social-contentmaster",].includes(
                               currentPath
                             )
                             ? "max-h-52 opacity-100"
@@ -1241,6 +1242,17 @@ const Sidebar = () => {
                               }`}
                           >
                             Credentials
+                          </button>
+
+                          <button
+                            onClick={() => navigate("/social-contentmaster")}
+                            className={`px-2 py-1 rounded-full 
+    ${currentPath === "/social-contentmaster"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
+                          >
+                            Content Master
                           </button>
                         </div>
                       </div>
