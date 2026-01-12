@@ -140,6 +140,7 @@ import Bidding_transaction_main from "./components/bidding assests components/Bi
 import Billing_details_main from "./components/bidding assests components/Billing_details.main";
 import LeadManagement_Mainbar from "./pages/LeadManagement_Mainbar";
 import Payslip_govt from "./components/payroll components/Payslip_govt";
+import Social_ContentMaster_Main from "./components/social media/Social_ContentMaster_Main";
 
 export const SettingsContext = createContext();
 
@@ -954,6 +955,16 @@ function App() {
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
           <Social_credentials_main />
+        </ProtectedRoute>
+      ),
+    },
+
+    {
+      path: "/social-contentmaster",
+      permissionTitle: "socialmedia",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Social_ContentMaster_Main />
         </ProtectedRoute>
       ),
     },

@@ -707,6 +707,14 @@ const Mobile_Sidebar = () => {
                             >
                               Credentials
                             </button>
+                            <button
+                              onClick={() =>
+                                onClickSidebarMenu("social-contentmaster")
+                              }
+                              className="hover:bg-blue-100 px-2 py-1 rounded-full"
+                            >
+                              Content Master
+                            </button>
                           </div>
                         </div>
                       )}
