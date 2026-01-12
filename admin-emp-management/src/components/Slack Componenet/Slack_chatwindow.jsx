@@ -2658,13 +2658,10 @@ export default function Slack_chatwindow({
   // edit text and file
   const handleSaveEdit = async (messageId) => {
     if (!editText.trim() && editFiles.length === 0) return;
-
     const formData = new FormData();
     formData.append("messageId", messageId);
     formData.append("text", editText);
-
     editFiles.forEach(({ file }) => formData.append("files", file));
-
     try {
       const res = await axios.patch(
         `${API_URL}/api/messages/messages/edit`, // make sure backend route exists
@@ -3061,7 +3058,7 @@ export default function Slack_chatwindow({
                                   setEditFiles([]); // new files only
                                 }}
                               >
-                                <Pencil size={14} />
+                                <Pencil size={14}/>
                               </ActionButton>
                             )}
 
@@ -3077,7 +3074,7 @@ export default function Slack_chatwindow({
                                 title="Delete message"
                                 onClick={() => handleDeleteMessage(m._id)}
                               >
-                                <Trash2 size={14} />
+                                <Trash2 size={14}/>
                               </ActionButton>
                             )}
 
@@ -3156,6 +3153,7 @@ export default function Slack_chatwindow({
                                 </div>
                               );
                             })}
+                            
                             <button
                               onClick={() => editFileRef.current.click()}
                               className="w-15 h-10 p-5 flex items-center justify-center rounded-lg border border-gray-300  hover:bg-gray-100 hover:text-black"
@@ -3712,18 +3710,17 @@ export default function Slack_chatwindow({
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {/* {console.log("threadReplies ", threadReplies)} */}
               {threadReplies &&
-             
                 threadReplies.map((reply, index) => {
                   const isMe = reply.senderId === me;
 
                   return (
                     <div key={index} className={isMe ? "text-right" : ""}>
                       {/* TEXT */}
-                       {/* <p>aaaa</p> */}
+                      {/* <p>aaaa</p> */}
                       {reply.text && (
                         // <MessageText text={reply.text} isMe={isMe} />
-                          <MessageText text={reply.text} isMe={isMe} />
-                        // <p>{reply.text}</p>
+                        // <MessageText text={reply.text} isMe={isMe} />
+                        <p>{reply.text}</p>
                       )}
                       {console.log("coming", reply.text)}
                       {/* FILES */}
