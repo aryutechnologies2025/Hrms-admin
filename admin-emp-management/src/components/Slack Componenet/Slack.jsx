@@ -1,12 +1,9 @@
-
-
 // // // import { useEffect, useState, useRef } from "react";
 // // // import axios from "axios";
 // // // import { API_URL } from "../../config";
 // // // import { connectSocket } from "../../services/socket";
 // // // import Slack_chatwindow from "./Slack_chatwindow";
 // // // import Slack_sidebar from "./Slack_sidebar";
-
 
 // // // export default function Slack() {
 // // //   const socketRef = useRef(null);
@@ -413,7 +410,7 @@
 
 //     const handler = (msg) => {
 //       if (msg.receiverId !== currentUser.employeeId) return;
-      
+
 //       if (selectedUser?._id === msg.senderId) return;
 //       setUnread((prev) => ({
 //         ...prev,
@@ -488,7 +485,7 @@
 // const handleSelectUser = async(user) => {
 //   setSelectedUser(user);
 //   setUnread((p) => ({ ...p, [user._id]: 0 }));
-  
+
 //   // Mark messages as seen
 //   await axios.post(`${API_URL}/api/messages/seen`, {
 //     senderId: user._id,
@@ -500,7 +497,6 @@
 //     receiverId: currentUser.employeeId,
 //   });
 // };
-
 
 //   if (!currentUser) return <div>Loading chat...</div>;
 
@@ -598,7 +594,6 @@
 //     receiverId: currentUser.employeeId,
 //   });
 // };
-
 
 //   return (
 //     <div className="flex h-screen">
@@ -728,7 +723,6 @@
 //   );
 // }
 
-
 //Besting working main with unread from db
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
@@ -748,25 +742,26 @@ export default function Slack() {
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [channelUnread, setChannelUnread] = useState({});
   const [favorites, setFavorites] = useState({
-  dm: [],
-  channels: [],
-});
-const [activeThread, setActiveThread] = useState(null);
-// activeThread = parent message object
-
+    dm: [],
+    channels: [],
+  });
+  const [activeThread, setActiveThread] = useState(null);
+  // activeThread = parent message object
 
   /* LOAD CURRENT USER */
   useEffect(() => {
     const u = JSON.parse(localStorage.getItem("hrmsuser"));
     if (u?._id) setCurrentUser(u);
   }, []);
-  console.log("currentUser",currentUser);
+  console.log("currentUser", currentUser);
 
   /* ONLINE USERS */
   useEffect(() => {
     if (!socket || !currentUser) return;
     socket.emit("user_online", currentUser._id);
-    socket.on("online_users", setOnlineUsers);
+    socket.on("online_users", (users) => {
+      setOnlineUsers(users);
+    });
 
     return () => socket.off("online_users");
   }, [socket, currentUser]);
@@ -774,37 +769,34 @@ const [activeThread, setActiveThread] = useState(null);
   /* LOAD USERS */
   useEffect(() => {
     if (!currentUser) return;
-    axios.get(`${API_URL}/api/employees/all-users`)
-      .then(res => setUsers(res.data.data || []));
-      console.log("users",users);
+    axios
+      .get(`${API_URL}/api/employees/all-users`)
+      .then((res) => setUsers(res.data.data || []));
+    console.log("users", users);
   }, [currentUser]);
 
   /* LOAD UNREAD FROM DB */
   useEffect(() => {
-    if(!currentUser ) return;
+    if (!currentUser) return;
 
-    axios.get(`${API_URL}/api/messages/unread/${currentUser._id}`)
-      .then(res => {
+    axios
+      .get(`${API_URL}/api/messages/unread/${currentUser._id}`)
+      .then((res) => {
         const map = {};
-        res.data.data.forEach(i => map[i._id] = i.count);
+        res.data.data.forEach((i) => (map[i._id] = i.count));
         setUnread(map);
       });
   }, [currentUser]);
-
-
-
-
 
   /* RECEIVE MESSAGE → INCREASE UNREAD */
   useEffect(() => {
     if (!socket || !currentUser) return;
 
     const onReceive = (msg) => {
-      if(msg.receiverId !== currentUser._id) return;
+      if (msg.receiverId !== currentUser._id) return;
       // chat not open
-      if(selectedUser?._id !== msg.senderId)
-      {
-        setUnread(prev => ({
+      if (selectedUser?._id !== msg.senderId) {
+        setUnread((prev) => ({
           ...prev,
           [msg.senderId]: (prev[msg.senderId] || 0) + 1,
         }));
@@ -815,26 +807,25 @@ const [activeThread, setActiveThread] = useState(null);
     return () => socket.off("receive_dm", onReceive);
   }, [socket, currentUser, selectedUser]);
 
-//   useEffect(() => {
-//   if (!socket) return;
+  //   useEffect(() => {
+  //   if (!socket) return;
 
-//   socket.on("receive_channel_message", (msg) => {
-//     if (msg.channelId === selectedChannel?._id) {
-//       setMessages(prev => [...prev, msg]);
-//     }
-//   });
+  //   socket.on("receive_channel_message", (msg) => {
+  //     if (msg.channelId === selectedChannel?._id) {
+  //       setMessages(prev => [...prev, msg]);
+  //     }
+  //   });
 
-//   return () => socket.off("receive_channel_message");
-// }, [socket, selectedChannel]);
-
+  //   return () => socket.off("receive_channel_message");
+  // }, [socket, selectedChannel]);
 
   /* OPEN CHAT */
   const handleSelectUser = async (user) => {
-     setSelectedChannel(null);
+    setSelectedChannel(null);
     setSelectedUser(user);
 
     // clear unread immediately
-    setUnread(prev => ({ ...prev, [user._id]: 0 }));
+    setUnread((prev) => ({ ...prev, [user._id]: 0 }));
 
     // mark seen
     await axios.post(`${API_URL}/api/messages/seen`, {
@@ -849,161 +840,148 @@ const [activeThread, setActiveThread] = useState(null);
   };
 
   // console.log
-   /* LOAD USERS */
-useEffect(() => {
-  if (!currentUser?._id) return;
-
-  axios
-    .get(`${API_URL}/api/channel/channel-list`, {
-      params: {
-        userId: currentUser._id,
-        isSuperAdmin: currentUser?.superUser || false, // boolean
-      },
-    })
-    .then((res) => setChaneel(res.data.data || []))
-    .catch(console.error);
-
-}, [currentUser]); // ✅ IMPORTANT
-
-
-
-    // Load channel unread from 
+  /* LOAD USERS */
   useEffect(() => {
-  if (currentUser && !currentUser?._id) return;
-try{
-  axios
-    .get(`${API_URL}/api/messages/channels/unread/${currentUser?._id}`)
-    .then((res) => {
-      if (res.data.success) {
-        setChannelUnread(res.data.data);
-      }
-    });
+    if (!currentUser?._id) return;
 
-}
-catch(err){
-  console.error(err);
-}
-  
-}, [currentUser]);
+    axios
+      .get(`${API_URL}/api/channel/channel-list`, {
+        params: {
+          userId: currentUser._id,
+          isSuperAdmin: currentUser?.superUser || false, // boolean
+        },
+      })
+      .then((res) => setChaneel(res.data.data || []))
+      .catch(console.error);
+  }, [currentUser]); // ✅ IMPORTANT
 
-// CHANNEL UNREAD INCREMENT
+  // Load channel unread from
+  useEffect(() => {
+    if (!currentUser && !currentUser?._id) return;
+    // if(!currentUser || currentUser?._id==undefined || currentUser?._id=="undefined" ){
+    //   return;
+    // }
+    try {
+      axios
+        .get(`${API_URL}/api/messages/channels/unread/${currentUser?._id}`)
+        .then((res) => {
+          if (res.data.success) {
+            setChannelUnread(res.data.data);
+          }
+        });
+    } catch (err) {
+      console.error(err);
+    }
+  }, [currentUser]);
 
-// useEffect(() => {
-//   if (!socket || !currentUser) return;
+  // CHANNEL UNREAD INCREMENT
 
-//   const onChannelMessage = (msg) => {
-//     if (
-//       msg.channelId &&
-//       msg.senderId !== currentUser._id &&
-//       msg.channelId !== selectedChannel?._id
-//     ) {
-//       setChannelUnread((prev) => ({
-//         ...prev,
-//         [msg.channelId]: (prev[msg.channelId] || 0) + 1,
-//       }));
-//     }
-//   };
+  // useEffect(() => {
+  //   if (!socket || !currentUser) return;
 
-//   socket.on("receive_channel_message", onChannelMessage);
+  //   const onChannelMessage = (msg) => {
+  //     if (
+  //       msg.channelId &&
+  //       msg.senderId !== currentUser._id &&
+  //       msg.channelId !== selectedChannel?._id
+  //     ) {
+  //       setChannelUnread((prev) => ({
+  //         ...prev,
+  //         [msg.channelId]: (prev[msg.channelId] || 0) + 1,
+  //       }));
+  //     }
+  //   };
 
-//   return () => socket.off("receive_channel_message", onChannelMessage);
+  //   socket.on("receive_channel_message", onChannelMessage);
 
-// }, [socket, currentUser, selectedChannel]);
-useEffect(() => {
-  if (!socket || !currentUser) return;
+  //   return () => socket.off("receive_channel_message", onChannelMessage);
 
-  const onChannelMessage = (msg) => {
-    if (!msg.channelId) return;
+  // }, [socket, currentUser, selectedChannel]);
 
-    const channelId = msg.channelId.toString();
+  useEffect(() => {
+    if (!socket || !currentUser) return;
 
-    // ignore own messages
-    if (msg.senderId === currentUser._id) return;
+    const onChannelMessage = (msg) => {
+      if (!msg.channelId) return;
 
-    setChannelUnread((prev) => {
-      // if channel is open, do not increment
-      if (selectedChannel?._id === channelId) return prev;
+      const channelId = msg.channelId.toString();
 
-      return {
+      // ignore own messages
+      if (msg.senderId === currentUser._id) return;
+
+      setChannelUnread((prev) => {
+        // if channel is open, do not increment
+        if (selectedChannel?._id === channelId) return prev;
+
+        return {
+          ...prev,
+          [channelId]: (prev[channelId] || 0) + 1,
+        };
+      });
+    };
+
+    socket.on("receive_channel_message", onChannelMessage);
+    return () => socket.off("receive_channel_message", onChannelMessage);
+  }, [socket, currentUser, selectedChannel?._id]);
+
+  // CLEAR CHANNEL UNREAD ON OPEN
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const onUnreadClear = ({ channelId }) => {
+      setChannelUnread((prev) => ({
         ...prev,
-        [channelId]: (prev[channelId] || 0) + 1,
-      };
+        [channelId]: 0,
+      }));
+    };
+
+    socket.on("channel_unread_clear", onUnreadClear);
+
+    return () => {
+      socket.off("channel_unread_clear", onUnreadClear);
+    };
+  }, [socket]);
+
+  // All channel join
+  useEffect(() => {
+    if (!socket || !currentUser || !chaneel.length) return;
+
+    chaneel.forEach((ch) => {
+      socket.emit("join_channel", {
+        channelId: ch._id,
+      });
     });
-  };
+  }, [socket, currentUser, chaneel]);
 
-  socket.on("receive_channel_message", onChannelMessage);
-  return () => socket.off("receive_channel_message", onChannelMessage);
+  // dm room
+  useEffect(() => {
+    if (!socket || !currentUser || !users?.length) return;
 
-}, [socket, currentUser, selectedChannel?._id]);
-
-
-// CLEAR CHANNEL UNREAD ON OPEN
-
-useEffect(() => {
-  if (!socket) return;
-
-  const onUnreadClear = ({ channelId }) => {
-    setChannelUnread((prev) => ({
-      ...prev,
-      [channelId]: 0,
-    }));
-  };
-
-  socket.on("channel_unread_clear", onUnreadClear);
-
-  return () => {
-    socket.off("channel_unread_clear", onUnreadClear);
-  };
-}, [socket]);
-
-
-
-// All channel join
-useEffect(() => {
-  if (!socket || !currentUser || !chaneel.length) return;
-
-  chaneel.forEach((ch) => {
-    socket.emit("join_channel", {
-      channelId: ch._id,
+    users.forEach((dm) => {
+      socket.emit("join_dm", {
+        senderId: currentUser?._id,
+        receiverId: dm?._id, // other user
+      });
     });
-  });
+  }, [socket, currentUser, users]);
 
-}, [socket, currentUser, chaneel]);
+  // favorities list
+  useEffect(() => {
+    if (!currentUser?._id) return;
+    axios
+      .get(`${API_URL}/api/favorites/${currentUser._id}`)
+      .then((res) => {
+        if (res.data.success) {
+          setFavorites(res.data.data || { dm: [], channels: [] });
+        }
+      })
+      .catch(console.error);
+  }, [currentUser]);
 
-// dm room
-useEffect(() => {
-  if (!socket || !currentUser || !users?.length) return;
-
-  users.forEach((dm) => {
-    socket.emit("join_dm", {
-      senderId: currentUser?._id,
-      receiverId:dm?._id, // other user
-    });
-  });
-}, [socket, currentUser, users]);
-
-
-// favorities list
-useEffect(() => {
-  if (!currentUser?._id) return;
-
-  axios
-    .get(`${API_URL}/api/favorites/${currentUser._id}`)
-    .then((res) => {
-      if (res.data.success) {
-        setFavorites(res.data.data || { dm: [], channels: [] });
-      }
-    })
-    .catch(console.error);
-}, [currentUser]);
-
-
-
-
-console.log("channelUnread",channelUnread);
+  console.log("channelUnread", channelUnread);
   return (
     <div className="flex h-screen">
-     
       {/* <Slack_sidebar
   users={users}
   channels={chaneel}
@@ -1021,47 +999,43 @@ console.log("channelUnread",channelUnread);
   channelUnread={channelUnread}
 /> */}
 
-
-<Slack_sidebar
-  socket={socket}
-  currentUser={currentUser}
-  users={users}
-  channels={chaneel}
-  selectedUser={selectedUser}
-  selectedChannel={selectedChannel}
-  onSelectUser={handleSelectUser}
-  onSelectChannel={(ch) => {
-    setSelectedChannel(ch);
-    setSelectedUser(null);
-  }}
-  unread={unread}
-  onlineUsers={onlineUsers}
-  setChannelUnread={setChannelUnread}
-  channelUnread={channelUnread}
-  favorites={favorites}
-  setFavorites={setFavorites}
-  
-/>
-
+      <Slack_sidebar
+        socket={socket}
+        currentUser={currentUser}
+        users={users}
+        channels={chaneel}
+        setChaneel={setChaneel}
+        selectedUser={selectedUser}
+        selectedChannel={selectedChannel}
+        onSelectUser={handleSelectUser}
+        onSelectChannel={(ch) => {
+          setSelectedChannel(ch);
+          setSelectedUser(null);
+        }}
+        unread={unread}
+        onlineUsers={onlineUsers}
+        setChannelUnread={setChannelUnread}
+        channelUnread={channelUnread}
+        favorites={favorites}
+        setFavorites={setFavorites}
+      />
 
       <Slack_chatwindow
-       users={users}
-     channels={chaneel}
+        users={users}
+        channels={chaneel}
         socket={socket}
         currentUser={currentUser}
         selectedUser={selectedUser}
         selectedChannel={selectedChannel}
-         onSelectUser={handleSelectUser}
-   onSelectChannel={(ch) => {
-    setSelectedChannel(ch);
-    setSelectedUser(null);
-  }}
-    setChannelUnread={setChannelUnread}
-    activeThread={activeThread}
-    setActiveThread={setActiveThread}
-
+        onSelectUser={handleSelectUser}
+        onSelectChannel={(ch) => {
+          setSelectedChannel(ch);
+          setSelectedUser(null);
+        }}
+        setChannelUnread={setChannelUnread}
+        activeThread={activeThread}
+        setActiveThread={setActiveThread}
       />
     </div>
   );
 }
-
