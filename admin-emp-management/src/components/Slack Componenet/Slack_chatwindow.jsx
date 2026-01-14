@@ -2668,7 +2668,7 @@ export default function Slack_chatwindow({
   const handleDeleteMessage = async (messageId) => {
     try {
       const res = await axios.patch(
-        `${API_URL}/api/message/messages/${messageId}/delete`
+        `${API_URL}/api/messages/messages/${messageId}/delete`
       );
 
       setMessages((prev) =>
