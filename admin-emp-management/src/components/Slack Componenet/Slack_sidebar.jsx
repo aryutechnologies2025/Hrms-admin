@@ -1122,7 +1122,7 @@ export default function SlackSidebar({
         />
 
         <div className="flex gap-2">
-          {["all", "online", "unread"].map((f) => (
+          {["all", "online", ].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}

@@ -3147,12 +3147,14 @@ export default function Slack_chatwindow({
                             {/* <ActionButton title="Reply in thread">
                             <MessageSquare size={14} />
                           </ActionButton> */}
+                          {isMe && 
                             <ActionButton
                               title="Reply in thread"
                               onClick={() => setActiveThread(m)}
                             >
                               <MessageSquare size={14} />
                             </ActionButton>
+                          }
 
                             {/* EDIT */}
                             {/* {isMe && (
@@ -3212,12 +3214,14 @@ export default function Slack_chatwindow({
                             {/* <ActionButton title="Seen by">
                               <Eye size={14} />
                             </ActionButton> */}
+                            {isMe &&
                             <ActionButton
                               title="Seen by"
                               onClick={() => fetchSeenBy(m._id)}
                             >
                               <Eye size={14} />
                             </ActionButton>
+            }
                           </div>
                         )}
 
@@ -3485,7 +3489,7 @@ export default function Slack_chatwindow({
                           }`}
                         >
                           <span className="text-xs">{time}</span>
-                          {isMe && (
+                          {/* {isMe && (
                             <div className="flex items-center">
                               {!m.deliveredAt && (
                                 <Check className="w-3.5 h-3.5" />
@@ -3497,7 +3501,19 @@ export default function Slack_chatwindow({
                                 <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
                               )}
                             </div>
-                          )}
+                          )} */}
+                          {isMe && (
+  <div className="flex items-center">
+    {m.seenAt ? (
+      <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
+    ) : m.deliveredAt && !m.seenAt? (
+      <CheckCheck className="w-3.5 h-3.5" />
+    ) : (
+      <Check className="w-3.5 h-3.5" />
+    )}
+  </div>
+)}
+
                         </div>
                       )}
                       {/* channel tick */}
