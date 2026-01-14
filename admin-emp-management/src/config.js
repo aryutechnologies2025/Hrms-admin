@@ -12,7 +12,7 @@ export const API_URL = "https://hrms.aryuprojects.com";
 // export const API_URL = "http://192.168.0.116:5000";
 
 // 192.168.0.116
-// export const API_URL = "http://localhost:5000"; //system        
+// export const API_URL = "http://localhost:5000"; //system    
 
 // export const API_URL = "http://192.168.0.110:5000";
 

@@ -409,6 +409,7 @@ const Bidding_transaction_details = () => {
     {
       title: "Amount",
       data: "amountDollar",
+      render: (data) => `$${data}` || "-",
       // render: (data) => {
       //     if (data == null) return "-";
       //     return new Intl.NumberFormat("en-IN", {
@@ -620,7 +621,7 @@ const Bidding_transaction_details = () => {
                   <label className="text-sm font-medium text-gray-700 mb-1">
                     Account
                   </label>
-                  <Dropdown
+                  {/* <Dropdown
                     value={accountfilter}
                     onChange={(e) => setAccountfilter(e.value)}
                     options={accountBidderOptions}
@@ -629,6 +630,37 @@ const Bidding_transaction_details = () => {
                     placeholder="Select an Account"
                     className="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
+                  /> */}
+                  <MultiSelect
+                    value={accountfilter}
+                    onChange={(e) => setAccountfilter(e.value)}
+                    options={accountBidderOptions}
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Select Account"
+                    filter
+                    display="chip"
+                    maxSelectedLabels={2}
+                    className="w-full rounded-lg border border-gray-300"
+                    panelClassName="txn-panel"
+                    // filter
+                    filterPlaceholder="Search..."
+                    pt={{
+                      root: {
+                        className: "w-full  rounded-lg border border-gray-300",
+                      },
+                      label: { className: "text-gray-700 px-3" },
+                      trigger: { className: "text-gray-500" },
+                      input: { className: "h-11" },
+                      token: {
+                        className:
+                          "bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-md",
+                      },
+                      item: {
+                        className:
+                          "text-sm text-gray-700 hover:bg-gray-100 px-3 py-2",
+                      },
+                    }}
                   />
                 </div>
                 {/* From Date */}
