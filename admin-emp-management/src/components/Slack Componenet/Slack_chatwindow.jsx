@@ -2781,7 +2781,7 @@ export default function Slack_chatwindow({
 
   // image url to file object
   const urlToFile = async (url, filename, type) => {
-    const res = await fetch(`${API_URL}${url}`);
+    const res = await fetch(`${API_URL}/api${url}`);
     const blob = await res.blob();
     return new File([blob], filename, { type });
   };
@@ -3348,7 +3348,7 @@ export default function Slack_chatwindow({
 
                       {editingMessageId !== m._id &&
                         m.files.map((f) => {
-                          const src = `${API_URL}${f.url}`;
+                          const src = `${API_URL}/api${f.url}`;
 
                           return (
                             <div key={f._id} className="mt-3 relative group">
@@ -3748,7 +3748,7 @@ export default function Slack_chatwindow({
 
             {/* FILES OF PARENT */}
             {activeThread.files?.map((f) => {
-              const src = `${API_URL}${f.url}`;
+              const src = `${API_URL}/api${f.url}`;
               if (f.isDeleteFile) {
                 return (
                   <p key={f._id} className="text-sm italic text-gray-400">
@@ -3869,7 +3869,7 @@ export default function Slack_chatwindow({
                           );
                         }
 
-                        const src = `${API_URL}${f.url}`;
+                        const src = `${API_URL}/api${f.url}`;
 
                         if (f.type.startsWith("image")) {
                           return (
