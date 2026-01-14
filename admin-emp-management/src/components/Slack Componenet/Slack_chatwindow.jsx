@@ -1956,18 +1956,56 @@ const ActionButton = ({ children, title, danger, onClick }) => (
   </button>
 );
 
+
 const FileActions = ({ src, isMe, onDelete, onForward }) => {
   console.log("FileActions rendered with src:", onForward);
+ const handleDownload = async () => {
+  try {
+    const response = await fetch(src, { mode: "cors" });
+
+    const blob = await response.blob();
+
+    // 🔥 Extract filename from URL
+    const urlParts = src.split("/");
+    const originalName = urlParts[urlParts.length - 1];
+
+    // 🔥 Fallback if URL has no filename
+    const fileName = originalName.includes(".")
+      ? originalName
+      : `download.${blob.type.split("/")[1] || "png"}`;
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = fileName;
+
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error("Download failed:", err);
+  }
+};
+
   return (
     <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition z-10">
       {/* Download */}
-      <a
+      {/* <a
         href={src}
         download
         className="p-1 bg-black/60 rounded-full text-white hover:bg-black/80"
-      >
-        <Download className="w-4 h-4" />
-      </a>
+      > */}
+        <button
+  onClick={handleDownload}
+  className="p-1 bg-black/60 rounded-full text-white hover:bg-black/80"
+>
+  <Download className="w-4 h-4" />
+</button>
+
+      {/* </a> */}
 
       {/* Share */}
       <button
@@ -2059,6 +2097,11 @@ export default function Slack_chatwindow({
   const filteredChannels = channels.filter((c) =>
     c.name.toLowerCase().includes(searchForward.toLowerCase())
   );
+
+  // set seen by state
+  const [seenByUsers, setSeenByUsers] = useState([]);
+  const [showSeenPopup, setShowSeenPopup] = useState(false);
+  const [activeSeenMessage, setActiveSeenMessage] = useState(null);
 
   const me = currentUser?._id;
   const other = selectedUser?._id;
@@ -2738,7 +2781,7 @@ export default function Slack_chatwindow({
 
   // image url to file object
   const urlToFile = async (url, filename, type) => {
-    const res = await fetch(`http://localhost:5000${url}`);
+    const res = await fetch(`${API_URL}${url}`);
     const blob = await res.blob();
     return new File([blob], filename, { type });
   };
@@ -2799,8 +2842,76 @@ export default function Slack_chatwindow({
     );
   };
 
+  // seen by Api fetch
+  const fetchSeenBy = async (messageId) => {
+    try {
+      const res = await axios.get(
+        `${API_URL}/api/messages/messages/seen-by/${messageId}`
+      );
+
+      if (res.data.success) {
+        console.log("res.data.success",res.data.success);
+        setSeenByUsers(res.data.data);
+        setActiveSeenMessage(messageId);
+        setShowSeenPopup(true);
+      }
+    } catch (err) {
+      console.error("Seen by fetch error", err);
+    }
+  };
+
   return (
     <div className="flex h-full">
+    
+
+{showSeenPopup && (
+  <div
+    className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center"
+    onClick={() => setShowSeenPopup(false)}
+  >
+    <div
+      className="bg-white w-72 rounded-xl shadow-xl p-4 relative"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* HEADER */}
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="font-semibold text-sm">Seen by</h3>
+
+        <button
+          onClick={() => setShowSeenPopup(false)}
+          className="text-gray-500 hover:text-gray-800"
+        >
+          <X size={16} />
+        </button>
+      </div>
+
+      {seenByUsers.length === 0 ? (
+        <p className="text-sm text-gray-500">
+          No one has seen this yet
+        </p>
+      ) : (
+        <ul className="space-y-2 max-h-52 overflow-y-auto">
+          {seenByUsers.map((u) => (
+            <li key={u._id} className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold">
+                {u.name.charAt(0).toUpperCase()}
+              </div>
+
+              <div>
+                <p className="text-sm font-medium">{u.name}</p>
+                {/* <p className="text-xs text-gray-500">
+                  Seen at {new Date(u.seenAt).toLocaleTimeString()}
+                </p> */}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </div>
+)}
+
+
       <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50">
         {/* Chat Header */}
         {console.log("showForwardDropdown:", showForwardDropdown)}
@@ -3058,7 +3169,7 @@ export default function Slack_chatwindow({
                                   setEditFiles([]); // new files only
                                 }}
                               >
-                                <Pencil size={14}/>
+                                <Pencil size={14} />
                               </ActionButton>
                             )}
 
@@ -3074,7 +3185,7 @@ export default function Slack_chatwindow({
                                 title="Delete message"
                                 onClick={() => handleDeleteMessage(m._id)}
                               >
-                                <Trash2 size={14}/>
+                                <Trash2 size={14} />
                               </ActionButton>
                             )}
 
@@ -3098,7 +3209,13 @@ export default function Slack_chatwindow({
                             )}
 
                             {/* SEEN */}
-                            <ActionButton title="Seen by">
+                            {/* <ActionButton title="Seen by">
+                              <Eye size={14} />
+                            </ActionButton> */}
+                            <ActionButton
+                              title="Seen by"
+                              onClick={() => fetchSeenBy(m._id)}
+                            >
                               <Eye size={14} />
                             </ActionButton>
                           </div>
@@ -3153,7 +3270,7 @@ export default function Slack_chatwindow({
                                 </div>
                               );
                             })}
-                            
+
                             <button
                               onClick={() => editFileRef.current.click()}
                               className="w-15 h-10 p-5 flex items-center justify-center rounded-lg border border-gray-300  hover:bg-gray-100 hover:text-black"
@@ -3227,7 +3344,7 @@ export default function Slack_chatwindow({
 
                       {editingMessageId !== m._id &&
                         m.files.map((f) => {
-                          const src = `http://localhost:5000${f.url}`;
+                          const src = `${API_URL}${f.url}`;
 
                           return (
                             <div key={f._id} className="mt-3 relative group">
@@ -3615,7 +3732,7 @@ export default function Slack_chatwindow({
 
             {/* FILES OF PARENT */}
             {activeThread.files?.map((f) => {
-              const src = `http://localhost:5000${f.url}`;
+              const src = `${API_URL}${f.url}`;
               if (f.isDeleteFile) {
                 return (
                   <p key={f._id} className="text-sm italic text-gray-400">
@@ -3736,7 +3853,7 @@ export default function Slack_chatwindow({
                           );
                         }
 
-                        const src = `http://localhost:5000${f.url}`;
+                        const src = `${API_URL}${f.url}`;
 
                         if (f.type.startsWith("image")) {
                           return (
@@ -3773,6 +3890,8 @@ export default function Slack_chatwindow({
               socket={socket}
             />
           </div>
+          {/* { console.log("test open",showSeenPopup)} */}
+          
         </div>
       )}
     </div>

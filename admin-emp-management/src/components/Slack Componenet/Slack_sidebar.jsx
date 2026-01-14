@@ -417,7 +417,7 @@ import axios from "axios";
 import { MultiSelect } from "primereact/multiselect";
 
 /* ---------------- MODAL ---------------- */
-function CreateChannelModal({ onClose, currentUser }) {
+function CreateChannelModal({ onClose, currentUser, setChaneel }) {
   const [name, setName] = useState("");
   const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null);
 
@@ -432,7 +432,6 @@ function CreateChannelModal({ onClose, currentUser }) {
           withCredentials: true,
         }
       );
-
       // const employeeIds = response.data.data.map(emp => `${emp.employeeId} - ${emp.employeeName}`);
       const employeeemail = response.data.data.map((emp) => ({
         label: emp.employeeName,
@@ -458,6 +457,10 @@ function CreateChannelModal({ onClose, currentUser }) {
         createdBy: currentUser._id,
         members: selectedEmployeeDetails,
       });
+      console.log("res", res);
+      if (res.data.success && res.data.data) {
+        setChaneel((prev) => [...prev, res.data.data]);
+      }
     } catch (err) {
       console.log("error while creating channel", err);
     }
@@ -782,11 +785,14 @@ function SectionHeader({ title, open, onToggle, rightAction }) {
 //   currentUser,
 //   channelUnread = {},
 //   setChannelUnread,
+//   setChaneel={setChaneel},
+
 // }) {
 //   const [searchTerm, setSearchTerm] = useState("");
 //   const [filter, setFilter] = useState("all");
 //   const [dmOpen, setDmOpen] = useState(true);
 //   const [channelOpen, setChannelOpen] = useState(true);
+//    const [showChannelModal, setShowChannelModal] = useState(false);
 
 //   /* ---------------- FILTER USERS ---------------- */
 //   const filteredUsers = users.filter((u) => {
@@ -979,6 +985,14 @@ function SectionHeader({ title, open, onToggle, rightAction }) {
 //             </div>
 //           ))}
 //       </div>
+//       {/* ---------------- MODAL ---------------- */}
+//       {showChannelModal && (
+//         <CreateChannelModal
+//           onClose={() => setShowChannelModal(false)}
+//           onCreate={onCreateChannel}
+//           currentUser={currentUser}
+//         />
+//       )}
 
 //       {/* ---------------- FOOTER ---------------- */}
 //       <div className="p-4 border-t text-sm text-gray-500">
@@ -992,6 +1006,7 @@ export default function SlackSidebar({
   socket,
   users = [],
   channels = [],
+  setChaneel = { setChaneel },
   favorites = { dm: [], channels: [] },
   setFavorites,
   selectedUser,
@@ -1012,12 +1027,17 @@ export default function SlackSidebar({
   const [channelOpen, setChannelOpen] = useState(false);
   const [showChannelModal, setShowChannelModal] = useState(false);
 
+  console.log("onlineUsers", onlineUsers, users);
+  // helper function
+  const isOnline = (id) => onlineUsers.includes(String(id));
+
   /* ---------------- FILTER USERS ---------------- */
   const filteredUsers = users.filter((u) => {
     const name = u.name || "";
     const match = name.toLowerCase().includes(searchTerm.toLowerCase());
 
-    if (filter === "online") return match && onlineUsers.includes(u._id);
+    if (filter === "online")
+      return match && onlineUsers.includes(String(u?._id));
     if (filter === "unread") return match && unread[u._id] > 0;
 
     return match;
@@ -1228,47 +1248,73 @@ export default function SlackSidebar({
           onToggle={() => setDmOpen((p) => !p)}
         />
 
+        {/* {dmOpen &&
+          filteredUsers.map((u) => ( */}
         {dmOpen &&
-          filteredUsers.map((u) => (
-            <div
-              key={u._id}
-              onClick={() => onSelectUser(u)}
-              className={`mx-3 my-1 p-3 rounded-lg cursor-pointer flex justify-between items-center ${
-                selectedUser?._id === u._id
-                  ? "bg-purple-100"
-                  : "hover:bg-gray-100"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <span
-                  className={`w-2 h-2 rounded-full ${
-                    onlineUsers.includes(u._id) ? "bg-green-500" : "bg-gray-400"
-                  }`}
-                />
-                <span>{u.name}</span>
-              </div>
+          [...filteredUsers]
+            .sort((a, b) => {
+              const aOnline = isOnline(a._id);
+              const bOnline = isOnline(b._id);
 
-              <div className="flex items-center gap-2">
-                {unread[u._id] > 0 && (
-                  <span className="bg-red-500 text-white text-xs px-2 rounded-full">
-                    {unread[u._id]}
+              // 🟢 Online users first
+              if (aOnline && !bOnline) return -1;
+              if (!aOnline && bOnline) return 1;
+
+              // 🔔 More unread messages first
+              const aUnread = unread[a._id] || 0;
+              const bUnread = unread[b._id] || 0;
+              if (aUnread !== bUnread) return bUnread - aUnread;
+
+              // 🔤 Optional: alphabetical
+              return a.name.localeCompare(b.name);
+            })
+            .map((u) => (
+              <div
+                key={u._id}
+                onClick={() => onSelectUser(u)}
+                className={`mx-3 my-1 p-3 rounded-lg cursor-pointer flex justify-between items-center ${
+                  selectedUser?._id === u._id
+                    ? "bg-purple-100"
+                    : "hover:bg-gray-100"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  {console.log(
+                    "onlineUsers.includes(String(u._id))",
+                    onlineUsers.includes(String(u._id)),
+                    onlineUsers,
+                    u._id
+                  )}
+                  <span
+                    className={`w-2 h-2 rounded-full ${
+                      onlineUsers.includes(String(u._id))
+                        ? "bg-green-500"
+                        : "bg-gray-400"
+                    }`}
+                  />
+                  <span>{u.name}</span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {unread[u._id] > 0 && (
+                    <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+                      {unread[u._id]}
+                    </span>
+                  )}
+
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFavoriteDM(u);
+                    }}
+                  >
+                    {isDMFavorite(u._id) ? "⭐" : "☆"}
                   </span>
-                )}
-
-                <span
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleFavoriteDM(u);
-                  }}
-                >
-                  {isDMFavorite(u._id) ? "⭐" : "☆"}
-                </span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
       </div>
-      
-      
+
       {/* ---------------- FOOTER ---------------- */}
       <div className="p-4 border-t text-sm text-gray-500">
         Online users: {onlineUsers.length}
@@ -1278,6 +1324,7 @@ export default function SlackSidebar({
           onClose={() => setShowChannelModal(false)}
           onCreate={onCreateChannel}
           currentUser={currentUser}
+          setChaneel={setChaneel}
         />
       )}
     </div>
