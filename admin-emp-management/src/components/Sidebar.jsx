@@ -29,6 +29,8 @@ import { MdManageAccounts } from "react-icons/md";
 import { GrAnnounce } from "react-icons/gr";
 import { GiDiscussion } from "react-icons/gi";
 import { FaSlack } from "react-icons/fa";
+import { SiMarketo } from "react-icons/si";
+
 
 const Sidebar = () => {
   const location = useLocation();
@@ -1176,6 +1178,103 @@ const Sidebar = () => {
                       </div>
                     </>
                   )}
+{/* DigitalMarketing */}
+
+                    {hasPermission("DigitalMarketing") && (
+                        <>
+                          <div
+                            // onClick={() => setProjectOpen(!projectOpen)}
+                            onClick={() => toggleMenu("DigitalMarketing")}
+                            className={`flex items-center h-10 w-full flex-grow ${arrowClicked
+                                ? "justify-center  "
+                                : "justify-normal"
+                              } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${[
+                                "/digital-details"
+                               
+                              ].includes(currentPath)
+                                ? " text-[#4F46E5]"
+                                : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
+                              }`}
+                          >
+                            <SiMarketo />
+                            {!arrowClicked && (
+                              <p className="text-sm flex items-center gap-2">
+                                Digital Marketing
+                                {/* <span className="">
+                         
+                              {currentOpen === "projects" ? (
+                                <IoIosArrowUp />
+                              ) : (
+                                <IoIosArrowDown />
+                              )}
+                            </span> */}
+                                <span>
+                                  {currentOpen === "DigitalMarketing" ||
+                                    [
+                                      "/digital-details"
+                                     
+                                    ].includes(currentPath) ? (
+                                    <IoIosArrowUp />
+                                  ) : (
+                                    <IoIosArrowDown />
+                                  )}
+                                </span>
+                              </p>
+                            )}
+                          </div>
+                          <div
+                            className={`overflow-hidden w-full transition-all  duration-700 ease-in-out ${currentOpen === "DigitalMarketing" ||
+                                [
+                                  "/digital-details"
+                                
+                                ].includes(currentPath)
+                                ? "max-h-40 opacity-100"
+                                : "max-h-0 opacity-0"
+                              }`}
+                          >
+                            <div className="flex gap-2  items-start  ms-10 flex-col text-sm font-medium text-gray-500">
+                              <button
+                                onClick={() => navigate("/digital-details")}
+                                className={`px-2 py-1 rounded-full 
+    ${currentPath === "/digital-details"
+                                    ? " text-[#4F46E5]"
+                                    : "hover:bg-blue-100 text-gray-500"
+                                  }`}
+                              >
+                                Digital
+                              </button>
+                         
+                              {/* <div
+                        onClick={() => onClickSidebarMenu("task-list")}
+                        className={`flex w-full items-center flex-grow ${
+                          arrowClicked ? "justify-center  " : "justify-normal"
+                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer`}
+                      >
+                        <VscGithubProject />
+                        <p className="text-sm">Project</p>
+                      </div> */}
+                              {/* <div
+                        onClick={() => onClickSidebarMenu("task-list")}
+                        className={`flex w-full items-center flex-grow ${
+                          arrowClicked ? "justify-center  " : "justify-normal"
+                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer`}
+                      >
+                        <GrTask />
+                        <p className="text-sm">Task</p>
+                      </div>
+                      <div
+                        onClick={() => onClickSidebarMenu("Reports")}
+                        className={`flex w-full items-center flex-grow ${
+                          arrowClicked ? "justify-center  " : "justify-normal"
+                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer`}
+                      >
+                        <TbReportSearch />
+                        {!arrowClicked && <p className="text-sm">Reports</p>}
+                      </div> */}
+                            </div>
+                          </div>
+                        </>
+                      )}
 
                   {/* media account */}
 
