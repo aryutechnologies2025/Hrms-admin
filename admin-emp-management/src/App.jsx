@@ -141,6 +141,7 @@ import Billing_details_main from "./components/bidding assests components/Billin
 import LeadManagement_Mainbar from "./pages/LeadManagement_Mainbar";
 import Payslip_govt from "./components/payroll components/Payslip_govt";
 import Social_ContentMaster_Main from "./components/social media/Social_ContentMaster_Main";
+import Digital_list_main from "./components/digital team/Digital_list_main";
 
 export const SettingsContext = createContext();
 
@@ -635,15 +636,25 @@ function App() {
       ),
     },
 
+      {
+      path: "/Reports",
+      permissionTitle: "Projects",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Reports_mainbar />
+        </ProtectedRoute>
+      ),
+    },
+
     /* -------------------------------------------
       CLIENTS
   --------------------------------------------*/
     {
-      path: "/client-details",
+      path: "/digital-details",
       permissionTitle: "Clients",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
-          <Client_home />
+          <Digital_list_main/>
         </ProtectedRoute>
       ),
     },
