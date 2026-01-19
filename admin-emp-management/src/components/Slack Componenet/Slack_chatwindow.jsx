@@ -1956,39 +1956,38 @@ const ActionButton = ({ children, title, danger, onClick }) => (
   </button>
 );
 
-
 const FileActions = ({ src, isMe, onDelete, onForward }) => {
   console.log("FileActions rendered with src:", onForward);
- const handleDownload = async () => {
-  try {
-    const response = await fetch(src, { mode: "cors" });
+  const handleDownload = async () => {
+    try {
+      const response = await fetch(src, { mode: "cors" });
 
-    const blob = await response.blob();
+      const blob = await response.blob();
 
-    // 🔥 Extract filename from URL
-    const urlParts = src.split("/");
-    const originalName = urlParts[urlParts.length - 1];
+      // 🔥 Extract filename from URL
+      const urlParts = src.split("/");
+      const originalName = urlParts[urlParts.length - 1];
 
-    // 🔥 Fallback if URL has no filename
-    const fileName = originalName.includes(".")
-      ? originalName
-      : `download.${blob.type.split("/")[1] || "png"}`;
+      // 🔥 Fallback if URL has no filename
+      const fileName = originalName.includes(".")
+        ? originalName
+        : `download.${blob.type.split("/")[1] || "png"}`;
 
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
 
-    a.href = url;
-    a.download = fileName;
+      a.href = url;
+      a.download = fileName;
 
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
 
-    window.URL.revokeObjectURL(url);
-  } catch (err) {
-    console.error("Download failed:", err);
-  }
-};
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Download failed:", err);
+    }
+  };
 
   return (
     <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition z-10">
@@ -1998,12 +1997,12 @@ const FileActions = ({ src, isMe, onDelete, onForward }) => {
         download
         className="p-1 bg-black/60 rounded-full text-white hover:bg-black/80"
       > */}
-        <button
-  onClick={handleDownload}
-  className="p-1 bg-black/60 rounded-full text-white hover:bg-black/80"
->
-  <Download className="w-4 h-4" />
-</button>
+      <button
+        onClick={handleDownload}
+        className="p-1 bg-black/60 rounded-full text-white hover:bg-black/80"
+      >
+        <Download className="w-4 h-4" />
+      </button>
 
       {/* </a> */}
 
@@ -2850,7 +2849,7 @@ export default function Slack_chatwindow({
       );
 
       if (res.data.success) {
-        console.log("res.data.success",res.data.success);
+        console.log("res.data.success", res.data.success);
         setSeenByUsers(res.data.data);
         setActiveSeenMessage(messageId);
         setShowSeenPopup(true);
@@ -2862,55 +2861,50 @@ export default function Slack_chatwindow({
 
   return (
     <div className="flex h-full">
-    
-
-{showSeenPopup && (
-  <div
-    className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center"
-    onClick={() => setShowSeenPopup(false)}
-  >
-    <div
-      className="bg-white w-72 rounded-xl shadow-xl p-4 relative"
-      onClick={(e) => e.stopPropagation()}
-    >
-      {/* HEADER */}
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="font-semibold text-sm">Seen by</h3>
-
-        <button
+      {showSeenPopup && (
+        <div
+          className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center"
           onClick={() => setShowSeenPopup(false)}
-          className="text-gray-500 hover:text-gray-800"
         >
-          <X size={16} />
-        </button>
-      </div>
+          <div
+            className="bg-white w-72 rounded-xl shadow-xl p-4 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* HEADER */}
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-sm">Seen by</h3>
 
-      {seenByUsers.length === 0 ? (
-        <p className="text-sm text-gray-500">
-          No one has seen this yet
-        </p>
-      ) : (
-        <ul className="space-y-2 max-h-52 overflow-y-auto">
-          {seenByUsers.map((u) => (
-            <li key={u._id} className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold">
-                {u.name.charAt(0).toUpperCase()}
-              </div>
+              <button
+                onClick={() => setShowSeenPopup(false)}
+                className="text-gray-500 hover:text-gray-800"
+              >
+                <X size={16} />
+              </button>
+            </div>
 
-              <div>
-                <p className="text-sm font-medium">{u.name}</p>
-                {/* <p className="text-xs text-gray-500">
+            {seenByUsers.length === 0 ? (
+              <p className="text-sm text-gray-500">No one has seen this yet</p>
+            ) : (
+              <ul className="space-y-2 max-h-52 overflow-y-auto">
+                {seenByUsers.map((u) => (
+                  <li key={u._id} className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold">
+                      {u.name.charAt(0).toUpperCase()}
+                    </div>
+
+                    <div>
+                      <p className="text-sm font-medium">{u.name}</p>
+                      {/* <p className="text-xs text-gray-500">
                   Seen at {new Date(u.seenAt).toLocaleTimeString()}
                 </p> */}
-              </div>
-            </li>
-          ))}
-        </ul>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
       )}
-    </div>
-  </div>
-)}
-
 
       <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50">
         {/* Chat Header */}
@@ -3147,14 +3141,14 @@ export default function Slack_chatwindow({
                             {/* <ActionButton title="Reply in thread">
                             <MessageSquare size={14} />
                           </ActionButton> */}
-                          {isMe && 
-                            <ActionButton
-                              title="Reply in thread"
-                              onClick={() => setActiveThread(m)}
-                            >
-                              <MessageSquare size={14} />
-                            </ActionButton>
-                          }
+                            {isMe && (
+                              <ActionButton
+                                title="Reply in thread"
+                                onClick={() => setActiveThread(m)}
+                              >
+                                <MessageSquare size={14} />
+                              </ActionButton>
+                            )}
 
                             {/* EDIT */}
                             {/* {isMe && (
@@ -3214,14 +3208,14 @@ export default function Slack_chatwindow({
                             {/* <ActionButton title="Seen by">
                               <Eye size={14} />
                             </ActionButton> */}
-                            {isMe &&
-                            <ActionButton
-                              title="Seen by"
-                              onClick={() => fetchSeenBy(m._id)}
-                            >
-                              <Eye size={14} />
-                            </ActionButton>
-            }
+                            {isMe && (
+                              <ActionButton
+                                title="Seen by"
+                                onClick={() => fetchSeenBy(m._id)}
+                              >
+                                <Eye size={14} />
+                              </ActionButton>
+                            )}
                           </div>
                         )}
 
@@ -3503,17 +3497,16 @@ export default function Slack_chatwindow({
                             </div>
                           )} */}
                           {isMe && (
-  <div className="flex items-center">
-    {m.seenAt ? (
-      <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
-    ) : m.deliveredAt && !m.seenAt? (
-      <CheckCheck className="w-3.5 h-3.5" />
-    ) : (
-      <Check className="w-3.5 h-3.5" />
-    )}
-  </div>
-)}
-
+                            <div className="flex items-center">
+                              {m.seenAt ? (
+                                <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
+                              ) : m.deliveredAt && !m.seenAt ? (
+                                <CheckCheck className="w-3.5 h-3.5" />
+                              ) : (
+                                <Check className="w-3.5 h-3.5" />
+                              )}
+                            </div>
+                          )}
                         </div>
                       )}
                       {/* channel tick */}
@@ -3907,7 +3900,6 @@ export default function Slack_chatwindow({
             />
           </div>
           {/* { console.log("test open",showSeenPopup)} */}
-          
         </div>
       )}
     </div>
