@@ -132,7 +132,9 @@ const Client_note_details = () => {
     try {
       setLoading(true);
       const resp = await axios.get(
-        `${API_URL}/api/projectNotes/projectNotes/${_id}`,
+        `${API_URL}/api/projectNotes/projectNotes`,{
+          params: { projectId: _id },
+        },
         { withCredentials: true },
       );
 
@@ -363,6 +365,8 @@ const Client_note_details = () => {
     {
       title: "Report",
       data: "reporter",
+        render: (data) => data ? data : "-"
+
     },
 
     {

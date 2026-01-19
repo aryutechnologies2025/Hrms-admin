@@ -188,7 +188,7 @@ const Digital_list_details = () => {
       toast.success("Created Successfully!");
       setIsAddModalOpen(false);
 
-      fetchNotes();
+      fetchDigital();
 
       setTaskId("");
       setTitle("");
@@ -332,10 +332,20 @@ const Digital_list_details = () => {
 },
 
 {
-    key: "postUrl",
-    title: "Post URL",
-    data: "postUrl",
+  key: "postUrl",
+  title: "Post URL",
+  data: "postUrl",
+  render: (data) => {
+    if (!data) return "-";
+
+    return `
+      <a href="${data}" target="_blank" rel="noopener noreferrer">
+        ${data}
+      </a>
+    `;
+  }
 },
+
     {
       key: "postDate",
       title: "Post Date",
@@ -447,7 +457,7 @@ const Digital_list_details = () => {
         // console.log("res", res);
         // setNotedetails((prev) => prev.filter((item) => item._id !== _id));
         // fetchProject();
-        fetchProject();
+        fetchDigital();
       } catch (err) {
         console.error("Failed to delete:", err);
         Swal.fire("Error", "There was an error deleting.", "error");
@@ -535,86 +545,7 @@ const Digital_list_details = () => {
           </button>
         </div>
 
-        <div className="flex flex-wrap gap-6 mb-6 items-end">
-          {/* Client Filter */}
-          <div className="flex flex-col">
-            <label className="text-sm font-semibold mb-1 text-gray-700">
-              Client
-            </label>
-            <Dropdown
-              //   value={clientFilter}
-              //   onChange={(e) => setClientFilter(e.value)}
-              //   options={clientOption}
-              filter
-              optionLabel="label"
-              placeholder="Select a Client"
-              className="w-[300px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Project Filter */}
-          <div className="flex flex-col">
-            <label className="text-sm font-semibold mb-1 text-gray-700">
-              Project
-            </label>
-            <Dropdown
-              //   value={projectFilter}
-              //   onChange={(e) => setProjectFilter(e.value)}
-              //   options={projectOption}
-              filter
-              optionLabel="label"
-              placeholder="Select a Project"
-              className="w-[300px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Status Filter */}
-          <div className="flex flex-col">
-            <label className="text-sm font-semibold mb-1 text-gray-700">
-              Status
-            </label>
-            <select
-              className="border w-[300px] border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              //   value={statusFilter}
-              //   onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="">All Status</option>
-              <option value="invoice_raised">Invoice Raised</option>
-
-              <option value="advance_pending">Advance Pending</option>
-              <option value="advance_received">Advance Received</option>
-              <option value="partial_payment_pending">
-                Partial Payment Pending
-              </option>
-              <option value="partial_payment_received">
-                Partial Payment Received
-              </option>
-              <option value="final_payment_pending">
-                Final payment Pending
-              </option>
-
-              <option value="completed">Completed</option>
-              <option value="TDS">TDS</option>
-            </select>
-          </div>
-
-          {/* Buttons */}
-          <div className="flex gap-2 mt-5">
-            <button
-              //   onClick={handleSubmit}
-              // onClick={() => fetchProject()}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium shadow"
-            >
-              Submit
-            </button>
-            <button
-              //   onClick={handleReset}
-              className="border  px-6 py-2 rounded-lg hover:bg-gray-400 bg-gray-500 text-white text-sm font-medium"
-            >
-              Reset
-            </button>
-          </div>
-        </div>
+     
 
         <div className="flex flex-wrap items-center gap-4 ">
           {/* Column Dropdown */}
