@@ -427,14 +427,14 @@ function CreateChannelModal({ onClose, currentUser, setChaneel }) {
   const fetchEmployeeList = async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/employees/all-employees`,
+        `${API_URL}/api/employees/all-users`,
         {
           withCredentials: true,
         }
       );
       // const employeeIds = response.data.data.map(emp => `${emp.employeeId} - ${emp.employeeName}`);
       const employeeemail = response.data.data.map((emp) => ({
-        label: emp.employeeName,
+        label: emp.name,
         value: emp._id,
       }));
       setEmployeeOption(employeeemail);
@@ -1064,19 +1064,14 @@ export default function SlackSidebar({
   const toggleFavoriteDM = async (user) => {
     const res = await axios.post(`${API_URL}/api/favorites/dm`, {
       userId: currentUser?._id,
-      userModel:
-        currentUser?.type == "employee"
-          ? "Employee"
-          : currentUser?.type == "admin"
-          ? "AdminUser"
-          : "ClientDetails", // Employee | User | Client
+      userModel:currentUser?.type == "employee"?"Employee":currentUser?.type == "admin"? "AdminUser":currentUser?.type == "client" ? "ClientDetails":"ClientSubUser",  // Employee | User | Client
       dmId: user._id,
       dmModel:
         user.type == "employee"
           ? "Employee"
           : user.type == "admin"
           ? "AdminUser"
-          : "ClientDetails",
+          :user?.type=="client"?"ClientDetails":"ClientSubUser",
     });
 
     if (res.data.success) {
@@ -1269,10 +1264,11 @@ export default function SlackSidebar({
               return a.name.localeCompare(b.name);
             })
             .map((u) => (
-              <div
+              <div className="py-3">
+               <div
                 key={u._id}
                 onClick={() => onSelectUser(u)}
-                className={`mx-3 my-1 p-3 rounded-lg cursor-pointer flex justify-between items-center ${
+                className={`mx-3 my-1 p-2 rounded-lg cursor-pointer flex justify-between items-center ${
                   selectedUser?._id === u._id
                     ? "bg-purple-100"
                     : "hover:bg-gray-100"
@@ -1312,6 +1308,11 @@ export default function SlackSidebar({
                   </span>
                 </div>
               </div>
+             <div>
+              <p className="mx-5  text-blue-600">{u?.type}</p>
+             </div>
+              </div>
+             
             ))}
       </div>
 
