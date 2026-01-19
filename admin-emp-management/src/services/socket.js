@@ -40,7 +40,6 @@ export function connectSocket(token) {
     transports: ["websocket"],
       timeout: 20000,
     // withCredentials: true,
-
     // 🔐 enable later when JWT ready
     // auth: { token },
   });
