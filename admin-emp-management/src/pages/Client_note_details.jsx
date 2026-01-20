@@ -132,8 +132,8 @@ const Client_note_details = () => {
     try {
       setLoading(true);
       const resp = await axios.get(
-        `${API_URL}/api/projectNotes/projectNotes`,{
-          params: { projectId: _id },
+        `${API_URL}/api/projectNotes/projectNotes-details`,{
+          params: { id: _id },
         },
         { withCredentials: true },
       );
@@ -826,7 +826,7 @@ const Client_note_details = () => {
                   </span>
 
                   <a
-                    href={`${API_URL}/api/uploads/others/${doc.filepath}`}
+                    href={`${API_URL}/api/uploads/projectDocuments/${doc.filepath}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:underline text-sm font-medium"
