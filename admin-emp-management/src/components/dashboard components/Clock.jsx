@@ -28,8 +28,8 @@ const Clock = React.memo(() => {
 
   return (
     <div>
-      <h3>{time.day}, {time.month} {time.date}</h3>
-      <h2>{time.hours}:{time.minutes}:{time.seconds} {time.amPm}</h2>
+      <span className="mx-3">{time.day}, {time.month} {time.date}</span>
+      <span>{time.hours}:{time.minutes}:{time.seconds} {time.amPm}</span>
     </div>
   );
 });
