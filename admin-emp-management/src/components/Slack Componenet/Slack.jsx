@@ -770,7 +770,12 @@ export default function Slack() {
   useEffect(() => {
     if (!currentUser) return;
     axios
-      .get(`${API_URL}/api/employees/all-users`)
+      .get(`${API_URL}/api/employees/all-users`, {
+        params: {
+          userId: currentUser?._id,
+          type: currentUser?.superUser ? "superAdmin" : currentUser?.type,
+        },
+      })
       .then((res) => setUsers(res.data.data || []));
     console.log("users", users);
   }, [currentUser]);
