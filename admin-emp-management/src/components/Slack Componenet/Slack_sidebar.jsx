@@ -417,26 +417,50 @@ import axios from "axios";
 import { MultiSelect } from "primereact/multiselect";
 
 /* ---------------- MODAL ---------------- */
-function CreateChannelModal({ onClose, currentUser, setChaneel }) {
+function CreateChannelModal({ onClose, currentUser, setChaneel, socket }) {
   const [name, setName] = useState("");
   const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null);
 
   const [employeeOption, setEmployeeOption] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(new Date());
 
+  useEffect(() => {
+    if (!socket) return;
+    socket.on("channel_created", (newChannel) =>{
+      setChaneel((prev) => {
+        const exists = prev.find((c) => c._id === newChannel._id);
+        if (exists) return prev;
+        return [...prev, newChannel];
+      });
+    });
+    return () => {
+      socket.off("channel_created");
+    };
+  }, []);
+
   const fetchEmployeeList = async () => {
     try {
+
       const response = await axios.get(
         `${API_URL}/api/employees/all-users`,
         {
+          params: {
+            userId: currentUser?._id,
+            type: currentUser?.superUser ? "superAdmin" : currentUser?.type,
+          },
+        },
+        {
           withCredentials: true,
-        }
+        },
       );
+      
       // const employeeIds = response.data.data.map(emp => `${emp.employeeId} - ${emp.employeeName}`);
-      const employeeemail = response.data.data.map((emp) => ({
-        label: emp.name,
-        value: emp._id,
-      }));
+      const employeeemail = response.data.data
+        .filter((val) => val._id != currentUser?._id)
+        .map((emp) => ({
+          label: emp.name,
+          value: emp._id,
+        }));
       setEmployeeOption(employeeemail);
     } catch (error) {
       console.log(error);
@@ -520,7 +544,7 @@ function CreateChannelModal({ onClose, currentUser, setChaneel }) {
 }
 
 /* ---------------- SECTION HEADER ---------------- */
-function SectionHeader({ title, open, onToggle, rightAction }) {
+function SectionHeader({ title, open, onToggle, rightAction, currentUser }) {
   return (
     <div
       onClick={onToggle}
@@ -532,8 +556,7 @@ function SectionHeader({ title, open, onToggle, rightAction }) {
         </span>
         <span className="font-semibold text-gray-700">{title}</span>
       </div>
-
-      {rightAction}
+      {currentUser && currentUser.superUser && rightAction}
     </div>
   );
 }
@@ -1064,14 +1087,23 @@ export default function SlackSidebar({
   const toggleFavoriteDM = async (user) => {
     const res = await axios.post(`${API_URL}/api/favorites/dm`, {
       userId: currentUser?._id,
-      userModel:currentUser?.type == "employee"?"Employee":currentUser?.type == "admin"? "AdminUser":currentUser?.type == "client" ? "ClientDetails":"ClientSubUser",  // Employee | User | Client
+      userModel:
+        currentUser?.type == "employee"
+          ? "Employee"
+          : currentUser?.type == "admin"
+            ? "AdminUser"
+            : currentUser?.type == "client"
+              ? "ClientDetails"
+              : "ClientSubUser", // Employee | User | Client
       dmId: user._id,
       dmModel:
         user.type == "employee"
           ? "Employee"
           : user.type == "admin"
-          ? "AdminUser"
-          :user?.type=="client"?"ClientDetails":"ClientSubUser",
+            ? "AdminUser"
+            : user?.type == "client"
+              ? "ClientDetails"
+              : "ClientSubUser",
     });
 
     if (res.data.success) {
@@ -1086,8 +1118,8 @@ export default function SlackSidebar({
         currentUser?.type == "employee"
           ? "Employee"
           : currentUser?.type == "admin"
-          ? "AdminUser"
-          : "ClientDetails",
+            ? "AdminUser"
+            : "ClientDetails",
       channelId: channel._id,
       channelModel: "Channel",
     });
@@ -1117,7 +1149,7 @@ export default function SlackSidebar({
         />
 
         <div className="flex gap-2">
-          {["all", "online", ].map((f) => (
+          {["all", "online"].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -1191,6 +1223,7 @@ export default function SlackSidebar({
           title="Channels"
           open={channelOpen}
           onToggle={() => setChannelOpen((p) => !p)}
+          currentUser={currentUser}
           rightAction={
             <button
               onClick={(e) => {
@@ -1265,54 +1298,53 @@ export default function SlackSidebar({
             })
             .map((u) => (
               <div className="py-3">
-               <div
-                key={u._id}
-                onClick={() => onSelectUser(u)}
-                className={`mx-3 my-1 p-2 rounded-lg cursor-pointer flex justify-between items-center ${
-                  selectedUser?._id === u._id
-                    ? "bg-purple-100"
-                    : "hover:bg-gray-100"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  {console.log(
-                    "onlineUsers.includes(String(u._id))",
-                    onlineUsers.includes(String(u._id)),
-                    onlineUsers,
-                    u._id
-                  )}
-                  <span
-                    className={`w-2 h-2 rounded-full ${
-                      onlineUsers.includes(String(u._id))
-                        ? "bg-green-500"
-                        : "bg-gray-400"
-                    }`}
-                  />
-                  <span>{u.name}</span>
-                </div>
+                <div
+                  key={u._id}
+                  onClick={() => onSelectUser(u)}
+                  className={`mx-3 my-1 p-2 rounded-lg cursor-pointer flex justify-between items-center ${
+                    selectedUser?._id === u._id
+                      ? "bg-purple-100"
+                      : "hover:bg-gray-100"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    {console.log(
+                      "onlineUsers.includes(String(u._id))",
+                      onlineUsers.includes(String(u._id)),
+                      onlineUsers,
+                      u._id,
+                    )}
+                    <span
+                      className={`w-2 h-2 rounded-full ${
+                        onlineUsers.includes(String(u._id))
+                          ? "bg-green-500"
+                          : "bg-gray-400"
+                      }`}
+                    />
+                    <span>{u.name}</span>
+                  </div>
 
-                <div className="flex items-center gap-2">
-                  {unread[u._id] > 0 && (
-                    <span className="bg-red-500 text-white text-xs px-2 rounded-full">
-                      {unread[u._id]}
+                  <div className="flex items-center gap-2">
+                    {unread[u._id] > 0 && (
+                      <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+                        {unread[u._id]}
+                      </span>
+                    )}
+
+                    <span
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFavoriteDM(u);
+                      }}
+                    >
+                      {isDMFavorite(u._id) ? "⭐" : "☆"}
                     </span>
-                  )}
-
-                  <span
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleFavoriteDM(u);
-                    }}
-                  >
-                    {isDMFavorite(u._id) ? "⭐" : "☆"}
-                  </span>
+                  </div>
+                </div>
+                <div>
+                  <p className="mx-5  text-blue-600">{u?.type}</p>
                 </div>
               </div>
-             <div>
-              <p className="mx-5  text-blue-600">{u?.type}</p>
-             </div>
-              </div>
-             
             ))}
       </div>
 
@@ -1326,6 +1358,7 @@ export default function SlackSidebar({
           onCreate={onCreateChannel}
           currentUser={currentUser}
           setChaneel={setChaneel}
+          socket={socket}
         />
       )}
     </div>

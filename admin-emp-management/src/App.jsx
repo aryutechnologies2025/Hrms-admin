@@ -658,6 +658,16 @@ function App() {
         </ProtectedRoute>
       ),
     },
+     {
+      path: "/client-details",
+      permissionTitle: "Clients",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Client_home />
+        </ProtectedRoute>
+      ),
+    },
+
 
     {
       path: "/project-note-details/:_id",
