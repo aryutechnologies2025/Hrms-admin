@@ -253,6 +253,10 @@ const Invoice_details = () => {
       setStatusFilter("");
       setSearchParams({});
 
+      // Clear submitted labels
+      setSubmittedClient(null);
+      setSubmittedProject(null);
+
       // Fetch all data without filters
       const response = await axios.get(`${API_URL}/api/invoice/view-invoice`, {
         withCredentials: true,

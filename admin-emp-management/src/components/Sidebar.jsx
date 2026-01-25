@@ -15,7 +15,7 @@ import { VscGithubProject } from "react-icons/vsc";
 import axios from "axios";
 import { API_URL } from "../config";
 import { FaLinkSlash } from "react-icons/fa6";
-import { FaBusinessTime, FaRegAddressCard } from "react-icons/fa";
+import { FaRegAddressCard } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import { FaBuildingUser } from "react-icons/fa6";
 import { BsBank2 } from "react-icons/bs";
@@ -29,6 +29,8 @@ import { MdManageAccounts } from "react-icons/md";
 import { GrAnnounce } from "react-icons/gr";
 import { GiDiscussion } from "react-icons/gi";
 import { FaSlack } from "react-icons/fa";
+import { FaBusinessTime } from "react-icons/fa6";
+
 
 const Sidebar = () => {
   const location = useLocation();
@@ -1417,6 +1419,68 @@ const Sidebar = () => {
                     </>
                   )}
 
+
+{/* digital */}
+ {hasPermission("Digital") && (
+                    <>
+                      <div
+                        // onClick={() => setClientOpen(!clientOpen)}
+                        onClick={() => toggleMenu("digital-details")}
+                        className={`flex items-center h-10 w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                          } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${["/digital-details"].includes(
+                            currentPath
+                          )
+                            ? "bg-blue-100 text-[#4F46E5]"
+                            : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
+                          }`}
+                      >
+                        <FaBusinessTime />
+
+                        {!arrowClicked && (
+                          <p className="text-sm flex items-center gap-2">
+                            Digital Markerting
+                            <span>
+                              {currentOpen === "digital-details" ||
+                                [
+                                  "/digital-details",
+                                 
+                                ].includes(currentPath) ? (
+                                <IoIosArrowUp />
+                              ) : (
+                                <IoIosArrowDown />
+                              )}
+                            </span>
+                          </p>
+                        )}
+                      </div>
+                      {/*  */}
+                      <div
+                        className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "digital-details" ||
+                            ["/digital-details"].includes(
+                              currentPath
+                            )
+                            ? "max-h-52 opacity-100"
+                            : "max-h-0 opacity-0"
+                          }`}
+                      >
+                        <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
+                          <button
+                            onClick={() => navigate("/digital-details")}
+                            className={`px-2 py-1 rounded-full 
+    ${currentPath === "/digital-details"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
+                          >
+                           Digital
+                          </button>
+
+                       
+                        </div>
+                      </div>
+                    </>
+                  )}
+
                   {/* announcement */}
 
                   {hasPermission("Announcement") && (
@@ -1596,7 +1660,7 @@ const Sidebar = () => {
                           <button
                             onClick={() => navigate("/settings-invoice")}
                             className={`px-2 py-1 rounded-full 
-    ${currentPath === "/settings-invoice"
+    ${currentPath === "/General Settings"
                                 ? " text-[#4F46E5]"
                                 : "hover:bg-blue-100 text-gray-500"
                               }`}
