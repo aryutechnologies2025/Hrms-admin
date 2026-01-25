@@ -30,6 +30,8 @@ import { MdManageAccounts } from "react-icons/md";
 import { GrAnnounce } from "react-icons/gr";
 import AdminImage from "../assets/Yuvaraj-CEO-Aryu-Academy.png";
 import { GiDiscussion } from "react-icons/gi";
+import { FaSlack } from "react-icons/fa";
+import { FaBusinessTime } from "react-icons/fa6";
 
 const Mobile_Sidebar = () => {
   let navigate = useNavigate();
@@ -841,6 +843,46 @@ const Mobile_Sidebar = () => {
                           </div>
                         </div>
                       )}
+                      {/* digital marketing */}
+                      <div
+                        // onClick={() => setSelectAnyOneSocialMedia(!selectAnyOneSocialMedia)}
+                        onClick={() =>
+                          setOpenSection(
+                            openSection === "digital" ? null : "digital",
+                          )
+                        }
+                        className="flex items-center w-full hover:bg-blue-100 hover:text-[#4F46E5] px-3 py-2 rounded-lg gap-2 text-gray-500 text-sm font-medium cursor-pointer"
+                      >
+                        <div className="flex items-center justify-center h-5 w-5">
+                          <FaBusinessTime />
+                        </div>
+                        <p>Digital Markerting</p>
+                        {openSection === "digital" ? (
+                          <IoIosArrowUp />
+                        ) : (
+                          <IoIosArrowDown />
+                        )}{" "}
+                      </div>
+                      {openSection === "digital" && (
+                        <div
+                          className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${
+                            openSection === "digital"
+                              ? "max-h-40 opacity-100"
+                              : "max-h-0 opacity-0"
+                          }`}
+                        >
+                          <div className="flex gap-2  items-start  ms-10 flex-col text-sm font-medium text-gray-500">
+                            <button
+                              onClick={() =>
+                                onClickSidebarMenu("digital-details")
+                              }
+                              className="hover:bg-blue-100 px-2 py-1 rounded-full"
+                            >
+                              Digital
+                            </button>
+                          </div>
+                        </div>
+                      )}
                       {/* announcement */}
                       <div
                         onClick={() => onClickSidebarMenu("Announcement")}
@@ -893,30 +935,59 @@ const Mobile_Sidebar = () => {
                         <p>Holidays</p>
                       </div>
                       {/* links */}
+                   
+                      {/* settings */}
                       <div
-                        onClick={() => onClickSidebarMenu("settings")}
+                        // onClick={() => setSelectAnyOneSocialMedia(!selectAnyOneSocialMedia)}
+                        onClick={() =>
+                          setOpenSection(
+                            openSection === "settings" ? null : "settings",
+                          )
+                        }
                         className="flex items-center w-full hover:bg-blue-100 hover:text-[#4F46E5] px-3 py-2 rounded-lg gap-2 text-gray-500 text-sm font-medium cursor-pointer"
                       >
                         <div className="flex items-center justify-center h-5 w-5">
                           <IoSettings />
                         </div>
                         <p>Settings</p>
+                        {openSection === "settings" ? (
+                          <IoIosArrowUp />
+                        ) : (
+                          <IoIosArrowDown />
+                        )}{" "}
                       </div>
+                      {openSection === "settings" && (
+                        <div
+                          className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${
+                            openSection === "settings"
+                              ? "max-h-40 opacity-100"
+                              : "max-h-0 opacity-0"
+                          }`}
+                        >
+                          <div className="flex gap-2  items-start  ms-10 flex-col text-sm font-medium text-gray-500">
+                            <button
+                              onClick={() => onClickSidebarMenu("settings")}
+                              className="hover:bg-blue-100 px-2 py-1 rounded-full"
+                            >
+                             General Settings
+                            </button>
+
+                            <button
+                              onClick={() => onClickSidebarMenu("settings-invoice")}
+                              className="hover:bg-blue-100 px-2 py-1 rounded-full"
+                            >
+                              Invoice Settings{" "}
+                            </button>
+                          </div>
+                        </div>
+                      )}
                       {/* slack */}
                       <div>
                         {
                           //  {hasPermission("slack") && (
                           <div
                             onClick={() => onClickSidebarMenu("slack")}
-                            className={`flex items-center w-full flex-grow ${
-                              arrowClicked
-                                ? "justify-center  "
-                                : "justify-normal"
-                            } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                              currentPath === "/slack"
-                                ? "bg-blue-100 text-[#4F46E5]"
-                                : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                            }`}
+                            className="flex items-center w-full hover:bg-blue-100 hover:text-[#4F46E5] px-3 py-2 rounded-lg gap-2 text-gray-500 text-sm font-medium cursor-pointer"
                           >
                             <FaSlack />
 
@@ -961,13 +1032,7 @@ const Mobile_Sidebar = () => {
                       //  {hasPermission("slack") && (
                       <div
                         onClick={() => onClickSidebarMenu("slack")}
-                        className={`flex items-center w-full flex-grow ${
-                          arrowClicked ? "justify-center  " : "justify-normal"
-                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${
-                          currentPath === "/slack"
-                            ? "bg-blue-100 text-[#4F46E5]"
-                            : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                        }`}
+                        className="flex items-center w-full hover:bg-blue-100 hover:text-[#4F46E5] px-3 py-2 rounded-lg gap-2 text-gray-500 text-sm font-medium cursor-pointer"
                       >
                         <FaSlack />
 
