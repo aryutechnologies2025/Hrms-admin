@@ -170,7 +170,7 @@ const Client_note_details = () => {
 
   const handleEdit = (row) => {
     console.log("row", row)
-    setEditid(row._id);
+    setEditid(row.id);
     setTitleedit(row.title);
     setDescedit(row?.description);
     setOpenedit(true);
@@ -185,6 +185,7 @@ const Client_note_details = () => {
     formData.append("title", titleedit);
     formData.append("description", descedit);
     formData.append("reporter", noteTypeedit);
+     formData.append("createdBy", editid);
 
     //  append new uploaded files
     uploadedFilesedit.forEach((file) => {
