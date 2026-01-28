@@ -1025,6 +1025,346 @@ function SectionHeader({ title, open, onToggle, rightAction, currentUser }) {
 //   );
 // }
 
+// export default function SlackSidebar({
+//   socket,
+//   users = [],
+//   channels = [],
+//   setChaneel = { setChaneel },
+//   favorites = { dm: [], channels: [] },
+//   setFavorites,
+//   selectedUser,
+//   selectedChannel,
+//   onSelectUser,
+//   onSelectChannel,
+//   unread = {},
+//   onlineUsers = [],
+//   currentUser,
+//   channelUnread = {},
+//   setChannelUnread,
+//   onCreateChannel,
+// }) {
+//   const [searchTerm, setSearchTerm] = useState("");
+//   const [filter, setFilter] = useState("all");
+//   const [dmOpen, setDmOpen] = useState(true);
+//   const [favoritesOpen, setFavoritesOpen] = useState(false);
+//   const [channelOpen, setChannelOpen] = useState(false);
+//   const [showChannelModal, setShowChannelModal] = useState(false);
+//   users=[...users,...channels,...favorites.dm,...favorites.channels];
+//   console.log("onlineUsers", onlineUsers, users);
+//   // helper function
+//   const isOnline = (id) => onlineUsers.includes(String(id));
+
+//   /* ---------------- FILTER USERS ---------------- */
+//   const filteredUsers = users.filter((u) => {
+//     const name = u.name || "";
+//     const match = name.toLowerCase().includes(searchTerm.toLowerCase());
+
+//     if (filter === "online")
+//       return match && onlineUsers.includes(String(u?._id));
+//     if (filter === "unread") return match && unread[u._id] > 0;
+
+//     return match;
+//   });
+
+//   /* ---------------- OPEN CHANNEL ---------------- */
+//   const openChannel = (channel) => {
+//     onSelectChannel(channel);
+
+//     socket.emit("join_channel", { channelId: channel._id });
+
+//     setChannelUnread((prev) => ({
+//       ...prev,
+//       [channel._id]: 0,
+//     }));
+
+//     socket.emit("channel_seen", {
+//       channelId: channel._id,
+//       userId: currentUser._id,
+//     });
+//   };
+
+//   /* ---------------- FAVORITES API ---------------- */
+//   const toggleFavoriteDM = async (user) => {
+//     const res = await axios.post(`${API_URL}/api/favorites/dm`, {
+//       userId: currentUser?._id,
+//       userModel:
+//         currentUser?.type == "employee"
+//           ? "Employee"
+//           : currentUser?.type == "admin"
+//             ? "AdminUser"
+//             : currentUser?.type == "client"
+//               ? "ClientDetails"
+//               : "ClientSubUser", // Employee | User | Client
+//       dmId: user._id,
+//       dmModel:
+//         user.type == "employee"
+//           ? "Employee"
+//           : user.type == "admin"
+//             ? "AdminUser"
+//             : user?.type == "client"
+//               ? "ClientDetails"
+//               : "ClientSubUser",
+//     });
+
+//     if (res.data.success) {
+//       setFavorites(res.data.data);
+//     }
+//   };
+
+//   const toggleFavoriteChannel = async (channel) => {
+//     const res = await axios.post(`${API_URL}/api/favorites/channel`, {
+//       userId: currentUser._id,
+//       userModel:
+//         currentUser?.type == "employee"
+//           ? "Employee"
+//           : currentUser?.type == "admin"
+//             ? "AdminUser"
+//             : "ClientDetails",
+//       channelId: channel._id,
+//       channelModel: "Channel",
+//     });
+
+//     if (res.data.success) {
+//       setFavorites(res.data.data);
+//     }
+//   };
+
+//   /* ---------------- HELPERS ---------------- */
+//   const isDMFavorite = (id) => favorites.dm.some((f) => f._id === id);
+
+//   const isChannelFavorite = (id) =>
+//     favorites.channels.some((f) => f._id === id);
+
+//   return (
+//     <div className="w-80 h-screen flex flex-col border-r bg-white">
+//       {/* ---------------- HEADER ---------------- */}
+//       <div className="p-4 border-b">
+//         <h2 className="text-xl font-bold mb-3">Messages</h2>
+
+//         <input
+//           className="w-full px-3 py-2 rounded bg-gray-100 mb-3"
+//           placeholder="Search..."
+//           value={searchTerm}
+//           onChange={(e) => setSearchTerm(e.target.value)}
+//         />
+
+//         <div className="flex gap-2">
+//           {["all", "online"].map((f) => (
+//             <button
+//               key={f}
+//               onClick={() => setFilter(f)}
+//               className={`px-3 py-1 rounded-full text-sm ${
+//                 filter === f ? "bg-purple-600 text-white" : "bg-gray-100"
+//               }`}
+//             >
+//               {f}
+//             </button>
+//           ))}
+//         </div>
+//       </div>
+
+//       {/* ---------------- BODY ---------------- */}
+//       <div className="flex-1 overflow-y-auto">
+//         <SectionHeader
+//           title="Favorites"
+//           open={favoritesOpen}
+//           onToggle={() => setFavoritesOpen((p) => !p)}
+//         />
+//         {/* ⭐ FAVORITES */}
+
+//         {favoritesOpen &&
+//           (favorites.dm.length > 0 || favorites.channels.length > 0) && (
+//             <>
+//               {/* Favorite Channels */}
+//               {favorites.channels.map((ch) => (
+//                 <div
+//                   key={ch._id}
+//                   onClick={() => openChannel(ch)}
+//                   className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100 flex justify-between items-center"
+//                 >
+//                   ⭐ # {ch.name}
+//                   <div className="flex items-center gap-2">
+//                     {channelUnread[ch._id] > 0 && (
+//                       <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+//                         {channelUnread[ch._id]}
+//                       </span>
+//                     )}
+//                   </div>
+//                 </div>
+//               ))}
+
+//               {/* Favorite DMs */}
+//               {favorites.dm.map((u) => (
+//                 <div
+//                   key={u._id}
+//                   onClick={() => onSelectUser(u)}
+//                   className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100 flex justify-between items-center"
+//                 >
+//                   ⭐ {u.name}
+//                   <div>
+//                     {unread[u._id] > 0 && (
+//                       <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+//                         {unread[u._id]}
+//                       </span>
+//                     )}
+//                   </div>
+//                 </div>
+//               ))}
+//             </>
+//           )}
+
+//         {/* #️⃣ CHANNELS */}
+//         {/* <SectionHeader
+//           title="Channels"
+//           open={channelOpen}
+//           onToggle={() => setChannelOpen((p) => !p)}
+//         /> */}
+//         <SectionHeader
+//           title="Channels"
+//           open={channelOpen}
+//           onToggle={() => setChannelOpen((p) => !p)}
+//           currentUser={currentUser}
+//           rightAction={
+//             <button
+//               onClick={(e) => {
+//                 e.stopPropagation();
+//                 setShowChannelModal(true);
+//               }}
+//               className="text-xl"
+//             >
+//               +
+//             </button>
+//           }
+//         />
+
+//         {channelOpen &&
+//           channels.map((ch) => (
+//             <div
+//               key={ch._id}
+//               onClick={() => openChannel(ch)}
+//               className={`mx-3 my-1 p-3 rounded-lg cursor-pointer flex justify-between items-center ${
+//                 selectedChannel?._id === ch._id
+//                   ? "bg-blue-100"
+//                   : "hover:bg-gray-100"
+//               }`}
+//             >
+//               <span># {ch.name}</span>
+
+//               <div className="flex items-center gap-2">
+//                 {channelUnread[ch._id] > 0 && (
+//                   <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+//                     {channelUnread[ch._id]}
+//                   </span>
+//                 )}
+
+//                 <span
+//                   onClick={(e) => {
+//                     e.stopPropagation();
+//                     toggleFavoriteChannel(ch);
+//                   }}
+//                 >
+//                   {isChannelFavorite(ch._id) ? "⭐" : "☆"}
+//                 </span>
+//               </div>
+//             </div>
+//           ))}
+
+//         {/* 💬 DIRECT MESSAGES */}
+//         <SectionHeader
+//           title="Direct Messages"
+//           open={dmOpen}
+//           onToggle={() => setDmOpen((p) => !p)}
+//         />
+
+//         {/* {dmOpen &&
+//           filteredUsers.map((u) => ( */}
+//         {dmOpen &&
+//           [...filteredUsers]
+//             .sort((a, b) => {
+//               const aOnline = isOnline(a._id);
+//               const bOnline = isOnline(b._id);
+
+//               // 🟢 Online users first
+//               if (aOnline && !bOnline) return -1;
+//               if (!aOnline && bOnline) return 1;
+
+//               // 🔔 More unread messages first
+//               const aUnread = unread[a._id] || 0;
+//               const bUnread = unread[b._id] || 0;
+//               if (aUnread !== bUnread) return bUnread - aUnread;
+
+//               // 🔤 Optional: alphabetical
+//               return a.name.localeCompare(b.name);
+//             })
+//             .map((u) => (
+//               <div className="py-3">
+//                 <div
+//                   key={u._id}
+//                   onClick={() => onSelectUser(u)}
+//                   className={`mx-3 my-1 p-2 rounded-lg cursor-pointer flex justify-between items-center ${
+//                     selectedUser?._id === u._id
+//                       ? "bg-purple-100"
+//                       : "hover:bg-gray-100"
+//                   }`}
+//                 >
+//                   <div className="flex items-center gap-2">
+//                     {console.log(
+//                       "onlineUsers.includes(String(u._id))",
+//                       onlineUsers.includes(String(u._id)),
+//                       onlineUsers,
+//                       u._id,
+//                     )}
+//                     <span
+//                       className={`w-2 h-2 rounded-full ${
+//                         onlineUsers.includes(String(u._id))
+//                           ? "bg-green-500"
+//                           : "bg-gray-400"
+//                       }`}
+//                     />
+//                     <span>{u.name}</span>
+//                   </div>
+
+//                   <div className="flex items-center gap-2">
+//                     {unread[u._id] > 0 && (
+//                       <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+//                         {unread[u._id]}
+//                       </span>
+//                     )}
+
+//                     <span
+//                       onClick={(e) => {
+//                         e.stopPropagation();
+//                         toggleFavoriteDM(u);
+//                       }}
+//                     >
+//                       {isDMFavorite(u._id) ? "⭐" : "☆"}
+//                     </span>
+//                   </div>
+//                 </div>
+//                 <div>
+//                   <p className="mx-5  text-blue-600">{u?.type}</p>
+//                 </div>
+//               </div>
+//             ))}
+//       </div>
+
+//       {/* ---------------- FOOTER ---------------- */}
+//       <div className="p-4 border-t text-sm text-gray-500">
+//         Online users: {onlineUsers.length}
+//       </div>
+//       {showChannelModal && (
+//         <CreateChannelModal
+//           onClose={() => setShowChannelModal(false)}
+//           onCreate={onCreateChannel}
+//           currentUser={currentUser}
+//           setChaneel={setChaneel}
+//           socket={socket}
+//         />
+//       )}
+//     </div>
+//   );
+// }
+
 export default function SlackSidebar({
   socket,
   users = [],
@@ -1062,10 +1402,33 @@ export default function SlackSidebar({
     if (filter === "online")
       return match && onlineUsers.includes(String(u?._id));
     if (filter === "unread") return match && unread[u._id] > 0;
-
     return match;
   });
 
+  // filter channels based on search term
+  const filteredChannels = channels.filter((ch) => {
+    const name = ch.name || "";
+    return name.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+  // FILTER FAVORITE CHANNELS AND DMS
+  const favoriteDMs = favorites.dm.filter((dm) => {
+    const match = (dm.name || "")
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    if (filter === "online") {
+      return match && onlineUsers.includes(String(dm?._id));
+    }
+
+    if (filter === "unread") {
+      return match && unread[dm._id] > 0;
+    }
+    return match;
+  });
+
+  const favoriteChannels = favorites.channels.filter((ch) =>
+    (ch.name || "").toLowerCase().includes(searchTerm.toLowerCase()),
+  );
   /* ---------------- OPEN CHANNEL ---------------- */
   const openChannel = (channel) => {
     onSelectChannel(channel);
@@ -1092,10 +1455,14 @@ export default function SlackSidebar({
           ? "Employee"
           : currentUser?.type == "admin"
             ? "AdminUser"
-            : currentUser?.type == "client"
-              ? "ClientDetails"
-              : "ClientSubUser", // Employee | User | Client
+            : "ClientDetails", // Employee | User | Client
       dmId: user._id,
+      // dmModel:
+      //   user.type == "employee"
+      //     ? "Employee"
+      //     : user.type == "admin"
+      //     ? "AdminUser"
+      //     : "ClientDetails",
       dmModel:
         user.type == "employee"
           ? "Employee"
@@ -1135,6 +1502,51 @@ export default function SlackSidebar({
   const isChannelFavorite = (id) =>
     favorites.channels.some((f) => f._id === id);
 
+  // Dm Lable
+  const DM_GROUPS = [
+    { key: "admin", label: "Admin" },
+    { key: "employee", label: "Employee" },
+    { key: "client", label: "Client" },
+    { key: "clientSubUser", label: "Client Sub User" },
+  ];
+
+  // Accordion state
+
+  const [openGroups, setOpenGroups] = useState({
+    admin: true,
+    employee: true,
+    client: true,
+    client_sub_user: true,
+  });
+
+  const toggleGroup = (key) => {
+    setOpenGroups((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  // helper function to sort users
+  const sortUsers = (a, b) => {
+    const aOnline = isOnline(a._id);
+    const bOnline = isOnline(b._id);
+
+    if (aOnline && !bOnline) return -1;
+    if (!aOnline && bOnline) return 1;
+
+    const aUnread = unread[a._id] || 0;
+    const bUnread = unread[b._id] || 0;
+    if (aUnread !== bUnread) return bUnread - aUnread;
+
+    return a.name.localeCompare(b.name);
+  };
+
+  // Group users by type
+  const groupedUsers = DM_GROUPS.map((group) => ({
+    ...group,
+    users: filteredUsers.filter((u) => u.type === group.key).sort(sortUsers),
+  }));
+
   return (
     <div className="w-80 h-screen flex flex-col border-r bg-white">
       {/* ---------------- HEADER ---------------- */}
@@ -1147,7 +1559,6 @@ export default function SlackSidebar({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-
         <div className="flex gap-2">
           {["all", "online"].map((f) => (
             <button
@@ -1173,17 +1584,25 @@ export default function SlackSidebar({
         {/* ⭐ FAVORITES */}
 
         {favoritesOpen &&
-          (favorites.dm.length > 0 || favorites.channels.length > 0) && (
+          (favoriteDMs.length > 0 || favoriteChannels.length > 0) && (
             <>
               {/* Favorite Channels */}
-              {favorites.channels.map((ch) => (
+              {favoriteChannels.map((ch) => (
                 <div
-                  key={ch._id}
+                  key={`fav-channel-${ch._id}`}
                   onClick={() => openChannel(ch)}
-                  className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100 flex justify-between items-center"
+                  className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100"
                 >
-                  ⭐ # {ch.name}
-                  <div className="flex items-center gap-2">
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFavoriteChannel(ch);
+                    }}
+                  >
+                    {isChannelFavorite(ch._id) ? "⭐" : "☆"}
+                  </span>
+                  # {ch.name}
+                  <div className="">
                     {channelUnread[ch._id] > 0 && (
                       <span className="bg-red-500 text-white text-xs px-2 rounded-full">
                         {channelUnread[ch._id]}
@@ -1192,15 +1611,22 @@ export default function SlackSidebar({
                   </div>
                 </div>
               ))}
-
               {/* Favorite DMs */}
-              {favorites.dm.map((u) => (
+              {favoriteDMs.map((u) => (
                 <div
-                  key={u._id}
+                  key={`fav-dm-id-${u._id}`}
                   onClick={() => onSelectUser(u)}
-                  className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100 flex justify-between items-center"
+                  className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100"
                 >
-                  ⭐ {u.name}
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFavoriteDM(u);
+                    }}
+                  >
+                    {isDMFavorite(u._id) ? "⭐" : "☆"}
+                  </span>{" "}
+                  {u.name}
                   <div>
                     {unread[u._id] > 0 && (
                       <span className="bg-red-500 text-white text-xs px-2 rounded-full">
@@ -1219,6 +1645,7 @@ export default function SlackSidebar({
           open={channelOpen}
           onToggle={() => setChannelOpen((p) => !p)}
         /> */}
+
         <SectionHeader
           title="Channels"
           open={channelOpen}
@@ -1238,9 +1665,9 @@ export default function SlackSidebar({
         />
 
         {channelOpen &&
-          channels.map((ch) => (
+          filteredChannels.map((ch) => (
             <div
-              key={ch._id}
+              key={`channel-${ch._id}`}
               onClick={() => openChannel(ch)}
               className={`mx-3 my-1 p-3 rounded-lg cursor-pointer flex justify-between items-center ${
                 selectedChannel?._id === ch._id
@@ -1249,14 +1676,12 @@ export default function SlackSidebar({
               }`}
             >
               <span># {ch.name}</span>
-
               <div className="flex items-center gap-2">
                 {channelUnread[ch._id] > 0 && (
                   <span className="bg-red-500 text-white text-xs px-2 rounded-full">
                     {channelUnread[ch._id]}
                   </span>
                 )}
-
                 <span
                   onClick={(e) => {
                     e.stopPropagation();
@@ -1279,73 +1704,60 @@ export default function SlackSidebar({
         {/* {dmOpen &&
           filteredUsers.map((u) => ( */}
         {dmOpen &&
-          [...filteredUsers]
-            .sort((a, b) => {
-              const aOnline = isOnline(a._id);
-              const bOnline = isOnline(b._id);
-
-              // 🟢 Online users first
-              if (aOnline && !bOnline) return -1;
-              if (!aOnline && bOnline) return 1;
-
-              // 🔔 More unread messages first
-              const aUnread = unread[a._id] || 0;
-              const bUnread = unread[b._id] || 0;
-              if (aUnread !== bUnread) return bUnread - aUnread;
-
-              // 🔤 Optional: alphabetical
-              return a.name.localeCompare(b.name);
-            })
-            .map((u) => (
-              <div className="py-3">
-                <div
-                  key={u._id}
-                  onClick={() => onSelectUser(u)}
-                  className={`mx-3 my-1 p-2 rounded-lg cursor-pointer flex justify-between items-center ${
-                    selectedUser?._id === u._id
-                      ? "bg-purple-100"
-                      : "hover:bg-gray-100"
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    {console.log(
-                      "onlineUsers.includes(String(u._id))",
-                      onlineUsers.includes(String(u._id)),
-                      onlineUsers,
-                      u._id,
-                    )}
-                    <span
-                      className={`w-2 h-2 rounded-full ${
-                        onlineUsers.includes(String(u._id))
-                          ? "bg-green-500"
-                          : "bg-gray-400"
-                      }`}
-                    />
-                    <span>{u.name}</span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    {unread[u._id] > 0 && (
-                      <span className="bg-red-500 text-white text-xs px-2 rounded-full">
-                        {unread[u._id]}
-                      </span>
-                    )}
-
-                    <span
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFavoriteDM(u);
-                      }}
-                    >
-                      {isDMFavorite(u._id) ? "⭐" : "☆"}
-                    </span>
-                  </div>
-                </div>
-                <div>
-                  <p className="mx-5  text-blue-600">{u?.type}</p>
-                </div>
+          groupedUsers.map((group) => (
+            <div key={group.key} className="mb-2">
+              {/* Accordion Header */}
+              <div
+                onClick={() => toggleGroup(group.key)}
+                className="px-4 py-2 cursor-pointer font-semibold hover:bg-slate-50 hover:rounded rounded-lg flex justify-between items-center"
+              >
+                <span>{group.label}</span>
+                <span>{openGroups[group.key] ? "▾" : "▸"}</span>
               </div>
-            ))}
+
+              {/* Accordion Body */}
+              {openGroups[group.key] &&
+                group.users.map((u) => (
+                  <div key={`dm-${u._id}`} className="py-3">
+                    <div
+                      onClick={() => onSelectUser(u)}
+                      className={`mx-3 my-1 rounded-lg cursor-pointer flex justify-between items-center ${
+                        selectedUser?._id === u._id
+                          ? "bg-purple-100"
+                          : "hover:bg-gray-100"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`w-2 h-2 rounded-full ${
+                            isOnline(u._id) ? "bg-green-500" : "bg-gray-400"
+                          }`}
+                        />
+                        <span>{u.name}</span>
+                      </div>
+
+                      <div className="flex items-center gap-2 p-1">
+                        {unread[u._id] > 0 && (
+                          <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+                            {unread[u._id]}
+                          </span>
+                        )}
+                        <span
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleFavoriteDM(u);
+                          }}
+                        >
+                          {isDMFavorite(u._id) ? "⭐" : "☆"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* <p className="mx-5 text-blue-600 text-xs">{u.type}</p> */}
+                  </div>
+                ))}
+            </div>
+          ))}
       </div>
 
       {/* ---------------- FOOTER ---------------- */}
