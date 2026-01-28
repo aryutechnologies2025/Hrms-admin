@@ -1821,47 +1821,60 @@ import {
   Copy,
 } from "lucide-react";
 import { use } from "react";
+const renderSlackStyleText = (text) => {
+  if (!text) return null;
+
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+
+  return parts.map((part, index) => {
+    // ✅ use match, NOT test
+    if (part.match(urlRegex)) {
+      return (
+        <a
+          key={index}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 underline hover:text-blue-300 break-all"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {part}
+        </a>
+      );
+    }
+
+    return <span key={index}>{part}</span>;
+  });
+};
 
 const MessageText = ({ text, isMe }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const MAX_LENGTH = 300; // Characters to show before truncation
+  const MAX_LENGTH = 300;
 
-  // If text is short enough, show it fully
-  if (!text || text.length <= MAX_LENGTH) {
-    return (
-      <p
-        className={`whitespace-pre-wrap break-words text-[15px] leading-relaxed ${
-          isMe ? "text-white" : "text-gray-800"
-        }`}
-      >
-        {text}
-      </p>
-    );
-  }
-
-  // Split text into displayed part
-  const displayedText = isExpanded ? text : `${text.substring(0, MAX_LENGTH)}`;
-
+  if (!text) return null;
+   
+  const isLong = text.length > MAX_LENGTH;
+  const displayedText = isExpanded ? text : text.slice(0, MAX_LENGTH);
   const remainingChars = text.length - MAX_LENGTH;
 
   return (
     <div className="relative">
-      {/* Text Content */}
       <p
         className={`whitespace-pre-wrap break-words text-[15px] leading-relaxed ${
           isMe ? "text-white" : "text-gray-800"
         }`}
       >
-        {displayedText}
-        {!isExpanded && (
+        {renderSlackStyleText(displayedText)}
+
+        {!isExpanded && isLong && (
           <span className={`${isMe ? "text-blue-200/60" : "text-gray-500/60"}`}>
             ...
           </span>
         )}
       </p>
 
-      {/* Gradient Fade Effect (only when collapsed) */}
-      {!isExpanded && (
+      {!isExpanded && isLong && (
         <div
           className={`absolute bottom-0 right-0 h-6 w-20 pointer-events-none ${
             isMe
@@ -1871,30 +1884,31 @@ const MessageText = ({ text, isMe }) => {
         />
       )}
 
-      {/* Show More/Less Button */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          setIsExpanded(!isExpanded);
-        }}
-        className={`mt-1 text-sm font-medium flex items-center gap-1 hover:underline focus:outline-none ${
-          isMe
-            ? "text-blue-200 hover:text-white"
-            : "text-blue-600 hover:text-blue-800"
-        }`}
-      >
-        {isExpanded ? (
-          <>
-            <ChevronUp className="w-3.5 h-3.5" />
-            Show Less
-          </>
-        ) : (
-          <>
-            <ChevronDown className="w-3.5 h-3.5" />
-            Show {remainingChars}+ more
-          </>
-        )}
-      </button>
+      {isLong && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsExpanded(!isExpanded);
+          }}
+          className={`mt-1 text-sm font-medium flex items-center gap-1 hover:underline ${
+            isMe
+              ? "text-blue-200 hover:text-white"
+              : "text-blue-600 hover:text-blue-800"
+          }`}
+        >
+          {isExpanded ? (
+            <>
+              <ChevronUp className="w-3.5 h-3.5" />
+              Show Less
+            </>
+          ) : (
+            <>
+              <ChevronDown className="w-3.5 h-3.5" />
+              Show {remainingChars}+ more
+            </>
+          )}
+        </button>
+      )}
     </div>
   );
 };
@@ -2090,11 +2104,11 @@ export default function Slack_chatwindow({
   const [threadReplies, setThreadReplies] = useState([]);
 
   const filteredUsers = users.filter((u) =>
-    u.name.toLowerCase().includes(searchForward.toLowerCase())
+    u.name.toLowerCase().includes(searchForward.toLowerCase()),
   );
 
   const filteredChannels = channels.filter((c) =>
-    c.name.toLowerCase().includes(searchForward.toLowerCase())
+    c.name.toLowerCase().includes(searchForward.toLowerCase()),
   );
 
   // set seen by state
@@ -2194,7 +2208,7 @@ export default function Slack_chatwindow({
     const fetchMessages = async () => {
       try {
         const res = await axios.get(
-          `${API_URL}/api/messages/channel/${channelId}`
+          `${API_URL}/api/messages/channel/${channelId}`,
         );
         setMessages(res.data.data || []);
 
@@ -2234,8 +2248,8 @@ export default function Slack_chatwindow({
           m.receiverId === receiverId &&
           !m.deliveredAt
             ? { ...m, deliveredAt }
-            : m
-        )
+            : m,
+        ),
       );
     };
 
@@ -2299,8 +2313,8 @@ export default function Slack_chatwindow({
         prev.map((m) =>
           m.senderId === senderId && m.receiverId === receiverId && !m.seenAt
             ? { ...m, seenAt }
-            : m
-        )
+            : m,
+        ),
       );
     });
     return () => socket.off("messages_seen");
@@ -2314,8 +2328,8 @@ export default function Slack_chatwindow({
 
       setMessages((prev) =>
         prev.map((msg) =>
-          msg._id === messageId ? { ...msg, isSeenByAll } : msg
-        )
+          msg._id === messageId ? { ...msg, isSeenByAll } : msg,
+        ),
       );
     };
 
@@ -2380,15 +2394,15 @@ export default function Slack_chatwindow({
                 uploaded <= start
                   ? 0
                   : uploaded >= end
-                  ? 100
-                  : Math.round(((uploaded - start) / file.size) * 100);
+                    ? 100
+                    : Math.round(((uploaded - start) / file.size) * 100);
 
               map[tempId] = percent;
             });
 
             setProgressMap(map);
           },
-        }
+        },
       );
 
       // ✅ Notify via socket ONLY after success
@@ -2396,7 +2410,7 @@ export default function Slack_chatwindow({
         // console.log("entering socket emit for channel or dm ggg");
         socket.emit(
           selectedChannel ? "new_channel_message" : "new_message",
-          res.data.data
+          res.data.data,
         );
       }
       // cleanup
@@ -2497,8 +2511,8 @@ export default function Slack_chatwindow({
         prev.map((m) =>
           m._id === messageId
             ? { ...m, isDelete: true, text: "", files: [] }
-            : m
-        )
+            : m,
+        ),
       );
     };
 
@@ -2541,11 +2555,11 @@ export default function Slack_chatwindow({
             ? {
                 ...m,
                 files: m.files.map((f) =>
-                  f._id === fileId ? { ...f, isDeleteFile: true } : f
+                  f._id === fileId ? { ...f, isDeleteFile: true } : f,
                 ),
               }
-            : m
-        )
+            : m,
+        ),
       );
     };
 
@@ -2562,7 +2576,7 @@ export default function Slack_chatwindow({
 
     socket.on("message_edited", (updatedMessage) => {
       setMessages((prev) =>
-        prev.map((m) => (m._id === updatedMessage._id ? updatedMessage : m))
+        prev.map((m) => (m._id === updatedMessage._id ? updatedMessage : m)),
       );
     });
 
@@ -2619,8 +2633,8 @@ export default function Slack_chatwindow({
                 threadReplyCount: (m.threadReplyCount || 0) + 1,
                 lastThreadReplyAt: reply.createdAt,
               }
-            : m
-        )
+            : m,
+        ),
       );
     };
 
@@ -2644,22 +2658,34 @@ export default function Slack_chatwindow({
     );
   }
 
-  const renderTick = (msg) => {
+//   const renderTick = (msg) => {
+//   console.log("Rendering tick for message:", msg);
+
+//   if (!msg.deliveredAt) {
+//     return <Check className="w-3.5 h-3.5" />;
+//   }
+
+//   if (msg.isSeenByAll) {
+//     return <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />;
+//   }
+
+//   return <CheckCheck className="w-3.5 h-3.5 text-gray-500" />;
+// };
+
+ const renderTick = (msg) => {
     console.log("Rendering tick for message:", msg);
-    if (!msg.deliveredAt) {
-      return "✔";
+
+    if(!msg.deliveredAt) {
+      return <Check className="w-3.5 h-3.5" />;
     }
-
-    // if (msg.seenBy.length === 0) {
-    //   return "✔✔"; // delivered gray
-    // }
-
-    if (msg.isSeenByAll) {
-      return <span style={{ color: "#0b93f6" }}>✔✔</span>; // BLUE
+     else if(msg.isSeenByAll){
+      return <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />;
     }
-
-    return "✔✔"; // seen by some (gray)
+    else{
+       return <CheckCheck className="w-3.5 h-3.5 text-white" />;
+    }
   };
+
   console.log(" Message Rendering Chat Window with selectedChannel:", messages);
 
   // meassage Action buttons
@@ -2667,15 +2693,15 @@ export default function Slack_chatwindow({
   const handleDeleteMessage = async (messageId) => {
     try {
       const res = await axios.patch(
-        `${API_URL}/api/messages/messages/${messageId}/delete`
+        `${API_URL}/api/messages/messages/${messageId}/delete`,
       );
 
       setMessages((prev) =>
         prev.map((m) =>
           m._id === messageId
             ? { ...m, isDelete: true, text: "", files: [] }
-            : m
-        )
+            : m,
+        ),
       );
 
       socket.emit("message_deleted", { messageId });
@@ -2710,12 +2736,12 @@ export default function Slack_chatwindow({
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
-        }
+        },
       );
 
       if (res.data.success) {
         setMessages((prev) =>
-          prev.map((m) => (m._id === messageId ? res.data.data : m))
+          prev.map((m) => (m._id === messageId ? res.data.data : m)),
         );
         socket.emit("message_edited", res.data.data);
         setEditingMessageId(null);
@@ -2765,7 +2791,7 @@ export default function Slack_chatwindow({
       if (res.data?.success) {
         socket.emit(
           channelId ? "new_channel_message" : "new_message",
-          res.data.data
+          res.data.data,
         );
       }
 
@@ -2845,7 +2871,7 @@ export default function Slack_chatwindow({
   const fetchSeenBy = async (messageId) => {
     try {
       const res = await axios.get(
-        `${API_URL}/api/messages/messages/seen-by/${messageId}`
+        `${API_URL}/api/messages/messages/seen-by/${messageId}`,
       );
 
       if (res.data.success) {
@@ -3025,7 +3051,7 @@ export default function Slack_chatwindow({
                 <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
                   {console.log(
                     "Rendering header with selectedUser name:",
-                    selectedUser
+                    selectedUser,
                   )}
                   {selectedUser && selectedUser?.name.charAt(0).toUpperCase()}
                 </div>
@@ -3044,7 +3070,7 @@ export default function Slack_chatwindow({
                   <h2 className="font-bold">
                     {console.log(
                       "Rendering header with selectedUser channel:",
-                      selectedChannel?.name
+                      selectedChannel?.name,
                     )}
                     {(selectedUser && selectedUser?.name) ||
                       `# ${selectedChannel && selectedChannel?.name}`}
@@ -3098,6 +3124,13 @@ export default function Slack_chatwindow({
                     minute: "2-digit",
                   })
                 : "";
+                const date = m.createdAt
+                ? new Date(m.createdAt).toLocaleDateString([], {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                  })
+                : "";
 
               return (
                 <div
@@ -3123,7 +3156,7 @@ export default function Slack_chatwindow({
                       onMouseLeave={() => setHoveredMessageId(null)}
                     >
                       {/* 🔥 Hover Actions */}
-                      {!m.isDelete &&
+                      {!m.isDelete  &&  isMe &&
                         hoveredMessageId === (m._id || m.clientId) && (
                           <div
                             className={`absolute -top-9 ${
@@ -3141,14 +3174,14 @@ export default function Slack_chatwindow({
                             {/* <ActionButton title="Reply in thread">
                             <MessageSquare size={14} />
                           </ActionButton> */}
-                            {isMe && (
+                            {/* {isMe && (
                               <ActionButton
                                 title="Reply in thread"
                                 onClick={() => setActiveThread(m)}
                               >
                                 <MessageSquare size={14} />
                               </ActionButton>
-                            )}
+                            )} */}
 
                             {/* EDIT */}
                             {/* {isMe && (
@@ -3258,7 +3291,7 @@ export default function Slack_chatwindow({
                                   <button
                                     onClick={() =>
                                       setEditFiles((prev) =>
-                                        prev.filter((f) => f.tempId !== tempId)
+                                        prev.filter((f) => f.tempId !== tempId),
                                       )
                                     }
                                     className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
@@ -3285,7 +3318,7 @@ export default function Slack_chatwindow({
                                   (file) => ({
                                     file,
                                     tempId: crypto.randomUUID(),
-                                  })
+                                  }),
                                 );
                                 setEditFiles((prev) => [...prev, ...newFiles]);
                               }}
@@ -3316,7 +3349,7 @@ export default function Slack_chatwindow({
                             </p>
                           ) : m.text ? (
                             <div className="relative group max-w-fit">
-                              <MessageText text={m.text} isMe={isMe} />
+                              <MessageText text={m.text.trim()} isMe={isMe} />
 
                               {/* TEXT ACTIONS */}
                               {isMe && (
@@ -3476,26 +3509,14 @@ export default function Slack_chatwindow({
 
                       {/* dm tick */}
                       {/* Message Status and Time */}
-                      {selectedUser && (
+                      {/* {selectedUser && (
                         <div
                           className={`flex items-center justify-end gap-2 mt-2 ${
                             isMe ? "text-blue-100" : "text-gray-500"
                           }`}
                         >
                           <span className="text-xs">{time}</span>
-                          {/* {isMe && (
-                            <div className="flex items-center">
-                              {!m.deliveredAt && (
-                                <Check className="w-3.5 h-3.5" />
-                              )}
-                              {m.deliveredAt && !m.seenAt && (
-                                <CheckCheck className="w-3.5 h-3.5" />
-                              )}
-                              {m.seenAt && (
-                                <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
-                              )}
-                            </div>
-                          )} */}
+                         
                           {isMe && (
                             <div className="flex items-center">
                               {m.seenAt ? (
@@ -3508,11 +3529,78 @@ export default function Slack_chatwindow({
                             </div>
                           )}
                         </div>
+                      )} */}
+                      {/* channel tick */}
+                      {/* {selectedChannel && m.senderId == me && (
+                        <div>
+                          <div className="message-footer">{renderTick(m)}</div>
+                        </div>
+                      )} */}
+                       {/* dm tick */}
+                      {/* Message Status and Time */}
+                      {selectedUser && (
+                        <div
+                          className={`flex items-center justify-end gap-2 mt-2 ${
+                            isMe ? "text-blue-100" : "text-gray-500"
+                          }`}
+                        >
+                          <div>
+                            {" "}
+                            <span className="text-xs">{date}</span>
+                          </div>
+                          <div className="flex gap">
+                            <span className="text-xs">{time}</span>
+                            {/* {isMe && (
+                              <div className="flex items-center">
+                                {!m.deliveredAt && (
+                                  <Check className="w-3.5 h-3.5" />
+                                )}
+                                {m.deliveredAt && !m.seenAt && (
+                                  <CheckCheck className="w-3.5 h-3.5" />
+                                )}
+                                {m.seenAt && (
+                                  <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
+                                )}
+                              </div>
+                            )} */}
+                            {isMe && (
+                              <div className="flex items-center">
+                                {(() => {
+                                  if (!m.deliveredAt) {
+                                    return <Check className="w-3.5 h-3.5" />;
+                                  } else if (m.deliveredAt && !m.seenAt) {
+                                    return (
+                                      <CheckCheck className="w-3.5 h-3.5" />
+                                    );
+                                  } else if (m.seenAt) {
+                                    return (
+                                      <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
+                                    );
+                                  }
+                                  return null;
+                                })()}
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       )}
                       {/* channel tick */}
                       {selectedChannel && m.senderId == me && (
-                        <div>
-                          <div className="message-footer">{renderTick(m)}</div>
+                        <div
+                          className={`flex items-center justify-between gap-2 mt-2 ${
+                            isMe ? "text-blue-100" : "text-gray-500"
+                          }`}
+                        >
+                          <div>
+                            {" "}
+                            <span className="text-xs">{date}</span>
+                          </div>
+                          <div className="flex gap-3">
+                            <span className="text-xs">{time}</span>
+                            <div className="message-footer">
+                              {renderTick(m)}
+                            </div>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -3520,7 +3608,7 @@ export default function Slack_chatwindow({
                 </div>
               );
             })}
-            <div ref={bottomRef} />
+            <div ref={bottomRef}/>
           </div>
         </div>
 
@@ -3734,7 +3822,7 @@ export default function Slack_chatwindow({
           <div className="p-4 bg-gray-50 border-b">
             {activeThread.text && (
               <MessageText
-                text={activeThread.text}
+                text={activeThread.text.trim()}
                 isMe={activeThread.senderId === me}
               />
             )}
