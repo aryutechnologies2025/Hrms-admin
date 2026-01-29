@@ -26,7 +26,7 @@ import { GiCrystalGrowth } from "react-icons/gi";
 import { LuUserSearch } from "react-icons/lu";
 import { BsFillCameraReelsFill } from "react-icons/bs";
 import { MdManageAccounts } from "react-icons/md";
-import { GrAnnounce } from "react-icons/gr";
+import { GrAnnounce, GrTechnology } from "react-icons/gr";
 import { GiDiscussion } from "react-icons/gi";
 import { FaSlack } from "react-icons/fa";
 import { FaBusinessTime } from "react-icons/fa6";
@@ -1193,6 +1193,78 @@ const Sidebar = () => {
                           >
                             Billing Details
                           </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                    {/* Portfolio */}
+
+                  {hasPermission("Portfolio") && (
+                    <>
+                      <div
+                        // onClick={() => setClientOpen(!clientOpen)}
+                        onClick={() => toggleMenu("portfolio-tech")}
+                        className={`flex items-center h-10 w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                          } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${[
+                            "/technology",
+                            "/portfolio",
+                          ].includes(currentPath)
+                            ? "bg-blue-100 text-[#4F46E5]"
+                            : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
+                          }`}
+                      >
+                        <GrTechnology />{" "}
+                        {!arrowClicked && (
+                          <p className="text-sm flex items-center gap-2">
+                            Portfolio
+                            <span>
+                              {currentOpen === "portfolio-tech" ||
+                                [
+                                  "/technology",
+                            "/portfolio",
+                                ].includes(currentPath) ? (
+                                <IoIosArrowUp />
+                              ) : (
+                                <IoIosArrowDown />
+                              )}
+                            </span>
+                          </p>
+                        )}
+                      </div>
+                      {/*  */}
+                      <div
+                        className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "portfolio-tech" ||
+                            [
+                               "/technology",
+                            "/portfolio",
+                            ].includes(currentPath)
+                            ? "max-h-60 opacity-100"
+                            : "max-h-0 opacity-0"
+                          }`}
+                      >
+                        <div className="flex gap-2  items-start  ms-4 flex-col text-sm font-medium text-gray-500">
+                          <button
+                            onClick={() => navigate("/technology")}
+                            className={`px-2 py-1 rounded-full 
+    ${currentPath === "/technology"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
+                          >
+                            Technology
+                          </button>
+                          <button
+                            onClick={() => navigate("/portfolio")}
+                            className={`px-2 py-1 rounded-full 
+    ${currentPath === "/portfolio"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                              }`}
+                          >
+                            Portfolio
+                          </button>
+                         
                         </div>
                       </div>
                     </>

@@ -142,6 +142,8 @@ import LeadManagement_Mainbar from "./pages/LeadManagement_Mainbar";
 import Payslip_govt from "./components/payroll components/Payslip_govt";
 import Social_ContentMaster_Main from "./components/social media/Social_ContentMaster_Main";
 import Digital_list_main from "./components/digital team/Digital_list_main";
+import Technology_Main from "./pages/Portfolio pages/Technology_Main";
+import Portfolio_Main from "./pages/Portfolio pages/Portfolio_Main";
 
 export const SettingsContext = createContext();
 
@@ -1064,6 +1066,28 @@ function App() {
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
           <Bidding_all_main />
+        </ProtectedRoute>
+      ),
+    },
+
+    /* -------------------------------------------
+      Portfolio-technology
+  --------------------------------------------*/
+    {
+      path: "/technology",
+      permissionTitle: "Portfolio-technology",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Technology_Main />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/portfolio",
+      permissionTitle: "Portfolio-technology",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Portfolio_Main/>
         </ProtectedRoute>
       ),
     },

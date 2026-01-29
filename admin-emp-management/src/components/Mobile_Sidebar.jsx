@@ -27,7 +27,7 @@ import { FaLinkSlash } from "react-icons/fa6";
 import { IoSettings } from "react-icons/io5";
 import Button_Loader from "./Button_Loader";
 import { MdManageAccounts } from "react-icons/md";
-import { GrAnnounce } from "react-icons/gr";
+import { GrAnnounce, GrTechnology } from "react-icons/gr";
 import AdminImage from "../assets/Yuvaraj-CEO-Aryu-Academy.png";
 import { GiDiscussion } from "react-icons/gi";
 import { FaSlack } from "react-icons/fa";
@@ -657,6 +657,56 @@ const Mobile_Sidebar = () => {
                           </div>
                         </div>
                       )}
+
+                        {/* Portfolio */}
+                      <div
+                        // onClick={() => setSelectAnyOneBidding(!selectAnyOneBidding)}
+                        onClick={() =>
+                          setOpenSection(
+                            openSection === "portfolio-tech" ? null : "portfolio-tech",
+                          )
+                        }
+                        className="flex items-center w-full hover:bg-blue-100 hover:text-[#4F46E5] px-3 py-2 rounded-lg gap-2 text-gray-500 text-sm font-medium cursor-pointer"
+                      >
+                        <div className="flex items-center justify-center h-5 w-5">
+                          <GrTechnology />
+
+                        </div>
+                        <p>Portfolio</p>
+                        {openSection === "portfolio-tech" ? (
+                          <IoIosArrowUp />
+                        ) : (
+                          <IoIosArrowDown />
+                        )}{" "}
+                      </div>
+                      {openSection === "portfolio-tech" && (
+                        <div
+                          className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${
+                            openSection === "portfolio-tech"
+                              ? "max-h-50 opacity-100"
+                              : "max-h-0 opacity-0"
+                          }`}
+                        >
+                          <div className="flex gap-2  items-start  ms-10 flex-col text-sm font-medium text-gray-500">
+                            <button
+                              onClick={() =>
+                                onClickSidebarMenu("technology")
+                              }
+                              className="hover:bg-blue-100 px-2 py-1 rounded-full"
+                            >
+                              Technology
+                            </button>
+                            <button
+                              onClick={() => onClickSidebarMenu("portfolio")}
+                              className="hover:bg-blue-100 px-2 py-1 rounded-full"
+                            >
+                              Portfolio
+                            </button>
+                            
+                          </div>
+                        </div>
+                      )}
+
                       {/* socialmedia */}
                       <div
                         // onClick={() => setSelectAnyOneSocialMedia(!selectAnyOneSocialMedia)}
