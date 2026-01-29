@@ -628,3 +628,11 @@ table.dataTable {
 }
 
 /* Hide PrimeReact default icon */
+
+/* prime react dropdown same size*/
+
+.uniform-field {
+  height: 42px;           /* match PrimeReact dropdown */
+  padding: 0 0.75rem;     /* px-3 */
+  font-size: 14px;
+}
