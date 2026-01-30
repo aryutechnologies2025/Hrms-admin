@@ -786,7 +786,7 @@ const handlesubmitedit = async (e) => {
     {/* New documents */}
     {documentsEdit?.filter(doc => doc.name)?.length > 0 && (
       <div className="space-y-2">
-        <p className="text-sm text-gray-600">New files:</p>
+        {/* <p className="text-sm text-gray-600">New files:</p> */}
 
         {documentsEdit
           .filter(doc => doc.name)
