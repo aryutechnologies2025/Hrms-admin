@@ -561,11 +561,12 @@ const handlesubmitedit = async (e) => {
                     </div>
 
                  {/* Documents */}
-                    <div className="mb-3 ">
-                      <div className="flex justify-between">
+                    <div className="mb-3 flex justify-between items-center ">
+                      <div >
                       <label className="block text-sm font-medium mb-2">
                         Images <span className="text-red-500">*</span>
                       </label>
+                      </div>
                       <div className="w-[60%] md:w-[50%]">
                       <input
                         type="file"
@@ -574,11 +575,7 @@ const handlesubmitedit = async (e) => {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 
                       />
-                      </div>
-                      </div>
-
-                      
-                      {documents.length > 0 && (
+                        {documents.length > 0 && (
                         <div className="mt-2 space-y-2">
                           {documents.map((file, index) => (
                             <div
@@ -597,6 +594,8 @@ const handlesubmitedit = async (e) => {
                           ))}
                         </div>
                       )}
+                      </div>
+                    
                     </div>
 
                     {/* Status Dropdown */}
