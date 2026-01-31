@@ -415,32 +415,32 @@ import { useEffect, useState } from "react";
 import { API_URL } from "../../config";
 import axios from "axios";
 import { MultiSelect } from "primereact/multiselect";
-
+import { FiEdit, FiTrash2 } from "react-icons/fi"; // Feather icon (recommended)
+import Swal from "sweetalert2";
 /* ---------------- MODAL ---------------- */
-function CreateChannelModal({ onClose, currentUser, setChaneel, socket }) {
+function CreateChannelModal({ onClose, currentUser, setChaneel, socket,setChannelRefresh }) {
   const [name, setName] = useState("");
   const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null);
 
   const [employeeOption, setEmployeeOption] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(new Date());
 
-  useEffect(() => {
-    if (!socket) return;
-    socket.on("channel_created", (newChannel) =>{
-      setChaneel((prev) => {
-        const exists = prev.find((c) => c._id === newChannel._id);
-        if (exists) return prev;
-        return [...prev, newChannel];
-      });
-    });
-    return () => {
-      socket.off("channel_created");
-    };
-  }, []);
+  // useEffect(() => {
+  //   if (!socket) return;
+  //   socket.on("channel_created", (newChannel) => {
+  //     setChaneel((prev) => {
+  //       const exists = prev.find((c) => c._id === newChannel._id);
+  //       if (exists) return prev;
+  //       return [...prev, newChannel];
+  //     });
+  //   });
+  //   return () => {
+  //     socket.off("channel_created");
+  //   };
+  // }, []);
 
   const fetchEmployeeList = async () => {
     try {
-
       const response = await axios.get(
         `${API_URL}/api/employees/all-users`,
         {
@@ -453,7 +453,6 @@ function CreateChannelModal({ onClose, currentUser, setChaneel, socket }) {
           withCredentials: true,
         },
       );
-      
       // const employeeIds = response.data.data.map(emp => `${emp.employeeId} - ${emp.employeeName}`);
       const employeeemail = response.data.data
         .filter((val) => val._id != currentUser?._id)
@@ -473,24 +472,97 @@ function CreateChannelModal({ onClose, currentUser, setChaneel, socket }) {
     fetchEmployeeList();
   }, []);
 
-  const handleCreate = async () => {
-    if (!name.trim()) return;
-    try {
-      const res = await axios.post(`${API_URL}/api/channel/create-channel`, {
+  // const handleCreate = async () => {
+  //   if (!name.trim()) return;
+  //   try {
+  //     const res = await axios.post(`${API_URL}/api/channel/create-channel`, {
+  //       name,
+  //       createdBy: currentUser._id,
+  //       members: selectedEmployeeDetails,
+  //     });
+  //     console.log("res", res);
+  //     if (res.data.success && res.data.data) {
+  //       setChaneel((prev) => [...prev, res.data.data]);
+  //     }
+  //   } catch (err) {
+  //     console.log("error while creating channel", err);
+  //   }
+  //   // onCreate(name);
+  //   onClose();
+  // };
+
+
+const handleCreate = async () => {
+
+  console.log("selectedEmployeeDetails");
+  // ✅ Validate name
+  if (!name.trim()) {
+    Swal.fire({
+      icon: "warning",
+      title: "Channel name required",
+    });
+    return;
+  }
+
+  try {
+    // ✅ Loading popup
+    Swal.fire({
+      title: "Creating Channel...",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    const res = await axios.post(
+      `${API_URL}/api/channel/create-channel`,
+      {
         name,
         createdBy: currentUser._id,
         members: selectedEmployeeDetails,
-      });
-      console.log("res", res);
-      if (res.data.success && res.data.data) {
-        setChaneel((prev) => [...prev, res.data.data]);
       }
-    } catch (err) {
-      console.log("error while creating channel", err);
+    );
+
+    if (res.data.success && res.data.data) {
+      console.log("res", res.data.data);
+      // setChaneel((prev) => [...prev,{name,members: selectedEmployeeDetails}]);
+  setChannelRefresh((prev) => !prev);
+       // ✅ Optional realtime emit
+      // socket?.emit("channel-created", newChannel);
+
+      //  Success
+      Swal.fire({
+        icon: "success",
+        title: "Channel Created!",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
+      onClose(); // close only after success
     }
-    // onCreate(name);
-    onClose();
-  };
+  }catch (err) {
+  console.log("error while creating channel", err);
+
+  const errorMessage = err?.response?.data?.message || "";
+
+  //  Detect Mongo duplicate error
+  if (errorMessage.includes("E11000")) {
+    Swal.fire({
+      icon: "error",
+      title: "Duplicate Channel",
+      text: "Channel name already exists. Please choose another name.",
+    });
+  } else {
+    Swal.fire({
+      icon: "error",
+      title: "Creation Failed",
+      text: "Something went wrong.",
+    });
+  }
+}
+
+};
+
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -536,6 +608,380 @@ function CreateChannelModal({ onClose, currentUser, setChaneel, socket }) {
             className="px-4 py-2 rounded bg-purple-600 text-white"
           >
             Create
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Edit Channel Modal
+// function EditChannelModal({
+//   channel,
+//   onClose,
+//   currentUser,
+//   setChaneel,
+//   socket,
+// }) {
+
+//   console.log("channel in edit modal", channel);
+//   const [name, setName] = useState(channel.name);
+//   const [employeeOption, setEmployeeOption] = useState([]);
+//   const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState([]);
+
+//   useEffect(() => {
+//     fetchEmployeeList();
+//   }, []);
+
+//   const fetchEmployeeList = async () => {
+//     try {
+//       const response = await axios.get(
+//         `${API_URL}/api/employees/all-users`,
+//         {
+//           params: {
+//             userId: currentUser?._id,
+//             type: currentUser?.superUser ? "superAdmin" : currentUser?.type,
+//           },
+//         },
+//         {
+//           withCredentials: true,
+//         },
+//       );
+//       console.log("response in edit modal", response);
+//       // const employeeIds = response.data.data.map(emp => `${emp.employeeId} - ${emp.employeeName}`);
+//       const employeeemail = response.data.data
+//         .filter((val) => val._id != currentUser?._id)
+//         .map((emp) => ({
+//           label: emp.name,
+//           value: emp._id,
+//         }));
+//       console.log("employeeemail", employeeemail);
+//       setEmployeeOption(employeeemail);
+
+//       // const selected = channel.members.map((m) => ({
+//       //   label: m.name,
+//       //   value: m._id,
+//       // }));
+
+//       // const selected = channel.members.map((m) => m._id);
+     
+
+// setSelectedEmployeeDetails(channel.members || []);
+
+    
+   
+//     } catch (error) {
+//       console.log(error);
+//       // setLoading(false);
+//     }
+//   };
+
+// console.log("selected", selectedEmployeeDetails);
+//   // const handleUpdate = async () => {
+//   //   try {
+//   //     console.log("update res", selectedEmployeeDetails);
+//   //     const res = await axios.put(
+//   //       `${API_URL}/api/channel/update-channel/${channel._id}`,
+//   //       {
+//   //         name,
+//   //         members: selectedEmployeeDetails,
+//   //       },
+//   //     );
+
+//   //     if (res.data.success) {
+//   //       setChaneel((prev) =>
+//   //         prev.map((ch) => (ch._id === channel._id ? res.data.data : ch)),
+//   //       );
+//   //     }
+//   //     onClose();
+//   //   } catch (err) {
+//   //     console.log("update error", err);
+//   //   }
+//   // };
+  
+ 
+// const handleUpdate = async () => {
+//   // ✅ Prevent empty name
+//   if (!name.trim()) {
+//     Swal.fire({
+//       icon: "warning",
+//       title: "Channel name required",
+//     });
+//     return;
+//   }
+//   try {
+//     // ✅ Loading alert
+//     Swal.fire({
+//       title: "Updating...",
+//       allowOutsideClick: false,
+//       didOpen: () => {
+//         Swal.showLoading();
+//       },
+//     });
+
+//     const res = await axios.put(
+//       `${API_URL}/api/channel/update-channel/${channel._id}`,
+//       {
+//         name,
+//         members: selectedEmployeeDetails, // already IDs 👍
+//       }
+//     );
+
+//     if (res.data.success) {
+//       setChaneel((prev) =>
+//         prev.map((ch) => (ch._id === channel._id ? res.data.data : ch))
+//       );
+
+//       Swal.fire({
+//         icon: "success",
+//         title: "Channel Updated!",
+//         timer: 1500,
+//         showConfirmButton: false,
+//       });
+
+//       onClose();
+//     }
+//   } catch (err) {
+//     console.log("update error", err);
+
+//     Swal.fire({
+//       icon: "error",
+//       title: "Update Failed",
+//       text: "Something went wrong.",
+//     });
+//   }
+// };
+
+ 
+//   return (
+//     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+//       <div className="bg-white rounded-xl w-96 p-6 shadow-xl">
+//         <h2 className="text-lg font-bold mb-4">Edit Channel</h2>
+
+//         <input
+//           className="w-full border rounded px-3 py-2 mb-4"
+//           value={name}
+//           onChange={(e) => setName(e.target.value)}
+//         />
+
+//         <MultiSelect
+//           value={selectedEmployeeDetails}
+//           onChange={(e) => setSelectedEmployeeDetails(e.value)}
+//           options={employeeOption}
+//           optionLabel="label"
+//           optionValue="value" // ⭐ THIS IS THE FIX
+//           filter
+//           placeholder="Select Employees"
+//           // maxSelectedLabels={3}
+//           className="w-full border border-gray-300 rounded-lg"
+//           display="chip"
+//         />
+
+//         <div className="flex justify-end gap-2 mt-4">
+//           <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded">
+//             Cancel
+//           </button>
+//           <button
+//             onClick={handleUpdate}
+//             className="px-4 py-2 bg-blue-600 text-white rounded"
+//           >
+//             Update
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+function EditChannelModal({
+  channel,
+  onClose,
+  currentUser,
+  setChaneel,
+  setChannelRefresh
+}) {
+  const [name, setName] = useState("");
+  const [employeeOption, setEmployeeOption] = useState([]);
+  const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState([]);
+
+  /* ------------------------------------------------ */
+  /* ✅ Sync state when channel arrives */
+  /* ------------------------------------------------ */
+
+  useEffect(() => {
+    if (channel) {
+      setName(channel.name || "");
+      setSelectedEmployeeDetails(channel.members || []); // ✅ IDs only
+    }
+  }, [channel]);
+
+  /* ------------------------------------------------ */
+  /* ✅ Fetch Employees */
+  /* ------------------------------------------------ */
+
+  useEffect(() => {
+    fetchEmployeeList();
+  }, []);
+
+  const fetchEmployeeList = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/employees/all-users`,
+        {
+          params: {
+            userId: currentUser?._id,
+            type: currentUser?.superUser
+              ? "superAdmin"
+              : currentUser?.type,
+          },
+          withCredentials: true, // ✅ FIXED AXIOS
+        }
+      );
+
+      const employeeemail = response.data.data
+        // .filter((val) => val._id !== currentUser?._id)
+        .map((emp) => ({
+          label: emp.name,
+          value: emp._id,
+        }));
+
+      setEmployeeOption(employeeemail);
+    } catch (error) {
+      console.log("Employee fetch error:", error);
+    }
+  };
+
+  /* ------------------------------------------------ */
+  /* ✅ UPDATE CHANNEL */
+  /* ------------------------------------------------ */
+
+  const handleUpdate = async () => {
+    if (!name.trim()) {
+      return Swal.fire({
+        icon: "warning",
+        title: "Channel name required",
+      });
+    }
+
+    try {
+      Swal.fire({
+        title: "Updating...",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      const res = await axios.put(
+        `${API_URL}/api/channel/update-channel/${channel._id}`,
+        {
+          name,
+          members: selectedEmployeeDetails, // ✅ already IDs
+        }
+      );
+
+      if (res.data.success) {
+  //       setChaneel((prev) =>
+  //   prev.map((ch) =>
+  //     ch._id === channel._id
+  //       ? {
+  //           ...ch, // keep existing fields
+  //           name,
+  //           members: selectedEmployeeDetails,
+  //         }
+  //       : ch
+  //   )
+  // );
+  setChannelRefresh((prev) => !prev);      
+  Swal.fire({
+          icon: "success",
+          title: "Channel Updated!",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+        onClose();
+      }
+    } catch (err) {
+      console.log("update error", err);
+
+      // ✅ Duplicate name check
+      if (
+        err?.response?.data?.message?.includes("E11000")
+      ) {
+        Swal.fire({
+          icon: "error",
+          title: "Duplicate Channel",
+          text: "Channel name already exists.",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Update Failed",
+          text: "Something went wrong.",
+        });
+      }
+    }
+  };
+
+  /* ------------------------------------------------ */
+
+  if (!channel) return null; // ✅ Prevent crash
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl w-96 p-6 shadow-xl">
+        <h2 className="text-lg font-bold mb-4">
+          Edit Channel
+        </h2>
+
+        {/* Channel Name */}
+        <input
+          className="w-full border rounded px-3 py-2 mb-4"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Channel name"
+        />
+{console.log("selectedEmployeeDetails",selectedEmployeeDetails)}
+        {/* MultiSelect */}
+        {/* <MultiSelect
+          value={selectedEmployeeDetails} // ✅ ["id1","id2"]
+          onChange={(e) =>
+            setSelectedEmployeeDetails(e.value)
+          }
+          options={employeeOption}
+          optionLabel="label"
+          optionValue="value"
+          filter
+          placeholder="Select Employees"
+          className="w-full border border-gray-300 rounded-lg"
+          display="chip"
+        /> */}
+        <MultiSelect
+          value={selectedEmployeeDetails}
+          onChange={(e) => setSelectedEmployeeDetails(e.value)}
+          options={employeeOption}
+          optionLabel="label"
+          optionValue="value" // ⭐ THIS IS THE FIX
+          filter
+          placeholder="Select Employees"
+          // maxSelectedLabels={3}
+          className="w-full border border-gray-300 rounded-lg"
+          display="chip"
+        />
+
+        {/* Buttons */}
+        <div className="flex justify-end gap-2 mt-4">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-200 rounded"
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={handleUpdate}
+            className="px-4 py-2 bg-blue-600 text-white rounded"
+          >
+            Update
           </button>
         </div>
       </div>
@@ -1382,6 +1828,8 @@ export default function SlackSidebar({
   channelUnread = {},
   setChannelUnread,
   onCreateChannel,
+  setChannelRefresh,
+
 }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
@@ -1389,11 +1837,14 @@ export default function SlackSidebar({
   const [favoritesOpen, setFavoritesOpen] = useState(false);
   const [channelOpen, setChannelOpen] = useState(false);
   const [showChannelModal, setShowChannelModal] = useState(false);
+  // edit channels and users array to single array
+  const [editChannel, setEditChannel] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   console.log("onlineUsers", onlineUsers, users);
   // helper function
   const isOnline = (id) => onlineUsers.includes(String(id));
-
+  console.log("after create channel selected ", channels);
   /* ---------------- FILTER USERS ---------------- */
   const filteredUsers = users.filter((u) => {
     const name = u.name || "";
@@ -1513,10 +1964,10 @@ export default function SlackSidebar({
   // Accordion state
 
   const [openGroups, setOpenGroups] = useState({
-    admin: true,
-    employee: true,
-    client: true,
-    client_sub_user: true,
+    admin:false,
+    employee: false,
+    client: false,
+    client_sub_user: false,
   });
 
   const toggleGroup = (key) => {
@@ -1546,6 +1997,69 @@ export default function SlackSidebar({
     ...group,
     users: filteredUsers.filter((u) => u.type === group.key).sort(sortUsers),
   }));
+  // edit channel handler
+
+  const handleEditChannel = (channel) => {
+    console.log("Editing channel:", channel);
+    setEditChannel(channel);
+    setShowEditModal(true);
+  };
+
+  // delete channel handler
+  // const handleDeleteChannel = async (id) => {
+  //   const confirmDelete = window.confirm(
+  //     "Are you sure you want to delete this channel?",
+  //   );
+
+  //   if (!confirmDelete) return;
+
+  //   try {
+  //     await axios.delete(`${API_URL}/api/channel/${id}`);
+
+  //     setChaneel((prev) => prev.filter((ch) => ch._id !== id));
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+const handleDeleteChannel = async (id) => {
+  const result = await Swal.fire({
+    title: "Delete Channel?",
+    text: "This action cannot be undone!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Yes, delete it!",
+    cancelButtonText: "Cancel",
+    reverseButtons: true,
+  });
+
+  if (!result.isConfirmed) return;
+
+  try {
+    await axios.delete(`${API_URL}/api/channel/${id}`);
+
+    setChaneel((prev) => prev.filter((ch) => ch._id !== id));
+
+    // ✅ Success alert
+    Swal.fire({
+      title: "Deleted!",
+      text: "Channel has been deleted.",
+      icon: "success",
+      timer: 1500,
+      showConfirmButton: false,
+    });
+
+  } catch (err) {
+    console.log(err);
+
+    Swal.fire({
+      title: "Error!",
+      text: "Failed to delete channel.",
+      icon: "error",
+    });
+  }
+};
 
   return (
     <div className="w-80 h-screen flex flex-col border-r bg-white">
@@ -1677,11 +2191,6 @@ export default function SlackSidebar({
             >
               <span># {ch.name}</span>
               <div className="flex items-center gap-2">
-                {channelUnread[ch._id] > 0 && (
-                  <span className="bg-red-500 text-white text-xs px-2 rounded-full">
-                    {channelUnread[ch._id]}
-                  </span>
-                )}
                 <span
                   onClick={(e) => {
                     e.stopPropagation();
@@ -1690,6 +2199,32 @@ export default function SlackSidebar({
                 >
                   {isChannelFavorite(ch._id) ? "⭐" : "☆"}
                 </span>
+                <span
+                  className="text-blue-400 hover:text-blue-600"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditChannel(ch);
+                  }}
+                >
+                  <FiEdit size={14} />
+                </span>
+
+                <span>
+                  <FiTrash2
+                    size={14}
+                    className="text-red-400 hover:text-red-600 cursor-pointer transition"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteChannel(ch._id);
+                    }}
+                  />
+                </span>
+
+                {channelUnread[ch._id] > 0 && (
+                  <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+                    {channelUnread[ch._id]}
+                  </span>
+                )}
               </div>
             </div>
           ))}
@@ -1771,6 +2306,17 @@ export default function SlackSidebar({
           currentUser={currentUser}
           setChaneel={setChaneel}
           socket={socket}
+          setChannelRefresh={setChannelRefresh}
+        />
+      )}
+      {showEditModal && (
+        <EditChannelModal
+          channel={editChannel}
+          onClose={() => setShowEditModal(false)}
+          currentUser={currentUser}
+          setChaneel={setChaneel}
+          socket={socket}
+            setChannelRefresh={setChannelRefresh}
         />
       )}
     </div>
