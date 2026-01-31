@@ -9,10 +9,10 @@ const Slack_mainbar = () => {
       <div className="bg-gray-100 md:bg-white">
         <Sidebar />
       </div>
-    {/* <Slack_details/> */}
+   
     <Slack/>
     </div>
   )
 }
 
-export default Slack_mainbar
+export default Slack_mainbar;
