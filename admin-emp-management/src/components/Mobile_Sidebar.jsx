@@ -155,7 +155,7 @@ const Mobile_Sidebar = () => {
           />
 
           {/* RIGHT - Profile Circle */}
-          <div className="relative" ref={menuRef}>
+          <div className="relative " ref={menuRef}>
             <img
               src={AdminImage}
               alt="profile"
@@ -997,6 +997,20 @@ const Mobile_Sidebar = () => {
                       </div>
                     </>
                   )}
+
+                   {/* <div>
+                        {
+                          //  {hasPermission("slack") && (
+                          <div
+                            onClick={() => onClickSidebarMenu("slack")}
+                            className="flex items-center w-full hover:bg-blue-100 hover:text-[#4F46E5] px-3 py-2 rounded-lg gap-2 text-gray-500 text-sm font-medium cursor-pointer"
+                          >
+                            <FaSlack />
+
+                            {!arrowClicked && <p className="text-sm">Slack</p>}
+                          </div>
+                        }
+                      </div> */}
                   {/* client dashboard */}
 
                   {client && (
@@ -1027,7 +1041,7 @@ const Mobile_Sidebar = () => {
                       {!arrowClicked && <p className="text-sm">Users</p>}
                     </div>
                   )}
-                  <div>
+                  {/* <div>
                     {
                       //  {hasPermission("slack") && (
                       <div
@@ -1039,7 +1053,7 @@ const Mobile_Sidebar = () => {
                         {!arrowClicked && <p className="text-sm">Slack</p>}
                       </div>
                     }
-                  </div>
+                  </div> */}
                 </div>
 
                 <hr className="my-3 mx-4 border-gray-300" />

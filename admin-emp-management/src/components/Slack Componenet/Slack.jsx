@@ -730,6 +730,7 @@ import { connectSocket } from "../../services/socket";
 import Slack_sidebar from "./Slack_sidebar";
 import Slack_chatwindow from "./Slack_chatwindow";
 import { API_URL } from "../../config";
+import Mobile_Sidebar from "../Mobile_Sidebar";
 
 export default function Slack() {
   const socket = useMemo(() => connectSocket(), []);
@@ -988,7 +989,11 @@ export default function Slack() {
 
   console.log("channelUnread", channelUnread);
   return (
-    <div className="flex h-screen">
+    <div className="h-screen">
+       <div className="">
+                  <Mobile_Sidebar />
+      
+                </div>
       {/* <Slack_sidebar
   users={users}
   channels={chaneel}
@@ -1005,8 +1010,13 @@ export default function Slack() {
   setChannelUnread={setChannelUnread}
   channelUnread={channelUnread}
 /> */}
-
-      <Slack_sidebar
+<div className="flex h-screen overflow-hidden">
+   {/* Sidebar */}
+  <div className="
+     flex
+      border-r
+  ">
+  <Slack_sidebar
         socket={socket}
         currentUser={currentUser}
         users={users}
@@ -1027,7 +1037,9 @@ export default function Slack() {
         setFavorites={setFavorites}
          setChannelRefresh={setChannelRefresh}
       />
-
+  </div>
+    {/* Chat Window */}
+  <div className="flex-1 min-w-0">
       <Slack_chatwindow
         users={users}
         channels={chaneel}
@@ -1044,6 +1056,10 @@ export default function Slack() {
         activeThread={activeThread}
         setActiveThread={setActiveThread}
       />
+</div>
+</div>
+  
+      
     </div>
   );
 }
