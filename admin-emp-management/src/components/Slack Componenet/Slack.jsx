@@ -745,6 +745,8 @@ export default function Slack() {
     dm: [],
     channels: [],
   });
+  // channel Refresh
+  const [channelRefresh, setChannelRefresh] = useState(false);
   const [activeThread, setActiveThread] = useState(null);
   // activeThread = parent message object
 
@@ -845,7 +847,7 @@ export default function Slack() {
   };
 
   // console.log
-  /* LOAD USERS */
+  /* LOAD USERS channel */
   useEffect(() => {
     if (!currentUser?._id) return;
 
@@ -858,7 +860,7 @@ export default function Slack() {
       })
       .then((res) => setChaneel(res.data.data || []))
       .catch(console.error);
-  }, [currentUser]); // ✅ IMPORTANT
+  }, [currentUser,channelRefresh]); // ✅ IMPORTANT
 
   // Load channel unread from
   useEffect(() => {
@@ -1023,6 +1025,7 @@ export default function Slack() {
         channelUnread={channelUnread}
         favorites={favorites}
         setFavorites={setFavorites}
+         setChannelRefresh={setChannelRefresh}
       />
 
       <Slack_chatwindow
