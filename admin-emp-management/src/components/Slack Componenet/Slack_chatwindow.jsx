@@ -2642,21 +2642,41 @@ export default function Slack_chatwindow({
     return () => socket.off("thread_reply", onThreadReply);
   }, [socket, activeThread]);
 
+  // if (!selectedUser && !selectedChannel) {
+  //   return (
+  //     <div className=" flex  items-center justify-center bg-gradient-to-br from-gray-50 to-white h-100 border">
+  //       <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center mb-6">
+  //         <Send className="w-12 h-12 text-gray-400" />
+  //       </div>
+  //       <h3 className="text-xl font-semibold text-gray-700 mb-2">
+  //         Welcome to Aryu Chat
+  //       </h3>
+  //       <p className="text-gray-500">
+  //         Select a conversation to start messaging
+  //       </p>
+  //     </div>
+  //   );
+  // }
   if (!selectedUser && !selectedChannel) {
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-white">
-        <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center mb-6">
-          <Send className="w-12 h-12 text-gray-400" />
-        </div>
-        <h3 className="text-xl font-semibold text-gray-700 mb-2">
-          Welcome to Aryu Chat
-        </h3>
-        <p className="text-gray-500">
-          Select a conversation to start messaging
-        </p>
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center h-full bg-gradient-to-br from-gray-50 to-white border">
+      
+      <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center mb-6">
+        <Send className="w-12 h-12 text-gray-400" />
       </div>
-    );
-  }
+
+      <h3 className="text-xl font-semibold text-gray-700 mb-2">
+        Welcome to Aryu Chat
+      </h3>
+
+      <p className="text-gray-500">
+        Select a conversation to start messaging
+      </p>
+
+    </div>
+  );
+}
+
 
 //   const renderTick = (msg) => {
 //   console.log("Rendering tick for message:", msg);
