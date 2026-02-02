@@ -418,7 +418,13 @@ import { MultiSelect } from "primereact/multiselect";
 import { FiEdit, FiTrash2 } from "react-icons/fi"; // Feather icon (recommended)
 import Swal from "sweetalert2";
 /* ---------------- MODAL ---------------- */
-function CreateChannelModal({ onClose, currentUser, setChaneel, socket,setChannelRefresh }) {
+function CreateChannelModal({
+  onClose,
+  currentUser,
+  setChaneel,
+  socket,
+  setChannelRefresh,
+}) {
   const [name, setName] = useState("");
   const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null);
 
@@ -439,33 +445,88 @@ function CreateChannelModal({ onClose, currentUser, setChaneel, socket,setChanne
   //   };
   // }, []);
 
-  const fetchEmployeeList = async () => {
-    try {
-      const response = await axios.get(
-        `${API_URL}/api/employees/all-users`,
-        {
-          params: {
-            userId: currentUser?._id,
-            type: currentUser?.superUser ? "superAdmin" : currentUser?.type,
-          },
+  // const fetchEmployeeList = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `${API_URL}/api/employees/all-users`,
+  //       {
+  //         params: {
+  //           userId: currentUser?._id,
+  //           type: currentUser?.superUser ? "superAdmin" : currentUser?.type,
+  //         },
+  //       },
+  //       {
+  //         withCredentials: true,
+  //       },
+  //     );
+  //     // const employeeIds = response.data.data.map(emp => `${emp.employeeId} - ${emp.employeeName}`);
+  //     const employeeemail = response.data.data
+  //       .filter((val) => val._id != currentUser?._id)
+  //       .map((emp) => ({
+  //         label: emp.name,
+  //         value: emp._id,
+  //       }));
+  //     setEmployeeOption(employeeemail);
+  //   } catch (error) {
+  //     console.log(error);
+  //     setLoading(false);
+  //   }
+  // };
+const fetchEmployeeList = async () => {
+  try {
+    const response = await axios.get(
+      `${API_URL}/api/employees/all-users`,
+      {
+        params: {
+          userId: currentUser?._id,
+          type: currentUser?.superUser
+            ? "superAdmin"
+            : currentUser?.type,
         },
-        {
-          withCredentials: true,
-        },
-      );
-      // const employeeIds = response.data.data.map(emp => `${emp.employeeId} - ${emp.employeeName}`);
-      const employeeemail = response.data.data
-        .filter((val) => val._id != currentUser?._id)
-        .map((emp) => ({
-          label: emp.name,
-          value: emp._id,
-        }));
-      setEmployeeOption(employeeemail);
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
-    }
-  };
+        withCredentials: true,
+      }
+    );
+
+    // Remove current user
+    const filtered = response.data.data.filter(
+      (emp) => emp._id !== currentUser?._id
+    );
+
+    // 1️⃣ Group users by type
+    const grouped = filtered.reduce((acc, emp) => {
+      if (!acc[emp.type]) acc[emp.type] = [];
+
+      acc[emp.type].push({
+        label: emp.name,
+        value: emp._id,
+      });
+
+      return acc;
+    }, {});
+
+    // 2️⃣ Define required order
+    const ORDER = ["employee", "admin", "client", "clientSubUser"];
+
+    // 3️⃣ Convert to PrimeReact MultiSelect group format
+    const groupArray = ORDER
+      .filter((type) => grouped[type]) // keep only existing types
+      .map((type) => ({
+        label:
+          type === "clientSubUser"
+            ? "Client Sub User"
+            : type.charAt(0).toUpperCase() + type.slice(1),
+        items: grouped[type].sort((a, b) =>
+          a.label.localeCompare(b.label)
+        ),
+      }));
+
+    setEmployeeOption(groupArray);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
 
   useEffect(() => {
     // fetchData();
@@ -491,78 +552,71 @@ function CreateChannelModal({ onClose, currentUser, setChaneel, socket,setChanne
   //   onClose();
   // };
 
+  const handleCreate = async () => {
+    console.log("selectedEmployeeDetails");
+    // ✅ Validate name
+    if (!name.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Channel name required",
+      });
+      return;
+    }
 
-const handleCreate = async () => {
+    try {
+      // ✅ Loading popup
+      Swal.fire({
+        title: "Creating Channel...",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
 
-  console.log("selectedEmployeeDetails");
-  // ✅ Validate name
-  if (!name.trim()) {
-    Swal.fire({
-      icon: "warning",
-      title: "Channel name required",
-    });
-    return;
-  }
-
-  try {
-    // ✅ Loading popup
-    Swal.fire({
-      title: "Creating Channel...",
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
-
-    const res = await axios.post(
-      `${API_URL}/api/channel/create-channel`,
-      {
+      const res = await axios.post(`${API_URL}/api/channel/create-channel`, {
         name,
         createdBy: currentUser._id,
         members: selectedEmployeeDetails,
-      }
-    );
-
-    if (res.data.success && res.data.data) {
-      console.log("res", res.data.data);
-      // setChaneel((prev) => [...prev,{name,members: selectedEmployeeDetails}]);
-  setChannelRefresh((prev) => !prev);
-       // ✅ Optional realtime emit
-      // socket?.emit("channel-created", newChannel);
-
-      //  Success
-      Swal.fire({
-        icon: "success",
-        title: "Channel Created!",
-        timer: 1500,
-        showConfirmButton: false,
       });
 
-      onClose(); // close only after success
+      if (res.data.success && res.data.data) {
+        console.log("res", res.data.data);
+        // setChaneel((prev) => [...prev,{name,members: selectedEmployeeDetails}]);
+        setChannelRefresh((prev) => !prev);
+        // ✅ Optional realtime emit
+        // socket?.emit("channel-created", newChannel);
+
+        //  Success
+        Swal.fire({
+          icon: "success",
+          title: "Channel Created!",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+        onClose(); // close only after success
+      }
+    } catch (err) {
+      console.log("error while creating channel", err);
+
+      const errorMessage = err?.response?.data?.message || "";
+
+      //  Detect Mongo duplicate error
+      if (errorMessage.includes("E11000")) {
+        Swal.fire({
+          icon: "error",
+          title: "Duplicate Channel",
+          text: "Channel name already exists. Please choose another name.",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Creation Failed",
+          text: "Something went wrong.",
+        });
+      }
     }
-  }catch (err) {
-  console.log("error while creating channel", err);
-
-  const errorMessage = err?.response?.data?.message || "";
-
-  //  Detect Mongo duplicate error
-  if (errorMessage.includes("E11000")) {
-    Swal.fire({
-      icon: "error",
-      title: "Duplicate Channel",
-      text: "Channel name already exists. Please choose another name.",
-    });
-  } else {
-    Swal.fire({
-      icon: "error",
-      title: "Creation Failed",
-      text: "Something went wrong.",
-    });
-  }
-}
-
-};
-
+  };
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -585,7 +639,7 @@ const handleCreate = async () => {
               Add Employees
             </label>
 
-            <MultiSelect
+            {/* <MultiSelect
               value={selectedEmployeeDetails}
               onChange={(e) => setSelectedEmployeeDetails(e.value)}
               options={employeeOption}
@@ -595,6 +649,17 @@ const handleCreate = async () => {
               maxSelectedLabels={3}
               className="w-full   border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               display="chip"
+            /> */}
+            <MultiSelect
+              value={selectedEmployeeDetails}
+              onChange={(e) => setSelectedEmployeeDetails(e.value)}
+              options={employeeOption}
+              optionGroupLabel="label" // Heading
+              optionGroupChildren="items" // Items under heading
+              filter
+              placeholder="Select Employees"
+              display="chip"
+              className="w-full border border-gray-300 rounded-lg"
             />
           </div>
         </div>
@@ -664,12 +729,9 @@ const handleCreate = async () => {
 //       // }));
 
 //       // const selected = channel.members.map((m) => m._id);
-     
 
 // setSelectedEmployeeDetails(channel.members || []);
 
-    
-   
 //     } catch (error) {
 //       console.log(error);
 //       // setLoading(false);
@@ -698,8 +760,7 @@ const handleCreate = async () => {
 //   //     console.log("update error", err);
 //   //   }
 //   // };
-  
- 
+
 // const handleUpdate = async () => {
 //   // ✅ Prevent empty name
 //   if (!name.trim()) {
@@ -752,7 +813,6 @@ const handleCreate = async () => {
 //   }
 // };
 
- 
 //   return (
 //     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
 //       <div className="bg-white rounded-xl w-96 p-6 shadow-xl">
@@ -798,7 +858,7 @@ function EditChannelModal({
   onClose,
   currentUser,
   setChaneel,
-  setChannelRefresh
+  setChannelRefresh,
 }) {
   const [name, setName] = useState("");
   const [employeeOption, setEmployeeOption] = useState([]);
@@ -823,31 +883,83 @@ function EditChannelModal({
     fetchEmployeeList();
   }, []);
 
+  // const fetchEmployeeList = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `${API_URL}/api/employees/all-users`,
+  //       {
+  //         params: {
+  //           userId: currentUser?._id,
+  //           type: currentUser?.superUser
+  //             ? "superAdmin"
+  //             : currentUser?.type,
+  //         },
+  //         withCredentials: true, // ✅ FIXED AXIOS
+  //       }
+  //     );
+
+  //     const employeeemail = response.data.data
+  //       // .filter((val) => val._id !== currentUser?._id)
+  //       .map((emp) => ({
+  //         label: emp.name,
+  //         value: emp._id,
+  //       }));
+
+  //     setEmployeeOption(employeeemail);
+  //   } catch (error) {
+  //     console.log("Employee fetch error:", error);
+  //   }
+  // };
+
   const fetchEmployeeList = async () => {
     try {
-      const response = await axios.get(
-        `${API_URL}/api/employees/all-users`,
-        {
-          params: {
-            userId: currentUser?._id,
-            type: currentUser?.superUser
-              ? "superAdmin"
-              : currentUser?.type,
-          },
-          withCredentials: true, // ✅ FIXED AXIOS
-        }
-      );
+      const response = await axios.get(`${API_URL}/api/employees/all-users`, {
+        params: {
+          userId: currentUser?._id,
+          type: currentUser?.superUser ? "superAdmin" : currentUser?.type,
+        },
+        withCredentials: true,
+      });
 
-      const employeeemail = response.data.data
-        // .filter((val) => val._id !== currentUser?._id)
-        .map((emp) => ({
+      // Filter out current user
+      const filtered = response.data.data;
+      // .filter(
+      //   (val) => val._id !== currentUser?._id
+      // );
+
+      // Group by type
+      const grouped = filtered.reduce((acc, emp) => {
+        if (!acc[emp.type]) acc[emp.type] = [];
+        acc[emp.type].push({
           label: emp.name,
           value: emp._id,
-        }));
+        });
+        return acc;
+      }, {});
 
-      setEmployeeOption(employeeemail);
+      // // Transform into array of groups for MultiSelect
+      // const groupArray = Object.keys(grouped).map((key) => ({
+      //   label: key.charAt(0).toUpperCase() + key.slice(1), // Capitalize
+      //   items: grouped[key],
+      // }));
+       const ORDER = ["employee", "admin", "client", "clientSubUser"];
+
+    // 3️⃣ Convert to PrimeReact MultiSelect group format
+    const groupArray = ORDER
+      .filter((type) => grouped[type]) // keep only existing types
+      .map((type) => ({
+        label:
+          type === "clientSubUser"
+            ? "Client Sub User"
+            : type.charAt(0).toUpperCase() + type.slice(1),
+        items: grouped[type].sort((a, b) =>
+          a.label.localeCompare(b.label)
+        ),
+      }));
+
+      setEmployeeOption(groupArray);
     } catch (error) {
-      console.log("Employee fetch error:", error);
+      console.error(error);
     }
   };
 
@@ -875,23 +987,23 @@ function EditChannelModal({
         {
           name,
           members: selectedEmployeeDetails, // ✅ already IDs
-        }
+        },
       );
 
       if (res.data.success) {
-  //       setChaneel((prev) =>
-  //   prev.map((ch) =>
-  //     ch._id === channel._id
-  //       ? {
-  //           ...ch, // keep existing fields
-  //           name,
-  //           members: selectedEmployeeDetails,
-  //         }
-  //       : ch
-  //   )
-  // );
-  setChannelRefresh((prev) => !prev);      
-  Swal.fire({
+        //       setChaneel((prev) =>
+        //   prev.map((ch) =>
+        //     ch._id === channel._id
+        //       ? {
+        //           ...ch, // keep existing fields
+        //           name,
+        //           members: selectedEmployeeDetails,
+        //         }
+        //       : ch
+        //   )
+        // );
+        setChannelRefresh((prev) => !prev);
+        Swal.fire({
           icon: "success",
           title: "Channel Updated!",
           timer: 1500,
@@ -904,9 +1016,7 @@ function EditChannelModal({
       console.log("update error", err);
 
       // ✅ Duplicate name check
-      if (
-        err?.response?.data?.message?.includes("E11000")
-      ) {
+      if (err?.response?.data?.message?.includes("E11000")) {
         Swal.fire({
           icon: "error",
           title: "Duplicate Channel",
@@ -929,9 +1039,7 @@ function EditChannelModal({
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white rounded-xl w-96 p-6 shadow-xl">
-        <h2 className="text-lg font-bold mb-4">
-          Edit Channel
-        </h2>
+        <h2 className="text-lg font-bold mb-4">Edit Channel</h2>
 
         {/* Channel Name */}
         <input
@@ -940,7 +1048,7 @@ function EditChannelModal({
           onChange={(e) => setName(e.target.value)}
           placeholder="Channel name"
         />
-{console.log("selectedEmployeeDetails",selectedEmployeeDetails)}
+        {console.log("selectedEmployeeDetails", selectedEmployeeDetails)}
         {/* MultiSelect */}
         {/* <MultiSelect
           value={selectedEmployeeDetails} // ✅ ["id1","id2"]
@@ -955,7 +1063,7 @@ function EditChannelModal({
           className="w-full border border-gray-300 rounded-lg"
           display="chip"
         /> */}
-        <MultiSelect
+        {/* <MultiSelect
           value={selectedEmployeeDetails}
           onChange={(e) => setSelectedEmployeeDetails(e.value)}
           options={employeeOption}
@@ -966,14 +1074,23 @@ function EditChannelModal({
           // maxSelectedLabels={3}
           className="w-full border border-gray-300 rounded-lg"
           display="chip"
+        /> */}
+
+        <MultiSelect
+          value={selectedEmployeeDetails}
+          onChange={(e) => setSelectedEmployeeDetails(e.value)}
+          options={employeeOption}
+          optionGroupLabel="label" // Heading
+          optionGroupChildren="items" // Items under heading
+          filter
+          placeholder="Select Employees"
+          display="chip"
+          className="w-full border border-gray-300 rounded-lg"
         />
 
         {/* Buttons */}
         <div className="flex justify-end gap-2 mt-4">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-200 rounded"
-          >
+          <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded">
             Cancel
           </button>
 
@@ -1829,7 +1946,6 @@ export default function SlackSidebar({
   setChannelUnread,
   onCreateChannel,
   setChannelRefresh,
-
 }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
@@ -1964,7 +2080,7 @@ export default function SlackSidebar({
   // Accordion state
 
   const [openGroups, setOpenGroups] = useState({
-    admin:false,
+    admin: false,
     employee: false,
     client: false,
     client_sub_user: false,
@@ -2021,45 +2137,44 @@ export default function SlackSidebar({
   //     console.log(err);
   //   }
   // };
-const handleDeleteChannel = async (id) => {
-  const result = await Swal.fire({
-    title: "Delete Channel?",
-    text: "This action cannot be undone!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Yes, delete it!",
-    cancelButtonText: "Cancel",
-    reverseButtons: true,
-  });
-
-  if (!result.isConfirmed) return;
-
-  try {
-    await axios.delete(`${API_URL}/api/channel/${id}`);
-
-    setChaneel((prev) => prev.filter((ch) => ch._id !== id));
-
-    // ✅ Success alert
-    Swal.fire({
-      title: "Deleted!",
-      text: "Channel has been deleted.",
-      icon: "success",
-      timer: 1500,
-      showConfirmButton: false,
+  const handleDeleteChannel = async (id) => {
+    const result = await Swal.fire({
+      title: "Delete Channel?",
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
     });
 
-  } catch (err) {
-    console.log(err);
+    if (!result.isConfirmed) return;
 
-    Swal.fire({
-      title: "Error!",
-      text: "Failed to delete channel.",
-      icon: "error",
-    });
-  }
-};
+    try {
+      await axios.delete(`${API_URL}/api/channel/${id}`);
+
+      setChaneel((prev) => prev.filter((ch) => ch._id !== id));
+
+      // ✅ Success alert
+      Swal.fire({
+        title: "Deleted!",
+        text: "Channel has been deleted.",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (err) {
+      console.log(err);
+
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to delete channel.",
+        icon: "error",
+      });
+    }
+  };
 
   return (
     <div className="w-80 h-screen flex flex-col border-r bg-white">
@@ -2316,7 +2431,7 @@ const handleDeleteChannel = async (id) => {
           currentUser={currentUser}
           setChaneel={setChaneel}
           socket={socket}
-            setChannelRefresh={setChannelRefresh}
+          setChannelRefresh={setChannelRefresh}
         />
       )}
     </div>
