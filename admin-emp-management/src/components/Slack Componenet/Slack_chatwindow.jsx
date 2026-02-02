@@ -2570,10 +2570,11 @@ export default function Slack_chatwindow({
     };
   }, [socket]);
 
+ 
+
   // Edit action useEffect
   useEffect(() => {
     if (!socket) return;
-
     socket.on("message_edited", (updatedMessage) => {
       setMessages((prev) =>
         prev.map((m) => (m._id === updatedMessage._id ? updatedMessage : m)),
@@ -3570,9 +3571,10 @@ export default function Slack_chatwindow({
                           </div>
                           <div className="flex gap">
                             <span className="text-xs">{time}</span>
+                             {console.log("Rendering ticks for message:", m.seenAt)}
                             {/* {isMe && (
                               <div className="flex items-center">
-                                {!m.deliveredAt && (
+                                {!m.deliveredAt && !m.seenAt && (
                                   <Check className="w-3.5 h-3.5" />
                                 )}
                                 {m.deliveredAt && !m.seenAt && (
@@ -3583,7 +3585,19 @@ export default function Slack_chatwindow({
                                 )}
                               </div>
                             )} */}
+                              {/* {isMe && (
+                            <div className="flex items-center">
+                              {m.seenAt ? (
+                                <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
+                              ) : m.deliveredAt && !m.seenAt ? (
+                                <CheckCheck className="w-3.5 h-3.5" />
+                              ) : (
+                                <Check className="w-3.5 h-3.5" />
+                              )}
+                            </div>
+                          )} */}
                             {isMe && (
+                             
                               <div className="flex items-center">
                                 {(() => {
                                   if (!m.deliveredAt) {
@@ -3597,7 +3611,7 @@ export default function Slack_chatwindow({
                                       <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
                                     );
                                   }
-                                  return null;
+                                   return <Check className="w-3.5 h-3.5" />;
                                 })()}
                               </div>
                             )}

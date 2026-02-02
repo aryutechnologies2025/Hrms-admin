@@ -758,6 +758,16 @@ export default function Slack() {
   }, []);
   console.log("currentUser", currentUser);
 
+//   useEffect(() => {
+//     if (!socket)
+//     {
+//       socket.onAny((event, data) => {
+//   console.log("📥 EVENT:", event, data);
+// });
+// } 
+//   },
+// [socket]);
+
   /* ONLINE USERS */
   useEffect(() => {
     if (!socket || !currentUser) return;
