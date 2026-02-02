@@ -396,7 +396,7 @@ const Sidebar = () => {
                         )}
                       </div>
                       <div
-                        className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "onboarding" ||
+                        className={`overflow-hidden h-80 w-full transition-all duration-700 ease-in-out ${currentOpen === "onboarding" ||
                             [
                               "/employees",
                               "/roles",
@@ -408,7 +408,7 @@ const Sidebar = () => {
                               "/letters-form",
                               "/inter",
                             ].includes(currentPath)
-                            ? "max-h-72 opacity-100"
+                            ? "max-h-96 opacity-100"
                             : "max-h-0 opacity-0"
                           }`}
                       >
@@ -1506,13 +1506,13 @@ const Sidebar = () => {
                             : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
                           }`}
                       >
-                        <FaBusinessTime />
+                        <FaBusinessTime />{""}
 
                         {!arrowClicked && (
                           <p className="text-sm flex items-center gap-2">
                             Digital Markerting
                             <span>
-                              {currentOpen === "digital-details" ||
+                              {currentOpen === "digital" ||
                                 [
                                   "/digital-details",
                                  
@@ -1623,6 +1623,20 @@ const Sidebar = () => {
                         )}
                       </div>
                     </>
+                  )}
+
+                   {hasPermission("Backup") && (
+                    <div
+                      onClick={() => onClickSidebarMenu("Backup")}
+                      className={`flex items-center w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/backup"
+                          ? "bg-blue-100 text-[#4F46E5]"
+                          : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
+                        }`}
+                    >
+                      <BiSolidHomeHeart />
+                      {!arrowClicked && <p className="text-sm">Backup</p>}
+                    </div>
                   )}
 
 

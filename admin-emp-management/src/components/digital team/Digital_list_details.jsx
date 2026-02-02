@@ -12,7 +12,7 @@ import { API_URL } from "../../config";
 // import { capitalizeFirstLetter } from "../../StringCaps";
 import { TfiPencilAlt } from "react-icons/tfi";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import ReactDOM from "react-dom";
+import ReactDOM, { render } from "react-dom";
 import Swal from "sweetalert2";
 import Footer from "../../components/Footer";
 import Mobile_Sidebar from "../../components/Mobile_Sidebar";
@@ -161,7 +161,7 @@ const Digital_list_details = () => {
   };
 
   const handleSubmit = async () => {
-    if (!validateForm()) return;
+    // if (!validateForm()) return;
     try {
       const formData = new FormData();
       formData.append("projectId", projectFilter);
@@ -196,12 +196,12 @@ const Digital_list_details = () => {
 
       fetchDigital();
 
-      setTaskId("");
+      // setTaskId("");
       setTitle("");
       setDescription("");
       setPostType("");
-      setPostUrl("");
-      setPostDate("");
+      // setPostUrl("");
+      // setPostDate("");
       setStatus("pending");
       setUploadedFiles([]);
     } catch (err) {
@@ -215,12 +215,19 @@ const Digital_list_details = () => {
     }
   };
 
+  useEffect(() => {
+    if (!isAddModalOpen && !isEditModalOpen) {
+      setErrors({});
+    }
+  }, []);
+
 
 
   // edit all form
 
 
-  const [projectFilteredit, setProjectFilteredit] = useState("");
+  const [projectFilteredit, setProjectFilteredit] = useState(null);
+  console.log("projectFilteredit", projectFilteredit);
   const [taskIdedit, setTaskIdedit] = useState("");
   const [titleedit, setTitleedit] = useState("");
   const [descriptionedit, setDescriptionedit] = useState("");
@@ -230,14 +237,14 @@ const Digital_list_details = () => {
   const [statusedit, setStatusedit] = useState("");
   const [uploadedFilesedit, setUploadedFilesedit] = useState([]);
   const [editid, setEditid] = useState("");
-
+  console.log("editid", editid);
   //   console.log("uploadedFiles", uploadedFiles);
 
 
 
     const handleEdit = (row) => {
     console.log("row", row)
-    setEditid(row._id);
+    setEditid(row.id);
     setProjectFilteredit(row.projectId || "");
     setTaskIdedit(row.taskId || "");
     setTitleedit(row.title || "");
@@ -489,15 +496,16 @@ const Digital_list_details = () => {
         key: "status",
       title: "Status",
       data: "status",
-      render: (data, type, row) => {
-        const textColor =
-          data === "1"
-            ? "text-green-600 border rounded-full border-green-600"
-            : "text-red-600 border rounded-full border-red-600";
-        return `<div class="${textColor}"  style="display: inline-block; padding: 2px;  text-align: center; width:100px; font-size: 12px; font-weight:500 ">
-                  ${data === "1" ? "Active" : "InActive"}
-                </div>`;
-      },
+      render: (data) => data || "-",
+      // render: (data, type, row) => {
+      //   const textColor =
+      //     data === "1"
+      //       ? "text-green-600 border rounded-full border-green-600"
+      //       : "text-red-600 border rounded-full border-red-600";
+      //   return `<div class="${textColor}"  style="display: inline-block; padding: 2px;  text-align: center; width:100px; font-size: 12px; font-weight:500 ">
+      //             ${data === "1" ? "Active" : "InActive"}
+      //           </div>`;
+      // },
     },
 
     
@@ -775,7 +783,8 @@ const Digital_list_details = () => {
                 {/* Task ID */}
                 <div className="mb-3 flex justify-between">
                   <label className="block text-sm font-medium mb-1">
-                    Task ID<span className="text-red-500">*</span>
+                    Task ID
+                    {/* <span className="text-red-500">*</span> */}
                   </label>
                   <div className="w-[50%]">
                     <input
@@ -784,11 +793,11 @@ const Digital_list_details = () => {
                       onChange={(e) => setTaskId(e.target.value)}
                       className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                     />
-                    {errors.taskId && (
+                    {/* {errors.taskId && (
                       <p className="text-red-500 text-xs mt-1">
                         {errors.taskId}
                       </p>
-                    )}
+                    )} */}
                   </div>
                 </div>
 
@@ -900,7 +909,8 @@ const Digital_list_details = () => {
                 {/* Post URL */}
                 <div className="mb-3 flex justify-between">
                   <label className="block text-sm font-medium mb-1">
-                    Post URL<span className="text-red-500">*</span>
+                    Post URL
+                    {/* <span className="text-red-500">*</span> */}
                   </label>
                   <div className="w-[50%]">
                     <input
@@ -909,18 +919,19 @@ const Digital_list_details = () => {
                       onChange={(e) => setPostUrl(e.target.value)}
                       className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                     />
-                    {errors.postUrl && (
+                    {/* {errors.postUrl && (
                       <p className="text-red-500 text-xs mt-1">
                         {errors.postUrl}
                       </p>
-                    )}
+                    )} */}
                   </div>
                 </div>
 
                 {/* Post Date */}
                 <div className="mb-3 flex justify-between">
                   <label className="block text-sm font-medium mb-1">
-                    Post Date<span className="text-red-500">*</span>
+                    Post Date
+                    {/* <span className="text-red-500">*</span> */}
                   </label>
                   <div className="w-[50%]">
                     <input
@@ -929,11 +940,11 @@ const Digital_list_details = () => {
                       onChange={(e) => setPostDate(e.target.value)}
                       className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                     />
-                    {errors.postDate && (
+                    {/* {errors.postDate && (
                       <p className="text-red-500 text-xs mt-1">
                         {errors.postDate}
                       </p>
-                    )}
+                    )} */}
                   </div>
                 </div>
 
@@ -949,8 +960,11 @@ const Digital_list_details = () => {
                       className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">Select Status</option>
-                      <option value="1">Active</option>
-                      <option value="0">InActive</option>
+                      <option value="to do">TO DO</option>
+                      <option value="content completed">Content Completed</option>
+                      <option value="design completed">Design Completed</option>
+                      <option value="waiting for approval">Waiting for Approval</option>
+                      <option value="posted">Posted</option>
                     </select>
                     {errors.status && (
                       <p className="text-red-500 text-xs mt-1">
@@ -1028,7 +1042,8 @@ const Digital_list_details = () => {
                 {/* Task ID */}
                 <div className="mb-3 flex justify-between">
                   <label className="block text-sm font-medium mb-1">
-                    Task ID<span className="text-red-500">*</span>
+                    Task ID
+                    {/* <span className="text-red-500">*</span> */}
                   </label>
                   <div className="w-[50%]">
                     <input
@@ -1153,7 +1168,8 @@ const Digital_list_details = () => {
                 {/* Post URL */}
                 <div className="mb-3 flex justify-between">
                   <label className="block text-sm font-medium mb-1">
-                    Post URL<span className="text-red-500">*</span>
+                    Post URL
+                    {/* <span className="text-red-500">*</span> */}
                   </label>
                   <div className="w-[50%]">
                     <input
@@ -1173,11 +1189,12 @@ const Digital_list_details = () => {
                 {/* Post Date */}
                 <div className="mb-3 flex justify-between">
                   <label className="block text-sm font-medium mb-1">
-                    Post Date<span className="text-red-500">*</span>
+                    Post Date
+                    {/* <span className="text-red-500">*</span> */}
                   </label>
                   <div className="w-[50%]">
                     <input
-                      type="date"
+                      type="date" 
                       value={postDateedit}
                       onChange={(e) => setPostDateedit(e.target.value)}
                       className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
@@ -1202,8 +1219,11 @@ const Digital_list_details = () => {
                       className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">Select Status</option>
-                      <option value="1">Active</option>
-                      <option value="0">InActive</option>
+                      <option value="to do">TO DO</option>
+                      <option value="content completed">Content Completed</option>
+                      <option value="design completed">Design Completed</option>
+                      <option value="waiting for approval">Waiting for Approval</option>
+                      <option value="posted">Posted</option>
                     </select>
                     {/* {errors.status && (
                       <p className="text-red-500 text-xs mt-1">
