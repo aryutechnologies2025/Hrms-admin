@@ -25,6 +25,7 @@ import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import ProtectedRoute from "./auth/Protected_Route";
 import Hoildays from "./pages/Hoildays";
+import Backup from "./pages/Backup";
 import WorkingDays from "./pages/WorkingDays";
 import PresentedEmployees_Mainbar from "./components/presented employees components/PresentedEmployees_Mainbar";
 import PresentedEmployees from "./pages/PresentedEmployees";
@@ -942,6 +943,18 @@ function App() {
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
           <Payroll />
+        </ProtectedRoute>
+      ),
+    },
+    /* -------------------------------------------
+      Backup
+  --------------------------------------------*/
+    {
+      path: "/backup",
+      permissionTitle: "Backup",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Backup />
         </ProtectedRoute>
       ),
     },
