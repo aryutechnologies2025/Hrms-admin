@@ -999,7 +999,7 @@ export default function Slack() {
 
   console.log("channelUnread", channelUnread);
   return (
-    <div className="h-screen">
+    <div className="h-screen w-full">
        <div className="">
                   <Mobile_Sidebar />
       
@@ -1020,7 +1020,7 @@ export default function Slack() {
   setChannelUnread={setChannelUnread}
   channelUnread={channelUnread}
 /> */}
-<div className="flex h-screen overflow-hidden">
+<div className="flex h-screen overflow-hidden ">
    {/* Sidebar */}
   <div className="
      flex
@@ -1049,7 +1049,7 @@ export default function Slack() {
       />
   </div>
     {/* Chat Window */}
-  <div className="flex-1 min-w-0">
+  <div className="flex-1 flex">
       <Slack_chatwindow
         users={users}
         channels={chaneel}
