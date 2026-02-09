@@ -1377,7 +1377,7 @@ function Task_view_all() {
 
                         <div className="bg-gray-100/70 p-3 sm:p-4 rounded-lg shadow-sm w-full sm:w-[600px] space-y-2">
                           <p className="text-sm font-semibold text-gray-800 capitalize">
-                            {msg.createdBy?.name}
+                            {msg.name}
                           </p>
                           <p
                             className="text-sm break-words text-gray-700"
