@@ -417,6 +417,9 @@ import axios from "axios";
 import { MultiSelect } from "primereact/multiselect";
 import { FiEdit, FiTrash2 } from "react-icons/fi"; // Feather icon (recommended)
 import Swal from "sweetalert2";
+import { Group, Lock } from "lucide-react";
+import { BsGlobeCentralSouthAsia, BsPeople } from "react-icons/bs";
+import { GiAllForOne } from "react-icons/gi";
 /* ---------------- MODAL ---------------- */
 function CreateChannelModal({
   onClose,
@@ -430,6 +433,7 @@ function CreateChannelModal({
 
   const [employeeOption, setEmployeeOption] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(new Date());
+  const [channelType, setChaneelType] = useState();
 
   // useEffect(() => {
   //   if (!socket) return;
@@ -472,61 +476,49 @@ function CreateChannelModal({
   //     setLoading(false);
   //   }
   // };
-const fetchEmployeeList = async () => {
-  try {
-    const response = await axios.get(
-      `${API_URL}/api/employees/all-users`,
-      {
+  const fetchEmployeeList = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/employees/all-users`, {
         params: {
           userId: currentUser?._id,
-          type: currentUser?.superUser
-            ? "superAdmin"
-            : currentUser?.type,
+          type: currentUser?.superUser ? "superAdmin" : currentUser?.type,
         },
         withCredentials: true,
-      }
-    );
-
-    // Remove current user
-    const filtered = response.data.data.filter(
-      (emp) => emp._id !== currentUser?._id
-    );
-
-    // 1️⃣ Group users by type
-    const grouped = filtered.reduce((acc, emp) => {
-      if (!acc[emp.type]) acc[emp.type] = [];
-
-      acc[emp.type].push({
-        label: emp.name,
-        value: emp._id,
       });
 
-      return acc;
-    }, {});
+      // Remove current user
+      const filtered = response.data.data.filter(
+        (emp) => emp._id !== currentUser?._id,
+      );
+      // 1️ Group users by type
+      const grouped = filtered.reduce((acc, emp) => {
+        if (!acc[emp.type]) acc[emp.type] = [];
 
-    // 2️⃣ Define required order
-    const ORDER = ["employee", "admin", "client", "clientSubUser"];
+        acc[emp.type].push({
+          label: emp.name,
+          value: emp._id,
+        });
+        return acc;
+      }, {});
 
-    // 3️⃣ Convert to PrimeReact MultiSelect group format
-    const groupArray = ORDER
-      .filter((type) => grouped[type]) // keep only existing types
-      .map((type) => ({
-        label:
-          type === "clientSubUser"
-            ? "Client Sub User"
-            : type.charAt(0).toUpperCase() + type.slice(1),
-        items: grouped[type].sort((a, b) =>
-          a.label.localeCompare(b.label)
-        ),
-      }));
+      // 2️ Define required order
+      const ORDER = ["employee", "admin", "client", "clientSubUser"];
 
-    setEmployeeOption(groupArray);
-  } catch (error) {
-    console.error(error);
-  }
-};
+      // 3️ Convert to PrimeReact MultiSelect group format
+      const groupArray = ORDER.filter((type) => grouped[type]) // keep only existing types
+        .map((type) => ({
+          label:
+            type === "clientSubUser"
+              ? "Client Sub User"
+              : type.charAt(0).toUpperCase() + type.slice(1),
+          items: grouped[type].sort((a, b) => a.label.localeCompare(b.label)),
+        }));
 
-
+      setEmployeeOption(groupArray);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     // fetchData();
@@ -554,7 +546,7 @@ const fetchEmployeeList = async () => {
 
   const handleCreate = async () => {
     console.log("selectedEmployeeDetails");
-    // ✅ Validate name
+    // Validate name
     if (!name.trim()) {
       Swal.fire({
         icon: "warning",
@@ -564,7 +556,7 @@ const fetchEmployeeList = async () => {
     }
 
     try {
-      // ✅ Loading popup
+      // Loading popup
       Swal.fire({
         title: "Creating Channel...",
         allowOutsideClick: false,
@@ -573,17 +565,31 @@ const fetchEmployeeList = async () => {
         },
       });
 
+      let members = selectedEmployeeDetails;
+
+      // ✅ auto select for general
+      if (channelType === "general") {
+        members = employeeOption
+          .filter(
+            (group) =>
+              group.label.toLowerCase() === "employee" ||
+              group.label.toLowerCase() === "admin",
+          )
+          .flatMap((group) => group.items.map((item) => item.value));
+      }
+
       const res = await axios.post(`${API_URL}/api/channel/create-channel`, {
         name,
         createdBy: currentUser._id,
-        members: selectedEmployeeDetails,
+        members: members,
+        channelType: channelType,
       });
 
       if (res.data.success && res.data.data) {
         console.log("res", res.data.data);
         // setChaneel((prev) => [...prev,{name,members: selectedEmployeeDetails}]);
         setChannelRefresh((prev) => !prev);
-        // ✅ Optional realtime emit
+        //  Optional realtime emit
         // socket?.emit("channel-created", newChannel);
 
         //  Success
@@ -622,24 +628,55 @@ const fetchEmployeeList = async () => {
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white rounded-xl w-96 p-6 shadow-xl">
         <h2 className="text-lg font-bold mb-4">Create Channel</h2>
-
+        <label
+          htmlFor="employee_name"
+          className="block text-sm font-medium mb-2"
+        >
+          Channel Name
+        </label>
         <input
           className="w-full border rounded px-3 py-2 mb-4"
           placeholder="channel-name"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
+        <label
+          htmlFor="employee_name"
+          className="block text-sm font-medium mb-2"
+        >
+          Channel type
+        </label>
 
-        <div className="flex flex-wrap md:flex-nowrap gap-3  pt-2">
-          <div className="my-2 w-full ">
-            <label
-              htmlFor="employee_name"
-              className="block text-sm font-medium mb-2"
-            >
-              Add Employees
-            </label>
+        {/* <select
+          onChange={(e) => setChaneelType(e.target.value)}
+          className="w-full border rounded px-3 py-2 mb-4"
+        >
+          <option value="private">Private</option>
+          <option value="general">General</option>
+        </select> */}
+        <select
+          value={channelType || ""}
+          onChange={(e) => setChaneelType(e.target.value)}
+          className="w-full border rounded px-3 py-2 mb-4"
+        >
+          <option value="" disabled hidden>
+            Select Type
+          </option>
+          <option value="private">Private</option>
+          <option value="general">General</option>
+        </select>
 
-            {/* <MultiSelect
+        {channelType !== "general" && (
+          <div className="flex flex-wrap md:flex-nowrap gap-3  pt-2">
+            <div className="my-2 w-full ">
+              <label
+                htmlFor="employee_name"
+                className="block text-sm font-medium mb-2"
+              >
+                Add Employees
+              </label>
+
+              {/* <MultiSelect
               value={selectedEmployeeDetails}
               onChange={(e) => setSelectedEmployeeDetails(e.value)}
               options={employeeOption}
@@ -650,19 +687,21 @@ const fetchEmployeeList = async () => {
               className="w-full   border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               display="chip"
             /> */}
-            <MultiSelect
-              value={selectedEmployeeDetails}
-              onChange={(e) => setSelectedEmployeeDetails(e.value)}
-              options={employeeOption}
-              optionGroupLabel="label" // Heading
-              optionGroupChildren="items" // Items under heading
-              filter
-              placeholder="Select Employees"
-              display="chip"
-              className="w-full border border-gray-300 rounded-lg"
-            />
+
+              <MultiSelect
+                value={selectedEmployeeDetails}
+                onChange={(e) => setSelectedEmployeeDetails(e.value)}
+                options={employeeOption}
+                optionGroupLabel="label" // Heading
+                optionGroupChildren="items" // Items under heading
+                filter
+                placeholder="Select Employees"
+                display="chip"
+                className="w-full border border-gray-300 rounded-lg"
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="flex justify-end gap-2 mt-3">
           <button onClick={onClose} className="px-4 py-2 rounded bg-gray-200">
@@ -863,20 +902,21 @@ function EditChannelModal({
   const [name, setName] = useState("");
   const [employeeOption, setEmployeeOption] = useState([]);
   const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState([]);
-
+  const [channelType, setChaneelType] = useState();
   /* ------------------------------------------------ */
-  /* ✅ Sync state when channel arrives */
+  /*  Sync state when channel arrives */
   /* ------------------------------------------------ */
 
   useEffect(() => {
     if (channel) {
       setName(channel.name || "");
-      setSelectedEmployeeDetails(channel.members || []); // ✅ IDs only
+      setSelectedEmployeeDetails(channel.members || []); //  IDs only
+      setChaneelType(channel?.channelType);
     }
   }, [channel]);
 
   /* ------------------------------------------------ */
-  /* ✅ Fetch Employees */
+  /*  Fetch Employees */
   /* ------------------------------------------------ */
 
   useEffect(() => {
@@ -942,20 +982,17 @@ function EditChannelModal({
       //   label: key.charAt(0).toUpperCase() + key.slice(1), // Capitalize
       //   items: grouped[key],
       // }));
-       const ORDER = ["employee", "admin", "client", "clientSubUser"];
+      const ORDER = ["employee", "admin", "client", "clientSubUser"];
 
-    // 3️⃣ Convert to PrimeReact MultiSelect group format
-    const groupArray = ORDER
-      .filter((type) => grouped[type]) // keep only existing types
-      .map((type) => ({
-        label:
-          type === "clientSubUser"
-            ? "Client Sub User"
-            : type.charAt(0).toUpperCase() + type.slice(1),
-        items: grouped[type].sort((a, b) =>
-          a.label.localeCompare(b.label)
-        ),
-      }));
+      // 3️⃣ Convert to PrimeReact MultiSelect group format
+      const groupArray = ORDER.filter((type) => grouped[type]) // keep only existing types
+        .map((type) => ({
+          label:
+            type === "clientSubUser"
+              ? "Client Sub User"
+              : type.charAt(0).toUpperCase() + type.slice(1),
+          items: grouped[type].sort((a, b) => a.label.localeCompare(b.label)),
+        }));
 
       setEmployeeOption(groupArray);
     } catch (error) {
@@ -964,7 +1001,7 @@ function EditChannelModal({
   };
 
   /* ------------------------------------------------ */
-  /* ✅ UPDATE CHANNEL */
+  /*  UPDATE CHANNEL */
   /* ------------------------------------------------ */
 
   const handleUpdate = async () => {
@@ -982,11 +1019,25 @@ function EditChannelModal({
         didOpen: () => Swal.showLoading(),
       });
 
+      let members = selectedEmployeeDetails;
+
+      //  auto select for general
+      if (channelType === "general") {
+        members = employeeOption
+          .filter(
+            (group) =>
+              group.label.toLowerCase() === "employee" ||
+              group.label.toLowerCase() === "admin",
+          )
+          .flatMap((group) => group.items.map((item) => item.value));
+      }
+
       const res = await axios.put(
         `${API_URL}/api/channel/update-channel/${channel._id}`,
         {
           name,
-          members: selectedEmployeeDetails, // ✅ already IDs
+          members: members, //  already IDs
+          channelType: channelType,
         },
       );
 
@@ -1009,13 +1060,12 @@ function EditChannelModal({
           timer: 1500,
           showConfirmButton: false,
         });
-
         onClose();
       }
     } catch (err) {
       console.log("update error", err);
 
-      // ✅ Duplicate name check
+      //  Duplicate name check
       if (err?.response?.data?.message?.includes("E11000")) {
         Swal.fire({
           icon: "error",
@@ -1034,7 +1084,7 @@ function EditChannelModal({
 
   /* ------------------------------------------------ */
 
-  if (!channel) return null; // ✅ Prevent crash
+  if (!channel) return null; //  Prevent crash
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -1042,6 +1092,13 @@ function EditChannelModal({
         <h2 className="text-lg font-bold mb-4">Edit Channel</h2>
 
         {/* Channel Name */}
+
+        <label
+          htmlFor="employee_name"
+          className="block text-sm font-medium mb-2"
+        >
+          Channel Name
+        </label>
         <input
           className="w-full border rounded px-3 py-2 mb-4"
           value={name}
@@ -1076,17 +1133,49 @@ function EditChannelModal({
           display="chip"
         /> */}
 
-        <MultiSelect
-          value={selectedEmployeeDetails}
-          onChange={(e) => setSelectedEmployeeDetails(e.value)}
-          options={employeeOption}
-          optionGroupLabel="label" // Heading
-          optionGroupChildren="items" // Items under heading
-          filter
-          placeholder="Select Employees"
-          display="chip"
-          className="w-full border border-gray-300 rounded-lg"
-        />
+        <div>
+          <label
+            htmlFor="employee_name"
+            className="block text-sm font-medium mb-2"
+          >
+            Channel type
+          </label>
+
+          <select
+            value={channelType || ""}
+            onChange={(e) => setChaneelType(e.target.value)}
+            className="w-full border rounded px-3 py-2 mb-4"
+          >
+            <option value="" disabled hidden>
+              Select Type
+            </option>
+            <option value="private">Private</option>
+            <option value="general">General</option>
+          </select>
+        </div>
+
+        {channelType !== "general" && (
+          <div>
+            <label
+              htmlFor="employee_name"
+              className="block text-sm font-medium mb-2"
+            >
+              Channel Member
+            </label>
+
+            <MultiSelect
+              value={selectedEmployeeDetails}
+              onChange={(e) => setSelectedEmployeeDetails(e.value)}
+              options={employeeOption}
+              optionGroupLabel="label" // Heading
+              optionGroupChildren="items" // Items under heading
+              filter
+              placeholder="Select Employees"
+              display="chip"
+              className="w-full border border-gray-300 rounded-lg"
+            />
+          </div>
+        )}
 
         {/* Buttons */}
         <div className="flex justify-end gap-2 mt-4">
@@ -2304,7 +2393,15 @@ export default function SlackSidebar({
                   : "hover:bg-gray-100"
               }`}
             >
-              <span># {ch.name}</span>
+              <div className="flex gap-2">
+                {ch.channelType == "private" ? (
+                  <Lock className="w-4 h-4 text-yellow-500" />
+                ) : (
+                  <BsPeople className="w-4 h-4 text-green-500" />
+                )}
+                <span># {ch.name}</span>
+              </div>
+
               <div className="flex items-center gap-2">
                 <span
                   onClick={(e) => {

@@ -1791,7 +1791,7 @@
 //   );
 // }
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { API_URL } from "../../config";
@@ -1821,6 +1821,8 @@ import {
   Copy,
 } from "lucide-react";
 import { use } from "react";
+import { BsViewStacked } from "react-icons/bs";
+
 const renderSlackStyleText = (text) => {
   if (!text) return null;
 
@@ -1828,7 +1830,7 @@ const renderSlackStyleText = (text) => {
   const parts = text.split(urlRegex);
 
   return parts.map((part, index) => {
-    // ✅ use match, NOT test
+    //  use match, NOT test
     if (part.match(urlRegex)) {
       return (
         <a
@@ -1853,7 +1855,7 @@ const MessageText = ({ text, isMe }) => {
   const MAX_LENGTH = 300;
 
   if (!text) return null;
-   
+
   const isLong = text.length > MAX_LENGTH;
   const displayedText = isExpanded ? text : text.slice(0, MAX_LENGTH);
   const remainingChars = text.length - MAX_LENGTH;
@@ -2059,6 +2061,44 @@ const FileActions = ({ src, isMe, onDelete, onForward }) => {
 //   });
 // };
 
+export function MembersAvatarStack({ members = [], setFuntionOpen }) {
+  // const [open, setOpen] = useState(false);
+  console.log("hhhh", setFuntionOpen);
+
+  const visible = members.slice(0, 3);
+  const remaining = members.length - visible.length;
+
+  return (
+    <>
+      {/* Avatar stack */}
+      <div
+        className="flex -space-x-3 cursor-pointer"
+        onClick={() => setFuntionOpen(true)}
+      >
+        {visible.map((m, i) => (
+          <div
+            key={m._id}
+            className="w-9 h-9 rounded-full bg-indigo-500 text-white flex items-center justify-center text-sm font-semibold border-2 border-white shadow"
+            title={m.name}
+            style={{ zIndex: 10 - i }}
+          >
+            {m.name?.charAt(0).toUpperCase()}
+          </div>
+        ))}
+
+        {remaining > 0 && (
+          <div className="w-9 h-9 rounded-full bg-gray-300 text-gray-700 flex items-center justify-center text-xs font-semibold border-2 border-white">
+            +{remaining}
+          </div>
+        )}
+      </div>
+
+      {/* Popup */}
+      {/* {open && <MembersModal members={members} onClose={() => setOpen(false)} />} */}
+    </>
+  );
+}
+
 export default function Slack_chatwindow({
   socket,
   currentUser,
@@ -2085,6 +2125,7 @@ export default function Slack_chatwindow({
   const controllersRef = useRef({});
   const [showActions, setShowActions] = useState(false);
   const editFileRef = useRef(null);
+  const [open, setOpen] = useState(false);
 
   // message icons
   const [hoveredMessageId, setHoveredMessageId] = useState(null);
@@ -2115,7 +2156,9 @@ export default function Slack_chatwindow({
   const [seenByUsers, setSeenByUsers] = useState([]);
   const [showSeenPopup, setShowSeenPopup] = useState(false);
   const [activeSeenMessage, setActiveSeenMessage] = useState(null);
+  const [channelMembers, setChannelMembers] = useState([]);
 
+  // view channel members
   const me = currentUser?._id;
   const other = selectedUser?._id;
 
@@ -2150,9 +2193,7 @@ export default function Slack_chatwindow({
       </div>
     );
   };
-
   // channel open
-
   const openChannel = (channel) => {
     onSelectChannel(channel);
 
@@ -2236,12 +2277,29 @@ export default function Slack_chatwindow({
     };
   }, [socket, selectedChannel]);
 
-  // /* ✅ blue TICK dm*/
+  // /*  Channel View Members*/
+  useMemo(() => {
+    if (!selectedChannel || !selectedChannel?._id) return;
+    async function allChannelMember() {
+      try {
+        const respone = await axios.get(
+          `${API_URL}/api/channel/channel-members/${selectedChannel?._id}`,
+        );
+        if (respone.data.success) {
+          setChannelMembers(respone.data.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    allChannelMember();
+  }, [selectedChannel]);
 
   useEffect(() => {
-    if (!socket || !selectedUser) return;
+    if (!socket) return;
 
     const onDelivered = ({ senderId, receiverId, deliveredAt }) => {
+      console.log("messages_delivered", senderId, receiverId, deliveredAt);
       setMessages((prev) =>
         prev.map((m) =>
           m.senderId === senderId &&
@@ -2304,7 +2362,7 @@ export default function Slack_chatwindow({
     };
   }, [socket, selectedChannel]);
 
-  /* 🔵 BLUE TICK dm*/
+  /*  BLUE TICK dm*/
   useEffect(() => {
     if (!socket) return;
 
@@ -2405,7 +2463,7 @@ export default function Slack_chatwindow({
         },
       );
 
-      // ✅ Notify via socket ONLY after success
+      //  Notify via socket ONLY after success
       if (res.data?.success) {
         // console.log("entering socket emit for channel or dm ggg");
         socket.emit(
@@ -2570,8 +2628,6 @@ export default function Slack_chatwindow({
     };
   }, [socket]);
 
- 
-
   // Edit action useEffect
   useEffect(() => {
     if (!socket) return;
@@ -2588,10 +2644,20 @@ export default function Slack_chatwindow({
   useEffect(() => {
     if (!activeThread) return;
 
-    axios
-      .get(`${API_URL}/api/messages/messages/thread/${activeThread._id}`)
-      .then((res) => setThreadReplies(res.data.data || []));
+    const fetchThreadMessages = async () => {
+      try {
+        const res = await axios.get(
+          `${API_URL}/api/messages/messages/thread/${activeThread._id}`,
+        );
+        setThreadReplies(res.data.data || []);
+      } catch (error) {
+        console.error("Failed to fetch thread messages", error);
+      }
+    };
+    fetchThreadMessages();
   }, [activeThread]);
+
+  // console.log("active thread",activeThread && activeThread._id,threadReplies);
   // socket update
   // useEffect(() => {
   //   if (!socket) return;
@@ -2612,6 +2678,7 @@ export default function Slack_chatwindow({
 
   //   return () => socket.off("thread_reply");
   // }, [socket, activeThread]);
+
   useEffect(() => {
     if (!socket) return;
 
@@ -2658,52 +2725,55 @@ export default function Slack_chatwindow({
   //     </div>
   //   );
   // }
+  const USER_TYPE_ORDER = ["employee", "admin", "client", "clientSubUser"];
+
+  const sortedUsers = [...filteredUsers].sort((a, b) => {
+    return USER_TYPE_ORDER.indexOf(a.type) - USER_TYPE_ORDER.indexOf(b.type);
+  });
+
   if (!selectedUser && !selectedChannel) {
-  return (
-    <div className="flex-1 flex flex-col items-center justify-center h-full bg-gradient-to-br from-gray-50 to-white border">
-      
-      <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center mb-6">
-        <Send className="w-12 h-12 text-gray-400" />
+    return (
+      // <div className="w-full">
+      <div className="flex-1 flex flex-col items-center justify-center h-full bg-gradient-to-br from-gray-50 to-white border border-red-600 w-full ">
+        <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center mb-6">
+          <Send className="w-12 h-12 text-gray-400" />
+        </div>
+
+        <h3 className="text-xl font-semibold text-gray-700 mb-2">
+          Welcome to Aryu Chat
+        </h3>
+
+        <p className="text-gray-500">
+          Select a conversation to start messaging
+        </p>
       </div>
+      // </div>
+    );
+  }
 
-      <h3 className="text-xl font-semibold text-gray-700 mb-2">
-        Welcome to Aryu Chat
-      </h3>
+  //   const renderTick = (msg) => {
+  //   console.log("Rendering tick for message:", msg);
 
-      <p className="text-gray-500">
-        Select a conversation to start messaging
-      </p>
+  //   if (!msg.deliveredAt) {
+  //     return <Check className="w-3.5 h-3.5" />;
+  //   }
 
-    </div>
-  );
-}
+  //   if (msg.isSeenByAll) {
+  //     return <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />;
+  //   }
 
+  //   return <CheckCheck className="w-3.5 h-3.5 text-gray-500" />;
+  // };
 
-//   const renderTick = (msg) => {
-//   console.log("Rendering tick for message:", msg);
-
-//   if (!msg.deliveredAt) {
-//     return <Check className="w-3.5 h-3.5" />;
-//   }
-
-//   if (msg.isSeenByAll) {
-//     return <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />;
-//   }
-
-//   return <CheckCheck className="w-3.5 h-3.5 text-gray-500" />;
-// };
-
- const renderTick = (msg) => {
+  const renderTick = (msg) => {
     console.log("Rendering tick for message:", msg);
 
-    if(!msg.deliveredAt) {
+    if (!msg.deliveredAt) {
       return <Check className="w-3.5 h-3.5" />;
-    }
-     else if(msg.isSeenByAll){
+    } else if (msg.isSeenByAll) {
       return <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />;
-    }
-    else{
-       return <CheckCheck className="w-3.5 h-3.5 text-white" />;
+    } else {
+      return <CheckCheck className="w-3.5 h-3.5 text-white" />;
     }
   };
 
@@ -2815,7 +2885,6 @@ export default function Slack_chatwindow({
           res.data.data,
         );
       }
-
       // cleanup
       setShowForwardDropdown(false);
       setForwardMessage(null);
@@ -2905,9 +2974,55 @@ export default function Slack_chatwindow({
       console.error("Seen by fetch error", err);
     }
   };
-
   return (
-    <div className="flex h-full">
+    <div className="flex-1 flex flex-col  h-full bg-gradient-to-br from-gray-50 to-white border w-full relative  ">
+      {/* channel pop  */}
+      {selectedChannel &&open && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          {/* click outside to close */}
+         
+          <div className="relative bg-white w-full max-w-md mx-4 rounded-xl shadow-xl  max-h-[80vh] overflow-y-auto ">
+            <div className="absolute inset-0" onClick={() => setOpen(false)} />
+           <div className="sticky top-0 z-10 p-3 bg-white border-b flex justify-around items-center">
+            <div>
+                <h3 className="font-bold text-lg">Channel Members</h3>
+              </div>
+              <div>
+                <button
+                onClick={() => setOpen(false)}
+                className="text-gray-500  hover:text-red-400 "
+              >
+                ✕
+              </button>
+              <div>
+              </div>
+            
+              
+                
+              </div>
+            </div>
+            {channelMembers &&
+              channelMembers.map((m) => (
+                <div
+                  key={m._id}
+                  className="flex items-center gap-3 p-2 rounded hover:bg-gray-100"
+                >
+                  <div className="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center font-semibold">
+                    {m.name?.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium">{m.name}</p>
+                    <p className="text-xs text-gray-500">{m.email}</p>
+                  </div>
+                  <span className="text-xs bg-gray-200 px-2 py-1 rounded">
+                    {m.role}
+                  </span>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+
       {showSeenPopup && (
         <div
           className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center"
@@ -2953,7 +3068,7 @@ export default function Slack_chatwindow({
         </div>
       )}
 
-      <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50">
+      <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50 overflow-scroll">
         {/* Chat Header */}
         {console.log("showForwardDropdown:", showForwardDropdown)}
         {showForwardDropdown && (
@@ -2974,7 +3089,7 @@ export default function Slack_chatwindow({
             </div>
 
             {/* HEADER */}
-            <div className="px-3 py-2 text-xs font-semibold text-gray-500 border-b">
+            <div className="px-3 py-2 text-[20px] font-semibold text-gray-500 border-b">
               Forward to…
             </div>
 
@@ -3016,10 +3131,10 @@ export default function Slack_chatwindow({
             {/* SCROLL AREA */}
             <div className="max-h-64 overflow-y-auto">
               {/* USERS */}
-              {filteredUsers.length > 0 && (
+              {/* {sortedUsers.length > 0 && (
                 <>
                   <div className="px-3 py-1 text-xs text-gray-400">People</div>
-                  {filteredUsers.map((u) => (
+                  {sortedUsers.map((u) => (
                     <button
                       key={u._id}
                       onClick={() => {
@@ -3032,12 +3147,51 @@ export default function Slack_chatwindow({
                     </button>
                   ))}
                 </>
+              )} */}
+
+              {sortedUsers.length > 0 && (
+                <>
+                  <div className="px-3 py-1 text-xs text-gray-400">People</div>
+                  {USER_TYPE_ORDER.map((type) => {
+                    const usersByType = sortedUsers.filter(
+                      (u) => u.type === type,
+                    );
+
+                    if (usersByType.length === 0) return null;
+
+                    return (
+                      <div key={type}>
+                        {/* Type Header */}
+                        <div className="px-3 py-1 text-[15px] font-semibold text-blue-900  uppercase">
+                          {type}
+                        </div>
+
+                        {/* Users */}
+                        {usersByType.map((u) => (
+                          <button
+                            key={u._id}
+                            onClick={() => {
+                              onSelectUser?.(u);
+                              handleForward(u._id, null, forwardMessage);
+                            }}
+                            className="w-full px-3 py-2 flex items-center gap-2 hover:bg-gray-100 text-sm"
+                          >
+                            👤 {u.name}
+                            {/* {u.online && (
+                <span className="ml-auto h-2 w-2 rounded-full bg-green-500" />
+              )} */}
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })}
+                </>
               )}
 
               {/* CHANNELS */}
               {filteredChannels.length > 0 && (
                 <>
-                  <div className="px-3 py-1 text-xs text-gray-400">
+                  <div className="px-3 py-1 text-[15px] font-semibold text-blue-900  uppercase">
                     Channels
                   </div>
                   {filteredChannels.map((c) => (
@@ -3067,13 +3221,13 @@ export default function Slack_chatwindow({
 
         <div className="px-6 py-4 border-b border-gray-200 bg-white/95 backdrop-blur-sm shadow-sm">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 ">
               <div className="relative">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
-                  {console.log(
+                  {/* {console.log(
                     "Rendering header with selectedUser name:",
                     selectedUser,
-                  )}
+                  )} */}
                   {selectedUser && selectedUser?.name.charAt(0).toUpperCase()}
                 </div>
                 <div
@@ -3086,6 +3240,7 @@ export default function Slack_chatwindow({
                   }`}
                 />
               </div>
+
               <div>
                 <h2 className="font-bold text-gray-800 text-lg">
                   <h2 className="font-bold">
@@ -3129,6 +3284,11 @@ export default function Slack_chatwindow({
               <MoreVertical className="w-5 h-5" />
             </button>
           </div> */}
+          {selectedChannel && <MembersAvatarStack
+              members={channelMembers}
+              setFuntionOpen={(val) => setOpen(val)}
+            />}
+            
           </div>
         </div>
 
@@ -3145,7 +3305,7 @@ export default function Slack_chatwindow({
                     minute: "2-digit",
                   })
                 : "";
-                const date = m.createdAt
+              const date = m.createdAt
                 ? new Date(m.createdAt).toLocaleDateString([], {
                     year: "numeric",
                     month: "short",
@@ -3177,7 +3337,8 @@ export default function Slack_chatwindow({
                       onMouseLeave={() => setHoveredMessageId(null)}
                     >
                       {/* 🔥 Hover Actions */}
-                      {!m.isDelete  &&  isMe &&
+                      {!m.isDelete &&
+                        isMe &&
                         hoveredMessageId === (m._id || m.clientId) && (
                           <div
                             className={`absolute -top-9 ${
@@ -3557,7 +3718,7 @@ export default function Slack_chatwindow({
                           <div className="message-footer">{renderTick(m)}</div>
                         </div>
                       )} */}
-                       {/* dm tick */}
+                      {/* dm tick */}
                       {/* Message Status and Time */}
                       {selectedUser && (
                         <div
@@ -3571,7 +3732,10 @@ export default function Slack_chatwindow({
                           </div>
                           <div className="flex gap">
                             <span className="text-xs">{time}</span>
-                             {console.log("Rendering ticks for message:", m.seenAt)}
+                            {console.log(
+                              "Rendering ticks for message:",
+                              m.seenAt,
+                            )}
                             {/* {isMe && (
                               <div className="flex items-center">
                                 {!m.deliveredAt && !m.seenAt && (
@@ -3585,7 +3749,7 @@ export default function Slack_chatwindow({
                                 )}
                               </div>
                             )} */}
-                              {/* {isMe && (
+                            {/* {isMe && (
                             <div className="flex items-center">
                               {m.seenAt ? (
                                 <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
@@ -3597,7 +3761,6 @@ export default function Slack_chatwindow({
                             </div>
                           )} */}
                             {isMe && (
-                             
                               <div className="flex items-center">
                                 {(() => {
                                   if (!m.deliveredAt) {
@@ -3611,7 +3774,7 @@ export default function Slack_chatwindow({
                                       <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
                                     );
                                   }
-                                   return <Check className="w-3.5 h-3.5" />;
+                                  return <Check className="w-3.5 h-3.5" />;
                                 })()}
                               </div>
                             )}
@@ -3619,7 +3782,7 @@ export default function Slack_chatwindow({
                         </div>
                       )}
                       {/* channel tick */}
-                      {selectedChannel && m.senderId == me && (
+                      {selectedChannel && (
                         <div
                           className={`flex items-center justify-between gap-2 mt-2 ${
                             isMe ? "text-blue-100" : "text-gray-500"
@@ -3631,9 +3794,11 @@ export default function Slack_chatwindow({
                           </div>
                           <div className="flex gap-3">
                             <span className="text-xs">{time}</span>
-                            <div className="message-footer">
-                              {renderTick(m)}
-                            </div>
+                            {m.senderId == me && (
+                              <div className="message-footer">
+                                {renderTick(m)}
+                              </div>
+                            )}
                           </div>
                         </div>
                       )}
@@ -3642,7 +3807,7 @@ export default function Slack_chatwindow({
                 </div>
               );
             })}
-            <div ref={bottomRef}/>
+            <div ref={bottomRef} />
           </div>
         </div>
 
