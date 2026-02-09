@@ -2224,7 +2224,7 @@ export default function Slack_chatwindow({
 
   useEffect(() => {
     if (!socket || !selectedUser) return;
-
+     setActiveThread(null);
     socket.emit("join_dm", { senderId: me, receiverId: other });
 
     axios
@@ -2239,6 +2239,7 @@ export default function Slack_chatwindow({
 
   useEffect(() => {
     if (!socket || !selectedChannel || !currentUser?._id) return;
+     setActiveThread(null);
 
     const channelId = selectedChannel._id;
 
@@ -3068,7 +3069,9 @@ export default function Slack_chatwindow({
         </div>
       )}
 
-      <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50 overflow-scroll">
+
+      <div className="flex h-full">
+         <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50 overflow-scroll">
         {/* Chat Header */}
         {console.log("showForwardDropdown:", showForwardDropdown)}
         {showForwardDropdown && (
@@ -3198,7 +3201,7 @@ export default function Slack_chatwindow({
                     <button
                       key={c._id}
                       onClick={() => {
-                        openChannel(ch);
+                        openChannel(c);
                         handleForward(null, c._id, forwardMessage);
                       }}
                       className="w-full px-3 py-2 flex items-center gap-2 hover:bg-gray-100 text-sm"
@@ -3356,14 +3359,14 @@ export default function Slack_chatwindow({
                             {/* <ActionButton title="Reply in thread">
                             <MessageSquare size={14} />
                           </ActionButton> */}
-                            {/* {isMe && (
+                            {isMe && (
                               <ActionButton
                                 title="Reply in thread"
                                 onClick={() => setActiveThread(m)}
                               >
                                 <MessageSquare size={14} />
                               </ActionButton>
-                            )} */}
+                            )}
 
                             {/* EDIT */}
                             {/* {isMe && (
@@ -3784,11 +3787,12 @@ export default function Slack_chatwindow({
                       {/* channel tick */}
                       {selectedChannel && (
                         <div
-                          className={`flex items-center justify-between gap-2 mt-2 ${
+                          className={` gap-2 mt-2 ${
                             isMe ? "text-blue-100" : "text-gray-500"
                           }`}
                         >
-                          <div>
+                          <div className="flex items-center justify-between gap-2 mt-2">
+                             <div>
                             {" "}
                             <span className="text-xs">{date}</span>
                           </div>
@@ -3800,6 +3804,10 @@ export default function Slack_chatwindow({
                               </div>
                             )}
                           </div>
+                          
+                          </div>
+                           <div className="text-sm underline" onClick={()=>setActiveThread(m)}>Thread Count:{m.threadReplyCount}</div>
+                         
                         </div>
                       )}
                     </div>
@@ -4008,7 +4016,6 @@ export default function Slack_chatwindow({
               <h3 className="font-semibold text-gray-800">Thread</h3>
               <p className="text-xs text-gray-500">Replies to message</p>
             </div>
-
             <button
               onClick={() => setActiveThread(null)}
               className="text-gray-500 hover:text-red-500"
@@ -4016,9 +4023,8 @@ export default function Slack_chatwindow({
               ✕
             </button>
           </div>
-
           {/* PARENT MESSAGE ONLY */}
-          <div className="p-4 bg-gray-50 border-b">
+          <div className="bg-gray-50 ">
             {activeThread.text && (
               <MessageText
                 text={activeThread.text.trim()}
@@ -4038,7 +4044,7 @@ export default function Slack_chatwindow({
               }
 
               return (
-                <div key={f._id} className="mt-2">
+                <div key={f._id} className="">
                   {f.type.startsWith("image") ? (
                     <img src={src} className="rounded-lg max-w-full" />
                   ) : (
@@ -4189,6 +4195,10 @@ export default function Slack_chatwindow({
           {/* { console.log("test open",showSeenPopup)} */}
         </div>
       )}
+
+      </div>
+
+     
     </div>
   );
 }
