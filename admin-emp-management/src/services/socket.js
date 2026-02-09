@@ -26,9 +26,9 @@
 // src/services/socket.js
 import { io } from "socket.io-client";
 
-const SOCKET_URL = "http://192.168.0.116:5000";
+// const SOCKET_URL = "http://192.168.0.116:5000";
 
-// const SOCKET_URL = "https://hrms.aryuprojects.com";//staging socket
+const SOCKET_URL = "https://hrms.aryuprojects.com";//staging socket
 // const SOCKET_URL = "https://portal.aryutechnologies.com";//live socket
 
 let socket = null;
