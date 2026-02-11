@@ -26,9 +26,9 @@
 // src/services/socket.js
 import { io } from "socket.io-client";
 
-// const SOCKET_URL = "http://192.168.0.116:5000";
+const SOCKET_URL = "http://192.168.0.116:5000";
 
-const SOCKET_URL = "https://hrms.aryuprojects.com";//staging socket
+// const SOCKET_URL = "https://hrms.aryuprojects.com";//staging socket
 // const SOCKET_URL = "https://portal.aryutechnologies.com";//live socket
 
 let socket = null;
@@ -41,16 +41,16 @@ export function connectSocket(token) {
     transports: ["websocket"],
       timeout: 20000,
     // withCredentials: true,
-    // 🔐 enable later when JWT ready
+    //  enable later when JWT ready
     // auth: { token },
   });
 
   socket.on("connect", () => {
-    console.log("✅ Socket connected:", socket.id);
+    console.log(" Socket connected:", socket.id);
   });
 
   socket.on("disconnect", (reason) => {
-    console.log("❌ Socket disconnected:", reason);
+    console.log(" Socket disconnected:", reason);
   });
 
   socket.on("connect_error", (err) => {
