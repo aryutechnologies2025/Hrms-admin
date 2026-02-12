@@ -420,6 +420,8 @@ import Swal from "sweetalert2";
 import { Group, Lock } from "lucide-react";
 import { BsGlobeCentralSouthAsia, BsPeople } from "react-icons/bs";
 import { GiAllForOne } from "react-icons/gi";
+import { Star, Hash, MessageCircle, Plus } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 /* ---------------- MODAL ---------------- */
 function CreateChannelModal({
   onClose,
@@ -1196,22 +1198,82 @@ function EditChannelModal({
 }
 
 /* ---------------- SECTION HEADER ---------------- */
-function SectionHeader({ title, open, onToggle, rightAction, currentUser }) {
+// function SectionHeader({ title, open, onToggle, rightAction, currentUser }) {
+//   return (
+//     <div
+//       onClick={onToggle}
+//       className="flex items-center justify-between px-4 py-2 cursor-pointer hover:bg-gray-100"
+//     >
+//       <div className="flex items-center gap-2">
+//         <span className={`transition-transform ${open ? "rotate-90" : ""}`}>
+//           ▶
+//         </span>
+//         <span className="font-semibold text-gray-700">{title}</span>
+//       </div>
+//       {currentUser && currentUser.superUser && rightAction}
+//     </div>
+//   );
+// }
+
+
+function SectionHeader({
+  title,
+  open,
+  onToggle,
+  rightAction,
+  currentUser,
+  icon: LeftIcon, // optional left icon
+}) {
   return (
     <div
       onClick={onToggle}
-      className="flex items-center justify-between px-4 py-2 cursor-pointer hover:bg-gray-100"
+      className="
+        group
+        flex items-center justify-between
+        px-4 py-2 mx-2 mt-2
+        rounded-lg
+        cursor-pointer
+        transition-all
+        hover:bg-slate-100
+      "
     >
+      {/* LEFT SIDE */}
       <div className="flex items-center gap-2">
-        <span className={`transition-transform ${open ? "rotate-90" : ""}`}>
-          ▶
+        {/* Optional left icon */}
+        {LeftIcon && (
+          <LeftIcon size={16} className="text-slate-500" />
+        )}
+
+       
+
+        {/* Title */}
+        <span className="text-sm font-medium text-slate-700">
+          {title}
         </span>
-        <span className="font-semibold text-gray-700">{title}</span>
+         {/* Arrow (right → down when open) */}
+        <ChevronRight
+          size={14}
+          className={`
+            text-slate-400
+            transition-transform duration-200
+            ${open ? "rotate-90" : ""}
+          `}
+        />
       </div>
-      {currentUser && currentUser.superUser && rightAction}
+
+      {/* RIGHT ACTION (admin only) */}
+      {currentUser?.superUser && rightAction && (
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="opacity-0 group-hover:opacity-100 transition"
+        >
+          {rightAction}
+        </div>
+      )}
     </div>
   );
 }
+
 
 /* ---------------- MAIN SIDEBAR ---------------- */
 // export default function SlackSidebar({
@@ -2266,7 +2328,7 @@ export default function SlackSidebar({
   };
 
   return (
-    <div className="w-80 h-screen flex flex-col border-r bg-white">
+    <div className="w-80 h-screen flex flex-col border-r bg-white border rounded-md">
       {/* ---------------- HEADER ---------------- */}
       <div className="p-4 border-b">
         <h2 className="text-xl font-bold mb-3">Messages</h2>
@@ -2283,10 +2345,10 @@ export default function SlackSidebar({
               key={f}
               onClick={() => setFilter(f)}
               className={`px-3 py-1 rounded-full text-sm ${
-                filter === f ? "bg-purple-600 text-white" : "bg-gray-100"
+                filter === f ? " bg-indigo-500 text-white" : "bg-gray-100"
               }`}
             >
-              {f}
+              {f.toUpperCase()}
             </button>
           ))}
         </div>
@@ -2294,11 +2356,17 @@ export default function SlackSidebar({
 
       {/* ---------------- BODY ---------------- */}
       <div className="flex-1 overflow-y-auto">
-        <SectionHeader
+        {/* <SectionHeader
           title="Favorites"
           open={favoritesOpen}
           onToggle={() => setFavoritesOpen((p) => !p)}
-        />
+        /> */}
+        <SectionHeader
+  title="Favorites"
+  icon={Star}
+  open={favoritesOpen}
+  onToggle={() => setFavoritesOpen(p => !p)}
+/>
         {/* ⭐ FAVORITES */}
 
         {favoritesOpen &&
@@ -2364,7 +2432,7 @@ export default function SlackSidebar({
           onToggle={() => setChannelOpen((p) => !p)}
         /> */}
 
-        <SectionHeader
+        {/* <SectionHeader
           title="Channels"
           open={channelOpen}
           onToggle={() => setChannelOpen((p) => !p)}
@@ -2380,7 +2448,25 @@ export default function SlackSidebar({
               +
             </button>
           }
-        />
+        /> */}
+        <SectionHeader
+  title="Channels"
+  icon={Hash}
+  open={channelOpen}
+  onToggle={() => setChannelOpen(p => !p)}
+  currentUser={currentUser}
+  rightAction={
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowChannelModal(true);
+              }}
+              className="text-xl"
+            >
+             <Plus size={16} />
+            </button>
+          }
+/>
 
         {channelOpen &&
           filteredChannels.map((ch) => (
@@ -2429,6 +2515,7 @@ export default function SlackSidebar({
                       e.stopPropagation();
                       handleDeleteChannel(ch._id);
                     }}
+                    
                   />
                 </span>
 
@@ -2446,6 +2533,7 @@ export default function SlackSidebar({
           title="Direct Messages"
           open={dmOpen}
           onToggle={() => setDmOpen((p) => !p)}
+            icon={MessageCircle}
         />
 
         {/* {dmOpen &&
@@ -2475,13 +2563,34 @@ export default function SlackSidebar({
                       }`}
                     >
                       <div className="flex items-center gap-2">
-                        <span
+                        {/* <span
                           className={`w-2 h-2 rounded-full ${
                             isOnline(u._id) ? "bg-green-500" : "bg-gray-400"
                           }`}
-                        />
+                        /> */}
+                         <div className="relative">
+            {u.photo ? (
+              <img
+                src={u.photo}
+                alt={u.name}
+                className="w-9 h-9 rounded-full object-cover border"
+              />
+            ) : (
+              <div className="w-9 h-9 rounded-full  bg-indigo-500 text-white flex items-center justify-center text-sm font-semibold">
+                {u.name?.charAt(0).toUpperCase()}
+              </div>
+            )}
+
+            {/* Online indicator */}
+            <span
+              className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-white ${
+                isOnline(u._id) ? "bg-green-500" : "bg-gray-400"
+              }`}
+            />
+          </div>
                         <span>{u.name}</span>
                       </div>
+                      
 
                       <div className="flex items-center gap-2 p-1">
                         {unread[u._id] > 0 && (

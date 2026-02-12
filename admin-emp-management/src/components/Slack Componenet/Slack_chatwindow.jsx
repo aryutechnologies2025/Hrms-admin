@@ -71,7 +71,7 @@ const MessageText = ({ text, isMe }) => {
     <div className="relative">
       <p
         className={`whitespace-pre-wrap break-words text-[15px] leading-relaxed ${
-          isMe ? "text-white" : "text-gray-800"
+          isMe ? "text-black" : "text-gray-800"
         }`}
       >
         {renderSlackStyleText(displayedText)}
@@ -338,6 +338,8 @@ export default function Slack_chatwindow({
   const [editTextThread, setEditTextThread] = useState("");
   const [editFilesThread, setEditFilesThread] = useState([]);
   const editFileRefThread = useRef(null);
+  // THREAD
+  const bottomRefTheard = useRef();
 
   // meassage forwarding
   const [showForwardDropdown, setShowForwardDropdown] = useState(false);
@@ -756,9 +758,14 @@ export default function Slack_chatwindow({
       });
     }, 1500);
   };
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    bottomRefTheard.current?.scrollIntoView({ behavior: "smooth" });
+  }, [threadReplies]);
 
   // main chat files
   const handleFileSelect = (e) => {
@@ -1117,7 +1124,7 @@ export default function Slack_chatwindow({
   if (!selectedUser && !selectedChannel) {
     return (
       // <div className="w-full">
-      <div className="flex-1 flex flex-col items-center justify-center h-full bg-gradient-to-br from-gray-50 to-white border border-red-600 w-full ">
+      <div className="flex-1 flex flex-col items-center justify-center h-full bg-gradient-to-br from-gray-50 to-white border">
         <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center mb-6">
           <Send className="w-12 h-12 text-gray-400" />
         </div>
@@ -1154,9 +1161,9 @@ export default function Slack_chatwindow({
     if (!msg.deliveredAt) {
       return <Check className="w-3.5 h-3.5" />;
     } else if (msg.isSeenByAll) {
-      return <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />;
+      return <CheckCheck className="w-3.5 h-3.5 text-[#3549fa]" />;
     } else {
-      return <CheckCheck className="w-3.5 h-3.5 text-white" />;
+      return <CheckCheck className="w-3.5 h-3.5 text-gray-500" />;
     }
   };
 
@@ -1486,8 +1493,8 @@ export default function Slack_chatwindow({
         </div>
       )}
 
-      <div className="flex h-full">
-        <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50 overflow-scroll">
+      <div className="flex  overflow-scroll">
+        <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50 overflow-scroll h-[100vh] ">
           {/* Chat Header */}
           {console.log("showForwardDropdown:", showForwardDropdown)}
           {showForwardDropdown && (
@@ -1717,7 +1724,7 @@ export default function Slack_chatwindow({
           {/*  Hover Actions */}
 
           {/* Messages Container */}
-          <div className="flex-1 p-4 md:p-6 overflow-y-auto bg-gradient-to-b from-white to-gray-50/30">
+          <div className="flex-1 p-4 md:p-6 overflow-y-auto bg-gradient-to-b from-white to-gray-50/30 ">
             <div className="max-w-4xl mx-auto space-y-3">
               {messages.map((m) => {
                 const isMe = m.senderId === me;
@@ -1749,8 +1756,8 @@ export default function Slack_chatwindow({
                     >
                       <div
                         className={`relative rounded-2xl px-4 py-3 shadow-sm cursor-pointer ${
-                          isMe
-                            ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-br-lg"
+                          isMe?"bg-[#DBEAFE] text-black rounded-br-lg"
+                            // ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-br-lg"
                             : "bg-white text-gray-800 border border-gray-200 rounded-bl-lg"
                         }`}
                         onMouseEnter={() =>
@@ -1999,7 +2006,7 @@ export default function Slack_chatwindow({
                           <>
                             {/* {m.text && <MessageText text={m.text} isMe={isMe} />} */}
                             {m.isDelete ? (
-                              <p className="italic text-sm text-gray-400 select-none">
+                              <p className="italic text-sm text-red-400 select-none">
                                 This message was deleted
                               </p>
                             ) : m.text ? (
@@ -2036,7 +2043,7 @@ export default function Slack_chatwindow({
                               <div key={f._id} className="mt-3 relative group">
                                 {/* 🔥 FILE DELETED PLACEHOLDER */}
                                 {f.isDeleteFile ? (
-                                  <div className="italic text-gray-400 text-sm p-3 rounded-lg bg-gray-100">
+                                  <div className="italic text-red-400 text-sm p-3 rounded-lg bg-gray-100">
                                     🗑 File deleted
                                   </div>
                                 ) : (
@@ -2226,7 +2233,7 @@ export default function Slack_chatwindow({
                         {selectedUser && (
                           <div
                             className={`flex items-center justify-end gap-2 mt-2 ${
-                              isMe ? "text-blue-100" : "text-gray-500"
+                              isMe ? "text-black-800" : "text-gray-500"
                             }`}
                           >
                             <div>
@@ -2274,7 +2281,7 @@ export default function Slack_chatwindow({
                                       );
                                     } else if (m.seenAt) {
                                       return (
-                                        <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
+                                        <CheckCheck className="w-3.5 h-3.5 text-[#3549fa]" />
                                       );
                                     }
                                     return <Check className="w-3.5 h-3.5" />;
@@ -2288,7 +2295,7 @@ export default function Slack_chatwindow({
                         {selectedChannel && (
                           <div
                             className={` gap-2 mt-2 ${
-                              isMe ? "text-blue-100" : "text-gray-500"
+                              isMe ? "text-black-800" : "text-gray-500"
                             }`}
                           >
                             <div className="flex items-center justify-between gap-2 mt-2">
@@ -2315,10 +2322,12 @@ export default function Slack_chatwindow({
                         )}
                       </div>
                     </div>
+                     <div ref={bottomRef} />
                   </div>
+                  
                 );
               })}
-              <div ref={bottomRef} />
+             
             </div>
           </div>
 
@@ -2531,135 +2540,75 @@ export default function Slack_chatwindow({
         {/* Thread component */}
 
         {activeThread && (
-          <div className="w-[380px] border-l bg-white flex flex-col border-red-600">
-            {/* HEADER */}
-            <div className="p-2 border flex justify-between items-center  ">
-              <div>
-                <h3 className="font-semibold text-gray-800">Thread</h3>
-                <p className="text-xs text-gray-500">Replies to message</p>
-              </div>
-              <button
-                onClick={() => setActiveThread(null)}
-                className="text-gray-500 hover:text-red-500"
-              >
-                ✕
-              </button>
-            </div>
-            {/* PARENT MESSAGE ONLY */}
-            {/* <div className="bg-or-500 ">
-              {activeThread.text && (
-                <MessageText
-                  text={activeThread.text.trim()}
-                  isMe={activeThread.senderId === me}
-                />
-              )} */}
-
-            {/* {activeThread &&
-                activeThread.files?.map((f) => {
-                  // const src = `${API_URL}/api${f.url}`;
-                  if (f.isDeleteFile) {
-                    return (
-                      <p key={f._id} className="text-sm italic text-gray-400">
-                        🗑 File deleted
-                      </p>
-                    );
-                  } */}
-
-            {/* // return (
-                  //   <div key={f._id} className="">
-                  //     {f.type.startsWith("image") ? (
-                  //       <img src={src} className="rounded-lg max-w-full" />
-                  //     ) : (
-                  //       <a
-                  //         href={src}
-                  //         download
-                  //         className="text-sm text-blue-600"
-                  //       >
-                  //         📎 {f.name}
-                  //       </a>
-                  //     )}
-                  //   </div>
-                  // );
-                // })} 
-            </div>*/}
-
-            {/* REPLIES */}
-            <div className="flex-1 overflow-y-auto space-y-4 ">
-              {/* {threadReplies.map((reply) => {
-              const isMe = reply.senderId === me;
-
-              return (
-                <div key={reply._id} className={isMe ? "text-right" : ""}>
-                  {reply.text && <MessageText text={reply.text} isMe={isMe} />}
-
-                  {reply.files?.map((f) => {
-                    const src = `http://localhost:5000${f.url}`;
-                    return f.type.startsWith("image") ? (
-                      <img key={f._id} src={src} className="rounded-lg mt-2" />
-                    ) : (
-                      <a
-                        key={f._id}
-                        href={src}
-                        download
-                        className="text-sm text-blue-600"
-                      >
-                        📎 {f.name}
-                      </a>
-                    );
-                  })}
+          <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50 overflow-scroll">
+            {activeThread && (
+              <div className=" border-l bg-white flex flex-col w-full overflow-hidden h-[100vh] ">
+                {/* HEADER */}
+                <div className="p-2 border flex justify-between items-center w-full fixed z-50 bg-white  ">
+                  <div>
+                    <h3 className="font-semibold text-gray-800">Thread</h3>
+                    <p className="text-xs text-gray-500">Replies to message</p>
+                  </div>
+                  <button
+                    onClick={() => setActiveThread(null)}
+                    className="text-gray-500 hover:text-red-500"
+                  >
+                    ✕
+                  </button>
                 </div>
-              );
-            })} */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4 mt-3">
-                {/* {console.log("threadReplies ", threadReplies)} */}
-                {threadReplies &&
-                  threadReplies.map((m,index) => {
-                    const isMe = m.senderId === me;
-                    const time = m.createdAt
-                      ? new Date(m.createdAt).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })
-                      : "";
-                    const date = m.createdAt
-                      ? new Date(m.createdAt).toLocaleDateString([], {
-                          year: "numeric",
-                          month: "short",
-                          day: "2-digit",
-                        })
-                      : "";
+               
+                {/* REPLIES */}
+              <div className="flex-1 flex flex-col mt-10 p-4 md:p-6 overflow-y-auto bg-gradient-to-b from-white to-gray-50/30 gap-2  ">
 
-                    return (
-                      <div
-                        key={m._id || m.clientId}
-                        className={`flex ${
-                          isMe ? "justify-end" : "justify-start"
-                        } group`}
-                      >
+                 
+                  {threadReplies &&
+                    threadReplies.map((m, index) => {
+                      const isMe = m.senderId === me;
+                      const time = m.createdAt
+                        ? new Date(m.createdAt).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "";
+                      const date = m.createdAt
+                        ? new Date(m.createdAt).toLocaleDateString([], {
+                            year: "numeric",
+                            month: "short",
+                            day: "2-digit",
+                          })
+                        : "";
+
+                      return (
                         <div
-                          className={`max-w-[70%] lg:max-w-[60%] ${
-                            isMe ? "ml-auto" : ""
-                          }`}
+                          key={m._id || m.clientId}
+                          className={`flex ${
+                            isMe ? "justify-end" : "justify-start"
+                          } group`}
                         >
                           <div
-                            className={`relative rounded-2xl px-4 py-3 shadow-sm cursor-pointer ${
-                              isMe
-                                ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-br-lg"
-                                : "bg-white text-gray-800 border border-gray-200 rounded-bl-lg"
+                            className={`max-w-[70%] lg:max-w-[60%] ${
+                              isMe ? "ml-auto" : ""
                             }`}
-                            onMouseEnter={() =>
-                              setHoveredMessageId(m._id || m.clientId)
-                            }
-                            onMouseLeave={() => setHoveredMessageId(null)}
                           >
-                            {/* 🔥 Hover Actions */}
-                            {index !=0 && !m.isDelete &&
-                              isMe &&
-                              hoveredMessageId === (m._id || m.clientId) && (
-                                <div
-                                  className={`absolute -top-6 ${
-                                    isMe ? "right-2" : "left-2"
-                                  }
+                            <div
+                              className={`relative rounded-2xl px-4 py-3 shadow-sm cursor-pointer ${
+                                isMe?"bg-[#DBEAFE] text-black rounded-br-lg"
+                                  : "bg-white text-gray-800 border border-gray-200 rounded-bl-lg"
+                              }`}
+                              onMouseEnter={() =>
+                                setHoveredMessageId(m._id || m.clientId)
+                              }
+                              onMouseLeave={() => setHoveredMessageId(null)}
+                            >
+                              {/* 🔥 Hover Actions */}
+                              {index != 0 &&
+                                !m.isDelete &&
+                                isMe &&
+                                hoveredMessageId === (m._id || m.clientId) && (
+                                  <div
+                                    className={`absolute -top-6 ${
+                                      isMe ? "right-2" : "left-2"
+                                    }
     flex items-center gap-1
     bg-white border border-gray-200
     rounded-xl shadow-lg
@@ -2667,12 +2616,12 @@ export default function Slack_chatwindow({
     z-[50]
     opacity-0 group-hover:opacity-100
     transition-all duration-150`}
-                                >
-                                  {/* THREAD */}
-                                  {/* <ActionButton title="Reply in thread">
+                                  >
+                                    {/* THREAD */}
+                                    {/* <ActionButton title="Reply in thread">
                             <MessageSquare size={14} />
                           </ActionButton> */}
-                                  {/* {isMe && (
+                                    {/* {isMe && (
                                     <ActionButton
                                       title="Reply in thread"
                                       onClick={() => setActiveThread(m)}
@@ -2681,404 +2630,293 @@ export default function Slack_chatwindow({
                                     </ActionButton>
                                   )} */}
 
-                                  {/* EDIT */}
-                                  {/* {isMe && (
+                                    {/* EDIT */}
+                                    {/* {isMe && (
                             <ActionButton title="Edit message">
                               <Pencil size={14} />
                             </ActionButton>
                           )} */}
-                                  {isMe && (
-                                    <ActionButton
-                                      title="Edit message"
-                                      onClick={() => {
-                                        setEditingMessageIdThread(m._id);
-                                        setEditTextThread(m.text || "");
-                                        setEditFilesThread([]); // new files only
-                                      }}
-                                    >
-                                      <Pencil size={14} />
-                                    </ActionButton>
-                                  )}
+                                    {isMe && (
+                                      <ActionButton
+                                        title="Edit message"
+                                        onClick={() => {
+                                          setEditingMessageIdThread(m._id);
+                                          setEditTextThread(m.text || "");
+                                          setEditFilesThread([]); // new files only
+                                        }}
+                                      >
+                                        <Pencil size={14} />
+                                      </ActionButton>
+                                    )}
 
-                                  {/* DELETE */}
-                                  {/* {isMe && (
+                                    {/* DELETE */}
+                                    {/* {isMe && (
       <ActionButton danger title="Delete message">
         <Trash2 size={14} />
       </ActionButton>
     )} */}
-                                  {isMe && (
-                                    <ActionButton
-                                      danger
-                                      title="Delete message"
-                                      onClick={() =>
-                                        handleDeleteMessage(
-                                          m._id,
-                                          m.parentMessageId,
-                                        )
-                                      }
-                                    >
-                                      <Trash2 size={14} />
-                                    </ActionButton>
-                                  )}
+                                    {isMe && (
+                                      <ActionButton
+                                        danger
+                                        title="Delete message"
+                                        onClick={() =>
+                                          handleDeleteMessage(
+                                            m._id,
+                                            m.parentMessageId,
+                                          )
+                                        }
+                                      >
+                                        <Trash2 size={14} />
+                                      </ActionButton>
+                                    )}
 
-                                  {/* FORWARD
+                                    {/* FORWARD
                           <ActionButton
                             title="Forward"
                             onClick={() => openForwardMessage(m._id)}
                           >
                             <CornerUpRight size={14} />
                           </ActionButton> */}
-                                  {isMe && (
-                                    <ActionButton
-                                      title="Forward"
-                                      onClick={() => {
-                                        setForwardMessage(m);
-                                        setShowForwardDropdown(true);
-                                      }}
-                                    >
-                                      <CornerUpRight size={14} />
-                                    </ActionButton>
-                                  )}
+                                    {isMe && (
+                                      <ActionButton
+                                        title="Forward"
+                                        onClick={() => {
+                                          setForwardMessage(m);
+                                          setShowForwardDropdown(true);
+                                        }}
+                                      >
+                                        <CornerUpRight size={14} />
+                                      </ActionButton>
+                                    )}
 
-                                  {/* SEEN */}
-                                  {/* <ActionButton title="Seen by">
+                                    {/* SEEN */}
+                                    {/* <ActionButton title="Seen by">
                               <Eye size={14} />
                             </ActionButton> */}
-                                  {isMe && (
-                                    <ActionButton
-                                      title="Seen by"
-                                      onClick={() => fetchSeenBy(m._id)}
-                                    >
-                                      <Eye size={14} />
-                                    </ActionButton>
-                                  )}
-                                </div>
-                              )}
+                                    {isMe && (
+                                      <ActionButton
+                                        title="Seen by"
+                                        onClick={() => fetchSeenBy(m._id)}
+                                      >
+                                        <Eye size={14} />
+                                      </ActionButton>
+                                    )}
+                                  </div>
+                                )}
 
-                            {/* {m.text && (
+                              {/* {m.text && (
                       <p className="whitespace-pre-wrap break-words text-[15px] leading-relaxed">
                         {m.text}
                       </p>
                     )} */}
-                            {/* {m.isDelete ? (
+                              {/* {m.isDelete ? (
                       <p className="italic text-sm text-gray-400 select-none">
                         This message was deleted
                       </p>
                     ) : (
                       m.text && <MessageText text={m.text} isMe={isMe} />
                     )} */}
-                            {editingMessageIdThread === m._id ? (
-                              <div className="space-y-2">
-                                {/* Edit Text */}
-                                <textarea
-                                  value={editTextThread}
-                                  onChange={(e) =>
-                                    setEditTextThread(e.target.value)
-                                  }
-                                  className="w-full border rounded-lg p-2 text-sm text-black"
-                                  rows={2}
-                                />
-                                {/* Edit Files */}
-                                <div className="flex flex-wrap gap-2">
-                                  {editFilesThread.map(
-                                    ({ file, tempId }, idx) => {
-                                      const url = URL.createObjectURL(file);
-                                      return (
-                                        <div
-                                          key={tempId}
-                                          className="relative w-20 h-20 rounded-lg overflow-hidden border shadow-sm"
-                                        >
-                                          {/* <img
+                              {editingMessageIdThread === m._id ? (
+                                <div className="space-y-2">
+                                  {/* Edit Text */}
+                                  <textarea
+                                    value={editTextThread}
+                                    onChange={(e) =>
+                                      setEditTextThread(e.target.value)
+                                    }
+                                    className="w-full border rounded-lg p-2 text-sm text-black"
+                                    rows={2}
+                                  />
+                                  {/* Edit Files */}
+                                  <div className="flex flex-wrap gap-2">
+                                    {editFilesThread.map(
+                                      ({ file, tempId }, idx) => {
+                                        const url = URL.createObjectURL(file);
+                                        return (
+                                          <div
+                                            key={tempId}
+                                            className="relative w-20 h-20 rounded-lg overflow-hidden border shadow-sm"
+                                          >
+                                            {/* <img
                                             src={url}
                                             alt={file.name}
                                             className="w-full h-full object-cover"
                                           /> */}
-                                           {file.type.startsWith("image/") ? (
-                                      <img
-                                        src={url}
-                                        className="w-full h-full object-cover"
-                                        alt="preview"
-                                      />
-                                    ) : file.type.startsWith("video/") ? (
-                                      <video
-                                        src={url}
-                                        controls
-                                        className="w-full h-full object-cover"
-                                      />
-                                    ) : file.type.startsWith("audio/") ? (
-                                      <audio
-                                        src={url}
-                                        controls
-                                        className="w-full "
-                                      />
-                                    ) : file.type === "application/pdf" ? (
-                                      <iframe
-                                        src={url}
-                                        title="pdf"
-                                        className="w-full h-full"
-                                      />
-                                    ) : (
-                                      <div className="w-full h-full flex flex-col items-center justify-center p-3">
-                                        <span className="text-2xl mb-2">
-                                          {icon}
-                                        </span>
+                                            {file.type.startsWith("image/") ? (
+                                              <img
+                                                src={url}
+                                                className="w-full h-full object-cover"
+                                                alt="preview"
+                                              />
+                                            ) : file.type.startsWith(
+                                                "video/",
+                                              ) ? (
+                                              <video
+                                                src={url}
+                                                controls
+                                                className="w-full h-full object-cover"
+                                              />
+                                            ) : file.type.startsWith(
+                                                "audio/",
+                                              ) ? (
+                                              <audio
+                                                src={url}
+                                                controls
+                                                className="w-full "
+                                              />
+                                            ) : file.type ===
+                                              "application/pdf" ? (
+                                              <iframe
+                                                src={url}
+                                                title="pdf"
+                                                className="w-full h-full"
+                                              />
+                                            ) : (
+                                              <div className="w-full h-full flex flex-col items-center justify-center p-3">
+                                                <span className="text-2xl mb-2">
+                                                  {icon}
+                                                </span>
 
-                                        <p className="text-xs text-center font-medium truncate w-full">
-                                          {file.name
-                                            .split(".")
-                                            .slice(0, -1)
-                                            .join(".")}
-                                        </p>
+                                                <p className="text-xs text-center font-medium truncate w-full">
+                                                  {file.name
+                                                    .split(".")
+                                                    .slice(0, -1)
+                                                    .join(".")}
+                                                </p>
 
-                                        <p className="text-[11px] text-gray-500 mt-1">
-                                          {formatSize(file.size)}
-                                        </p>
-                                      </div>
+                                                <p className="text-[11px] text-gray-500 mt-1">
+                                                  {formatSize(file.size)}
+                                                </p>
+                                              </div>
+                                            )}
+
+                                            <button
+                                              onClick={() =>
+                                                setEditFilesThread((prev) =>
+                                                  prev.filter(
+                                                    (f) => f.tempId !== tempId,
+                                                  ),
+                                                )
+                                              }
+                                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                                            >
+                                              ×
+                                            </button>
+                                          </div>
+                                        );
+                                      },
                                     )}
 
-                                          <button
-                                            onClick={() =>
-                                              setEditFilesThread((prev) =>
-                                                prev.filter(
-                                                  (f) => f.tempId !== tempId,
-                                                ),
-                                              )
-                                            }
-                                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                                          >
-                                            ×
-                                          </button>
-                                        </div>
-                                      );
-                                    },
-                                  )}
-
-                                  <button
-                                    onClick={() =>
-                                      editFileRefThread.current.click()
-                                    }
-                                    className="w-15 h-10 p-5 flex items-center justify-center rounded-lg border border-gray-300  hover:bg-gray-100 hover:text-black"
-                                  >
-                                    + Add
-                                  </button>
-                                  <input
-                                    type="file"
-                                    multiple
-                                    ref={editFileRefThread}
-                                    className="hidden"
-                                    onChange={(e) => {
-                                      const newFiles = Array.from(
-                                        e.target.files,
-                                      ).map((file) => ({
-                                        file,
-                                        tempId: crypto.randomUUID(),
-                                      }));
-                                      setEditFilesThread((prev) => [
-                                        ...prev,
-                                        ...newFiles,
-                                      ]);
-                                    }}
-                                  />
-                                </div>
-
-                                <div className="flex justify-end gap-2 mt-2">
-                                  <button
-                                    onClick={() =>
-                                      setEditingMessageIdThread(null)
-                                    }
-                                    className="text-sm bg-red-500 text-white p-1  rounded-md "
-                                  >
-                                    Cancel
-                                  </button>
-                                  <button
-                                    onClick={() => handleSaveEditThread(m._id)}
-                                    className="bg-blue-600 text-white px-3 py-1 rounded text-sm"
-                                  >
-                                    Save
-                                  </button>
-                                </div>
-                              </div>
-                            ) : (
-                              <>
-                                {/* {m.text && <MessageText text={m.text} isMe={isMe} />} */}
-                                {m.isDelete ? (
-                                  <p className="italic text-sm text-gray-400 select-none">
-                                    This message was deleted
-                                  </p>
-                                ) : m.text ? (
-                                  <div className="relative group max-w-fit">
-                                    <MessageText
-                                      text={m.text.trim()}
-                                      isMe={isMe}
+                                    <button
+                                      onClick={() =>
+                                        editFileRefThread.current.click()
+                                      }
+                                      className="w-15 h-10 p-5 flex items-center justify-center rounded-lg border border-gray-300  hover:bg-gray-100 hover:text-black"
+                                    >
+                                      + Add
+                                    </button>
+                                    <input
+                                      type="file"
+                                      multiple
+                                      ref={editFileRefThread}
+                                      className="hidden"
+                                      onChange={(e) => {
+                                        const newFiles = Array.from(
+                                          e.target.files,
+                                        ).map((file) => ({
+                                          file,
+                                          tempId: crypto.randomUUID(),
+                                        }));
+                                        setEditFilesThread((prev) => [
+                                          ...prev,
+                                          ...newFiles,
+                                        ]);
+                                      }}
                                     />
-
-                                    {/* TEXT ACTIONS */}
-                                    {isMe && (
-                                      <TextActions text={m.text} message={m} />
-                                    )}
                                   </div>
-                                ) : null}
 
-                                {/* existing files rendering here */}
-                              </>
-                            )}
+                                  <div className="flex justify-end gap-2 mt-2">
+                                    <button
+                                      onClick={() =>
+                                        setEditingMessageIdThread(null)
+                                      }
+                                      className="text-sm bg-red-500 text-white p-1  rounded-md "
+                                    >
+                                      Cancel
+                                    </button>
+                                    <button
+                                      onClick={() =>
+                                        handleSaveEditThread(m._id)
+                                      }
+                                      className="bg-blue-600 text-white px-3 py-1 rounded text-sm"
+                                    >
+                                      Save
+                                    </button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <>
+                                  {/* {m.text && <MessageText text={m.text} isMe={isMe} />} */}
+                                  {m.isDelete ? (
+                                    <p className="italic text-sm text-red-400 select-none">
+                                      This message was deleted
+                                    </p>
+                                  ) : m.text ? (
+                                    <div className="relative group max-w-fit">
+                                      <MessageText
+                                        text={m.text.trim()}
+                                        isMe={isMe}
+                                      />
 
-                            {/* 
+                                      {/* TEXT ACTIONS */}
+                                      {isMe && (
+                                        <TextActions
+                                          text={m.text}
+                                          message={m}
+                                        />
+                                      )}
+                                    </div>
+                                  ) : null}
+
+                                  {/* existing files rendering here */}
+                                </>
+                              )}
+
+                              {/* 
                     {m.text && (
                       <div className="mb-1">
                         <MessageText text={m.text} isMe={isMe} />
                       </div>
                     )} */}
 
-                            {/* Files */}
+                              {/* Files */}
 
-                            {/* editingMessageId === m._id && */}
+                              {/* editingMessageId === m._id && */}
 
-                            {editingMessageIdThread !== m._id &&
-                              m.files.map((f) => {
-                                const src = `${API_URL}/api${f.url}`;
-                                return (
-                                  <div
-                                    key={f._id}
-                                    className="mt-3 relative group"
-                                  >
-                                    {/* 🔥 FILE DELETED PLACEHOLDER */}
-                                    {f.isDeleteFile ? (
-                                      <div className="italic text-gray-400 text-sm p-3 rounded-lg bg-gray-100">
-                                        🗑 File deleted
-                                      </div>
-                                    ) : (
-                                      <>
-                                        {/* IMAGE */}
-                                        {f.type.startsWith("image") && (
-                                          <div className="relative">
-                                            <img
-                                              src={src}
-                                              className="rounded-xl max-w-full h-auto shadow-sm"
-                                              alt={f.name}
-                                            />
+                              {editingMessageIdThread !== m._id &&
+                                m.files.map((f) => {
+                                  const src = `${API_URL}/api${f.url}`;
+                                  return (
+                                    <div
+                                      key={f._id}
+                                      className="mt-3 relative group"
+                                    >
+                                      {/* 🔥 FILE DELETED PLACEHOLDER */}
+                                      {f.isDeleteFile ? (
+                                        <div className="italic text-red-400 text-sm p-3 rounded-lg bg-gray-100">
+                                          🗑 File deleted
+                                        </div>
+                                      ) : (
+                                        <>
+                                          {/* IMAGE */}
+                                          {f.type.startsWith("image") && (
+                                            <div className="relative">
+                                              <img
+                                                src={src}
+                                                className="rounded-xl max-w-full h-auto shadow-sm"
+                                                alt={f.name}
+                                              />
 
-                                            <FileActions
-                                              src={src}
-                                              isMe={isMe}
-                                              onDelete={() =>
-                                                handleDeleteFile(m._id, f._id)
-                                              }
-                                              onForward={() => {
-                                                setForwardMessage(m); // parent message
-                                                setSelectedForwardFile(f); // 🔥 only this file
-                                                setShowForwardDropdown(true);
-                                              }}
-                                            />
-                                          </div>
-                                        )}
-
-                                        {/* VIDEO */}
-                                        {f.type.startsWith("video") && (
-                                          <div className="relative rounded-xl overflow-hidden">
-                                            <video controls className="w-full">
-                                              <source src={src} type={f.type} />
-                                            </video>
-
-                                            <FileActions
-                                              src={src}
-                                              isMe={isMe}
-                                              onDelete={() =>
-                                                handleDeleteFile(m._id, f._id)
-                                              }
-                                              onForward={() => {
-                                                setForwardMessage(m); // parent message
-                                                setSelectedForwardFile(f); //  only this file
-                                                setShowForwardDropdown(true);
-                                              }}
-                                            />
-                                          </div>
-                                        )}
-
-                                        {/* AUDIO */}
-                                        {f.type.startsWith("audio") && (
-                                          <div className="relative p-3 bg-black/5 rounded-lg">
-                                            <audio
-                                              controls
-                                              className="w-full"
-                                              src={src}
-                                            />
-
-                                            <FileActions
-                                              src={src}
-                                              isMe={isMe}
-                                              onDelete={() =>
-                                                handleDeleteFile(m._id, f._id)
-                                              }
-                                              onForward={() => {
-                                                setForwardMessage(m); // parent message
-                                                setSelectedForwardFile(f); // 🔥 only this file
-                                                setShowForwardDropdown(true);
-                                              }}
-                                            />
-                                          </div>
-                                        )}
-                                        {/* application/pdf */}
-                                        {f.type.startsWith("application/pdf") && (
-                                          <div className="relative p-3 bg-black/5 rounded-lg">
-                                            {/* <audio
-                                          controls
-                                          className="w-full"
-                                          src={src}
-                                        /> */}
-                                            <iframe
-                                              src={src}
-                                              title="pdf"
-                                              className="w-full h-full"
-                                            />
-
-                                            <FileActions
-                                              src={src}
-                                              isMe={isMe}
-                                              onDelete={() =>
-                                                handleDeleteFile(m._id, f._id)
-                                              }
-                                              onForward={() => {
-                                                setForwardMessage(m); // parent message
-                                                setSelectedForwardFile(f); // 🔥 only this file
-                                                setShowForwardDropdown(true);
-                                              }}
-                                            />
-                                          </div>
-                                        )}
-
-                                        {/* DOCUMENT / OTHER */}
-                                        {!f.type.startsWith("image") &&
-                                          !f.type.startsWith("video") &&
-                                          !f.type.startsWith("audio") && (
-                                            !f.type.startsWith("application/pdf") &&
-                                            <div
-                                              className={`relative flex items-center gap-3 p-3 rounded-xl ${
-                                                isMe
-                                                  ? "bg-blue-500/20 hover:bg-blue-500/30"
-                                                  : "bg-gray-100 hover:bg-gray-200"
-                                              } transition-colors`}
-                                            >
-                                              <span className="text-xl">
-                                                {getFileIcon(f.type, f.name)}
-                                              </span>
-
-                                              <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium truncate">
-                                                  {f.name}
-                                                </p>
-                                                <p className="text-xs text-gray-500">
-                                                  {formatSize(f.size)}
-                                                </p>
-                                              </div>
-
-                                              {/* <FileActions
-                                        src={src}
-                                        isMe={isMe}
-                                        onDelete={() =>
-                                          handleDeleteFile(m._id, f._id)
-                                        }
-                                      /> */}
                                               <FileActions
                                                 src={src}
                                                 isMe={isMe}
@@ -3093,15 +2931,151 @@ export default function Slack_chatwindow({
                                               />
                                             </div>
                                           )}
-                                      </>
-                                    )}
-                                  </div>
-                                );
-                              })}
 
-                            {/* dm tick */}
-                            {/* Message Status and Time */}
-                            {/* {selectedUser && (
+                                          {/* VIDEO */}
+                                          {f.type.startsWith("video") && (
+                                            <div className="relative rounded-xl overflow-hidden">
+                                              <video
+                                                controls
+                                                className="w-full"
+                                              >
+                                                <source
+                                                  src={src}
+                                                  type={f.type}
+                                                />
+                                              </video>
+
+                                              <FileActions
+                                                src={src}
+                                                isMe={isMe}
+                                                onDelete={() =>
+                                                  handleDeleteFile(m._id, f._id)
+                                                }
+                                                onForward={() => {
+                                                  setForwardMessage(m); // parent message
+                                                  setSelectedForwardFile(f); //  only this file
+                                                  setShowForwardDropdown(true);
+                                                }}
+                                              />
+                                            </div>
+                                          )}
+
+                                          {/* AUDIO */}
+                                          {f.type.startsWith("audio") && (
+                                            <div className="relative p-3 bg-black/5 rounded-lg">
+                                              <audio
+                                                controls
+                                                className="w-full"
+                                                src={src}
+                                              />
+
+                                              <FileActions
+                                                src={src}
+                                                isMe={isMe}
+                                                onDelete={() =>
+                                                  handleDeleteFile(m._id, f._id)
+                                                }
+                                                onForward={() => {
+                                                  setForwardMessage(m); // parent message
+                                                  setSelectedForwardFile(f); // 🔥 only this file
+                                                  setShowForwardDropdown(true);
+                                                }}
+                                              />
+                                            </div>
+                                          )}
+                                          {/* application/pdf */}
+                                          {f.type.startsWith(
+                                            "application/pdf",
+                                          ) && (
+                                            <div className="relative p-3 bg-black/5 rounded-lg">
+                                              {/* <audio
+                                          controls
+                                          className="w-full"
+                                          src={src}
+                                        /> */}
+                                              <iframe
+                                                src={src}
+                                                title="pdf"
+                                                className="w-full h-full"
+                                              />
+
+                                              <FileActions
+                                                src={src}
+                                                isMe={isMe}
+                                                onDelete={() =>
+                                                  handleDeleteFile(m._id, f._id)
+                                                }
+                                                onForward={() => {
+                                                  setForwardMessage(m); // parent message
+                                                  setSelectedForwardFile(f); // 🔥 only this file
+                                                  setShowForwardDropdown(true);
+                                                }}
+                                              />
+                                            </div>
+                                          )}
+
+                                          {/* DOCUMENT / OTHER */}
+                                          {!f.type.startsWith("image") &&
+                                            !f.type.startsWith("video") &&
+                                            !f.type.startsWith("audio") &&
+                                            !f.type.startsWith(
+                                              "application/pdf",
+                                            ) && (
+                                              <div
+                                                className={`relative flex items-center gap-3 p-3 rounded-xl ${
+                                                  isMe
+                                                    ? "bg-blue-500/20 hover:bg-blue-500/30"
+                                                    : "bg-gray-100 hover:bg-gray-200"
+                                                } transition-colors`}
+                                              >
+                                                <span className="text-xl">
+                                                  {getFileIcon(f.type, f.name)}
+                                                </span>
+
+                                                <div className="flex-1 min-w-0">
+                                                  <p className="text-sm font-medium truncate">
+                                                    {f.name}
+                                                  </p>
+                                                  <p className="text-xs text-gray-500">
+                                                    {formatSize(f.size)}
+                                                  </p>
+                                                </div>
+
+                                                {/* <FileActions
+                                        src={src}
+                                        isMe={isMe}
+                                        onDelete={() =>
+                                          handleDeleteFile(m._id, f._id)
+                                        }
+                                      /> */}
+                                                <FileActions
+                                                  src={src}
+                                                  isMe={isMe}
+                                                  onDelete={() =>
+                                                    handleDeleteFile(
+                                                      m._id,
+                                                      f._id,
+                                                    )
+                                                  }
+                                                  onForward={() => {
+                                                    setForwardMessage(m); // parent message
+                                                    setSelectedForwardFile(f); // 🔥 only this file
+                                                    setShowForwardDropdown(
+                                                      true,
+                                                    );
+                                                  }}
+                                                />
+                                              </div>
+                                            )}
+                                        </>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+
+                              {/* dm tick */}
+                              {/* Message Status and Time */}
+                              {/* {selectedUser && (
                         <div
                           className={`flex items-center justify-end gap-2 mt-2 ${
                             isMe ? "text-blue-100" : "text-gray-500"
@@ -3122,31 +3096,31 @@ export default function Slack_chatwindow({
                           )}
                         </div>
                       )} */}
-                            {/* channel tick */}
-                            {/* {selectedChannel && m.senderId == me && (
+                              {/* channel tick */}
+                              {/* {selectedChannel && m.senderId == me && (
                         <div>
                           <div className="message-footer">{renderTick(m)}</div>
                         </div>
                       )} */}
-                            {/* dm tick */}
-                            {/* Message Status and Time */}
-                            {selectedUser && (
-                              <div
-                                className={`flex items-center justify-end gap-2 mt-2 ${
-                                  isMe ? "text-blue-100" : "text-gray-500"
-                                }`}
-                              >
-                                <div>
-                                  {" "}
-                                  <span className="text-xs">{date}</span>
-                                </div>
-                                <div className="flex gap">
-                                  <span className="text-xs">{time}</span>
-                                  {console.log(
-                                    "Rendering ticks for message:",
-                                    m.seenAt,
-                                  )}
-                                  {/* {isMe && (
+                              {/* dm tick */}
+                              {/* Message Status and Time */}
+                              {selectedUser && (
+                                <div
+                                  className={`flex items-center justify-end gap-2 mt-2 ${
+                                    isMe ? "text-black-800" : "text-gray-500"
+                                  }`}
+                                >
+                                  <div>
+                                    {" "}
+                                    <span className="text-xs">{date}</span>
+                                  </div>
+                                  <div className="flex gap">
+                                    <span className="text-xs">{time}</span>
+                                    {console.log(
+                                      "Rendering ticks for message:",
+                                      m.seenAt,
+                                    )}
+                                    {/* {isMe && (
                               <div className="flex items-center">
                                 {!m.deliveredAt && !m.seenAt && (
                                   <Check className="w-3.5 h-3.5" />
@@ -3159,7 +3133,7 @@ export default function Slack_chatwindow({
                                 )}
                               </div>
                             )} */}
-                                  {/* {isMe && (
+                                    {/* {isMe && (
                             <div className="flex items-center">
                               {m.seenAt ? (
                                 <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
@@ -3170,70 +3144,75 @@ export default function Slack_chatwindow({
                               )}
                             </div>
                           )} */}
-                                  {isMe && (
-                                    <div className="flex items-center">
-                                      {(() => {
-                                        if (!m.deliveredAt) {
+                                    {isMe && (
+                                      <div className="flex items-center">
+                                        {(() => {
+                                          if (!m.deliveredAt) {
+                                            return (
+                                              <Check className="w-3.5 h-3.5" />
+                                            );
+                                          } else if (
+                                            m.deliveredAt &&
+                                            !m.seenAt
+                                          ) {
+                                            return (
+                                              <CheckCheck className="w-3.5 h-3.5" />
+                                            );
+                                          } else if (m.seenAt) {
+                                            return (
+                                              <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
+                                            );
+                                          }
                                           return (
                                             <Check className="w-3.5 h-3.5" />
                                           );
-                                        } else if (m.deliveredAt && !m.seenAt) {
-                                          return (
-                                            <CheckCheck className="w-3.5 h-3.5" />
-                                          );
-                                        } else if (m.seenAt) {
-                                          return (
-                                            <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
-                                          );
-                                        }
-                                        return (
-                                          <Check className="w-3.5 h-3.5" />
-                                        );
-                                      })()}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            )}
-                            {/* channel tick */}
-                            {selectedChannel && (
-                              <div
-                                className={` gap-2 mt-2 ${
-                                  isMe ? "text-blue-100" : "text-gray-500"
-                                }`}
-                              >
-                                <div className="flex items-center justify-between gap-2 mt-2">
-                                  <div>
-                                    {" "}
-                                    <span className="text-xs">{date}</span>
-                                  </div>
-                                  <div className="flex gap-3">
-                                    <span className="text-xs">{time}</span>
-                                    {m.senderId == me && (
-                                      <div className="message-footer">
-                                        {renderTick(m)}
+                                        })()}
                                       </div>
                                     )}
                                   </div>
                                 </div>
-                                {/* <div
+                              )}
+                              {/* channel tick */}
+                              {selectedChannel && (
+                                <div
+                                  className={` gap-2 mt-2 ${
+                                    isMe ? "text-blue-100" : "text-gray-500"
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between gap-2 mt-2">
+                                    <div>
+                                      {" "}
+                                      <span className="text-xs">{date}</span>
+                                    </div>
+                                    <div className="flex gap-3">
+                                      <span className="text-xs">{time}</span>
+                                      {m.senderId == me && (
+                                        <div className="message-footer">
+                                          {renderTick(m)}
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                  {/* <div
                                   className="text-sm underline"
                                   onClick={() => setActiveThread(m)}
                                 >
                                   Thread Count:{m.threadReplyCount}
                                 </div> */}
-                              </div>
-                            )}
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
-              </div>
-            </div>
+                      );
+                    })}
+                  <div ref={bottomRefTheard} />
+                  {/* </div> */}
+                </div>
+                <div />
 
-            {/* THREAD INPUT */}
-            {/* <div className="p-3 border-t">
+                {/* THREAD INPUT */}
+                {/* <div className="p-3 border-t">
               <ThreadInput
                 parentMessage={activeThread}
                 currentUser={currentUser}
@@ -3241,153 +3220,160 @@ export default function Slack_chatwindow({
               />
             </div> */}
 
-            {/* thread files */}
-            {filesThread.length > 0 && (
-              <div className="px-6 py-3 border-t bg-white/90 backdrop-blur-sm">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-semibold text-gray-700">
-                    Preparing to send ({filesThread.length})
-                  </span>
-                  <button
-                    onClick={() => setFilesThread([])}
-                    className="text-sm text-red-500 hover:text-red-600 font-medium"
-                  >
-                    Clear all
-                  </button>
-                </div>
-                <div className="flex gap-3 overflow-x-auto pb-2">
-                  {filesThread.map(({ file, tempId }, i) => {
-                    const url = URL.createObjectURL(file);
-                    const icon = getFileIcon(file.type, file.name);
-                    const progress = progressMap[tempId] || 0;
-
-                    return (
-                      <div
-                        key={i}
-                        className="relative flex-shrink-0 w-28 h-28 rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden group"
+                {/* thread files */}
+                {filesThread.length > 0 && (
+                  <div className="px-6 py-3 border-t bg-white/90 backdrop-blur-sm">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-sm font-semibold text-gray-700">
+                        Preparing to send ({filesThread.length})
+                      </span>
+                      <button
+                        onClick={() => setFilesThread([])}
+                        className="text-sm text-red-500 hover:text-red-600 font-medium"
                       >
-                        {progress < 100 ? (
-                          <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center z-10">
-                            <CircularProgress percent={progress} size={45} />
-                            <button
-                              onClick={() => cancelUploadThread(tempId)}
-                              className="mt-2 text-xs text-white hover:text-gray-300"
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => removeFileThread(i)}
-                            className="absolute top-2 right-2 z-10 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                        Clear all
+                      </button>
+                    </div>
+                    <div className="flex gap-3 overflow-x-auto pb-2">
+                      {filesThread.map(({ file, tempId }, i) => {
+                        const url = URL.createObjectURL(file);
+                        const icon = getFileIcon(file.type, file.name);
+                        const progress = progressMap[tempId] || 0;
+
+                        return (
+                          <div
+                            key={i}
+                            className="relative flex-shrink-0 w-28 h-28 rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden group"
                           >
-                            <X className="w-3 h-3" />
-                          </button>
-                        )}
+                            {progress < 100 ? (
+                              <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center z-10">
+                                <CircularProgress
+                                  percent={progress}
+                                  size={45}
+                                />
+                                <button
+                                  onClick={() => cancelUploadThread(tempId)}
+                                  className="mt-2 text-xs text-white hover:text-gray-300"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => removeFileThread(i)}
+                                className="absolute top-2 right-2 z-10 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            )}
 
-                        {file.type.startsWith("image") ? (
-                          <img
-                            src={url}
-                            className="w-full h-full object-cover"
-                            alt="Preview"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex flex-col items-center justify-center p-3">
-                            <span className="text-2xl mb-2">{icon}</span>
-                            <p className="text-xs text-center font-medium truncate w-full">
-                              {file.name.split(".").slice(0, -1).join(".")}
-                            </p>
-                            <p className="text-[11px] text-gray-500 mt-1">
-                              {formatSize(file.size)}
-                            </p>
+                            {file.type.startsWith("image") ? (
+                              <img
+                                src={url}
+                                className="w-full h-full object-cover"
+                                alt="Preview"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex flex-col items-center justify-center p-3">
+                                <span className="text-2xl mb-2">{icon}</span>
+                                <p className="text-xs text-center font-medium truncate w-full">
+                                  {file.name.split(".").slice(0, -1).join(".")}
+                                </p>
+                                <p className="text-[11px] text-gray-500 mt-1">
+                                  {formatSize(file.size)}
+                                </p>
+                              </div>
+                            )}
                           </div>
-                        )}
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Input Area */}
+                <div className="px-6 py-4 border-t bg-white">
+                  <div className="flex items-end gap-3">
+                    {/* File Upload Button */}
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (fileInputRefThread.current) {
+                            fileInputRefThread.current.click();
+                          }
+                        }}
+                        className="p-2.5 rounded-full hover:bg-gray-100 transition-colors text-gray-600"
+                      >
+                        <Paperclip className="w-5 h-5" />
+                      </button>
+
+                      <input
+                        type="file"
+                        multiple
+                        ref={fileInputRefThread}
+                        accept="image/*,video/*,audio/*,.pdf,.doc,.docx"
+                        className="hidden"
+                        onChange={handleFileSelectThread}
+                      />
+                    </div>
+
+                    {/* Text Input */}
+                    <div className="flex-1 relative">
+                      <div className="relative">
+                        <textarea
+                          value={textThread}
+                          onChange={handleTypingThread}
+                          onKeyDown={handleKeyDownThread}
+                          placeholder={`Message ${
+                            (selectedUser && selectedUser?.name) ||
+                            (selectedChannel && "#" + selectedChannel?.name)
+                          }...`}
+                          rows={1}
+                          className="w-full border border-gray-300 rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 resize-none max-h-32 bg-gray-50 text-gray-900 placeholder-gray-500"
+                          onInput={(e) => {
+                            e.target.style.height = "auto";
+                            e.target.style.height =
+                              e.target.scrollHeight + "px";
+                          }}
+                        />
+                        <button
+                          onClick={() => setTextThread("")}
+                          className={`absolute right-3 top-3 p-1 rounded-full hover:bg-gray-200 transition-colors ${
+                            text ? "opacity-100" : "opacity-0"
+                          }`}
+                        >
+                          <X className="w-4 h-4 text-gray-500" />
+                        </button>
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-            {/* Input Area */}
-            <div className="px-6 py-4 border-t bg-white">
-              <div className="flex items-end gap-3">
-                {/* File Upload Button */}
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (fileInputRefThread.current) {
-                        fileInputRefThread.current.click();
-                      }
-                    }}
-                    className="p-2.5 rounded-full hover:bg-gray-100 transition-colors text-gray-600"
-                  >
-                    <Paperclip className="w-5 h-5" />
-                  </button>
+                    </div>
 
-                  <input
-                    type="file"
-                    multiple
-                    ref={fileInputRefThread}
-                    accept="image/*,video/*,audio/*,.pdf,.doc,.docx"
-                    className="hidden"
-                    onChange={handleFileSelectThread}
-                  />
-                </div>
-
-                {/* Text Input */}
-                <div className="flex-1 relative">
-                  <div className="relative">
-                    <textarea
-                      value={textThread}
-                      onChange={handleTypingThread}
-                      onKeyDown={handleKeyDownThread}
-                      placeholder={`Message ${
-                        (selectedUser && selectedUser?.name) ||
-                        (selectedChannel && "#" + selectedChannel?.name)
-                      }...`}
-                      rows={1}
-                      className="w-full border border-gray-300 rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 resize-none max-h-32 bg-gray-50 text-gray-900 placeholder-gray-500"
-                      onInput={(e) => {
-                        e.target.style.height = "auto";
-                        e.target.style.height = e.target.scrollHeight + "px";
-                      }}
-                    />
+                    {/* Send Button */}
                     <button
-                      onClick={() => setTextThread("")}
-                      className={`absolute right-3 top-3 p-1 rounded-full hover:bg-gray-200 transition-colors ${
-                        text ? "opacity-100" : "opacity-0"
+                      onClick={sendReplyThread}
+                      disabled={!textThread.trim() && filesThread.length === 0}
+                      className={`p-3 rounded-full transition-all duration-200 ${
+                        textThread.trim() || filesThread.length > 0
+                          ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg hover:shadow-xl hover:scale-105"
+                          : "bg-gray-200 text-gray-400 cursor-not-allowed"
                       }`}
                     >
-                      <X className="w-4 h-4 text-gray-500" />
+                      <Send className="w-5 h-5" />
                     </button>
                   </div>
-                </div>
 
-                {/* Send Button */}
-                <button
-                  onClick={sendReplyThread}
-                  disabled={!textThread.trim() && filesThread.length === 0}
-                  className={`p-3 rounded-full transition-all duration-200 ${
-                    textThread.trim() || filesThread.length > 0
-                      ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg hover:shadow-xl hover:scale-105"
-                      : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  }`}
-                >
-                  <Send className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Helper Text */}
-              {/* <div className="mt-3 text-center">
+                  {/* Helper Text */}
+                  {/* <div className="mt-3 text-center">
                 <p className="text-xs text-gray-500">
                   Press <span className="font-semibold">Enter</span> to send •{" "}
                   <span className="font-semibold">Shift + Enter</span> for new
                   line
                 </p>
               </div> */}
-            </div>
-            {/* { console.log("test open",showSeenPopup)} */}
+                </div>
+                {/* { console.log("test open",showSeenPopup)} */}
+              </div>
+            )}
           </div>
         )}
       </div>
