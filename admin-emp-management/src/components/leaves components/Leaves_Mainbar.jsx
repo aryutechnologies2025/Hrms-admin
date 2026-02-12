@@ -1263,7 +1263,8 @@ const Leaves_Mainbar = () => {
                                   <div className="bg-blue-100 w-24 flex flex-col justify-between items-center p-2">
                                     <h2>CO</h2> { }
                                     <span>
-                                      {allleavecount.complementary_leave - item.co}/{item.co_month}
+                                      {/* {allleavecount.complementary_leave - item.co}/{item.co_month} */}
+                                      {item.co || 0}
                                     </span>
                                   </div>
                                   {allleavecount.unhappy_leave_option !== "No" && (
@@ -1277,7 +1278,10 @@ const Leaves_Mainbar = () => {
 
                                   <div className="bg-purple-100 w-24 flex flex-col justify-between items-center p-2 rounded-sm">
                                     <h2>PR</h2>
-                                    <span>{allleavecount.permission}/{item.permission_month}</span>
+                                    <span>
+                                      {allleavecount.permission}/{item.permission}
+                                      {/* {item.permission || 0} */}
+                                      </span>
                                   </div>
                                 </div>
                                 {item?.leaveDuration.map((data, lindex) => (
