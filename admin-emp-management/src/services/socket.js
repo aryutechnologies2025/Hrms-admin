@@ -41,16 +41,16 @@ export function connectSocket(token) {
     transports: ["websocket"],
       timeout: 20000,
     // withCredentials: true,
-    // 🔐 enable later when JWT ready
+    //  enable later when JWT ready
     // auth: { token },
   });
 
   socket.on("connect", () => {
-    console.log("✅ Socket connected:", socket.id);
+    console.log(" Socket connected:", socket.id);
   });
 
   socket.on("disconnect", (reason) => {
-    console.log("❌ Socket disconnected:", reason);
+    console.log(" Socket disconnected:", reason);
   });
 
   socket.on("connect_error", (err) => {
