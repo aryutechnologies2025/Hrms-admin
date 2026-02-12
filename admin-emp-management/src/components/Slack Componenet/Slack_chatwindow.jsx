@@ -1494,7 +1494,7 @@ export default function Slack_chatwindow({
       )}
 
       <div className="flex  overflow-scroll">
-        <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50 overflow-scroll h-[100vh] ">
+        <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50 overflow-scroll h-[100vh] w-full ">
           {/* Chat Header */}
           {console.log("showForwardDropdown:", showForwardDropdown)}
           {showForwardDropdown && (
@@ -1724,8 +1724,8 @@ export default function Slack_chatwindow({
           {/*  Hover Actions */}
 
           {/* Messages Container */}
-          <div className="flex-1 p-4 md:p-6 overflow-y-auto bg-gradient-to-b from-white to-gray-50/30 ">
-            <div className="max-w-4xl mx-auto space-y-3">
+          <div className="flex-1 p-4 md:p-6 overflow-y-auto bg-gradient-to-b from-white to-gray-50/30 w-full ">
+            <div className="w-full mx-auto space-y-3">
               {messages.map((m) => {
                 const isMe = m.senderId === me;
                 const time = m.createdAt
@@ -2542,23 +2542,24 @@ export default function Slack_chatwindow({
         {activeThread && (
           <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50 overflow-scroll">
             {activeThread && (
-              <div className=" border-l bg-white flex flex-col w-full overflow-hidden h-[100vh] ">
+              <div className=" border-b  flex flex-col w-full overflow-hidden h-[100vh] ">
                 {/* HEADER */}
-                <div className="p-2 border flex justify-between items-center w-full fixed z-50 bg-white  ">
+               <div className="p-2 py-5 border-b flex justify-between items-center w-full sticky top-0 z-20 bg-white">
+
                   <div>
                     <h3 className="font-semibold text-gray-800">Thread</h3>
                     <p className="text-xs text-gray-500">Replies to message</p>
                   </div>
                   <button
                     onClick={() => setActiveThread(null)}
-                    className="text-gray-500 hover:text-red-500"
+                    className="text-blue-500 hover:text-red-500"
                   >
                     ✕
                   </button>
                 </div>
                
                 {/* REPLIES */}
-              <div className="flex-1 flex flex-col mt-10 p-4 md:p-6 overflow-y-auto bg-gradient-to-b from-white to-gray-50/30 gap-2  ">
+              <div className="flex-1 flex flex-col  p-4 md:p-6 overflow-y-auto bg-gradient-to-b from-white to-gray-50/30 gap-2  ">
 
                  
                   {threadReplies &&
