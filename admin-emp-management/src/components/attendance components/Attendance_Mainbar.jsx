@@ -27,7 +27,7 @@ import { TiEdit } from "react-icons/ti";
 import { ToastContainer, toast } from "react-toastify";
 import { FaFileExport } from "react-icons/fa6";
 import { useDateUtils } from "../../hooks/useDateUtils";
-
+import { MdOutlineDeleteOutline } from "react-icons/md";
 const Attendance_Mainbar = () => {
   let navigate = useNavigate();
   const [loading, setLoading] = useState(true); // State to manage loading
@@ -37,7 +37,9 @@ const Attendance_Mainbar = () => {
   const [currentDate, setCurrentDate] = useState("");
 
   const [attendanceCount, setAttendanceCount] = useState({});
-
+  const [showConfirmAlert, setShowConfirmAlert] = useState(false);
+  const [deleteSelectedRow, setDeleteSelectedRow] = useState(null);
+  console.log("deleteSelectedRow", deleteSelectedRow);
   const [editIsOpen, setEditIsOpen] = useState(false);
   const [employeeAttendanceList, setEmployeeAttendanceList] = useState([]);
 
@@ -90,7 +92,7 @@ const Attendance_Mainbar = () => {
     empName,
     empId,
     entries,
-    editTime
+    editTime,
   ) => {
     // const response = await axios.get(
     //   `${API_URL}/api/attendance/attendancelist`,
@@ -212,14 +214,17 @@ const Attendance_Mainbar = () => {
           colorClass = "text-yellow-500 font-bold";
         }
         // Red for 10:30 and onwards
-        else if (hours > 10 || (hours === 10 && minutes >= 30) || meridian === "pm") {
+        else if (
+          hours > 10 ||
+          (hours === 10 && minutes >= 30) ||
+          meridian === "pm"
+        ) {
           colorClass = "text-red-500";
         }
 
         return <p className={colorClass}>{rowData.login}</p> || "-";
       },
     },
-
 
     { field: "logout", header: "Logout Time" },
     {
@@ -228,8 +233,9 @@ const Attendance_Mainbar = () => {
       body: (rowData) =>
         rowData.result ? (
           <p
-            className={`${rowData?.result?.breakTime?.hours >= 1 ? "text-red-500" : ""
-              }`}
+            className={`${
+              rowData?.result?.breakTime?.hours >= 1 ? "text-red-500" : ""
+            }`}
           >{`${rowData?.result?.breakTime?.hours}:${rowData?.result?.breakTime?.minutes}:${rowData?.result?.breakTime?.seconds} `}</p>
         ) : (
           "-"
@@ -326,40 +332,87 @@ const Attendance_Mainbar = () => {
       body: (rowData) =>
         rowData?.result ? (
           <p
-            className={`${rowData?.result?.payableTime?.hours >= 8
-              ? "text-green-600"
-              : "text-red-600"
-              }`}
+            className={`${
+              rowData?.result?.payableTime?.hours >= 8
+                ? "text-green-600"
+                : "text-red-600"
+            }`}
           >
             {`${String(rowData?.result?.payableTime?.hours).padStart(2, "0")}:${String(
-              rowData?.result?.payableTime?.minutes
-            ).padStart(2, "0")}:${String(rowData?.result?.payableTime?.seconds).padStart(
-              2,
-              "0"
-            )}`}
+              rowData?.result?.payableTime?.minutes,
+            ).padStart(2, "0")}:${String(
+              rowData?.result?.payableTime?.seconds,
+            ).padStart(2, "0")}`}
           </p>
         ) : (
           "-"
         ),
     },
 
+    // {
+    //   field: "action",
+    //   header: "Action",
+    //   body: (rowData) => (
+
+    //     <div
+    //       className="cursor-pointer "
+    //       onClick={() =>
+    //         getEmployeeAttendance(
+    //           rowData._id,
+    //           rowData.employeeId.employeeName,
+    //           rowData.employeeId.employeeId,
+    //           rowData.entries,
+    //           rowData.editTime
+    //         )
+    //       }
+    //     >
+    //       <TiEdit className="mx-auto" />
+    //       <button
+    //                   className="px-1 rounded text-white text-xl"
+    //                   onClick={() => {
+    //                     setDeleteSelectedRow(rowData);
+    //                     setShowConfirmAlert(true);
+    //                   }}
+    //                 >
+    //                   <MdOutlineDeleteOutline className="text-red-600 cursor-pointer hover:text-red-800" />
+    //                 </button>
+    //     </div>
+
+    //   ),
+    // },
+
     {
       field: "action",
       header: "Action",
       body: (rowData) => (
-        <div
-          className="cursor-pointer "
-          onClick={() =>
-            getEmployeeAttendance(
-              rowData._id,
-              rowData.employeeId.employeeName,
-              rowData.employeeId.employeeId,
-              rowData.entries,
-              rowData.editTime
-            )
-          }
-        >
-          <TiEdit className="mx-auto" />
+        <div className="flex items-center justify-center gap-3">
+          {/* Edit Button */}
+          <button
+            className="cursor-pointer"
+            onClick={() =>
+              getEmployeeAttendance(
+                rowData._id,
+                rowData.employeeId.employeeName,
+                rowData.employeeId.employeeId,
+                rowData.entries,
+                rowData.editTime,
+              )
+            }
+          >
+            <TiEdit className="text-lg hover:text-blue-600" />
+          </button>
+
+          {/* Delete Button */}
+          <button
+            className="px-1 rounded text-xl"
+            onClick={(e) => {
+              e.stopPropagation(); // 🔥 Prevent triggering parent click
+              setDeleteSelectedRow(rowData);
+              setShowConfirmAlert(true);
+            }}
+          >
+            <MdOutlineDeleteOutline className="text-red-600 hover:text-red-800 cursor-pointer" />
+          </button>
         </div>
       ),
     },
@@ -470,8 +523,8 @@ const Attendance_Mainbar = () => {
       let response = await axios.get(
         `${API_URL}/api/employees/today-logs/${date} `,
         {
-          withCredentials: true
-        }
+          withCredentials: true,
+        },
       );
       setAttendanceData(response?.data?.data);
       setAttendanceCount(response?.data?.count);
@@ -483,6 +536,25 @@ const Attendance_Mainbar = () => {
     } catch (error) {
       console.log(error);
       setLoading(false);
+    }
+  };
+
+  const handleDeleteCLick = async (rowData) => {
+    try {
+      let response = await axios.delete(
+        `${API_URL}/api/attendance/delete-attendance`,
+        {
+          params: {
+            attendanceId: rowData._id,
+            // entryId: employeeAttendanceList[0].entries?._id,
+          },
+        },
+        { withCredentials: true },
+      );
+      getAttendanceData(selectedDate);
+      toast.success("Deleted Successfully!");
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -499,7 +571,7 @@ const Attendance_Mainbar = () => {
 
       const formattedDate = `${String(now.getDate()).padStart(
         2,
-        "0"
+        "0",
       )} ${now.toLocaleString("en-US", {
         month: "short",
       })} ${now.getFullYear()}`;
@@ -534,7 +606,8 @@ const Attendance_Mainbar = () => {
       };
       const response = await axios.put(
         `${API_URL}/api/attendance/update-entry`,
-        payload, {withCredentials: true}
+        payload,
+        { withCredentials: true },
       );
 
       toast.success("Attendance updated successfully!");
@@ -620,13 +693,8 @@ const Attendance_Mainbar = () => {
       ) : (
         <>
           <div>
-
-
-
             <div className=" cursor-pointer ">
               <Mobile_Sidebar />
-
-
             </div>
             <div className="flex justify-end gap-1 items-center">
               <ToastContainer />
@@ -651,7 +719,6 @@ const Attendance_Mainbar = () => {
                 </span>
               </div> */}
 
-
             {/* Heading */}
             <section className="flex flex-wrap md:flex-row justify-between items-center mt-1 md:mt-4 ">
               <div className="flex flex-wrap md:flex-nowrap gap-1 md:gap-5">
@@ -665,7 +732,6 @@ const Attendance_Mainbar = () => {
                   onChange={(e) => {
                     getAttendanceData(e.target.value);
                     setSelectedDate(e.target.value);
-
                   }}
                 />
               </div>
@@ -712,10 +778,12 @@ const Attendance_Mainbar = () => {
                   </button>
                 </div>
               </div>
-
             </section>
             {/* Mobile Hamburger Menu */}
-            <div className="md:hidden relative flex justify-between" ref={menuRef}>
+            <div
+              className="md:hidden relative flex justify-between"
+              ref={menuRef}
+            >
               <input
                 type="date"
                 value={selectedDate}
@@ -729,7 +797,11 @@ const Attendance_Mainbar = () => {
                 onClick={() => setMenuOpen(!menuOpen)}
                 className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600"
               >
-                {menuOpen ? <IoClose size={22} /> : <GiHamburgerMenu size={22} />}
+                {menuOpen ? (
+                  <IoClose size={22} />
+                ) : (
+                  <GiHamburgerMenu size={22} />
+                )}
               </button>
 
               {menuOpen && (
@@ -767,9 +839,7 @@ const Attendance_Mainbar = () => {
 
             {/* Cards */}
             <div className="hidden md:flex flex-col sm:flex-row mt-5 flex-grow gap-3">
-              <div
-                className="flex flex-grow gap-2 w-full sm:w-1/4  transition-all duration-100 flex-col justify-between bg-white px-5 py-5 rounded-xl"
-              >
+              <div className="flex flex-grow gap-2 w-full sm:w-1/4  transition-all duration-100 flex-col justify-between bg-white px-5 py-5 rounded-xl">
                 <div className="flex items-center justify-between gap-3 text-4xl">
                   <img src={WFH} alt="" className="h-12 w-12" />
                   {attendanceCount?.present}
@@ -788,7 +858,6 @@ const Attendance_Mainbar = () => {
                 </p>
               </div>
 
-
               <div
                 onClick={() => setAbsentlistIsOpen(true)}
                 className="flex flex-grow gap-2 w-full transition-all duration-100 cursor-pointer sm:w-1/4 md:flex-col justify-between bg-white px-5 py-5 rounded-xl"
@@ -803,7 +872,6 @@ const Attendance_Mainbar = () => {
                 </p>
                 <p className="hidden md:block text-gray-400 mt-2">
                   {selectedDate ? formatDateTime(selectedDate) : ""}
-
                 </p>{" "}
                 <p className="text-2xl font-semibold text-blue-500 mt-2">
                   {attendanceData?.summary?.absent}
@@ -835,28 +903,44 @@ const Attendance_Mainbar = () => {
             <div className="flex md:hidden flex-row justify-between items-center gap-2 bg-white px-5 py-3 rounded-xl mt-5">
               {/* present */}
               <div className="flex flex-1 gap-2 justify-center cursor-pointer">
-                <p className="text-xl font-bold text-blue-500">{attendanceCount?.present}</p>
-                <p className="text-lg font-semibold text-gray-500 uppercase">Present</p>
+                <p className="text-xl font-bold text-blue-500">
+                  {attendanceCount?.present}
+                </p>
+                <p className="text-lg font-semibold text-gray-500 uppercase">
+                  Present
+                </p>
               </div>
 
               {/* <div className="w-[1px] bg-gray-300 h-12" /> */}
 
               {/* Absent */}
-              <div onClick={() => setAbsentlistIsOpen(true)} className="flex flex-1 gap-2 justify-center cursor-pointer">
-                <p className="text-xl font-bold text-blue-500">{attendanceCount?.absent}</p>
-                <p className="text-lg font-semibold text-gray-500 uppercase">Absent</p>
+              <div
+                onClick={() => setAbsentlistIsOpen(true)}
+                className="flex flex-1 gap-2 justify-center cursor-pointer"
+              >
+                <p className="text-xl font-bold text-blue-500">
+                  {attendanceCount?.absent}
+                </p>
+                <p className="text-lg font-semibold text-gray-500 uppercase">
+                  Absent
+                </p>
               </div>
 
               {/* <div className="w-[1px] bg-gray-300 h-12" /> */}
 
               {/* WFH */}
-              <div onClick={() => setWfhlistIsOpen(true)} className="flex flex-1 gap-2 justify-center cursor-pointer">
-                <p className="text-xl font-bold text-blue-500">{attendanceCount?.wfh}</p>
-                <p className="text-lg font-semibold text-gray-500 uppercase">WFH</p>
+              <div
+                onClick={() => setWfhlistIsOpen(true)}
+                className="flex flex-1 gap-2 justify-center cursor-pointer"
+              >
+                <p className="text-xl font-bold text-blue-500">
+                  {attendanceCount?.wfh}
+                </p>
+                <p className="text-lg font-semibold text-gray-500 uppercase">
+                  WFH
+                </p>
               </div>
-
             </div>
-
 
             {/* data table */}
             <div
@@ -961,7 +1045,7 @@ const Attendance_Mainbar = () => {
                               new Date(
                                 employeeAttendanceList[0]?.editTime[
                                   employeeAttendanceList[0]?.editTime.length - 1
-                                ]?.updatedTime
+                                ]?.updatedTime,
                               ).toLocaleString("en-IN", {
                                 timeZone: "Asia/Kolkata",
                                 hour: "2-digit",
@@ -1100,7 +1184,6 @@ const Attendance_Mainbar = () => {
               </div>
             )}
 
-
             {wfhlistIsOpen && (
               <div>
                 <div
@@ -1150,7 +1233,6 @@ const Attendance_Mainbar = () => {
                 </div>
               </div>
             )}
-
           </div>
 
           {/* {tooltipData && (
@@ -1233,8 +1315,38 @@ const Attendance_Mainbar = () => {
                           </p>
                         </div>
                       </div>
-                    )
+                    ),
                 )}
+              </div>
+            </div>
+          )}
+
+          {showConfirmAlert && (
+            <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/20 z-50">
+              <div className="bg-white shadow-lg rounded-lg p-4 mx-3 sm:mx-0 sm:p-6 w-80">
+                <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                  Confirm Delete
+                </h2>
+                <p className="text-gray-600 mb-4">
+                  Are you sure you want to delete this?
+                </p>
+                <div className="flex justify-end gap-3">
+                  <button
+                    className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-800"
+                    onClick={() => setShowConfirmAlert(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white"
+                    onClick={() => {
+                      handleDeleteCLick(deleteSelectedRow);
+                      setShowConfirmAlert(false);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
           )}
