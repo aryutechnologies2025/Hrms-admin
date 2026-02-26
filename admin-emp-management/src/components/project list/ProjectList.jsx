@@ -162,6 +162,7 @@ const ProjectList = () => {
     paymentType: "",
     recurringDays: "",
   });
+  console.log("roleDetails",roleDetails)
   //   const handleDelete = async () => {
   //   try {
   //     const res = await axios.delete(`${API_URL}/api/delete-file`, {
@@ -687,7 +688,7 @@ const ProjectList = () => {
                 }}
               >
                 <div className="cursor-pointer">
-                  {/* <FaEye
+                  <FaEye
                     onClick={() => {
                       openViewModal(
                         row._id,
@@ -704,7 +705,7 @@ const ProjectList = () => {
                         row.priority
                       );
                     }}
-                  /> */}
+                  />
                 </div>
                 <div
                   className="modula-icon-edit  flex gap-2"
@@ -1138,7 +1139,7 @@ const ProjectList = () => {
                             type="number"
                             value={budget}
                             onChange={(e) => setBudget(e.target.value)}
-                            className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                            className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none px-3 py-2 border mt-0 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
                           />
                         </div>
                       </div>
@@ -2004,7 +2005,7 @@ const ProjectList = () => {
                                     budget: e.target.value,
                                   }));
                                 }}
-                                className="mt-5 md:mt-0 px-3 w-full py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="mt-0 px-3 w-full py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                               />
                             </div>
                           </div>
@@ -2360,8 +2361,8 @@ const ProjectList = () => {
                     </div>
                   </div>
 
-                  <div className="card flex justify-between gap-8">
-                    <div className="w-[45%]">
+                  <div className="card flex flex-wrap md:flex-nowrap justify-between gap-8">
+                    <div className="w-full md:w-[45%]">
                       <label className="block text-md font-medium mb-2">
                         Project Name :
                       </label>
@@ -2371,11 +2372,13 @@ const ProjectList = () => {
                         value={roleDetails.name}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
+                      <div className="flex gap-2 md:gap-0">
                       <label className="block text-md font-medium mb-2">
                         Project Manager :
                       </label>
                       <div className="text-sm p-1 px-2 bg-gray-100 rounded-2xl inline-block mb-2">
                         {roleDetails.projectManager}
+                      </div>
                       </div>
 
                       <div className="my-2">
@@ -2402,14 +2405,14 @@ const ProjectList = () => {
                         <p>{roleDetails?.priority}</p>
                       </div>
                     </div>
-                    <div className="w-[54%]">
+                    <div className="w-full md:w-[54%]">
                       <label className="block text-md font-medium mb-2">
                         Client Name :
                       </label>
                       <input
                         disabled
                         type="text"
-                        value={roleDetails.clientName}
+                        value={roleDetails.clientName?.client_name}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <div className="flex mb-2">
@@ -2446,7 +2449,7 @@ const ProjectList = () => {
                       <Editor
                         value={roleDetails.projectDescription}
                         className="text-md font-medium w-full pb-2 mt-2 rounded-lg"
-                        style={{ height: "200px" }}
+                        style={{ height: "auto" }}
                         headerTemplate={true}
                         modules={{
                           toolbar: false, // Hide toolbar
