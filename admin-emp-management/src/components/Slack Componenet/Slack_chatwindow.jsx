@@ -580,6 +580,7 @@ export default function Slack_chatwindow({
     if (!socket) return;
 
     socket.on("messages_seen", ({ senderId, receiverId, seenAt }) => {
+      console.log("entering messages_seen with:", senderId, receiverId, seenAt);
       setMessages((prev) =>
         prev.map((m) =>
           m.senderId === senderId && m.receiverId === receiverId && !m.seenAt
@@ -1156,7 +1157,7 @@ export default function Slack_chatwindow({
   // };
 
   const renderTick = (msg) => {
-    console.log("Rendering tick for message:", msg);
+    console.log("Rendering tick for message 12333:", msg);
 
     if (!msg.deliveredAt) {
       return <Check className="w-3.5 h-3.5" />;
@@ -1493,7 +1494,7 @@ export default function Slack_chatwindow({
         </div>
       )}
 
-      <div className="flex  overflow-scroll">
+      <div className="flex  overflow-hidden h-[100vh]">
         <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50 overflow-scroll h-[100vh] w-full ">
           {/* Chat Header */}
           {console.log("showForwardDropdown:", showForwardDropdown)}
@@ -1785,7 +1786,7 @@ export default function Slack_chatwindow({
                               {/* <ActionButton title="Reply in thread">
                             <MessageSquare size={14} />
                           </ActionButton> */}
-                              {isMe && (
+                              {isMe && selectedChannel && (
                                 <ActionButton
                                   title="Reply in thread"
                                   onClick={() => setActiveThread(m)}
@@ -2242,10 +2243,10 @@ export default function Slack_chatwindow({
                             </div>
                             <div className="flex gap">
                               <span className="text-xs">{time}</span>
-                              {console.log(
+                              {/* {console.log(
                                 "Rendering ticks for message:",
                                 m.seenAt,
-                              )}
+                              )} */}
                               {/* {isMe && (
                               <div className="flex items-center">
                                 {!m.deliveredAt && !m.seenAt && (
@@ -2271,11 +2272,13 @@ export default function Slack_chatwindow({
                             </div>
                           )} */}
                               {isMe && (
+
                                 <div className="flex items-center">
                                   {(() => {
                                     if (!m.deliveredAt) {
                                       return <Check className="w-3.5 h-3.5" />;
                                     } else if (m.deliveredAt && !m.seenAt) {
+                                       console.log("Message delivered but not seen:", m);
                                       return (
                                         <CheckCheck className="w-3.5 h-3.5" />
                                       );
@@ -2540,7 +2543,7 @@ export default function Slack_chatwindow({
         {/* Thread component */}
 
         {activeThread && (
-          <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50 overflow-scroll">
+          <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50 overflow-hidden h-[100vh]">
             {activeThread && (
               <div className=" border-b  flex flex-col w-full overflow-hidden h-[100vh] ">
                 {/* HEADER */}
@@ -3113,7 +3116,7 @@ export default function Slack_chatwindow({
                                 >
                                   <div>
                                     {" "}
-                                    <span className="text-xs">{date}</span>
+                                    <span className="text-xs text-gray-600">{date}</span>
                                   </div>
                                   <div className="flex gap">
                                     <span className="text-xs">{time}</span>
@@ -3183,10 +3186,10 @@ export default function Slack_chatwindow({
                                   <div className="flex items-center justify-between gap-2 mt-2">
                                     <div>
                                       {" "}
-                                      <span className="text-xs">{date}</span>
+                                      <span className="text-xs text-gray-600">{date}</span>
                                     </div>
                                     <div className="flex gap-3">
-                                      <span className="text-xs">{time}</span>
+                                      <span className="text-xs text-gray-600">{time}</span>
                                       {m.senderId == me && (
                                         <div className="message-footer">
                                           {renderTick(m)}
