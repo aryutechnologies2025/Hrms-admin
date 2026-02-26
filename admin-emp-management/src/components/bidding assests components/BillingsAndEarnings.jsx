@@ -26,6 +26,51 @@ function BillingsAndEarnings() {
     const [loadingClients, setLoadingClients] = useState(false);
   const [loadingData, setLoadingData] = useState(false);
 
+  const downloadCSV = () => {
+  if (!data?.transactions || data.transactions.length === 0) {
+    alert("No data available to download");
+    return;
+  }
+
+  const headers = [
+    "Job Name",
+    "Billed",
+    "Fees & Taxes",
+    "Service Fee",
+    "WHT Tax",
+    "Net Earnings",
+  ];
+
+  const rows = data.transactions.map((job) => [
+    job.title,
+    Number(job.earnings || 0).toFixed(2),
+    Number(job.deductions || 0).toFixed(2),
+    Number(job.serviceFee || 0).toFixed(2),
+    Number(job.wht || 0).toFixed(2),
+    Number(job.netTotal || 0).toFixed(2),
+  ]);
+
+  const csvContent =
+    [headers, ...rows]
+      .map((row) => row.join(","))
+      .join("\n");
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.setAttribute(
+    "download",
+    `Billings_${selectedClient}_${dates.fromDate}_to_${dates.toDate}.csv`
+  );
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
   // console.log("dates", dates);
   useEffect(() => {
     if (dates.fromDate && dates.toDate) {
@@ -151,7 +196,9 @@ function BillingsAndEarnings() {
           onChange={(range) => setDates(range)}
         />
 
-        <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+        <button 
+        // onClick={downloadCSV} 
+        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
           Download CSV
         </button>
       </div>

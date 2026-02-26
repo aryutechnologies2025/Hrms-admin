@@ -235,6 +235,24 @@ const Sidebar = () => {
                 </div>
               )}
 
+              {/* slack */}
+
+              {(
+                //  {hasPermission("slack") && (
+                <div
+                  onClick={() => onClickSidebarMenu("slack")}
+                  className={`flex items-center w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                    } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/slack"
+                      ? "bg-blue-100 text-[#4F46E5]"
+                      : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
+                    }`}
+                >
+                  <FaSlack />
+
+                  {!arrowClicked && <p className="text-sm">Urai</p>}
+                </div>
+              )}
+
               {/* links */}
               {!client && hasPermission("Links") && (
                 <div
@@ -317,21 +335,21 @@ const Sidebar = () => {
                     {!arrowClicked && <p className="text-sm">Invoice Details</p>}
                   </div>
                   <div>
-                     {(
-                    //  {hasPermission("slack") && (
-                    <div
-                      onClick={() => onClickSidebarMenu("slack")}
-                      className={`flex items-center w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
-                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/slack"
-                          ? "bg-blue-100 text-[#4F46E5]"
-                          : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                        }`}
-                    >
-                      <FaSlack />
+                    {(
+                      //  {hasPermission("slack") && (
+                      <div
+                        onClick={() => onClickSidebarMenu("slack")}
+                        className={`flex items-center w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
+                          } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/slack"
+                            ? "bg-blue-100 text-[#4F46E5]"
+                            : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
+                          }`}
+                      >
+                        <FaSlack />
 
-                      {!arrowClicked && <p className="text-sm">Slack</p>}
-                    </div>
-                  )}
+                        {!arrowClicked && <p className="text-sm">Slack</p>}
+                      </div>
+                    )}
                   </div>
                 </>
               )}
@@ -397,19 +415,19 @@ const Sidebar = () => {
                       </div>
                       <div
                         className={`overflow-hidden h-80 w-full transition-all duration-700 ease-in-out ${currentOpen === "onboarding" ||
-                            [
-                              "/employees",
-                              "/roles",
-                              "/departments",
-                              "/joining-list",
-                              "/releiving-letter",
-                              "/relieved-list",
-                              "/Declaration-deatils",
-                              "/letters-form",
-                              "/inter",
-                            ].includes(currentPath)
-                            ? "max-h-96 opacity-100"
-                            : "max-h-0 opacity-0"
+                          [
+                            "/employees",
+                            "/roles",
+                            "/departments",
+                            "/joining-list",
+                            "/releiving-letter",
+                            "/relieved-list",
+                            "/Declaration-deatils",
+                            "/letters-form",
+                            "/inter",
+                          ].includes(currentPath)
+                          ? "max-h-96 opacity-100"
+                          : "max-h-0 opacity-0"
                           }`}
                       >
                         <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
@@ -563,14 +581,14 @@ const Sidebar = () => {
                       {!arrowClicked && (
                         <div
                           className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "employee" ||
-                              [
-                                "/attendance",
-                                "/leaves",
-                                "/wfh",
-                                "/requestdetails",
-                              ].includes(currentPath)
-                              ? "max-h-40 opacity-100"
-                              : "max-h-0 opacity-0"
+                            [
+                              "/attendance",
+                              "/leaves",
+                              "/wfh",
+                              "/requestdetails",
+                            ].includes(currentPath)
+                            ? "max-h-40 opacity-100"
+                            : "max-h-0 opacity-0"
                             }`}
                         >
                           <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500   ">
@@ -649,8 +667,8 @@ const Sidebar = () => {
                             // onClick={() => setProjectOpen(!projectOpen)}
                             onClick={() => toggleMenu("projects")}
                             className={`flex items-center h-10 w-full flex-grow ${arrowClicked
-                                ? "justify-center  "
-                                : "justify-normal"
+                              ? "justify-center  "
+                              : "justify-normal"
                               } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${[
                                 "/project-list",
                                 "/task-list",
@@ -689,13 +707,13 @@ const Sidebar = () => {
                           </div>
                           <div
                             className={`overflow-hidden w-full transition-all  duration-700 ease-in-out ${currentOpen === "projects" ||
-                                [
-                                  "/project-list",
-                                  "/task-list",
-                                  "/reports",
-                                ].includes(currentPath)
-                                ? "max-h-40 opacity-100"
-                                : "max-h-0 opacity-0"
+                              [
+                                "/project-list",
+                                "/task-list",
+                                "/reports",
+                              ].includes(currentPath)
+                              ? "max-h-40 opacity-100"
+                              : "max-h-0 opacity-0"
                               }`}
                           >
                             <div className="flex gap-2  items-start  ms-10 flex-col text-sm font-medium text-gray-500">
@@ -768,8 +786,8 @@ const Sidebar = () => {
                             // onClick={() => setClientOpen(!clientOpen)}
                             onClick={() => toggleMenu("clients")}
                             className={`flex items-center h-10 w-full flex-grow ${arrowClicked
-                                ? "justify-center  "
-                                : "justify-normal"
+                              ? "justify-center  "
+                              : "justify-normal"
                               } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${["/client-details", "/invoice-details"].includes(
                                 currentPath
                               )
@@ -804,15 +822,15 @@ const Sidebar = () => {
                           {/*  */}
                           <div
                             className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "clients" ||
-                                [
-                                  "/client-details",
-                                  "/invoice-details",
-                                  "/mom-details",
-                                  // "/document-details",
-                                  // "/client-note-details",
-                                ].includes(currentPath)
-                                ? "max-h-50 opacity-100"
-                                : "max-h-0 opacity-0"
+                              [
+                                "/client-details",
+                                "/invoice-details",
+                                "/mom-details",
+                                // "/document-details",
+                                // "/client-note-details",
+                              ].includes(currentPath)
+                              ? "max-h-50 opacity-100"
+                              : "max-h-0 opacity-0"
                               }`}
                           >
                             <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
@@ -905,7 +923,7 @@ const Sidebar = () => {
                       <IoPersonAddSharp />
                       {!arrowClicked && <p className="text-sm">Invoice List</p>}
                     </div> */}
-                    
+
                             </div>
                           </div>
                         </>
@@ -918,8 +936,8 @@ const Sidebar = () => {
                             // onClick={() => setFinace(!finace)}
                             onClick={() => toggleMenu("finance")}
                             className={`flex items-center h-10 w-full flex-grow ${arrowClicked
-                                ? "justify-center  "
-                                : "justify-normal"
+                              ? "justify-center  "
+                              : "justify-normal"
                               } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer  ${[
                                 "/finance-account",
                                 "/income/details",
@@ -956,16 +974,16 @@ const Sidebar = () => {
                           </div>
                           <div
                             className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "finance" ||
-                                [
-                                  "/finance-account",
-                                  "/income/details",
-                                  "/expense/details",
-                                  "/payment-type",
-                                  "/bankstatement",
-                                  "/recurring",
-                                ].includes(currentPath)
-                                ? "max-h-50 opacity-100"
-                                : "max-h-0 opacity-0"
+                              [
+                                "/finance-account",
+                                "/income/details",
+                                "/expense/details",
+                                "/payment-type",
+                                "/bankstatement",
+                                "/recurring",
+                              ].includes(currentPath)
+                              ? "max-h-50 opacity-100"
+                              : "max-h-0 opacity-0"
                               }`}
                           >
                             <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
@@ -1054,7 +1072,7 @@ const Sidebar = () => {
                           </div>
                         </>
                       )}
-                      
+
                     </>
                   )}
 
@@ -1105,17 +1123,17 @@ const Sidebar = () => {
                       {/*  */}
                       <div
                         className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "bidding" ||
-                            [
-                              "/account-bidding",
-                              "/tech-bidding",
-                              "/bidding-details",
-                              "/connect-details",
-                              "/bidding-reports",
-                              "/bidding-transaction_history",
-                              "/billing_details",
-                            ].includes(currentPath)
-                            ? "max-h-60 opacity-100"
-                            : "max-h-0 opacity-0"
+                          [
+                            "/account-bidding",
+                            "/tech-bidding",
+                            "/bidding-details",
+                            "/connect-details",
+                            "/bidding-reports",
+                            "/bidding-transaction_history",
+                            "/billing_details",
+                          ].includes(currentPath)
+                          ? "max-h-60 opacity-100"
+                          : "max-h-0 opacity-0"
                           }`}
                       >
                         <div className="flex gap-2  items-start  ms-4 flex-col text-sm font-medium text-gray-500">
@@ -1198,7 +1216,7 @@ const Sidebar = () => {
                     </>
                   )}
 
-                    {/* Portfolio */}
+                  {/* Portfolio */}
 
                   {hasPermission("Portfolio") && (
                     <>
@@ -1222,7 +1240,7 @@ const Sidebar = () => {
                               {currentOpen === "portfolio-tech" ||
                                 [
                                   "/technology",
-                            "/portfolio",
+                                  "/portfolio",
                                 ].includes(currentPath) ? (
                                 <IoIosArrowUp />
                               ) : (
@@ -1235,12 +1253,12 @@ const Sidebar = () => {
                       {/*  */}
                       <div
                         className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "portfolio-tech" ||
-                            [
-                               "/technology",
+                          [
+                            "/technology",
                             "/portfolio",
-                            ].includes(currentPath)
-                            ? "max-h-60 opacity-100"
-                            : "max-h-0 opacity-0"
+                          ].includes(currentPath)
+                          ? "max-h-60 opacity-100"
+                          : "max-h-0 opacity-0"
                           }`}
                       >
                         <div className="flex gap-2  items-start  ms-4 flex-col text-sm font-medium text-gray-500">
@@ -1264,7 +1282,7 @@ const Sidebar = () => {
                           >
                             Portfolio
                           </button>
-                         
+
                         </div>
                       </div>
                     </>
@@ -1307,11 +1325,11 @@ const Sidebar = () => {
                       {/*  */}
                       <div
                         className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "socialmedia" ||
-                            ["/social-account", "/social-credentials", "/social-contentmaster",].includes(
-                              currentPath
-                            )
-                            ? "max-h-52 opacity-100"
-                            : "max-h-0 opacity-0"
+                          ["/social-account", "/social-credentials", "/social-contentmaster",].includes(
+                            currentPath
+                          )
+                          ? "max-h-52 opacity-100"
+                          : "max-h-0 opacity-0"
                           }`}
                       >
                         <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
@@ -1397,16 +1415,16 @@ const Sidebar = () => {
                       {/*  */}
                       <div
                         className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "Recruitment" ||
-                            [
-                              "/jobtype-Recruitment",
-                              "/jobopening-Recruitment",
-                              "/interview-Recruitment",
-                              "/technologies-Recruitment",
-                              "/Candidate-Recruitment",
-                              "/dashboard-Recruitment",
-                            ].includes(currentPath)
-                            ? "max-h-60 opacity-100"
-                            : "max-h-0 opacity-0"
+                          [
+                            "/jobtype-Recruitment",
+                            "/jobopening-Recruitment",
+                            "/interview-Recruitment",
+                            "/technologies-Recruitment",
+                            "/Candidate-Recruitment",
+                            "/dashboard-Recruitment",
+                          ].includes(currentPath)
+                          ? "max-h-60 opacity-100"
+                          : "max-h-0 opacity-0"
                           }`}
                       >
                         <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
@@ -1492,8 +1510,8 @@ const Sidebar = () => {
                   )}
 
 
-{/* digital */}
- {hasPermission("Digital") && (
+                  {/* digital */}
+                  {hasPermission("Digital") && (
                     <>
                       <div
                         // onClick={() => setClientOpen(!clientOpen)}
@@ -1515,7 +1533,7 @@ const Sidebar = () => {
                               {currentOpen === "digital" ||
                                 [
                                   "/digital-details",
-                                 
+
                                 ].includes(currentPath) ? (
                                 <IoIosArrowUp />
                               ) : (
@@ -1528,11 +1546,11 @@ const Sidebar = () => {
                       {/*  */}
                       <div
                         className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "digital-details" ||
-                            ["/digital-details"].includes(
-                              currentPath
-                            )
-                            ? "max-h-52 opacity-100"
-                            : "max-h-0 opacity-0"
+                          ["/digital-details"].includes(
+                            currentPath
+                          )
+                          ? "max-h-52 opacity-100"
+                          : "max-h-0 opacity-0"
                           }`}
                       >
                         <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
@@ -1544,10 +1562,10 @@ const Sidebar = () => {
                                 : "hover:bg-blue-100 text-gray-500"
                               }`}
                           >
-                           Digital
+                            Digital
                           </button>
 
-                       
+
                         </div>
                       </div>
                     </>
@@ -1619,13 +1637,13 @@ const Sidebar = () => {
                       >
                         <MdManageAccounts />
                         {!arrowClicked && (
-                          <p className="text-sm">Asset</p>
+                          <p className="text-sm">Assets</p>
                         )}
                       </div>
                     </>
                   )}
 
-                   {hasPermission("Backup") && (
+                  {hasPermission("Backup") && (
                     <div
                       onClick={() => onClickSidebarMenu("Backup")}
                       className={`flex items-center w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
@@ -1724,11 +1742,11 @@ const Sidebar = () => {
                       {/*  */}
                       <div
                         className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "settings" ||
-                            ["/settings", "/settings-invoice"].includes(
-                              currentPath
-                            )
-                            ? "max-h-52 opacity-100"
-                            : "max-h-0 opacity-0"
+                          ["/settings", "/settings-invoice"].includes(
+                            currentPath
+                          )
+                          ? "max-h-52 opacity-100"
+                          : "max-h-0 opacity-0"
                           }`}
                       >
                         <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
@@ -1758,7 +1776,7 @@ const Sidebar = () => {
                     </>
                   )}
 
-{/* new module */}
+                  {/* new module */}
                   {hasPermission("leads") && (
                     <>
                       <div
@@ -1791,11 +1809,11 @@ const Sidebar = () => {
                       </div>
                       <div
                         className={`overflow-hidden w-full transition-all duration-700 ease-in-out ${currentOpen === "leads" ||
-                            ["/leads",].includes(
-                              currentPath
-                            )
-                            ? "max-h-52 opacity-100"
-                            : "max-h-0 opacity-0"
+                          ["/leads",].includes(
+                            currentPath
+                          )
+                          ? "max-h-52 opacity-100"
+                          : "max-h-0 opacity-0"
                           }`}
                       >
                         <div className="flex gap-2  items-start  ms-8 flex-col text-sm font-medium text-gray-500">
@@ -1810,7 +1828,7 @@ const Sidebar = () => {
                             Leads
                           </button>
 
-                         
+
                         </div>
                       </div>
                     </>
@@ -1821,23 +1839,9 @@ const Sidebar = () => {
 
                   {/* permission  */}
                   {/* hasPermission("slack") && */}
-                  {(
-                    //  {hasPermission("slack") && (
-                    <div
-                      onClick={() => onClickSidebarMenu("slack")}
-                      className={`flex items-center w-full flex-grow ${arrowClicked ? "justify-center  " : "justify-normal"
-                        } hover:bg-blue-100 hover:text-[#4F46E5] px-2 py-3 h-10 rounded-full gap-3 text-gray-500 text-sm font-medium cursor-pointer ${currentPath === "/slack"
-                          ? "bg-blue-100 text-[#4F46E5]"
-                          : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
-                        }`}
-                    >
-                      <FaSlack />
 
-                      {!arrowClicked && <p className="text-sm">Slack</p>}
-                    </div>
-                  )}
                 </>
-               
+
               )}
 
               {/* <div

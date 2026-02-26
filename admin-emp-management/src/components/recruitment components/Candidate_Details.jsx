@@ -41,7 +41,7 @@ const Candidate_Details = () => {
   const [filterStartDate, setFilterStartDate] = useState(null);
   const [filterEndDate, setFilterEndDate] = useState(null);
   const [filterInterviewStatus, setFilterInterviewStatus] = useState("");
-  console.log("filterInterviewStatus",filterInterviewStatus)
+  console.log("filterInterviewStatus", filterInterviewStatus)
   const [filterTechnology, setFilterTechnology] = useState("");
   const [filterPlatform, setFilterPlatform] = useState("");
 
@@ -158,7 +158,7 @@ const Candidate_Details = () => {
           withCredentials: true,
         }
       );
-      console.log("response",response)
+      console.log("response", response)
       setCandidateDetails(response.data.data || []);
       setTableKey(prev => prev + 1); //  FORCE RELOAD
       setLoading(false);
@@ -305,6 +305,8 @@ const Candidate_Details = () => {
   const [noteEdit, setNoteEdit] = useState("");
   const [editId, setEditid] = useState("");
 
+  
+
   const openEditModal = (row) => {
     // console.log("candidate row", row);
 
@@ -372,7 +374,6 @@ const Candidate_Details = () => {
   };
 
   // delete
-
   const deleteCandidate = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -579,11 +580,8 @@ const Candidate_Details = () => {
       ) : (
         <>
           <div>
-
-
             <div className="">
               <Mobile_Sidebar />
-
             </div>
             <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
               <p
@@ -685,8 +683,6 @@ const Candidate_Details = () => {
               >
                 Submit
               </button>
-
-
               <button
                 onClick={handleReset}
                 className="bg-gray-300 text-gray-800 px-3 py-2 font-medium w-20 rounded-2xl"
@@ -701,22 +697,20 @@ const Candidate_Details = () => {
               {/* Responsive wrapper for the table */}
               <div className="table-scroll-container" id="datatable">
                 <DataTable
-  key={tableKey}
-  data={candidateDetails}
-  columns={columns}
-  options={{
-    destroy: true,          // 🔥 REQUIRED
-    paging: true,
-    searching: false,
-    ordering: true,
-    scrollX: true,
-    responsive: true,
-    autoWidth: false,
-  }}
-  className="display nowrap bg-white"
-/>
-
-
+                  key={tableKey}
+                  data={candidateDetails}
+                  columns={columns}
+                  options={{
+                    destroy: true,  
+                    paging: true,
+                    searching: false,
+                    ordering: true,
+                    scrollX: true,
+                    responsive: true,
+                    autoWidth: false,
+                  }}
+                  className="display nowrap bg-white"
+                />
               </div>
             </div>
 
@@ -830,7 +824,7 @@ const Candidate_Details = () => {
                           type="number"
                           value={phoneNumber}
                           onChange={(e) => setPhoneNumber(e.target.value)}
-                          placeholder=" "
+                          placeholder="Enter Phone Number"
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.phoneNumber && (
@@ -874,7 +868,7 @@ const Candidate_Details = () => {
                           type="text"
                           value={address}
                           onChange={(e) => setAddress(e.target.value)}
-                          placeholder=" "
+                          placeholder="Enter Address"
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.address && (
@@ -1575,8 +1569,8 @@ const Candidate_Details = () => {
                 </div>
               </div>
             )}
-            </div>
-        
+          </div>
+
         </>
       )}
 
