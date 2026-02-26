@@ -940,7 +940,7 @@ const ProjectList = () => {
                 <div className="absolute inset-0" onClick={closeAddModal}></div>
 
                 <div
-                  className={`fixed  top-0 right-0 h-screen overflow-y-auto  w-[full] bg-white shadow-lg  transform transition-transform duration-500 ease-in-out  ${
+                  className={`fixed  top-0 right-0 h-screen overflow-y-auto w-full bg-white shadow-lg  transform transition-transform duration-500 ease-in-out  ${
                     isAnimating ? "translate-x-0" : "translate-x-full"
                   }`}
                 >
@@ -951,7 +951,7 @@ const ProjectList = () => {
                   >
                     <IoIosArrowForward className="w-3 h-3" />
                   </div>
-                  <div className="px-5 lg:px-14 py-3 md:py-10">
+                  <div className="px-5 lg:px-14 py-3 md:py-10 mb-20 md:mb-0">
                     <div className="flex justify-between items-center gap-2 ">
                       <h2 className="text-xl font-semibold mb-4">
                         Add Project
@@ -1774,7 +1774,7 @@ const ProjectList = () => {
                   </div>
 
 
-                  <div className="px-5 lg:px-14 py-2 md:py-5">
+                  <div className="px-5 lg:px-14 py-2 md:py-5 mb-20 md:mb-0">
                     <p className="text-2xl md:text-3xl font-medium">
                       Edit Project
                     </p>
