@@ -1215,6 +1215,61 @@ function EditChannelModal({
 //   );
 // }
 
+// function SectionHeader({
+//   title,
+//   open,
+//   onToggle,
+//   rightAction,
+//   currentUser,
+//   icon: LeftIcon, // optional left icon
+// }) {
+//   return (
+//     <div
+//       onClick={onToggle}
+//       className="
+//         group
+//         flex items-center justify-between
+//         px-4 py-2 mx-2 mt-2
+//         rounded-lg
+//         cursor-pointer
+//         transition-all
+//         hover:bg-slate-100
+//       "
+//     >
+//       {/* LEFT SIDE */}
+//       <div className="flex items-center gap-2">
+//         {/* Optional left icon */}
+//         {LeftIcon && (
+//           <LeftIcon size={16} className="text-slate-500" />
+//         )}
+
+//         {/* Title */}
+//         <span className="text-sm font-medium text-slate-700">
+//           {title}
+//         </span>
+//          {/* Arrow (right → down when open) */}
+//         <ChevronRight
+//           size={14}
+//           className={`
+//             text-slate-400
+//             transition-transform duration-200
+//             ${open ? "rotate-90" : ""}
+//           `}
+//         />
+//       </div>
+
+//       {/* RIGHT ACTION (admin only) */}
+//       {currentUser?.superUser && rightAction && (
+//         <div
+//           onClick={(e) => e.stopPropagation()}
+//           className="opacity-0 group-hover:opacity-100 transition"
+//         >
+//           {rightAction}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
 
 function SectionHeader({
   title,
@@ -1222,12 +1277,14 @@ function SectionHeader({
   onToggle,
   rightAction,
   currentUser,
-  icon: LeftIcon, // optional left icon
+  icon: LeftIcon,
 }) {
   return (
     <div
       onClick={onToggle}
       className="
+        sticky top-0 z-30
+        bg-white
         group
         flex items-center justify-between
         px-4 py-2 mx-2 mt-2
@@ -1237,31 +1294,17 @@ function SectionHeader({
         hover:bg-slate-100
       "
     >
-      {/* LEFT SIDE */}
       <div className="flex items-center gap-2">
-        {/* Optional left icon */}
-        {LeftIcon && (
-          <LeftIcon size={16} className="text-slate-500" />
-        )}
+        {LeftIcon && <LeftIcon size={16} className="text-slate-500" />}
 
-       
+        <span className="text-sm font-medium text-slate-700">{title}</span>
 
-        {/* Title */}
-        <span className="text-sm font-medium text-slate-700">
-          {title}
-        </span>
-         {/* Arrow (right → down when open) */}
         <ChevronRight
           size={14}
-          className={`
-            text-slate-400
-            transition-transform duration-200
-            ${open ? "rotate-90" : ""}
-          `}
+          className={`text-slate-400 transition-transform ${open ? "rotate-90" : ""}`}
         />
       </div>
 
-      {/* RIGHT ACTION (admin only) */}
       {currentUser?.superUser && rightAction && (
         <div
           onClick={(e) => e.stopPropagation()}
@@ -1273,7 +1316,6 @@ function SectionHeader({
     </div>
   );
 }
-
 
 /* ---------------- MAIN SIDEBAR ---------------- */
 // export default function SlackSidebar({
@@ -2328,7 +2370,7 @@ export default function SlackSidebar({
   };
 
   return (
-    <div className="w-80 h-screen flex flex-col border-r bg-white border rounded-md">
+    <div className="w-full h-screen flex flex-col border-r bg-white rounded-md overflow-hidden scrollbar-hide">
       {/* ---------------- HEADER ---------------- */}
       <div className="p-4 border-b">
         <h2 className="text-xl font-bold mb-3">Messages</h2>
@@ -2362,68 +2404,69 @@ export default function SlackSidebar({
           onToggle={() => setFavoritesOpen((p) => !p)}
         /> */}
         <SectionHeader
-  title="Favorites"
-  icon={Star}
-  open={favoritesOpen}
-  onToggle={() => setFavoritesOpen(p => !p)}
-/>
+          title="Favorites"
+          icon={Star}
+          open={favoritesOpen}
+          onToggle={() => setFavoritesOpen((p) => !p)}
+        />
         {/* ⭐ FAVORITES */}
-
-        {favoritesOpen &&
-          (favoriteDMs.length > 0 || favoriteChannels.length > 0) && (
-            <>
-              {/* Favorite Channels */}
-              {favoriteChannels.map((ch) => (
-                <div
-                  key={`fav-channel-${ch._id}`}
-                  onClick={() => openChannel(ch)}
-                  className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100"
-                >
-                  <span
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleFavoriteChannel(ch);
-                    }}
+        <div className="overflow-y-scroll scroll max-h-[50%] p-2 scrollbar-hide ">
+          {favoritesOpen &&
+            (favoriteDMs.length > 0 || favoriteChannels.length > 0) && (
+              <>
+                {/* Favorite Channels */}
+                {favoriteChannels.map((ch) => (
+                  <div
+                    key={`fav-channel-${ch._id}`}
+                    onClick={() => openChannel(ch)}
+                    className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100"
                   >
-                    {isChannelFavorite(ch._id) ? "⭐" : "☆"}
-                  </span>
-                  # {ch.name}
-                  <div className="">
-                    {channelUnread[ch._id] > 0 && (
-                      <span className="bg-red-500 text-white text-xs px-2 rounded-full">
-                        {channelUnread[ch._id]}
-                      </span>
-                    )}
+                    <span
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFavoriteChannel(ch);
+                      }}
+                    >
+                      {isChannelFavorite(ch._id) ? "⭐" : "☆"}
+                    </span>
+                    # {ch.name}
+                    <div className="">
+                      {channelUnread[ch._id] > 0 && (
+                        <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+                          {channelUnread[ch._id]}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-              {/* Favorite DMs */}
-              {favoriteDMs.map((u) => (
-                <div
-                  key={`fav-dm-id-${u._id}`}
-                  onClick={() => onSelectUser(u)}
-                  className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100"
-                >
-                  <span
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleFavoriteDM(u);
-                    }}
+                ))}
+                {/* Favorite DMs */}
+                {favoriteDMs.map((u) => (
+                  <div
+                    key={`fav-dm-id-${u._id}`}
+                    onClick={() => onSelectUser(u)}
+                    className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100"
                   >
-                    {isDMFavorite(u._id) ? "⭐" : "☆"}
-                  </span>{" "}
-                  {u.name}
-                  <div>
-                    {unread[u._id] > 0 && (
-                      <span className="bg-red-500 text-white text-xs px-2 rounded-full">
-                        {unread[u._id]}
-                      </span>
-                    )}
+                    <span
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFavoriteDM(u);
+                      }}
+                    >
+                      {isDMFavorite(u._id) ? "⭐" : "☆"}
+                    </span>{" "}
+                    {u.name}
+                    <div>
+                      {unread[u._id] > 0 && (
+                        <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+                          {unread[u._id]}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </>
-          )}
+                ))}
+              </>
+            )}
+        </div>
 
         {/* #️⃣ CHANNELS */}
         {/* <SectionHeader
@@ -2450,12 +2493,12 @@ export default function SlackSidebar({
           }
         /> */}
         <SectionHeader
-  title="Channels"
-  icon={Hash}
-  open={channelOpen}
-  onToggle={() => setChannelOpen(p => !p)}
-  currentUser={currentUser}
-  rightAction={
+          title="Channels"
+          icon={Hash}
+          open={channelOpen}
+          onToggle={() => setChannelOpen((p) => !p)}
+          currentUser={currentUser}
+          rightAction={
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -2463,92 +2506,112 @@ export default function SlackSidebar({
               }}
               className="text-xl"
             >
-             <Plus size={16} />
+              <Plus size={16} />
             </button>
           }
-/>
+        />
+        <div className={`overflow-scroll max-h-[50%] scrollbar-hide p-2 `}>
+          {channelOpen &&
+            filteredChannels.map((ch) => (
+              <div
+                key={`channel-${ch._id}`}
+                onClick={() => openChannel(ch)}
+                className={`mx-3 my-1 p-3 rounded-lg cursor-pointer flex justify-between items-center  ${
+                  selectedChannel?._id === ch._id
+                    ? "bg-blue-100"
+                    : "hover:bg-gray-100"
+                }`}
+              >
+                <div className="flex gap-2">
+                  {ch.channelType == "private" ? (
+                    <Lock className="w-4 h-4 text-yellow-500" />
+                  ) : (
+                    <BsPeople className="w-4 h-4 text-green-500" />
+                  )}
+                  <span># {ch.name}</span>
+                </div>
 
-        {channelOpen &&
-          filteredChannels.map((ch) => (
-            <div
-              key={`channel-${ch._id}`}
-              onClick={() => openChannel(ch)}
-              className={`mx-3 my-1 p-3 rounded-lg cursor-pointer flex justify-between items-center ${
-                selectedChannel?._id === ch._id
-                  ? "bg-blue-100"
-                  : "hover:bg-gray-100"
-              }`}
-            >
-              <div className="flex gap-2">
-                {ch.channelType == "private" ? (
-                  <Lock className="w-4 h-4 text-yellow-500" />
-                ) : (
-                  <BsPeople className="w-4 h-4 text-green-500" />
-                )}
-                <span># {ch.name}</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleFavoriteChannel(ch);
-                  }}
-                >
-                  {isChannelFavorite(ch._id) ? "⭐" : "☆"}
-                </span>
-                <span
-                  className="text-blue-400 hover:text-blue-600"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleEditChannel(ch);
-                  }}
-                >
-                  <FiEdit size={14} />
-                </span>
-
-                <span>
-                  <FiTrash2
-                    size={14}
-                    className="text-red-400 hover:text-red-600 cursor-pointer transition"
+                <div className="flex items-center gap-2">
+                  <span
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDeleteChannel(ch._id);
+                      toggleFavoriteChannel(ch);
                     }}
-                    
-                  />
-                </span>
-
-                {channelUnread[ch._id] > 0 && (
-                  <span className="bg-red-500 text-white text-xs px-2 rounded-full">
-                    {channelUnread[ch._id]}
+                  >
+                    {isChannelFavorite(ch._id) ? "⭐" : "☆"}
                   </span>
-                )}
+                  <span
+                    className="text-blue-400 hover:text-blue-600"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditChannel(ch);
+                    }}
+                  >
+                    <FiEdit size={14} />
+                  </span>
+
+                  <span>
+                    <FiTrash2
+                      size={14}
+                      className="text-red-400 hover:text-red-600 cursor-pointer transition"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteChannel(ch._id);
+                      }}
+                    />
+                  </span>
+
+                  {channelUnread[ch._id] > 0 && (
+                    <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+                      {channelUnread[ch._id]}
+                    </span>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+        </div>
 
         {/* 💬 DIRECT MESSAGES */}
         <SectionHeader
           title="Direct Messages"
           open={dmOpen}
           onToggle={() => setDmOpen((p) => !p)}
-            icon={MessageCircle}
+          icon={MessageCircle}
         />
 
         {/* {dmOpen &&
           filteredUsers.map((u) => ( */}
         {dmOpen &&
           groupedUsers.map((group) => (
-            <div key={group.key} className="mb-2">
+            <div
+              key={group.key}
+              className={`mb-2 max-h-72 overflow-y-auto relative scrollbar-hide`}
+            >
               {/* Accordion Header */}
-              <div
+              {/* <div
                 onClick={() => toggleGroup(group.key)}
-                className="px-4 py-2 cursor-pointer font-semibold hover:bg-slate-50 hover:rounded rounded-lg flex justify-between items-center"
+                className="px-4 py-2 cursor-pointer font-semibold hover:bg-slate-50 hover:rounded rounded-lg flex justify-between items-center position-striky"
               >
                 <span>{group.label}</span>
                 <span>{openGroups[group.key] ? "▾" : "▸"}</span>
-              </div>
+              </div> */}
+               {/* GROUP HEADER (STICKY) */}
+      <div
+        onClick={() => toggleGroup(group.key)}
+        className="
+          sticky top-0 z-20
+          bg-white
+          px-4 py-2
+          font-semibold
+          flex justify-between items-center
+          cursor-pointer
+          border-b
+          scrollbar-hide
+        "
+      >
+        <span>{group.label}</span>
+        <span>{openGroups[group.key] ? "▾" : "▸"}</span>
+      </div>
 
               {/* Accordion Body */}
               {openGroups[group.key] &&
@@ -2556,7 +2619,7 @@ export default function SlackSidebar({
                   <div key={`dm-${u._id}`} className="py-3">
                     <div
                       onClick={() => onSelectUser(u)}
-                      className={`mx-3 my-1 rounded-lg cursor-pointer flex justify-between items-center ${
+                      className={`mx-3 my-1 rounded-lg cursor-pointer flex justify-between items-center p-2  ${
                         selectedUser?._id === u._id
                           ? "bg-purple-100"
                           : "hover:bg-gray-100"
@@ -2568,30 +2631,28 @@ export default function SlackSidebar({
                             isOnline(u._id) ? "bg-green-500" : "bg-gray-400"
                           }`}
                         /> */}
-                         <div className="relative">
-            {u.photo ? (
-              <img
-                src={u.photo}
-                alt={u.name}
-                className="w-9 h-9 rounded-full object-cover border"
-              />
-            ) : (
-              <div className="w-9 h-9 rounded-full  bg-indigo-500 text-white flex items-center justify-center text-sm font-semibold">
-                {u.name?.charAt(0).toUpperCase()}
-              </div>
-            )}
+                        <div className="relative">
+                          {u.photo ? (
+                            <img
+                              src={u.photo}
+                              alt={u.name}
+                              className="w-9 h-9 rounded-full object-cover border"
+                            />
+                          ) : (
+                            <div className="w-9 h-9 rounded-full  bg-indigo-500 text-white flex items-center justify-center text-sm font-semibold">
+                              {u.name?.charAt(0).toUpperCase()}
+                            </div>
+                          )}
 
-            {/* Online indicator */}
-            <span
-              className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-white ${
-                isOnline(u._id) ? "bg-green-500" : "bg-gray-400"
-              }`}
-            />
-          </div>
+                          {/* Online indicator */}
+                          <span
+                            className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-white ${
+                              isOnline(u._id) ? "bg-green-500" : "bg-gray-400"
+                            }`}
+                          />
+                        </div>
                         <span>{u.name}</span>
                       </div>
-                      
-
                       <div className="flex items-center gap-2 p-1">
                         {unread[u._id] > 0 && (
                           <span className="bg-red-500 text-white text-xs px-2 rounded-full">

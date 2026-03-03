@@ -162,7 +162,7 @@ const Sidebar = () => {
   return (
     <div className="">
       <section
-        className={`bg-white dark:md:bg-gray-900  max-md:hidden max-h-dvh  transition-all duration-500 flex flex-col  ${arrowClicked ? "w-[60px]" : "w-52 dark:w-48"
+        className={`bg-white dark:md:bg-gray-900  max-md:hidden max-h-dvh  transition-all duration-500 flex flex-col   ${arrowClicked ? "w-[60px]" : "w-52 dark:w-48 "
           }`}
       >
         <ToastContainer />
@@ -347,7 +347,7 @@ const Sidebar = () => {
                       >
                         <FaSlack />
 
-                        {!arrowClicked && <p className="text-sm">Slack</p>}
+                        {!arrowClicked && <p className="text-sm">Urai</p>}
                       </div>
                     )}
                   </div>

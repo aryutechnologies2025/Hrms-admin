@@ -750,6 +750,10 @@ export default function Slack() {
   const [channelRefresh, setChannelRefresh] = useState(false);
   const [activeThread, setActiveThread] = useState(null);
   // activeThread = parent message object
+   const [mobileView, setMobileView] = useState("sidebar");
+// sidebar | chat | thread
+  // responsive sidebar
+
 
   /* LOAD CURRENT USER */
   useEffect(() => {
@@ -841,6 +845,7 @@ export default function Slack() {
   const handleSelectUser = async (user) => {
     setSelectedChannel(null);
     setSelectedUser(user);
+    setMobileView("chat"); // move to chat screen
 
     // clear unread immediately
     setUnread((prev) => ({ ...prev, [user._id]: 0 }));
@@ -1020,12 +1025,21 @@ export default function Slack() {
   setChannelUnread={setChannelUnread}
   channelUnread={channelUnread}
 /> */}
-<div className="flex h-screen overflow-hidden ">
+<div className="h-screen w-full flex overflow-hidden ">
    {/* Sidebar */}
-  <div className="
-     flex
-      border-r
-  ">
+  <div 
+
+   className={`
+      fixed md:static
+      z-40
+      h-full
+      w-full md:w-80
+      bg-white
+      transition-transform duration-300
+      ${mobileView === "sidebar" ? "translate-x-0" : "-translate-x-[110%] "}
+      md:translate-x-0
+    `}
+  >
   <Slack_sidebar
         socket={socket}
         currentUser={currentUser}
@@ -1038,6 +1052,8 @@ export default function Slack() {
         onSelectChannel={(ch) => {
           setSelectedChannel(ch);
           setSelectedUser(null);
+          setMobileView("chat");
+          
         }}
         unread={unread}
         onlineUsers={onlineUsers}
@@ -1046,10 +1062,19 @@ export default function Slack() {
         favorites={favorites}
         setFavorites={setFavorites}
          setChannelRefresh={setChannelRefresh}
+         setMobileView={setMobileView}
+         mobileView={mobileView}
       />
   </div>
     {/* Chat Window */}
-  <div className="flex-1 flex">
+  <div 
+  // className="flex-1 flex"
+   className={`
+      flex-1 flex
+      ${mobileView === "chat" ? "block" : "hidden"}
+      md:block
+    `}
+  >
       <Slack_chatwindow
         users={users}
         channels={chaneel}
@@ -1065,6 +1090,8 @@ export default function Slack() {
         setChannelUnread={setChannelUnread}
         activeThread={activeThread}
         setActiveThread={setActiveThread}
+         setMobileView={setMobileView}
+         mobileView={mobileView}
       />
 </div>
 </div>
