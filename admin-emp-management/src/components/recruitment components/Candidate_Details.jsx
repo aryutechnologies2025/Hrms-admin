@@ -36,8 +36,8 @@ const Candidate_Details = () => {
   console.log("candidateDetails:", candidateDetails);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState();
+  const [limit, setLimit] = useState();
   const [filterStartDate, setFilterStartDate] = useState(null);
   const [filterEndDate, setFilterEndDate] = useState(null);
   const [filterInterviewStatus, setFilterInterviewStatus] = useState("");

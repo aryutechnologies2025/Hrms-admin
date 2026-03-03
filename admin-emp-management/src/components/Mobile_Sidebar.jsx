@@ -1041,7 +1041,7 @@ const Mobile_Sidebar = () => {
                           >
                             <FaSlack />
 
-                            {!arrowClicked && <p className="text-sm">Slack</p>}
+                            {!arrowClicked && <p className="text-sm">Urai</p>}
                           </div>
                         }
                       </div>

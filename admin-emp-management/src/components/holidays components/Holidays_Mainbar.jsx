@@ -74,21 +74,22 @@ const Holidays_Mainbar = () => {
   const currentYear = new Date().getFullYear();
 
   // 🔹 generate years from 2020 → current year
- 
 
   const [years, setYears] = useState(currentYear);
 
-   useEffect(() => {
-    try{
+  useEffect(() => {
+    try {
       setYears(new Date().getFullYear());
-        axios.get(`${API_URL}/api/upcomingholiday/holidays/years`).then((res) => {
-    setYears(res.data.data || []);
-  },[years]);
-}
-  catch(error){
-    console.log(error)
-  }
-}, []);
+      axios.get(`${API_URL}/api/upcomingholiday/holidays/years`).then(
+        (res) => {
+          setYears(res.data.data || []);
+        },
+        [years],
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
   const handleEditClick = async (rowData) => {
     setHolidayDate(rowData.date.split("T")[0]);
     setHolidayReason(rowData.reason);
@@ -100,7 +101,7 @@ const Holidays_Mainbar = () => {
     try {
       let response = await axios.delete(
         `${API_URL}/api/upcomingholiday/delete-upcomingholiday/${rowData._id}`,
-        { withCredentials: true }
+        { withCredentials: true },
       );
       fetchHolidaysList();
       toast.success("Deleted Successfully!");
@@ -150,7 +151,7 @@ const Holidays_Mainbar = () => {
       const response = await axios.post(
         `${API_URL}/api/upcomingholiday/create-upcomingholiday`,
         payload,
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setHolidayDate("");
       setHolidayReason("");
@@ -174,7 +175,7 @@ const Holidays_Mainbar = () => {
           reason: holidayReason,
           date: holidayDate,
           withCredentials: true,
-        }
+        },
       );
 
       setHolidayDate("");
@@ -200,7 +201,7 @@ const Holidays_Mainbar = () => {
             years,
           },
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setHolidaysList(response.data.data);
       setLoading(false);
@@ -209,9 +210,6 @@ const Holidays_Mainbar = () => {
       setLoading(false);
     }
   };
-
- 
-
 
   useEffect(() => {
     fetchHolidaysList();
@@ -286,11 +284,12 @@ const Holidays_Mainbar = () => {
                     onChange={(e) => setYears(Number(e.target.value))}
                     className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    {Array.isArray(years) && years.map((y) => (
-                      <option key={y} value={y}>
-                        {y}
-                      </option>
-                    ))}
+                    {Array.isArray(years) &&
+                      years.map((y) => (
+                        <option key={y} value={y}>
+                          {y}
+                        </option>
+                      ))}
                   </select>
 
                   {/* Submit Button */}
@@ -452,15 +451,21 @@ const Holidays_Mainbar = () => {
                           Add Holiday Date
                         </p>
                       </div>
+
+                      {/* default date range set min="1900-01-01"
+                          max="2099-12-31" */}
                       <div className="flex flex-col gap-1">
                         <input
                           type="date"
                           id="holiday date"
                           className={`border-2  gray-300 rounded-xl px-4  outline-none h-10 w-full md:w-96`}
                           //    onKeyUp={handleKeyUp}
+                          min="1900-01-01"
+                          max="2099-12-31"
                           value={holidayDate}
                           onChange={(e) => setHolidayDate(e.target.value)}
                         />
+                       
                         {addUpcoimgHolidayError.date && (
                           <p className="text-red-500 text-sm">
                             {addUpcoimgHolidayError.date}
@@ -563,13 +568,26 @@ const Holidays_Mainbar = () => {
                         </p>
                       </div>
                       <div className="flex flex-col gap-1">
-                        <input
+                        {/* <input
                           type="date"
                           id="holiday date"
                           className={`border-2  gray-300 rounded-xl px-4  outline-none h-10 w-full md:w-96`}
                           //    onKeyUp={handleKeyUp}
                           value={holidayDate}
                           onChange={(e) => setHolidayDate(e.target.value)}
+                        /> */}
+                        <input
+                          type="text"
+                          placeholder="dd-mm-yyyy"
+                          className="border-2 rounded-xl px-4 outline-none h-10 w-full md:w-96"
+                          value={holidayDate}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            const regex = /^\d{2}-\d{2}-\d{4}$/;
+                            if (value === "" || regex.test(value)) {
+                              setHolidayDate(value);
+                            }
+                          }}
                         />
                         {editUpcoimgHolidayError.date && (
                           <p className="text-red-500 text-sm">
