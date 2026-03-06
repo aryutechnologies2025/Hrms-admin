@@ -2015,7 +2015,7 @@ export default function Slack_chatwindow({
             </div>
 
             {/* adding vedio call */}
-            <div className="flex items-center space-x-2">
+            {/* <div className="flex items-center space-x-2">
             <button className="p-2.5 rounded-full hover:bg-gray-100 transition-colors text-gray-600">
               <Phone className="w-5 h-5" />
             </button>
@@ -2028,7 +2028,7 @@ export default function Slack_chatwindow({
             >
               <MoreVertical className="w-5 h-5" />
             </button>
-          </div>
+          </div> */}
 
           </div>
 

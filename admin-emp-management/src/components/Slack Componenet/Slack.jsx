@@ -724,7 +724,7 @@
 // }
 
 //Besting working main with unread from db
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import { connectSocket } from "../../services/socket";
 import Slack_sidebar from "./Slack_sidebar";
@@ -809,6 +809,178 @@ export default function Slack() {
         setUnread(map);
       });
   }, [currentUser]);
+
+
+  //  ///////////////////////
+/////////////////////////
+/* ---------------- NOTIFICATION SYSTEM ---------------- */
+
+/* ---------------- NOTIFICATION SYSTEM ---------------- */
+
+const tabActiveRef = useRef(true);
+const unreadRef = useRef(0);
+const soundRef = useRef(null);
+
+const usersRef = useRef([]);
+const channelRef = useRef([]);
+const selectedUserRef = useRef(null);
+const selectedChannelRef = useRef(null);
+
+/* keep latest state in refs */
+useEffect(() => {
+  usersRef.current = users;
+  channelRef.current = chaneel;
+  selectedUserRef.current = selectedUser;
+  selectedChannelRef.current = selectedChannel;
+}, [users, chaneel, selectedUser, selectedChannel]);
+
+/* initialize notification sound */
+useEffect(() => {
+  soundRef.current = new Audio("/notification.mp3");
+  soundRef.current.preload = "auto";
+}, []);
+
+/* unlock audio for browsers */
+useEffect(() => {
+  const unlock = () => {
+    if (!soundRef.current) return;
+    soundRef.current.play()
+      .then(() => {
+        soundRef.current.pause();
+        soundRef.current.currentTime = 0;
+      })
+      .catch(() => {});
+    window.removeEventListener("click", unlock);
+  };
+
+  window.addEventListener("click", unlock);
+}, []);
+
+/* request browser permission */
+useEffect(() => {
+  if (!("Notification" in window)) return;
+
+  if (Notification.permission !== "granted") {
+    Notification.requestPermission();
+  }
+}, []);
+
+/* track tab visibility */
+useEffect(() => {
+  const handleVisibility = () => {
+    tabActiveRef.current = !document.hidden;
+  };
+
+  document.addEventListener("visibilitychange", handleVisibility);
+  return () =>
+    document.removeEventListener("visibilitychange", handleVisibility);
+}, []);
+
+/* reset tab counter when returning */
+useEffect(() => {
+  const reset = () => {
+    unreadRef.current = 0;
+    document.title = "Admin Dashboard";
+  };
+
+  window.addEventListener("focus", reset);
+  return () => window.removeEventListener("focus", reset);
+}, []);
+
+/* browser notification helper */
+const showNotification = (title, body) => {
+  if (!("Notification" in window)) return;
+  if (Notification.permission !== "granted") return;
+
+  const notification = new Notification(title, {
+    body,
+    icon: "/chat-icon.png"
+  });
+
+  notification.onclick = () => {
+    window.focus();
+  };
+};
+
+/* update tab title badge */
+const updateTabTitle = (text) => {
+  unreadRef.current += 1;
+  document.title = `(${unreadRef.current}) ${text}`;
+};
+
+/* message preview helper */
+const getPreview = (msg) => {
+  if (msg.text && msg.files?.length) return `Sent a file\n${msg.text}`;
+  if (msg.text) return msg.text;
+  if (msg.files?.length) return "Sent a file";
+  return "New message";
+};
+
+/* ---------------- SOCKET NOTIFICATIONS ---------------- */
+
+useEffect(() => {
+  if (!socket || !currentUser) return;
+
+  const handleDMNotification = (msg) => {
+
+    if (msg.receiverId !== currentUser._id) return;
+    if (msg.senderId === currentUser._id) return;
+
+    const chatOpen =
+      selectedUserRef.current?._id === msg.senderId;
+
+    /* skip only if same chat AND tab active */
+    if (chatOpen && tabActiveRef.current) return;
+
+    const sender = usersRef.current.find(
+      (u) => u._id === msg.senderId
+    );
+
+    const senderName = sender?.name || "User";
+    const preview = getPreview(msg);
+
+    soundRef.current?.play().catch(()=>{});
+
+    showNotification(`Message from ${senderName}`, preview);
+    updateTabTitle(`${senderName}: ${preview}`);
+  };
+
+  const handleChannelNotification = (msg) => {
+
+    if (!msg.channelId) return;
+    if (msg.senderId === currentUser._id) return;
+
+    const channelOpen =
+      selectedChannelRef.current?._id === msg.channelId;
+
+    /* skip only if same channel AND tab active */
+    if (channelOpen && tabActiveRef.current) return;
+
+    const channel = channelRef.current.find(
+      (c) => c._id === msg.channelId
+    );
+
+    const channelName = channel?.name || "channel";
+    const preview = getPreview(msg);
+
+    soundRef.current?.play().catch(()=>{});
+
+    showNotification(`${msg.senderName} in #${channelName}`, preview);
+    updateTabTitle(`#${channelName}: ${preview}`);
+  };
+
+  socket.on("receive_dm", handleDMNotification);
+  socket.on("receive_channel_message", handleChannelNotification);
+
+  return () => {
+    socket.off("receive_dm", handleDMNotification);
+    socket.off("receive_channel_message", handleChannelNotification);
+  };
+
+}, [socket, currentUser]);
+
+// ////////////
+
 
   /* RECEIVE MESSAGE → INCREASE UNREAD */
   useEffect(() => {
@@ -982,7 +1154,7 @@ export default function Slack() {
     if (!socket || !currentUser || !users?.length) return;
 
     users.forEach((dm) => {
-      socket.emit("join_dm", {
+      socket.emit("join_dm",{
         senderId: currentUser?._id,
         receiverId: dm?._id, // other user
       });
