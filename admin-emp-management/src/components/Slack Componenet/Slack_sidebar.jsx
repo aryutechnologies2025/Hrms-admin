@@ -422,6 +422,8 @@ import { BsGlobeCentralSouthAsia, BsPeople } from "react-icons/bs";
 import { GiAllForOne } from "react-icons/gi";
 import { Star, Hash, MessageCircle, Plus } from "lucide-react";
 import { ChevronRight } from "lucide-react";
+import { clearChannel, clearDM, setSelectedChannel, setSelectedUser } from "../../redux/chatSlice";
+import { useDispatch } from "react-redux";
 /* ---------------- MODAL ---------------- */
 function CreateChannelModal({
   onClose,
@@ -2149,6 +2151,8 @@ export default function SlackSidebar({
   // edit channels and users array to single array
   const [editChannel, setEditChannel] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  // redux dispatch
+  const dispatch = useDispatch();
 
   console.log("onlineUsers", onlineUsers, users);
   // helper function
@@ -2192,7 +2196,13 @@ export default function SlackSidebar({
   );
   /* ---------------- OPEN CHANNEL ---------------- */
   const openChannel = (channel) => {
-    onSelectChannel(channel);
+    // onSelectChannel(channel);
+     dispatch(setSelectedUser(null));        // close DM
+  dispatch(setSelectedChannel(channel));       // set active channel
+
+  dispatch(clearChannel(channel._id));         // clear unread
+
+  onSelectChannel(channel);                    // UI / API logic
 
     socket.emit("join_channel", { channelId: channel._id });
 
@@ -2470,7 +2480,13 @@ export default function SlackSidebar({
                 {favoriteDMs.map((u) => (
                   <div
                     key={`fav-dm-id-${u._id}`}
-                    onClick={() => onSelectUser(u)}
+                    // onClick={() => onSelectUser(u)}
+                    onClick={() => {
+  dispatch(setSelectedChannel(null));   // close channel
+  dispatch(setSelectedUser(u));         // set active DM
+  dispatch(clearDM(u._id));             // clear unread count
+  onSelectUser(u);                      // UI / API logic
+}}
                     className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100"
                   >
                     <span
@@ -2671,7 +2687,12 @@ export default function SlackSidebar({
                   group.users.map((u) => (
                     <div key={`dm-${u._id}`} className="py-3">
                       <div
-                        onClick={() => onSelectUser(u)}
+                      onClick={() => {
+  dispatch(setSelectedChannel(null));   // close channel
+  dispatch(setSelectedUser(u));         // set active DM
+  dispatch(clearDM(u._id));             // clear unread count
+  onSelectUser(u);                      // UI / API logic
+}}
                         className={`mx-3 my-1 rounded-lg cursor-pointer flex justify-between items-center p-2  ${
                           selectedUser?._id === u._id
                             ? "bg-purple-100"

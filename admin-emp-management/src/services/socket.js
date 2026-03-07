@@ -33,7 +33,7 @@ const SOCKET_URL = "https://hrms.aryuprojects.com";//staging socket
 
 let socket = null;
 
-export function connectSocket(token) {
+export function connectSocket(userId,Token) {
   //  Prevent multiple connections
   if (socket) return socket;
 
@@ -43,6 +43,14 @@ export function connectSocket(token) {
     // withCredentials: true,
     //  enable later when JWT ready
     // auth: { token },
+    //  query: { userId }
+      auth: { Token },
+
+    query: { userId },
+
+    reconnection: true,
+    reconnectionAttempts: 5,
+    reconnectionDelay: 3000
   });
 
   socket.on("connect", () => {

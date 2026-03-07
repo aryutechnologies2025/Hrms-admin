@@ -428,14 +428,14 @@ export default function Slack_chatwindow({
   };
 
   // All existing useEffect hooks remain the same...
-  useEffect(() => {
-    return () => {
-      socket.emit("stop_typing", {
-        senderId: me,
-        receiverId: other,
-      });
-    };
-  }, [selectedUser]);
+  // useEffect(() => {
+  //   return () => {
+  //     socket.emit("stop_typing", {
+  //       senderId: me,
+  //       receiverId: other,
+  //     });
+  //   };
+  // }, [selectedUser]);
 
   // JOIN + LOAD
 

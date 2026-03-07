@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
-import { createContext, lazy } from "react";
+import { createContext, lazy, useRef } from "react";
 import Employees from "./pages/Employees";
 import CreateEmployee from "./pages/CreateEmployee";
 import EmployeeDetails from "./pages/EmployeeDetails";
@@ -145,17 +145,29 @@ import Social_ContentMaster_Main from "./components/social media/Social_ContentM
 import Digital_list_main from "./components/digital team/Digital_list_main";
 import Technology_Main from "./pages/Portfolio pages/Technology_Main";
 import Portfolio_Main from "./pages/Portfolio pages/Portfolio_Main";
+import { setSocket } from "./redux/socketSlice";
+import { connectSocket } from "./services/socket";
+import { useDispatch, useSelector } from "react-redux";
+import useSocketNotifications from "./hooks/useSocketNotifications";
+import useSocketConnection from "./hooks/useSocketConnection";
+import useSocketEvents from "./hooks/useSocketEvents";
+import { resetTabTitle } from "./notifications/notificationManager";
 
 export const SettingsContext = createContext();
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     const userDetails = localStorage.getItem("hrmsuser");
-
+   
     return userDetails ? true : false;
   });
-  const [dynamicDateFormat, setDynamicDateFormat] = useState("");
+   const socketRef = useRef(null);
 
+  const [dynamicDateFormat, setDynamicDateFormat] = useState("");
+  const dispatch = useDispatch();
+  const selectedUser = useSelector((state) => state.chat.selectedUser);
+
+  const selectedChannel = useSelector((state) => state.chat.selectedChannel);
 
   const settingsApi = async () => {
     const response = await axios.get(`${API_URL}/api/setting/view-setting`);
@@ -167,17 +179,16 @@ function App() {
     settingsApi();
   }, []);
 
-    //  const response = await axios.get(`${API_URL}/api/setting/view-setting`,
-    //   {withCredentials: true}
-    //  );
-    //  const dateFormat = response.data.data[0]?.date_format;
-    //  setDynamicDateFormat(dateFormat);
-     
-    // }
-    // useEffect(() => {
-    //   settingsApi();
-    // },[]);
+  //  const response = await axios.get(`${API_URL}/api/setting/view-setting`,
+  //   {withCredentials: true}
+  //  );
+  //  const dateFormat = response.data.data[0]?.date_format;
+  //  setDynamicDateFormat(dateFormat);
 
+  // }
+  // useEffect(() => {
+  //   settingsApi();
+  // },[]);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -194,30 +205,57 @@ function App() {
 
   const user = JSON.parse(localStorage.getItem("hrmsuser") || "{}");
 
+  // storing socket instance in redux to access across the app without prop drilling
+  useEffect(() => {
+    if (!user?._id) return;
+
+    socketRef.current = connectSocket(user._id);
+
+    dispatch(setSocket(socketRef.current));
+  }, [user]);
+
   const fetchPermissionModule = async () => {
     const user = JSON.parse(localStorage.getItem("hrmsuser"));
 
-   
-    if(!user.superUser) {
-  
+    if (!user.superUser) {
       const response = await axios.get(
-        `${API_URL}/api/hr-permission/get-employee-permission/${user?.employeeId}`
+        `${API_URL}/api/hr-permission/get-employee-permission/${user?.employeeId}`,
       );
       localStorage.setItem(
         "module",
-        JSON.stringify(response?.data?.data[0]?.module || [])
+        JSON.stringify(response?.data?.data[0]?.module || []),
       );
     }
-
-    
-
-    
-
   };
 
   useEffect(() => {
     fetchPermissionModule();
   }, []);
+
+  // const user = JSON.parse(localStorage.getItem("hrms_employee"));
+
+  //  useSocketNotifications(user);
+  useSocketConnection(user);
+
+  useSocketEvents({
+    socket: socketRef.current,
+    currentUser: user,
+    selectedUser,
+    selectedChannel,
+  });
+  useEffect(() => {
+
+  const handleFocus = () => {
+    resetTabTitle();
+  };
+
+  window.addEventListener("focus", handleFocus);
+
+  return () => {
+    window.removeEventListener("focus", handleFocus);
+  };
+
+}, []);
 
   const routesConfig = [
     /* -------------------------------------------
@@ -639,7 +677,7 @@ function App() {
       ),
     },
 
-      {
+    {
       path: "/Reports",
       permissionTitle: "Projects",
       element: (
@@ -657,11 +695,11 @@ function App() {
       permissionTitle: "Clients",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
-          <Digital_list_main/>
+          <Digital_list_main />
         </ProtectedRoute>
       ),
     },
-     {
+    {
       path: "/client-details",
       permissionTitle: "Clients",
       element: (
@@ -670,7 +708,6 @@ function App() {
         </ProtectedRoute>
       ),
     },
-
 
     {
       path: "/project-note-details/:_id",
@@ -692,10 +729,8 @@ function App() {
       ),
     },
 
-
-    
     {
-      path:"/invoice-full",
+      path: "/invoice-full",
       permissionTitle: "Clients",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
@@ -705,7 +740,7 @@ function App() {
     },
 
     {
-      path:"/invoice-edit",
+      path: "/invoice-edit",
       permissionTitle: "Clients",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
@@ -714,9 +749,8 @@ function App() {
       ),
     },
 
-
     {
-      path:"/invoice-pdf",
+      path: "/invoice-pdf",
       permissionTitle: "Clients",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
@@ -725,8 +759,8 @@ function App() {
       ),
     },
 
-      {
-      path:"/invoice-export",
+    {
+      path: "/invoice-export",
       permissionTitle: "Clients",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
@@ -735,9 +769,8 @@ function App() {
       ),
     },
 
-
-       {
-      path:"/invoice-performa",
+    {
+      path: "/invoice-performa",
       permissionTitle: "Clients",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
@@ -746,8 +779,8 @@ function App() {
       ),
     },
 
-       {
-      path:"/invoice-sales",
+    {
+      path: "/invoice-sales",
       permissionTitle: "Clients",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
@@ -756,9 +789,8 @@ function App() {
       ),
     },
 
-
-       {
-      path:"/play-slip",
+    {
+      path: "/play-slip",
       permissionTitle: "Clients",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
@@ -766,8 +798,8 @@ function App() {
         </ProtectedRoute>
       ),
     },
-   {
-      path:"/play-slip-govt",
+    {
+      path: "/play-slip-govt",
       permissionTitle: "Clients",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
@@ -775,7 +807,6 @@ function App() {
         </ProtectedRoute>
       ),
     },
-
 
     /* -------------------------------------------
       FINANCE
@@ -864,7 +895,7 @@ function App() {
       COMPLAINENCE
   --------------------------------------------*/
 
-     {
+    {
       path: "/complaince",
       permissionTitle: "Complaince",
 
@@ -1045,7 +1076,7 @@ function App() {
       ),
     },
 
-       {
+    {
       path: "/bidding-transaction_history",
       permissionTitle: "Bidding",
       element: (
@@ -1055,12 +1086,12 @@ function App() {
       ),
     },
 
-       {
+    {
       path: "/billing_details",
       permissionTitle: "Bidding",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
-          <Billing_details_main/>
+          <Billing_details_main />
         </ProtectedRoute>
       ),
     },
@@ -1100,7 +1131,7 @@ function App() {
       permissionTitle: "Portfolio-technology",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
-          <Portfolio_Main/>
+          <Portfolio_Main />
         </ProtectedRoute>
       ),
     },
@@ -1177,7 +1208,7 @@ function App() {
       permissionTitle: "leads",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
-         <LeadManagement_Mainbar />
+          <LeadManagement_Mainbar />
         </ProtectedRoute>
       ),
     },
@@ -1197,13 +1228,10 @@ function App() {
       ),
     },
 
-      {
+    {
       path: "/invoice_clients",
       element: (
-        <ProtectedRoute
-          isLoggedIn={isLoggedIn}
-          requiredRole={["client"]}
-        >
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole={["client"]}>
           <Client_invoice_main />
         </ProtectedRoute>
       ),
@@ -1240,8 +1268,7 @@ function App() {
       ),
     },
 
-
-      {
+    {
       path: "/settings-invoice",
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
