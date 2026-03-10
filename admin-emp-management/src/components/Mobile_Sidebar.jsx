@@ -32,8 +32,14 @@ import AdminImage from "../assets/Yuvaraj-CEO-Aryu-Academy.png";
 import { GiDiscussion } from "react-icons/gi";
 import { FaSlack } from "react-icons/fa";
 import { FaBusinessTime } from "react-icons/fa6";
+import { useSelector } from "react-redux";
 
 const Mobile_Sidebar = () => {
+  //  redux state 
+  const unreadDM = useSelector((state) => state.chat.unreadDM);
+const unreadChannels = useSelector((state) => state.chat.unreadChannels);
+const totalUnread =Object.values(unreadDM).reduce((a,b)=>a+b,0) +Object.values(unreadChannels).reduce((a,b)=>a+b,0)
+
   let navigate = useNavigate();
 
   const [hamburgerIconClicked, setHamburgerIconClicked] = useState(false);
@@ -1041,7 +1047,21 @@ const Mobile_Sidebar = () => {
                           >
                             <FaSlack />
 
-                            {!arrowClicked && <p className="text-sm">Slack</p>}
+                            {/* {!arrowClicked && <p className="text-sm">Urai</p>} */}
+                             {!arrowClicked && <div className="relative inline-block">
+  <p className="text-sm font-medium relative z-10">
+    Urai
+  </p>
+
+  {totalUnread > 0 && (
+    <span className="absolute -top-2 -right-4 
+      bg-red-500 text-white text-xs 
+      px-2 py-[2px] rounded-full 
+      min-w-[18px] text-center">
+      {totalUnread}
+    </span>
+  )}
+</div>}
                           </div>
                         }
                       </div>

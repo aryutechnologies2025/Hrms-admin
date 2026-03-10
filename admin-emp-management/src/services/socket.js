@@ -26,14 +26,14 @@
 // src/services/socket.js
 import { io } from "socket.io-client";
 
-// const SOCKET_URL = "http://192.168.0.116:5000";
+// const SOCKET_URL = "http://localhost:5000";
 
 const SOCKET_URL = "https://hrms.aryuprojects.com";//staging socket
 // const SOCKET_URL = "https://portal.aryutechnologies.com";//live socket
 
 let socket = null;
 
-export function connectSocket(token) {
+export function connectSocket(userId,Token) {
   //  Prevent multiple connections
   if (socket) return socket;
 
@@ -43,6 +43,14 @@ export function connectSocket(token) {
     // withCredentials: true,
     //  enable later when JWT ready
     // auth: { token },
+    //  query: { userId }
+      auth: { Token },
+
+    query: { userId },
+
+    reconnection: true,
+    reconnectionAttempts: 5,
+    reconnectionDelay: 3000
   });
 
   socket.on("connect", () => {

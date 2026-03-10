@@ -724,16 +724,20 @@
 // }
 
 //Besting working main with unread from db
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
-import { connectSocket } from "../../services/socket";
+// import { connectSocket } from "../../services/socket";
 import Slack_sidebar from "./Slack_sidebar";
 import Slack_chatwindow from "./Slack_chatwindow";
 import { API_URL } from "../../config";
 import Mobile_Sidebar from "../Mobile_Sidebar";
-
+import { useSelector } from "react-redux";
+import useSocketEvents from "../../hooks/useSocketEvents";
 export default function Slack() {
-  const socket = useMemo(() => connectSocket(), []);
+  // const socket = useMemo(() => connectSocket(), []);
+
+  const socket = useSelector((state) => state?.socket?.socket);
+
   const [currentUser, setCurrentUser] = useState(null);
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -750,6 +754,10 @@ export default function Slack() {
   const [channelRefresh, setChannelRefresh] = useState(false);
   const [activeThread, setActiveThread] = useState(null);
   // activeThread = parent message object
+   const [mobileView, setMobileView] = useState("sidebar");
+// sidebar | chat | thread
+  // responsive sidebar
+
 
   /* LOAD CURRENT USER */
   useEffect(() => {
@@ -806,6 +814,20 @@ export default function Slack() {
       });
   }, [currentUser]);
 
+
+
+/////////////////
+//  useSocketEvents({
+//     socket,
+//     currentUser,
+//     selectedUser,
+//     selectedChannel
+//   });
+
+
+////////////////////////
+
+
   /* RECEIVE MESSAGE → INCREASE UNREAD */
   useEffect(() => {
     if (!socket || !currentUser) return;
@@ -841,6 +863,7 @@ export default function Slack() {
   const handleSelectUser = async (user) => {
     setSelectedChannel(null);
     setSelectedUser(user);
+    setMobileView("chat"); // move to chat screen
 
     // clear unread immediately
     setUnread((prev) => ({ ...prev, [user._id]: 0 }));
@@ -977,7 +1000,7 @@ export default function Slack() {
     if (!socket || !currentUser || !users?.length) return;
 
     users.forEach((dm) => {
-      socket.emit("join_dm", {
+      socket.emit("join_dm",{
         senderId: currentUser?._id,
         receiverId: dm?._id, // other user
       });
@@ -1020,12 +1043,21 @@ export default function Slack() {
   setChannelUnread={setChannelUnread}
   channelUnread={channelUnread}
 /> */}
-<div className="flex h-screen overflow-hidden ">
+<div className="h-screen w-full flex overflow-hidden ">
    {/* Sidebar */}
-  <div className="
-     flex
-      border-r
-  ">
+  <div 
+
+   className={`
+      fixed md:static
+      z-40
+      h-full
+      w-full md:w-80
+      bg-white
+      transition-transform duration-300
+      ${mobileView === "sidebar" ? "translate-x-0" : "-translate-x-[110%] "}
+      md:translate-x-0
+    `}
+  >
   <Slack_sidebar
         socket={socket}
         currentUser={currentUser}
@@ -1038,6 +1070,8 @@ export default function Slack() {
         onSelectChannel={(ch) => {
           setSelectedChannel(ch);
           setSelectedUser(null);
+          setMobileView("chat");
+          
         }}
         unread={unread}
         onlineUsers={onlineUsers}
@@ -1046,10 +1080,19 @@ export default function Slack() {
         favorites={favorites}
         setFavorites={setFavorites}
          setChannelRefresh={setChannelRefresh}
+         setMobileView={setMobileView}
+         mobileView={mobileView}
       />
   </div>
     {/* Chat Window */}
-  <div className="flex-1 flex">
+  <div 
+  // className="flex-1 flex"
+   className={`
+      flex-1 flex
+      ${mobileView === "chat" ? "block" : "hidden"}
+      md:block
+    `}
+  >
       <Slack_chatwindow
         users={users}
         channels={chaneel}
@@ -1065,6 +1108,8 @@ export default function Slack() {
         setChannelUnread={setChannelUnread}
         activeThread={activeThread}
         setActiveThread={setActiveThread}
+         setMobileView={setMobileView}
+         mobileView={mobileView}
       />
 </div>
 </div>
