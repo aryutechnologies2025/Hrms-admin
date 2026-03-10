@@ -192,30 +192,37 @@ const Holidays_Mainbar = () => {
   };
 
   const fetchHolidaysList = async () => {
-    try {
-      let response = await axios.get(
-        `${API_URL}/api/upcomingholiday/view-upcomingholiday`,
-        {
-          params: {
-            years,
-          },
+  try {
+    let response = await axios.get(
+      `${API_URL}/api/upcomingholiday/view-upcomingholiday`,
+      {
+        params: {
+          years: years,
         },
-        { withCredentials: true }
-      );
-      setHolidaysList(response.data.data);
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
-    }
-  };
+        withCredentials: true
+      }
+    );
+
+    const decodedData = JSON.parse(atob(response.data.data));
+    
+    console.log("decodedData:", decodedData);
+    
+
+    setHolidaysList(decodedData.data);
+    setLoading(false);
+    
+  } catch (error) {
+    console.log("Error fetching holidays:", error);
+    setLoading(false);
+  }
+};
 
  
 
 
   useEffect(() => {
     fetchHolidaysList();
-  }, [years]);
+  }, []);
 
   useEffect(() => {
     if (
