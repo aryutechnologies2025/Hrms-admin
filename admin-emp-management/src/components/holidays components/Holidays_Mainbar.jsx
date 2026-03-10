@@ -193,14 +193,14 @@ const Holidays_Mainbar = () => {
   };
 
   const fetchHolidaysList = async () => {
-    try {
-      let response = await axios.get(
-        `${API_URL}/api/upcomingholiday/view-upcomingholiday`,
-        {
-          params: {
-            years,
-          },
+  try {
+    let response = await axios.get(
+      `${API_URL}/api/upcomingholiday/view-upcomingholiday`,
+      {
+        params: {
+          years: years,
         },
+
         { withCredentials: true },
       );
       setHolidaysList(response.data.data);
@@ -211,9 +211,10 @@ const Holidays_Mainbar = () => {
     }
   };
 
+
   useEffect(() => {
     fetchHolidaysList();
-  }, [years]);
+  }, []);
 
   useEffect(() => {
     if (

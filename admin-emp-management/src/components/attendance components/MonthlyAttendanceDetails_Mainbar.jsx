@@ -18,7 +18,6 @@ import { FaFileExport } from "react-icons/fa6";
 import Loader from "../Loader";
 import { useDateUtils } from "../../hooks/useDateUtils";
 
-
 const MonthlyAttendanceDetails_Mainbar = () => {
   let navigate = useNavigate();
   const formatDateTime = useDateUtils();
@@ -34,7 +33,6 @@ const MonthlyAttendanceDetails_Mainbar = () => {
   const [loading, setLoading] = useState(true);
 
   const columns = [
-
     {
       field: "sno",
       header: "S.No",
@@ -114,14 +112,15 @@ const MonthlyAttendanceDetails_Mainbar = () => {
       body: (rowData) =>
         rowData?.loginTime ? (
           <p
-            className={`${rowData?.loginTime.split(":")[0] > 10
+            className={`${
+              rowData?.loginTime.split(":")[0] > 10
                 ? "text-red-500"
                 : (rowData?.loginTime.split(":")[0] == 10 &&
-                  rowData?.loginTime.split(":")[1] >= 30) ||
-                  rowData?.loginTime.split(" ")[1] == "pm"
+                      rowData?.loginTime.split(":")[1] >= 30) ||
+                    rowData?.loginTime.split(" ")[1] == "pm"
                   ? "text-red-500"
                   : ""
-              }`}
+            }`}
           >
             {rowData.loginTime}
           </p>
@@ -168,14 +167,16 @@ const MonthlyAttendanceDetails_Mainbar = () => {
             }}
           >
             <p
-              className={`${rowData?.result?.breakTime?.hours >= 1 &&
+              className={`${
+                rowData?.result?.breakTime?.hours >= 1 &&
                 rowData?.result?.breakTime?.seconds >= 0
-                ? "text-red-500"
-                : ""
-                }`}
+                  ? "text-red-500"
+                  : ""
+              }`}
             >
-              {`${rowData?.result?.breakTime?.hours ?? 0}:${rowData?.result?.breakTime?.minutes ?? 0
-                }:${rowData?.result?.breakTime?.seconds ?? 0}`}
+              {`${rowData?.result?.breakTime?.hours ?? 0}:${
+                rowData?.result?.breakTime?.minutes ?? 0
+              }:${rowData?.result?.breakTime?.seconds ?? 0}`}
             </p>
           </div>
         ) : (
@@ -228,20 +229,21 @@ const MonthlyAttendanceDetails_Mainbar = () => {
       body: (rowData) =>
         rowData?.result ? (
           <p
-            className={`${rowData?.result?.payableTime?.hours >= 8
+            className={`${
+              rowData?.result?.payableTime?.hours >= 8
                 ? "text-green-600"
                 : "text-red-600"
-              }`}
+            }`}
           >
             {`${String(rowData?.result?.payableTime?.hours).padStart(
               2,
-              "0"
+              "0",
             )}:${String(rowData?.result?.payableTime?.minutes).padStart(
               2,
-              "0"
+              "0",
             )}:${String(rowData?.result?.payableTime?.seconds).padStart(
               2,
-              "0"
+              "0",
             )}`}
           </p>
         ) : (
@@ -264,7 +266,7 @@ const MonthlyAttendanceDetails_Mainbar = () => {
               .toLocaleLowerCase(),
             year: selectedMonth.getFullYear(),
           },
-        }
+        },
       );
 
       setMonthlyReportList(response.data);
@@ -279,12 +281,12 @@ const MonthlyAttendanceDetails_Mainbar = () => {
     try {
       const monthDate = new Date(selectedMonth);
 
-      const month = `${monthDate.getDate()}-${monthDate.getMonth() + 1}-${monthDate.getFullYear()}`
+      const month = `${monthDate.getDate()}-${monthDate.getMonth() + 1}-${monthDate.getFullYear()}`;
       const response = await axios.get(
         `${API_URL}/api/employees/all-employees-filterdate/${month}`,
         {
           withCredentials: true,
-        }
+        },
       );
 
       // console.log("response", response.data.data);
@@ -321,7 +323,6 @@ const MonthlyAttendanceDetails_Mainbar = () => {
 
   // console.log("summary", summary);
 
-
   // console.log("employeeData", employeeData);
 
   const handleSubmit = async () => {
@@ -335,14 +336,14 @@ const MonthlyAttendanceDetails_Mainbar = () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/attendance/particular-month-attendancelist`,
-        { params: payload, withCredentials: true}
+        { params: payload, withCredentials: true },
       );
 
-      // console.log("response", response)
+      console.log("response", response);
 
       setEmployeeData(response.data.data);
       setSummary(response.data.summary);
-      setEmployeeName(response.data.employee)
+      setEmployeeName(response.data.employee);
 
       // console.log(response.data.data);
     } catch (error) {
@@ -413,10 +414,8 @@ const MonthlyAttendanceDetails_Mainbar = () => {
       ) : (
         <>
           <div>
-
             <div className=" items-center">
               <Mobile_Sidebar />
-
             </div>
 
             <div className="flex justify-end mt-3 md:mt-0 gap-1 items-center">
@@ -431,16 +430,13 @@ const MonthlyAttendanceDetails_Mainbar = () => {
               <p>{">"}</p>
             </div>
             <div className="flex justify-between mt-2 md:mt-4">
-
               <p className="text-2xl md:text-3xl  font-semibold">
                 Monthly Report
               </p>
 
               <div>
                 <button
-                  onClick={() =>
-                    navigate(-1)
-                  }
+                  onClick={() => navigate(-1)}
                   className="text-sm bg-gray-600 hover:bg-gray-500 text-white px-5 py-2 mt-2 md:mt-0 rounded-3xl"
                 >
                   Back
@@ -496,7 +492,6 @@ const MonthlyAttendanceDetails_Mainbar = () => {
                   className="px-2 py-2 bg-gray-200 rounded-md"
                 /> */}
 
-
                     <button
                       onClick={exportToCSV}
                       className="flex flex-wrap mb-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold px-3 py-1 md:py-2 md:px-4 rounded-mditems-center gap-2"
@@ -508,46 +503,195 @@ const MonthlyAttendanceDetails_Mainbar = () => {
                 </div>
                 {/* <div>{employeeName?.name}</div> */}
                 {summary && Object.keys(summary).length > 0 && (
-                  <div className="bg-white p-4 rounded-md shadow-md w-full max-w-md  mt-4">
-                    <h2 className="text-xl font-bold mb-2 text-gray-900">
-                      {employeeName?.name || "Employee"}
-                    </h2>
-                    <h2 className="text-lg font-semibold mb-3 text-gray-800 border-b pb-2">Summary</h2>
+                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-lg w-full  mt-4 border border-gray-200">
+                    {/* Header with decorative element */}
+                    <div className="relative mb-4">
+                      <div className="absolute -top-2 -left-2 w-12 h-12 bg-blue-500 rounded-lg opacity-20 transform rotate-12"></div>
+                      <div className="relative">
+                        <h2 className="text-2xl font-bold text-gray-800 tracking-tight">
+                          {employeeName?.name || "Employee"}
+                        </h2>
+                        <p className="text-sm text-gray-500 mt-1">
+                          Attendance Summary Report
+                        </p>
+                      </div>
+                    </div>
 
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between px-2 py-1 bg-blue-50 rounded">
-                        <span className="text-blue-700 font-medium">Total Days:</span>
-                        <span className="font-semibold text-blue-900">{summary.totalDays ?? 0}</span>
+                    {/* Divider */}
+                    <div className="h-1 w-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mb-4"></div>
+
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-3 gap-3">
+                      {/* Total Days */}
+                      <div className="bg-white p-3 rounded-lg border-l-4 border-blue-500 shadow-sm hover:shadow-md transition-shadow">
+                        <p className="text-xs text-gray-500 uppercase tracking-wider">
+                          Total Days
+                        </p>
+                        <p className="text-xl font-bold text-blue-600">
+                          {summary.totalMonthInDays ?? 0}
+                        </p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg border-l-4 border-blue-500 shadow-sm hover:shadow-md transition-shadow">
+                        <p className="text-xs text-gray-500 uppercase tracking-wider">
+                          Total Working Days
+                        </p>
+                        <p className="text-xl font-bold text-blue-600">
+                          {summary.totalWorkingDays ?? 0}
+                        </p>
                       </div>
 
-                      <div className="flex justify-between px-2 py-1 bg-green-50 rounded">
-                        <span className="text-green-700 font-medium">Present Days:</span>
-                        <span className="font-semibold text-green-900">{summary.presentDaysCount ?? 0}</span>
+                      {/* Present Days */}
+                      <div className="bg-white p-3 rounded-lg border-l-4 border-green-500 shadow-sm hover:shadow-md transition-shadow">
+                        <p className="text-xs text-gray-500 uppercase tracking-wider">
+                          Present
+                        </p>
+                        <p className="text-xl font-bold text-green-600">
+                          {summary.presentDaysCount ?? 0}
+                        </p>
                       </div>
 
-                      <div className="flex justify-between px-2 py-1 bg-red-50 rounded">
-                        <span className="text-red-700 font-medium">Absent Days:</span>
-                        <span className="font-semibold text-red-900">{summary.absentDaysCount ?? 0}</span>
+                      {/* Absent Days */}
+                      <div className="bg-white p-3 rounded-lg border-l-4 border-red-500 shadow-sm hover:shadow-md transition-shadow">
+                        <p className="text-xs text-gray-500 uppercase tracking-wider">
+                          Absent
+                        </p>
+                        <p className="text-xl font-bold text-red-600">
+                          {summary.absentDaysCount ?? 0}
+                        </p>
                       </div>
 
-                      <div className="flex justify-between px-2 py-1 bg-yellow-50 rounded">
-                        <span className="text-yellow-700 font-medium">Late Login:</span>
-                        <span className="font-semibold text-yellow-900">{summary.after1030LoginCount ?? 0}</span>
+                      {/* Holidays */}
+                      <div className="bg-white p-3 rounded-lg border-l-4 border-indigo-500 shadow-sm hover:shadow-md transition-shadow">
+                        <p className="text-xs text-gray-500 uppercase tracking-wider">
+                          Holidays
+                        </p>
+                        <p className="text-xl font-bold text-indigo-600">
+                          {summary.totalHolidaysCount ?? 0}
+                        </p>
                       </div>
 
-                      <div className="flex justify-between px-2 py-1 bg-purple-50 rounded">
-                        <span className="text-purple-700 font-medium">Less Than 8 Hours:</span>
-                        <span className="font-semibold text-purple-900">{summary.lessThan8HoursCount ?? 0}</span>
+                      {/* Casual Leave */}
+                      <div className="bg-white p-3 rounded-lg border-l-4 border-teal-500 shadow-sm hover:shadow-md transition-shadow">
+                        <p className="text-xs text-gray-500 uppercase tracking-wider">
+                          Casual Leave
+                        </p>
+                        <p className="text-xl font-bold text-teal-600">
+                          {summary.casualLeave ?? 0}
+                        </p>
                       </div>
 
-                      <div className="flex justify-between px-2 py-1 bg-indigo-50 rounded">
-                        <span className="text-indigo-700 font-medium">Holidays:</span>
-                        <span className="font-semibold text-indigo-900">{summary.totalHolidaysCount ?? 0}</span>
+                      {/* Compensatory Leave */}
+                      <div className="bg-white p-3 rounded-lg border-l-4 border-cyan-500 shadow-sm hover:shadow-md transition-shadow">
+                        <p className="text-xs text-gray-500 uppercase tracking-wider">
+                          Comp. Leave
+                        </p>
+                        <p className="text-xl font-bold text-cyan-600">
+                          {summary.compensatoryLeaveCount ?? 0}
+                        </p>
+                      </div>
+
+                      {/* Permission */}
+                      <div className="bg-white p-3 rounded-lg border-l-4 border-orange-500 shadow-sm hover:shadow-md transition-shadow">
+                        <p className="text-xs text-gray-500 uppercase tracking-wider">
+                          Permission
+                        </p>
+                        <p className="text-xl font-bold text-orange-600">
+                          {summary.permission ?? 0}
+                        </p>
+                      </div>
+
+                      {/* Half Day Equivalent */}
+                      <div className="bg-white p-3 rounded-lg border-l-4 border-pink-500 shadow-sm hover:shadow-md transition-shadow">
+                        <p className="text-xs text-gray-500 uppercase tracking-wider">
+                          Half Day
+                        </p>
+                        <p className="text-xl font-bold text-pink-600">
+                          {summary.halfDayEquivalent ?? 0}
+                        </p>
+                      </div>
+
+                      {/* LOP */}
+                      <div className="bg-white p-3 rounded-lg border-l-4 border-rose-500 shadow-sm hover:shadow-md transition-shadow">
+                        <p className="text-xs text-gray-500 uppercase tracking-wider">
+                          LOP
+                        </p>
+                        <p className="text-xl font-bold text-rose-600">
+                          {summary.lop ?? 0}
+                        </p>
+                      </div>
+
+                      {/* Late Login */}
+                      <div className="bg-white p-3 rounded-lg border-l-4 border-yellow-500 shadow-sm hover:shadow-md transition-shadow">
+                        <p className="text-xs text-gray-500 uppercase tracking-wider">
+                          Late Login
+                        </p>
+                        <p className="text-xl font-bold text-yellow-600">
+                          {summary.after1030LoginCount ?? 0}
+                        </p>
+                      </div>
+
+                      {/* Less Than 8 Hours */}
+                      <div className="bg-white p-3 rounded-lg border-l-4 border-purple-500 shadow-sm hover:shadow-md transition-shadow">
+                        <p className="text-xs text-gray-500 uppercase tracking-wider">
+                          &lt; 8 Hours
+                        </p>
+                        <p className="text-xl font-bold text-purple-600">
+                          {summary.lessThan8HoursCount ?? 0}
+                        </p>
+                      </div>
+
+                      
+
+                      
+
+                      {/* Summary Card */}
+                      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-3 rounded-lg col-span-2 border border-blue-200 mt-2">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="text-xs text-blue-600 uppercase tracking-wider">
+                              Attendance Rate
+                            </p>
+                            <p className="text-2xl font-bold text-blue-700">
+                              {summary.totalWorkingDays
+                                ? Math.round(
+                                    (summary.presentDaysCount /
+                                      summary.totalWorkingDays) *
+                                      100,
+                                  )
+                                : 0}
+                              %
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs text-blue-600 uppercase tracking-wider">
+                              Working Days
+                            </p>
+                            <p className="text-lg font-semibold text-blue-700">
+                              {summary.totalWorkingDays ?? 0}
+                            </p>
+                          </div>
+                        </div>
+                        {/* Progress bar */}
+                        <div className="w-full bg-gray-200 rounded-full h-2 mt-2 ">
+                          <div
+                            className="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full"
+                            style={{
+                              width: `${
+                                summary.totalWorkingDays
+                                  ? (summary.presentDaysCount /
+                                      summary.totalWorkingDays) *
+                                    100
+                                  : 0
+                              }%`,
+                            }}
+                          >
+
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 )}
-
 
                 <DataTable
                   className="mt-8"
@@ -568,12 +712,12 @@ const MonthlyAttendanceDetails_Mainbar = () => {
                       field={col.field}
                       header={col.header}
                       body={col.body}
-                    // style={{
-                    //   minWidth: "150px",
-                    //   wordWrap: "break-word", // Allow text to wrap
-                    //   overflow: "hidden", // Prevent text overflow
-                    //   whiteSpace: "normal", // Ensure that text wraps within the available space
-                    // }}
+                      // style={{
+                      //   minWidth: "150px",
+                      //   wordWrap: "break-word", // Allow text to wrap
+                      //   overflow: "hidden", // Prevent text overflow
+                      //   whiteSpace: "normal", // Ensure that text wraps within the available space
+                      // }}
                     />
                   ))}
                 </DataTable>
@@ -605,8 +749,6 @@ const MonthlyAttendanceDetails_Mainbar = () => {
         </div>
       )} */}
 
-
-
           {tooltipData?.data?.length > 0 && (
             <div
               className="absolute bg-[#FAFAFA] border border-gray-300 shadow-lg px-5 py-5 rounded text-xs z-50 max-w-[250px] max-h-[200px] overflow-y-auto transition-opacity duration-200"
@@ -630,7 +772,8 @@ const MonthlyAttendanceDetails_Mainbar = () => {
               </p>
               {tooltipData.data
                 .filter(
-                  (entry) => entry.reason !== "Login" && entry.reason !== "Logout"
+                  (entry) =>
+                    entry.reason !== "Login" && entry.reason !== "Logout",
                 )
                 .map((entry, index) => (
                   <div
@@ -647,7 +790,6 @@ const MonthlyAttendanceDetails_Mainbar = () => {
                 ))}
             </div>
           )}
-
         </>
       )}
       <Footer />
