@@ -198,10 +198,10 @@ const Holidays_Mainbar = () => {
       `${API_URL}/api/upcomingholiday/view-upcomingholiday`,
       {
         params: {
-          years: years,
+          years,
         },
-
-        { withCredentials: true },
+        withCredentials: true,
+      }
       );
       setHolidaysList(response.data.data);
       setLoading(false);
