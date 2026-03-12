@@ -33,10 +33,9 @@ const SOCKET_URL = "https://hrms.aryuprojects.com";//staging socket
 
 let socket = null;
 
-export function connectSocket(userId,Token) {
+export function connectSocket(userId,Token){
   //  Prevent multiple connections
   if (socket) return socket;
-
   socket = io(SOCKET_URL, {
     transports: ["websocket"],
       timeout: 20000,
@@ -66,4 +65,5 @@ export function connectSocket(userId,Token) {
   });
 
   return socket;
+
 }

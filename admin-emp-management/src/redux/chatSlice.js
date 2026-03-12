@@ -7,7 +7,8 @@ const chatSlice = createSlice({
     unreadDM: {},
     unreadChannels: {},
     selectedUser: null,
-    selectedChannel: null
+    selectedChannel: null,
+    slackActivePage: false
   },
 
   reducers: {
@@ -44,6 +45,9 @@ const chatSlice = createSlice({
 
     setSelectedChannel(state, action) {
       state.selectedChannel = action.payload;
+    },
+    SetSLackActivePage(state, action) {
+      state.slackActivePage = action.payload;
     }
 
   }
@@ -55,7 +59,8 @@ export const {
   incrementChannel,
   clearChannel,
   setSelectedUser,
-  setSelectedChannel
+  setSelectedChannel,
+  SetSLackActivePage
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

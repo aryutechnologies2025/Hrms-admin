@@ -73,7 +73,7 @@ const EmployeeDetails_Mainbar = () => {
   }, []);
   // console.log(employee);
   const openDocument = (fileName) => {
-    const url = `${API_URL}/api/uploads/documents/${fileName}`;
+    const url = `${API_URL}/api/uploads/employeesDocuments/${fileName}`;
     window.open(url, "_blank");
   };
 
@@ -258,7 +258,7 @@ const EmployeeDetails_Mainbar = () => {
                       <div className=" border-2  rounded-full h-16 w-16">
                         <img
                           className="rounded-full h-16 w-16"
-                          src={`${API_URL}/api/uploads/${employee?.photo}`}
+                          src={`${API_URL}/api/uploads/employeesImages/${employee?.photo}`}
                           alt="Employee Profile"
                         />
                       </div>

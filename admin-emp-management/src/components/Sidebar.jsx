@@ -263,16 +263,16 @@ const Sidebar = () => {
                       : "text-gray-500 hover:bg-blue-100 hover:text-[#4F46E5]"
                   }`}
                 >
-                  <FaSlack />
+                  <FaSlack /> <p className="text-sm font-medium r">Urai</p>
 
                   {!arrowClicked && (
-                    <div className="relative inline-block">
-                      <p className="text-sm font-medium relative z-10">Urai</p>
+                    <div className="flex items-center justify-end w-full ">
+                      
 
                       {totalUnread > 0 && (
                         <span
-                          className="absolute -top-2 -right-4 
-      bg-red-500 text-white text-xs 
+                          className="
+      bg-purple-700 text-white text-xs 
       px-2 py-[2px] rounded-full 
       min-w-[18px] text-center -z-[-10]"
                         >
@@ -403,7 +403,7 @@ const Sidebar = () => {
                             {totalUnread > 0 && (
                               <span
                                 className="absolute -top-2 -right-4 
-      bg-red-500 text-white text-xs 
+      bg-purple-700 text-white text-xs 
       px-2 py-[2px] rounded-full 
       min-w-[18px] text-center"
                               >

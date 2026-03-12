@@ -731,8 +731,9 @@ import Slack_sidebar from "./Slack_sidebar";
 import Slack_chatwindow from "./Slack_chatwindow";
 import { API_URL } from "../../config";
 import Mobile_Sidebar from "../Mobile_Sidebar";
-import { useSelector } from "react-redux";
-import useSocketEvents from "../../hooks/useSocketEvents";
+import { useDispatch, useSelector } from "react-redux";
+import { SetSLackActivePage } from "../../redux/chatSlice";
+
 export default function Slack() {
   // const socket = useMemo(() => connectSocket(), []);
 
@@ -775,6 +776,18 @@ export default function Slack() {
 // } 
 //   },
 // [socket]);
+
+
+  // traking page is active or not
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(SetSLackActivePage(true));
+
+    return () => {
+      dispatch(SetSLackActivePage(false));
+    };
+  }, []);
 
   /* ONLINE USERS */
   useEffect(() => {
@@ -1049,7 +1062,7 @@ export default function Slack() {
 
    className={`
       fixed md:static
-      z-40
+      z-30
       h-full
       w-full md:w-80
       bg-white
@@ -1087,15 +1100,21 @@ export default function Slack() {
     {/* Chat Window */}
   <div 
   // className="flex-1 flex"
+  //  className={`
+  //     flex-1 flex
+  //     ${mobileView === "chat" ? "block" : "hidden"}
+  //     md:block
+  //   `}
    className={`
-      flex-1 flex
-      ${mobileView === "chat" ? "block" : "hidden"}
-      md:block
-    `}
+  flex-1 flex transition-transform duration-300 
+  ${mobileView === "chat" ? "translate-x-0 " : "translate-x-full"}
+  md:translate-x-0 relative 
+`}
   >
       <Slack_chatwindow
         users={users}
         channels={chaneel}
+         setChaneel={setChaneel}
         socket={socket}
         currentUser={currentUser}
         selectedUser={selectedUser}
@@ -1105,11 +1124,14 @@ export default function Slack() {
           setSelectedChannel(ch);
           setSelectedUser(null);
         }}
+         favorites={favorites}
+          setFavorites={setFavorites}
         setChannelUnread={setChannelUnread}
         activeThread={activeThread}
         setActiveThread={setActiveThread}
          setMobileView={setMobileView}
          mobileView={mobileView}
+           setChannelRefresh={setChannelRefresh}
       />
 </div>
 </div>
