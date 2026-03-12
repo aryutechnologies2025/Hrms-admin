@@ -969,7 +969,7 @@ const EditEmployeeDetails_Mainbar = () => {
         setSkills(skillArray);
       }
 
-      const profileImg = `${API_URL}/api/uploads/${employee?.photo}`;
+      const profileImg = `${API_URL}/api/uploads/employeesImages/${employee?.photo}`;
       setSelectedImage(profileImg);
 
       //doucments
@@ -978,7 +978,7 @@ const EditEmployeeDetails_Mainbar = () => {
       const uploadedDocs = documents.map((doc) => ({
         title: doc.title,
         files: doc.files.map((file) => ({
-          file: `${API_URL}/api/uploads/documents/${file.filepath}`,
+          file: `${API_URL}/api/uploads/employeesDocuments/${file.filepath}`,
           preview: file.originalName,
         })),
         // doc_id: doc.document_id,
