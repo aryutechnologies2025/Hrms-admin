@@ -151,7 +151,7 @@ import { useDispatch, useSelector } from "react-redux";
 import useSocketNotifications from "./hooks/useSocketNotifications";
 import useSocketConnection from "./hooks/useSocketConnection";
 import useSocketEvents from "./hooks/useSocketEvents";
-import { resetTabTitle } from "./notifications/notificationManager";
+import { initNotificationSound, resetTabTitle } from "./notifications/notificationManager";
 
 export const SettingsContext = createContext();
 
@@ -234,7 +234,18 @@ function App() {
 
   // const user = JSON.parse(localStorage.getItem("hrms_employee"));
 
-  //  useSocketNotifications(user);
+    
+
+    // storing socket instance in redux to access across the app without prop drilling
+  useEffect(() => {
+    if (!user?._id) return;
+
+    socketRef.current = connectSocket(user._id);
+
+    dispatch(setSocket(socketRef.current));
+  }, [user]);
+
+   //  useSocketNotifications(user);
   useSocketConnection(user);
 
   useSocketEvents({
@@ -256,6 +267,20 @@ function App() {
   };
 
 }, []);
+
+// calling sound 
+useEffect(() => {
+  initNotificationSound();
+}, []);
+
+// Asking permission for browser notifications on app load
+
+useEffect(() => {
+  if ("Notification" in window) {
+    Notification.requestPermission();
+  }
+}, []); 
+
 
   const routesConfig = [
     /* -------------------------------------------

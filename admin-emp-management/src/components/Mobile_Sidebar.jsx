@@ -1055,7 +1055,7 @@ const totalUnread =Object.values(unreadDM).reduce((a,b)=>a+b,0) +Object.values(u
 
   {totalUnread > 0 && (
     <span className="absolute -top-2 -right-4 
-      bg-red-500 text-white text-xs 
+      bg-purple-700 text-white text-xs 
       px-2 py-[2px] rounded-full 
       min-w-[18px] text-center">
       {totalUnread}

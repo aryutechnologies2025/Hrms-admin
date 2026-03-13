@@ -29,6 +29,9 @@ import {
 } from "lucide-react";
 import { use } from "react";
 import { BsViewStacked } from "react-icons/bs";
+import { FiEdit, FiTrash2 } from "react-icons/fi";
+import { MultiSelect } from "primereact/multiselect";
+import Swal from "sweetalert2";
 
 const renderSlackStyleText = (text) => {
   if (!text) return null;
@@ -296,11 +299,615 @@ export function MembersAvatarStack({ members = [], setFuntionOpen }) {
   );
 }
 
+//create or edit and delete
+function CreateChannelModal({
+  onClose,
+  currentUser,
+  setChaneel,
+  socket,
+  setChannelRefresh,
+}) {
+  const [name, setName] = useState("");
+  const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null);
+
+  const [employeeOption, setEmployeeOption] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(new Date());
+  const [channelType, setChaneelType] = useState();
+
+  // useEffect(() => {
+  //   if (!socket) return;
+  //   socket.on("channel_created", (newChannel) => {
+  //     setChaneel((prev) => {
+  //       const exists = prev.find((c) => c._id === newChannel._id);
+  //       if (exists) return prev;
+  //       return [...prev, newChannel];
+  //     });
+  //   });
+  //   return () => {
+  //     socket.off("channel_created");
+  //   };
+  // }, []);
+
+  // const fetchEmployeeList = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `${API_URL}/api/employees/all-users`,
+  //       {
+  //         params: {
+  //           userId: currentUser?._id,
+  //           type: currentUser?.superUser ? "superAdmin" : currentUser?.type,
+  //         },
+  //       },
+  //       {
+  //         withCredentials: true,
+  //       },
+  //     );
+  //     // const employeeIds = response.data.data.map(emp => `${emp.employeeId} - ${emp.employeeName}`);
+  //     const employeeemail = response.data.data
+  //       .filter((val) => val._id != currentUser?._id)
+  //       .map((emp) => ({
+  //         label: emp.name,
+  //         value: emp._id,
+  //       }));
+  //     setEmployeeOption(employeeemail);
+  //   } catch (error) {
+  //     console.log(error);
+  //     setLoading(false);
+  //   }
+  // };
+  const fetchEmployeeList = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/employees/all-users`, {
+        params: {
+          userId: currentUser?._id,
+          type: currentUser?.superUser ? "superAdmin" : currentUser?.type,
+        },
+        withCredentials: true,
+      });
+
+      // Remove current user
+      const filtered = response.data.data.filter(
+        (emp) => emp._id !== currentUser?._id,
+      );
+      // 1️ Group users by type
+      const grouped = filtered.reduce((acc, emp) => {
+        if (!acc[emp.type]) acc[emp.type] = [];
+
+        acc[emp.type].push({
+          label: emp.name,
+          value: emp._id,
+        });
+        return acc;
+      }, {});
+
+      // 2️ Define required order
+      const ORDER = ["employee", "admin", "client", "clientSubUser"];
+
+      // 3️ Convert to PrimeReact MultiSelect group format
+      const groupArray = ORDER.filter((type) => grouped[type]) // keep only existing types
+        .map((type) => ({
+          label:
+            type === "clientSubUser"
+              ? "Client Sub User"
+              : type.charAt(0).toUpperCase() + type.slice(1),
+          items: grouped[type].sort((a, b) => a.label.localeCompare(b.label)),
+        }));
+
+      setEmployeeOption(groupArray);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    // fetchData();
+    fetchEmployeeList();
+  }, []);
+
+  // const handleCreate = async () => {
+  //   if (!name.trim()) return;
+  //   try {
+  //     const res = await axios.post(`${API_URL}/api/channel/create-channel`, {
+  //       name,
+  //       createdBy: currentUser._id,
+  //       members: selectedEmployeeDetails,
+  //     });
+  //     console.log("res", res);
+  //     if (res.data.success && res.data.data) {
+  //       setChaneel((prev) => [...prev, res.data.data]);
+  //     }
+  //   } catch (err) {
+  //     console.log("error while creating channel", err);
+  //   }
+  //   // onCreate(name);
+  //   onClose();
+  // };
+
+  const handleCreate = async () => {
+    console.log("selectedEmployeeDetails");
+    // Validate name
+    if (!name.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Channel name required",
+      });
+      return;
+    }
+
+    try {
+      // Loading popup
+      Swal.fire({
+        title: "Creating Channel...",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      let members = selectedEmployeeDetails;
+
+      // ✅ auto select for general
+      if (channelType === "general") {
+        members = employeeOption
+          .filter(
+            (group) =>
+              group.label.toLowerCase() === "employee" ||
+              group.label.toLowerCase() === "admin",
+          )
+          .flatMap((group) => group.items.map((item) => item.value));
+      }
+
+      const res = await axios.post(`${API_URL}/api/channel/create-channel`, {
+        name,
+        createdBy: currentUser._id,
+        members: members,
+        channelType: channelType,
+      });
+
+      if (res.data.success && res.data.data) {
+        console.log("res", res.data.data);
+        // setChaneel((prev) => [...prev,{name,members: selectedEmployeeDetails}]);
+        setChannelRefresh((prev) => !prev);
+        //  Optional realtime emit
+        // socket?.emit("channel-created", newChannel);
+
+        //  Success
+        Swal.fire({
+          icon: "success",
+          title: "Channel Created!",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+        onClose(); // close only after success
+      }
+    } catch (err) {
+      console.log("error while creating channel", err);
+
+      const errorMessage = err?.response?.data?.message || "";
+
+      //  Detect Mongo duplicate error
+      if (errorMessage.includes("E11000")) {
+        Swal.fire({
+          icon: "error",
+          title: "Duplicate Channel",
+          text: "Channel name already exists. Please choose another name.",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Creation Failed",
+          text: "Something went wrong.",
+        });
+      }
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 w-full">
+      <div className="bg-white rounded-xl w-96 p-6 shadow-xl">
+        <h2 className="text-lg font-bold mb-4">Create Channel</h2>
+        <label
+          htmlFor="employee_name"
+          className="block text-sm font-medium mb-2"
+        >
+          Channel Name
+        </label>
+        <input
+          className="w-full border rounded px-3 py-2 mb-4"
+          placeholder="channel-name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <label
+          htmlFor="employee_name"
+          className="block text-sm font-medium mb-2"
+        >
+          Channel type
+        </label>
+
+        {/* <select
+          onChange={(e) => setChaneelType(e.target.value)}
+          className="w-full border rounded px-3 py-2 mb-4"
+        >
+          <option value="private">Private</option>
+          <option value="general">General</option>
+        </select> */}
+        <select
+          value={channelType || ""}
+          onChange={(e) => setChaneelType(e.target.value)}
+          className="w-full border rounded px-3 py-2 mb-4"
+        >
+          <option value="" disabled hidden>
+            Select Type
+          </option>
+          <option value="private">Private</option>
+          <option value="general">General</option>
+        </select>
+
+        {channelType !== "general" && (
+          <div className="flex flex-wrap md:flex-nowrap gap-3  pt-2">
+            <div className="my-2 w-full ">
+              <label
+                htmlFor="employee_name"
+                className="block text-sm font-medium mb-2"
+              >
+                Add Employees
+              </label>
+
+              {/* <MultiSelect
+              value={selectedEmployeeDetails}
+              onChange={(e) => setSelectedEmployeeDetails(e.value)}
+              options={employeeOption}
+              optionLabel="label"
+              filter
+              placeholder="Select Employees"
+              maxSelectedLabels={3}
+              className="w-full   border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              display="chip"
+            /> */}
+
+              <MultiSelect
+                value={selectedEmployeeDetails}
+                onChange={(e) => setSelectedEmployeeDetails(e.value)}
+                options={employeeOption}
+                optionGroupLabel="label" // Heading
+                optionGroupChildren="items" // Items under heading
+                filter
+                placeholder="Select Employees"
+                display="chip"
+                className="w-full border border-gray-300 rounded-lg"
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="flex justify-end gap-2 mt-3">
+          <button onClick={onClose} className="px-4 py-2 rounded bg-gray-200">
+            Cancel
+          </button>
+          <button
+            onClick={handleCreate}
+            className="px-4 py-2 rounded bg-purple-600 text-white"
+          >
+            Create
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EditChannelModal({
+  channel,
+  onClose,
+  currentUser,
+  setChaneel,
+  setChannelRefresh,
+}) {
+  const [name, setName] = useState("");
+  const [employeeOption, setEmployeeOption] = useState([]);
+  const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState([]);
+  const [channelType, setChaneelType] = useState();
+  /* ------------------------------------------------ */
+  /*  Sync state when channel arrives */
+  /* ------------------------------------------------ */
+
+  useEffect(() => {
+    if (channel) {
+      setName(channel.name || "");
+      setSelectedEmployeeDetails(channel.members || []); //  IDs only
+      setChaneelType(channel?.channelType);
+    }
+  }, [channel]);
+
+  /* ------------------------------------------------ */
+  /*  Fetch Employees */
+  /* ------------------------------------------------ */
+
+  useEffect(() => {
+    fetchEmployeeList();
+  }, []);
+
+  // const fetchEmployeeList = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `${API_URL}/api/employees/all-users`,
+  //       {
+  //         params: {
+  //           userId: currentUser?._id,
+  //           type: currentUser?.superUser
+  //             ? "superAdmin"
+  //             : currentUser?.type,
+  //         },
+  //         withCredentials: true, // ✅ FIXED AXIOS
+  //       }
+  //     );
+
+  //     const employeeemail = response.data.data
+  //       // .filter((val) => val._id !== currentUser?._id)
+  //       .map((emp) => ({
+  //         label: emp.name,
+  //         value: emp._id,
+  //       }));
+
+  //     setEmployeeOption(employeeemail);
+  //   } catch (error) {
+  //     console.log("Employee fetch error:", error);
+  //   }
+  // };
+
+  const fetchEmployeeList = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/employees/all-users`, {
+        params: {
+          userId: currentUser?._id,
+          type: currentUser?.superUser ? "superAdmin" : currentUser?.type,
+        },
+        withCredentials: true,
+      });
+
+      // Filter out current user
+      const filtered = response.data.data;
+      // .filter(
+      //   (val) => val._id !== currentUser?._id
+      // );
+
+      // Group by type
+      const grouped = filtered.reduce((acc, emp) => {
+        if (!acc[emp.type]) acc[emp.type] = [];
+        acc[emp.type].push({
+          label: emp.name,
+          value: emp._id,
+        });
+        return acc;
+      }, {});
+
+      // // Transform into array of groups for MultiSelect
+      // const groupArray = Object.keys(grouped).map((key) => ({
+      //   label: key.charAt(0).toUpperCase() + key.slice(1), // Capitalize
+      //   items: grouped[key],
+      // }));
+      const ORDER = ["employee", "admin", "client", "clientSubUser"];
+
+      // 3️⃣ Convert to PrimeReact MultiSelect group format
+      const groupArray = ORDER.filter((type) => grouped[type]) // keep only existing types
+        .map((type) => ({
+          label:
+            type === "clientSubUser"
+              ? "Client Sub User"
+              : type.charAt(0).toUpperCase() + type.slice(1),
+          items: grouped[type].sort((a, b) => a.label.localeCompare(b.label)),
+        }));
+
+      setEmployeeOption(groupArray);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  /* ------------------------------------------------ */
+  /*  UPDATE CHANNEL */
+  /* ------------------------------------------------ */
+
+  const handleUpdate = async () => {
+    if (!name.trim()) {
+      return Swal.fire({
+        icon: "warning",
+        title: "Channel name required",
+      });
+    }
+
+    try {
+      Swal.fire({
+        title: "Updating...",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      let members = selectedEmployeeDetails;
+
+      //  auto select for general
+      if (channelType === "general") {
+        members = employeeOption
+          .filter(
+            (group) =>
+              group.label.toLowerCase() === "employee" ||
+              group.label.toLowerCase() === "admin",
+          )
+          .flatMap((group) => group.items.map((item) => item.value));
+      }
+
+      const res = await axios.put(
+        `${API_URL}/api/channel/update-channel/${channel._id}`,
+        {
+          name,
+          members: members, //  already IDs
+          channelType: channelType,
+        },
+      );
+
+      if (res.data.success) {
+        //       setChaneel((prev) =>
+        //   prev.map((ch) =>
+        //     ch._id === channel._id
+        //       ? {
+        //           ...ch, // keep existing fields
+        //           name,
+        //           members: selectedEmployeeDetails,
+        //         }
+        //       : ch
+        //   )
+        // );
+        
+        Swal.fire({
+          icon: "success",
+          title: "Channel Updated!",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+        // setChannelRefresh((prev) => !prev);
+        window.location.reload();
+        onClose();
+      }
+    } catch (err) {
+      console.log("update error", err);
+
+      //  Duplicate name check
+      if (err?.response?.data?.message?.includes("E11000")) {
+        Swal.fire({
+          icon: "error",
+          title: "Duplicate Channel",
+          text: "Channel name already exists.",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Update Failed",
+          text: "Something went wrong.",
+        });
+      }
+    }
+  };
+
+  /* ------------------------------------------------ */
+
+  if (!channel) return null; //  Prevent crash
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl w-96 p-6 shadow-xl">
+        <h2 className="text-lg font-bold mb-4">Edit Channel</h2>
+
+        {/* Channel Name */}
+
+        <label
+          htmlFor="employee_name"
+          className="block text-sm font-medium mb-2"
+        >
+          Channel Name
+        </label>
+        <input
+          className="w-full border rounded px-3 py-2 mb-4"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Channel name"
+        />
+        {console.log("selectedEmployeeDetails", selectedEmployeeDetails)}
+        {/* MultiSelect */}
+        {/* <MultiSelect
+          value={selectedEmployeeDetails} // ✅ ["id1","id2"]
+          onChange={(e) =>
+            setSelectedEmployeeDetails(e.value)
+          }
+          options={employeeOption}
+          optionLabel="label"
+          optionValue="value"
+          filter
+          placeholder="Select Employees"
+          className="w-full border border-gray-300 rounded-lg"
+          display="chip"
+        /> */}
+        {/* <MultiSelect
+          value={selectedEmployeeDetails}
+          onChange={(e) => setSelectedEmployeeDetails(e.value)}
+          options={employeeOption}
+          optionLabel="label"
+          optionValue="value" // ⭐ THIS IS THE FIX
+          filter
+          placeholder="Select Employees"
+          // maxSelectedLabels={3}
+          className="w-full border border-gray-300 rounded-lg"
+          display="chip"
+        /> */}
+
+        <div>
+          <label
+            htmlFor="employee_name"
+            className="block text-sm font-medium mb-2"
+          >
+            Channel type
+          </label>
+
+          <select
+            value={channelType || ""}
+            onChange={(e) => setChaneelType(e.target.value)}
+            className="w-full border rounded px-3 py-2 mb-4"
+          >
+            <option value="" disabled hidden>
+              Select Type
+            </option>
+            <option value="private">Private</option>
+            <option value="general">General</option>
+          </select>
+        </div>
+
+        {channelType !== "general" && (
+          <div>
+            <label
+              htmlFor="employee_name"
+              className="block text-sm font-medium mb-2"
+            >
+              Channel Member
+            </label>
+
+            <MultiSelect
+              value={selectedEmployeeDetails}
+              onChange={(e) => setSelectedEmployeeDetails(e.value)}
+              options={employeeOption}
+              optionGroupLabel="label" // Heading
+              optionGroupChildren="items" // Items under heading
+              filter
+              placeholder="Select Employees"
+              display="chip"
+              className="w-full border border-gray-300 rounded-lg"
+            />
+          </div>
+        )}
+
+        {/* Buttons */}
+        <div className="flex justify-end gap-2 mt-4">
+          <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded">
+            Cancel
+          </button>
+
+          <button
+            onClick={handleUpdate}
+            className="px-4 py-2 bg-blue-600 text-white rounded"
+          >
+            Update
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Slack_chatwindow({
   socket,
   currentUser,
   selectedUser,
-  onlineUsers,
+  onlineUsers = [],
   selectedChannel,
   users = [],
   channels = [],
@@ -311,6 +918,10 @@ export default function Slack_chatwindow({
   setActiveThread,
   setMobileView,
   mobileView,
+  favorites = { dm: [], channels: [] },
+  setChaneel,
+  setChannelRefresh ,
+  setFavorites,
 }) {
   console.log("Selected Channel in Chat Window:", selectedChannel);
   const [messages, setMessages] = useState([]);
@@ -374,9 +985,75 @@ export default function Slack_chatwindow({
   // handle Drag and Drop
   const [isDragging, setIsDragging] = useState(false);
 
+  // edit channel
+  const [editChannel, setEditChannel] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
+     const handleEditChannel = (channel) => {
+    console.log("Editing channel:", channel);
+    setEditChannel(channel);
+    setShowEditModal(true);
+  };
+
   // view channel members
   const me = currentUser?._id;
   const other = selectedUser?._id;
+
+  /* ---------------- HELPERS ---------------- */
+
+    /* ---------------- FAVORITES API ---------------- */
+  const toggleFavoriteDM = async (user) => {
+    const res = await axios.post(`${API_URL}/api/favorites/dm`, {
+      userId: currentUser?._id,
+      userModel:
+        currentUser?.type == "employee"
+          ? "Employee"
+          : currentUser?.type == "admin"
+            ? "AdminUser"
+            : "ClientDetails", // Employee | User | Client
+      dmId: user._id,
+      // dmModel:
+      //   user.type == "employee"
+      //     ? "Employee"
+      //     : user.type == "admin"
+      //     ? "AdminUser"
+      //     : "ClientDetails",
+      dmModel:
+        user.type == "employee"
+          ? "Employee"
+          : user.type == "admin"
+            ? "AdminUser"
+            : user?.type == "client"
+              ? "ClientDetails"
+              : "ClientSubUser",
+    });
+
+    if (res.data.success) {
+      setFavorites(res.data.data);
+    }
+  };
+
+  const toggleFavoriteChannel = async (channel) => {
+    const res = await axios.post(`${API_URL}/api/favorites/channel`, {
+      userId: currentUser._id,
+      userModel:
+        currentUser?.type == "employee"
+          ? "Employee"
+          : currentUser?.type == "admin"
+            ? "AdminUser"
+            : "ClientDetails",
+      channelId: channel._id,
+      channelModel: "Channel",
+    });
+
+    if (res.data.success) {
+      setFavorites(res.data.data);
+    }
+  };
+
+  const isDMFavorite = (id) => favorites.dm.some((f) => f._id === id);
+
+  const isChannelFavorite = (id) =>
+    favorites.channels.some((f) => f._id === id);
 
   // text forwording
   const TextActions = ({ text, message }) => {
@@ -843,7 +1520,7 @@ export default function Slack_chatwindow({
     }
   };
   // edit main chat paste
-     const handleEditPaste = (e) => {
+  const handleEditPaste = (e) => {
     const items = e.clipboardData.items;
     console.log("Pasted items:", e.clipboardData, items);
 
@@ -870,7 +1547,7 @@ export default function Slack_chatwindow({
     }
   };
 
-   const handleEditDrop = async (e) => {
+  const handleEditDrop = async (e) => {
     e.preventDefault();
 
     const items = e.dataTransfer.items;
@@ -896,8 +1573,6 @@ export default function Slack_chatwindow({
       setEditFiles((prev) => [...prev, ...formatted]);
     }
   };
-
-
 
   // handle  drag
   const handleDrop = async (e) => {
@@ -951,7 +1626,6 @@ export default function Slack_chatwindow({
     setIsDragging(true);
   };
 
-
   // handle thread paste
   const handlePasteThread = (e) => {
     const items = e.clipboardData.items;
@@ -976,8 +1650,8 @@ export default function Slack_chatwindow({
     }
   };
 
-// handle thread copy and paste
-  const handleEditThreadPaste= (e) => {
+  // handle thread copy and paste
+  const handleEditThreadPaste = (e) => {
     const items = e.clipboardData.items;
     const pastedFiles = [];
 
@@ -999,7 +1673,6 @@ export default function Slack_chatwindow({
       setEditFilesThread((prev) => [...prev, ...formatted]);
     }
   };
-
 
   // const handleDropThread = (e) => {
   //   e.preventDefault();
@@ -1687,8 +2360,49 @@ export default function Slack_chatwindow({
     }
   };
 
+  // Delete channel
+   const handleDeleteChannel = async (id) => {
+    const result = await Swal.fire({
+      title: "Delete Channel?",
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await axios.delete(`${API_URL}/api/channel/${id}`);
+
+      setChaneel((prev) => prev.filter((ch) => ch._id !== id));
+
+      //  Success alert
+      Swal.fire({
+        title: "Deleted!",
+        text: "Channel has been deleted.",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+       window.location.reload();
+    } catch (err) {
+      console.log(err);
+
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to delete channel.",
+        icon: "error",
+      });
+    }
+  };
+
   return (
-    <div className="flex-1 flex flex-col  h-full bg-gradient-to-br from-gray-50 to-white border w-full relative  ">
+    <div className="flex-1 flex flex-col  h-full bg-gradient-to-br from-gray-50 to-white border w-full relative md:w-[40vw]  ">
       {/* channel pop  */}
       {selectedChannel && open && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -1782,40 +2496,57 @@ export default function Slack_chatwindow({
           </div>
         </div>
       )}
+       {showEditModal && (
+        <EditChannelModal
+          channel={editChannel}
+          onClose={() => setShowEditModal(false)}
+          currentUser={currentUser}
+          setChaneel={setChaneel}
+          socket={socket}
+          setChannelRefresh={setChannelRefresh}
+        />
+      )}
 
       <div className="flex  overflow-hidden h-[100vh]">
-        <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50 h-[100vh] w-full ">
+        <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50 h-[100vh]  w-full md:w-[35vw]">
           {/* Chat Header */}
           {console.log("showForwardDropdown:", showForwardDropdown)}
           {showForwardDropdown && (
             <div
-              className="absolute top-10 right-2 w-[90%] bg-white border rounded-xl shadow-xl z-50"
+              className="absolute top-10 right-2 
+    w-[95%] sm:w-[420px] 
+    bg-white border rounded-xl shadow-xl 
+    z-[100] max-h-[80vh] 
+    flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex justify-end w-full pr-5 p-2">
+              {/* CLOSE BUTTON */}
+              <div className="flex justify-end p-2 border-b">
                 <button
                   onClick={() => {
                     setShowForwardDropdown(false);
                     setForwardMessage(null);
                   }}
-                  className="  flex justify-end  text-red-500"
+                  className="text-red-500 text-lg"
                 >
                   ✕
                 </button>
               </div>
 
               {/* HEADER */}
-              <div className="px-3 py-2 text-[20px] font-semibold text-gray-500 border-b">
+              <div className="px-4 py-2 text-lg font-semibold text-gray-600 border-b">
                 Forward to…
               </div>
 
-              {/* SEARCH */}
-              <input
-                value={searchForward}
-                onChange={(e) => setSearchForward(e.target.value)}
-                placeholder="Search people or channels"
-                className="w-full px-3 py-2 text-sm border-b outline-none"
-              />
+              {/* SEARCH (fixed) */}
+              <div className="border-b px-3 py-2">
+                <input
+                  value={searchForward}
+                  onChange={(e) => setSearchForward(e.target.value)}
+                  placeholder="Search people or channels"
+                  className="w-full px-3 py-2 text-sm border rounded-md outline-none focus:ring focus:ring-blue-200"
+                />
+              </div>
 
               {/* MESSAGE PREVIEW */}
               {forwardMessage && (
@@ -1823,6 +2554,7 @@ export default function Slack_chatwindow({
                   <p className="text-xs text-gray-600 truncate">
                     {forwardMessage.text || "📎 Attachment"}
                   </p>
+
                   {forwardMessage.files?.length > 0 && (
                     <div className="flex gap-1 mt-1">
                       {forwardMessage.files.slice(0, 3).map((f) => (
@@ -1833,6 +2565,7 @@ export default function Slack_chatwindow({
                           {f.type.startsWith("image") ? "🖼" : "📄"}
                         </span>
                       ))}
+
                       {forwardMessage.files.length > 3 && (
                         <span className="text-[10px] text-gray-500">
                           +{forwardMessage.files.length - 3}
@@ -1843,32 +2576,15 @@ export default function Slack_chatwindow({
                 </div>
               )}
 
-              {/* SCROLL AREA */}
-              <div className="max-h-64 ">
+              {/* SCROLLABLE LIST */}
+              <div className="flex-1 overflow-y-auto">
                 {/* USERS */}
-                {/* {sortedUsers.length > 0 && (
-                <>
-                  <div className="px-3 py-1 text-xs text-gray-400">People</div>
-                  {sortedUsers.map((u) => (
-                    <button
-                      key={u._id}
-                      onClick={() => {
-                        onSelectUser?.(u);
-                        handleForward(u._id, null, forwardMessage);
-                      }}
-                      className="w-full px-3 py-2 flex items-center gap-2 hover:bg-gray-100 text-sm"
-                    >
-                      👤 {u.name}
-                    </button>
-                  ))}
-                </>
-              )} */}
-
                 {sortedUsers.length > 0 && (
                   <>
-                    <div className="px-3 py-1 text-xs text-gray-400">
+                    <div className="px-3 py-2 text-xs text-gray-400 uppercase">
                       People
                     </div>
+
                     {USER_TYPE_ORDER.map((type) => {
                       const usersByType = sortedUsers.filter(
                         (u) => u.type === type,
@@ -1878,12 +2594,10 @@ export default function Slack_chatwindow({
 
                       return (
                         <div key={type}>
-                          {/* Type Header */}
-                          <div className="px-3 py-1 text-[15px] font-semibold text-blue-900  uppercase">
+                          <div className="px-3 py-1 text-sm font-semibold text-blue-900 uppercase">
                             {type}
                           </div>
 
-                          {/* Users */}
                           {usersByType.map((u) => (
                             <button
                               key={u._id}
@@ -1894,9 +2608,6 @@ export default function Slack_chatwindow({
                               className="w-full px-3 py-2 flex items-center gap-2 hover:bg-gray-100 text-sm"
                             >
                               👤 {u.name}
-                              {/* {u.online && (
-                <span className="ml-auto h-2 w-2 rounded-full bg-green-500" />
-              )} */}
                             </button>
                           ))}
                         </div>
@@ -1908,9 +2619,10 @@ export default function Slack_chatwindow({
                 {/* CHANNELS */}
                 {filteredChannels.length > 0 && (
                   <>
-                    <div className="px-3 py-1 text-[15px] font-semibold text-blue-900  uppercase">
+                    <div className="px-3 py-2 text-xs text-gray-400 uppercase">
                       Channels
                     </div>
+
                     {filteredChannels.map((c) => (
                       <button
                         key={c._id}
@@ -1950,36 +2662,69 @@ export default function Slack_chatwindow({
               </button>
 
               {/* Avatar */}
-              <div className="relative flex-shrink-0">
-                <div
-                  className="w-11 h-11 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 
-                      flex items-center justify-center text-white font-semibold text-lg shadow-sm"
-                >
-                  {selectedUser?.name?.charAt(0)?.toUpperCase() ||
-                    selectedChannel?.name?.charAt(0)?.toUpperCase()}
-                </div>
 
-                {/* Online indicator (only for DM) */}
-                {selectedUser && (
+              
+              {selectedUser
+              
+                ?  <span
+                className=" cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFavoriteDM(selectedUser);
+                      }}
+                    >
+                      {isDMFavorite(selectedUser._id) ? "⭐" : "☆"}
+                    </span>
+                : <span
+                  className=" cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFavoriteChannel(selectedChannel);
+                      }}
+                    >
+                      {isChannelFavorite(selectedChannel._id) ? "⭐" : "☆"}
+                    </span>}
+                    
+              {selectedUser && (
+                <div className="relative flex-shrink-0">
+                  <div
+                    className="w-11 h-11 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 
+                      flex items-center justify-center text-white font-semibold text-lg shadow-sm"
+                  >
+                    {selectedUser?.name?.charAt(0)?.toUpperCase() ||
+                      selectedChannel?.name?.charAt(0)?.toUpperCase()}
+                  </div>
+
+                  {/* {selectedUser && (
                   <span
                     className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white
             ${
-              onlineUsers?.includes(selectedUser?._id)
+              onlineUsers?.includes(String(selectedUser?._id))
                 ? "bg-green-500"
                 : "bg-gray-400"
             }`}
                   />
-                )}
-              </div>
+                )} */}
+                </div>
+              )}
 
               {/* Name & Status */}
               <div className="min-w-0">
                 <h2 className="font-semibold text-gray-800 text-base truncate">
-                  {selectedUser?.name || `# ${selectedChannel?.name}`}
+                  {/* {selectedUser?.name
+                    ? selectedUser.name.length > 12
+                      ? selectedUser.name.slice(0, 12) + "..."
+                      : selectedUser.name
+                    : selectedChannel?.name.length > 12
+                      ? "#" + selectedChannel.name.slice(0, 12) + "..."
+                      : `# ${selectedChannel?.name}`} */}
+                      <div className="max-w-[300px]md:max-w-[450px] truncate">
+  {selectedUser?.name || `# ${selectedChannel?.name}`}
+</div>
                 </h2>
 
-                <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
-                  {/* Online / Last seen */}
+                {/* <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
+              
                   {selectedUser && (
                     <>
                       {onlineUsers?.includes(selectedUser?._id) ? (
@@ -1993,16 +2738,16 @@ export default function Slack_chatwindow({
                     </>
                   )}
 
-                  {/* Channel message count */}
                   {selectedChannel && (
                     <span className="text-blue-600 font-medium">
                       {messages.length} messages
                     </span>
                   )}
-                </div>
+                </div> */}
               </div>
             </div>
-            
+           
+          
 
             {/* RIGHT SECTION */}
             <div className="flex items-center gap-2">
@@ -2013,6 +2758,44 @@ export default function Slack_chatwindow({
                 />
               )}
             </div>
+
+             {
+              selectedChannel && currentUser?.superUser&&
+                <div className="flex gap-5"> 
+                <div className="flex items-center gap-2">
+
+  {/* EDIT */}
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      handleEditChannel(selectedChannel);
+    }}
+    className="flex items-center justify-center
+    w-8 h-8 rounded-md
+    text-blue-500 bg-blue-50
+    hover:bg-blue-100 hover:text-blue-600
+    transition duration-200"
+  >
+    <FiEdit size={16} />
+  </button>
+
+  {/* DELETE */}
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      handleDeleteChannel(selectedChannel?._id);
+    }}
+    className="flex items-center justify-center
+    w-8 h-8 rounded-md
+    text-red-500 bg-red-50
+    hover:bg-red-100 hover:text-red-600
+    transition duration-200"
+  >
+    <FiTrash2 size={16} />
+  </button>
+
+</div></div>
+            }
 
             {/* adding vedio call */}
             {/* <div className="flex items-center space-x-2">
@@ -2029,7 +2812,6 @@ export default function Slack_chatwindow({
               <MoreVertical className="w-5 h-5" />
             </button>
           </div> */}
-
           </div>
 
           {/*  Hover Actions */}
@@ -2078,53 +2860,62 @@ export default function Slack_chatwindow({
                         onMouseLeave={() => setHoveredMessageId(null)}
                       >
                         {/* Particular user name */}
-                        {selectedChannel && (
-                          <div className="flex gap-4 items-center mb-2">
-                            <div
-                              className={`w-10 h-10 flex items-center justify-center 
-                  ${isMe ? "bg-gradient-to-r from-blue-500 to-indigo-500" : "bg-gray-500"} text-white
-                    rounded-full font-semibold`}
-                            >
-                              {isMe
-                                ? currentUser?.name?.charAt(0)?.toUpperCase()
-                                : m.senderName?.charAt(0)?.toUpperCase() || "U"}
-                            </div>
+                       <div className="flex gap-3 items-start mb-2">
+  {/* Avatar */}
+  <div
+    className={`w-7 h-7  flex items-center justify-center 
+      ${isMe ? "bg-gradient-to-r from-blue-500 to-indigo-500" : "bg-gray-500"}
+      text-white rounded-full font-semibold`}
+  >
+    {isMe
+      ? currentUser?.name?.charAt(0)?.toUpperCase()
+      : (selectedUser?.name || m.senderName || "U")
+          .charAt(0)
+          .toUpperCase()}
+  </div>
 
-                            <div className="tex-sm md:text-lg font-medium text-blue">
-                              {/* {m.senderName ||
-                                      currentUser?.name ||
-                                      "User"} */}
-                              {isMe
-                                ? currentUser?.name
-                                : m.senderName || "User"}
-                            </div>
-                          </div>
-                        )}
-                        {selectedUser && (
-                          <div className="flex gap-4 items-center mb-2">
-                            <div
-                              className={`w-10 h-10 flex items-center justify-center 
-                  ${isMe ? "bg-gradient-to-r from-blue-500 to-indigo-500" : "bg-gray-500"} text-white
-                    rounded-full font-semibold`}
-                            >
-                              {isMe
-                                ? currentUser?.name?.charAt(0)?.toUpperCase()
-                                : selectedUser &&
-                                  selectedUser?.name.charAt(0).toUpperCase()}
-                            </div>
+  {/* Message Meta */}
+  <div className="flex flex-col">
+    {/* Name */}
+    <div className="font-semibold md:text-xs  text-black">
+      {isMe
+        ? currentUser?.name
+        : selectedUser?.name || m.senderName || "User"}
+    </div>
 
-                            <div className="tex-sm md:text-lg font-medium text-black">
-                              {/* {m.senderName ||
-                                      currentUser?.name ||
-                                      "User"} */}
-                              {isMe ? currentUser?.name : selectedUser?.name}
-                            </div>
-                          </div>
-                        )}
+    {/* Date + Time + Tick */}
+    <div className="flex items-center gap-2 text-xs text-gray-500">
+      <span className="text-[10px]">{date}</span>
+      <span className="text-[10px]">{time}</span>
+
+      {/* {isMe && (
+        <div className="flex items-center">
+          {!m.deliveredAt ? (
+            <Check className="w-3.5 h-3.5" />
+          ) : m.deliveredAt && !m.seenAt ? (
+            <CheckCheck className="w-3.5 h-3.5" />
+          ) : (
+            <CheckCheck className="w-3.5 h-3.5 text-[#3549fa]" />
+          )}
+        </div>
+      )} */}
+    </div>
+
+    {/* Thread (only for channel) */}
+    {/* {selectedChannel && (
+      <div
+        className="text-xs text-blue-500 cursor-pointer mt-1"
+        onClick={() => setActiveThread(m)}
+      >
+        Thread : {m.threadReplyCount}
+      </div>
+    )} */}
+  </div>
+</div>
 
                         {/* 🔥 Hover Actions */}
                         {!m.isDelete &&
-                          isMe &&
+                         
                           hoveredMessageId === (m._id || m.clientId) && (
                             <div
                               className={`absolute -top-9  ${
@@ -2142,7 +2933,7 @@ export default function Slack_chatwindow({
                               {/* <ActionButton title="Reply in thread">
                             <MessageSquare size={14} />
                           </ActionButton> */}
-                              {isMe && selectedChannel && (
+                              { selectedChannel && (
                                 <ActionButton
                                   title="Reply in thread"
                                   onClick={() => {
@@ -2381,9 +3172,9 @@ export default function Slack_chatwindow({
                                 <MessageText text={m.text.trim()} isMe={isMe} />
 
                                 {/* TEXT ACTIONS */}
-                                {isMe && (
+                                {/* {isMe && ( */}
                                   <TextActions text={m.text} message={m} />
-                                )}
+                                {/* )} */}
                               </div>
                             ) : null}
 
@@ -2598,46 +3389,15 @@ export default function Slack_chatwindow({
                       )} */}
                         {/* dm tick */}
                         {/* Message Status and Time */}
-                        {selectedUser && (
+                        {selectedUser  && (m.threadReplyCount > 0 || m.senderId == me)&& (
                           <div
-                            className={`flex items-center justify-end gap-2 mt-2 ${
+                            className={`flex items-center justify-end gap-2  ${
                               isMe ? "text-black-800" : "text-gray-500"
                             }`}
                           >
-                            <div>
-                              {" "}
-                              <span className="text-xs">{date}</span>
-                            </div>
-                            <div className="flex gap">
-                              <span className="text-xs">{time}</span>
-                              {/* {console.log(
-                                "Rendering ticks for message:",
-                                m.seenAt,
-                              )} */}
-                              {/* {isMe && (
-                              <div className="flex items-center">
-                                {!m.deliveredAt && !m.seenAt && (
-                                  <Check className="w-3.5 h-3.5" />
-                                )}
-                                {m.deliveredAt && !m.seenAt && (
-                                  <CheckCheck className="w-3.5 h-3.5" />
-                                )}
-                                {m.seenAt && (
-                                  <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
-                                )}
-                              </div>
-                            )} */}
-                              {/* {isMe && (
-                            <div className="flex items-center">
-                              {m.seenAt ? (
-                                <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
-                              ) : m.deliveredAt && !m.seenAt ? (
-                                <CheckCheck className="w-3.5 h-3.5" />
-                              ) : (
-                                <Check className="w-3.5 h-3.5" />
-                              )}
-                            </div>
-                          )} */}
+                            
+                            <div className=" ">
+                             
                               {isMe && (
                                 <div className="flex items-center">
                                   {(() => {
@@ -2663,35 +3423,42 @@ export default function Slack_chatwindow({
                             </div>
                           </div>
                         )}
-                        {/* channel tick */}
-                        {selectedChannel && (
-                          <div
-                            className={` gap-2 mt-2 ${
-                              isMe ? "text-black-800" : "text-gray-500"
-                            }`}
-                          >
-                            <div className="flex items-center justify-between gap-2 mt-2">
-                              <div>
-                                {" "}
-                                <span className="text-xs">{date}</span>
-                              </div>
-                              <div className="flex gap-3">
-                                <span className="text-xs">{time}</span>
-                                {m.senderId == me && (
-                                  <div className="message-footer">
-                                    {renderTick(m)}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                            <div
-                              className="text-xs"
-                              onClick={() => setActiveThread(m)}
-                            >
-                              Thread : {m.threadReplyCount}
-                            </div>
+                       
+                          <div>
+                            {/* channel tick */}
+                    {selectedChannel && (m.threadReplyCount > 0 || m.senderId == me) && (
+  <div
+    className={`flex items-center justify-between mt-2 text-xs gap-1 ${
+      isMe ? "text-black-800" : "text-gray-500"
+    }`}
+  >
+    {/* Thread replies */}
+    <div>
+      {m.threadReplyCount > 0 && (
+        <div
+          className="flex items-center gap-1 text-blue-500 cursor-pointer group"
+          onClick={() => setActiveThread(m)}
+        >
+          <span>{m.threadReplyCount} replies</span>
+
+          <span className="opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 text-blue-700 hover:underline">
+            (view thread)
+          </span>
+        </div>
+      )}
+    </div>
+
+    {/* Tick */}
+    {m.senderId == me && (
+      <div className="flex items-center">
+        {renderTick(m)}
+      </div>
+    )}
+  </div>
+)}
                           </div>
-                        )}
+                        
+                        
                       </div>
                     </div>
                     <div ref={bottomRef} />
@@ -2866,7 +3633,7 @@ export default function Slack_chatwindow({
                       (selectedChannel && "#" + selectedChannel?.name)
                     }...`}
                     rows={1}
-                    className="w-full border border-gray-300 rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 resize-none max-h-32 bg-gray-50 text-gray-900 placeholder-gray-500"
+                    className="w-full border border-gray-300 rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 resize-none max-h-32 bg-gray-50 text-gray-900 placeholder-gray-500  "
                     onInput={(e) => {
                       e.target.style.height = "auto";
                       e.target.style.height = e.target.scrollHeight + "px";
@@ -2918,15 +3685,15 @@ export default function Slack_chatwindow({
         {/* Thread component */}
 
         {activeThread && (
-          <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50 overflow-hidden h-[100vh]">
+          <div className="flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50/50 overflow-hidden h-[100vh] w-full md:w-[50%]  ">
             {activeThread && (
               <div
-                className="border-b  flex flex-col w-full overflow-hidden h-[100vh]
+                className="border-b  flex flex-col  overflow-hidden h-[100vh] w-full 
                  fixed inset-0 md:static md:inset-auto z-50 bg-white p-2 
     "
               >
                 {/* HEADER */}
-                <div className="p-2 py-5 border-b flex justify-between items-center w-full sticky top-0 z-20 bg-white">
+                <div className="p-2 py-3 border-b flex justify-between items-center w-full sticky top-0 z-20 bg-white">
                   <div>
                     <h3 className="font-semibold text-gray-800">Thread</h3>
                     <p className="text-xs text-gray-500">Replies to message</p>
@@ -2989,60 +3756,59 @@ export default function Slack_chatwindow({
                               }
                               onMouseLeave={() => setHoveredMessageId(null)}
                             >
-                              {selectedChannel && (
-                                <div className="flex gap-4 items-center mb-2">
-                                  <div
-                                    className={`w-10 h-10 flex items-center justify-center 
-                  ${isMe ? "bg-gradient-to-r from-blue-500 to-indigo-500" : "bg-gray-500"} text-white
-                    rounded-full font-semibold`}
-                                  >
-                                    {isMe
-                                      ? currentUser?.name
-                                          ?.charAt(0)
-                                          ?.toUpperCase()
-                                      : m.senderName
-                                          ?.charAt(0)
-                                          ?.toUpperCase() || "U"}
-                                  </div>
+ {/* Particular user name */}
+                       <div className="flex gap-3 items-start mb-2">
+  {/* Avatar */}
+  <div
+    className={`w-7 h-7  flex items-center justify-center 
+      ${isMe ? "bg-gradient-to-r from-blue-500 to-indigo-500" : "bg-gray-500"}
+      text-white rounded-full font-semibold`}
+  >
+    {isMe
+      ? currentUser?.name?.charAt(0)?.toUpperCase()
+      : (selectedUser?.name || m.senderName || "U")
+          .charAt(0)
+          .toUpperCase()}
+  </div>
 
-                                  <div className="tex-sm md:text-lg font-medium text-blue">
-                                    {/* {m.senderName ||
-                                      currentUser?.name ||
-                                      "User"} */}
-                                    {isMe
-                                      ? currentUser?.name
-                                      : m.senderName || "User"}
-                                  </div>
-                                </div>
-                              )}
-                              {selectedUser && (
-                                <div className="flex gap-4 items-center">
-                                  <div
-                                    className="w-10 h-10 flex items-center justify-center 
-                    bg-blue-300 text-blue-700 
-                    border border-blue-300 
-                    rounded-full font-semibold"
-                                  >
-                                    {isMe
-                                      ? currentUser?.name
-                                          ?.charAt(0)
-                                          ?.toUpperCase()
-                                      : selectedUser &&
-                                        selectedUser?.name
-                                          .charAt(0)
-                                          .toUpperCase()}
-                                  </div>
+  {/* Message Meta */}
+  <div className="flex flex-col">
+    {/* Name */}
+    <div className="font-semibold md:text-xs  text-black">
+      {isMe
+        ? currentUser?.name
+        : selectedUser?.name || m.senderName || "User"}
+    </div>
 
-                                  <div className="tex-sm md:text-lg font-medium text-gray-700">
-                                    {/* {m.senderName ||
-                                      currentUser?.name ||
-                                      "User"} */}
-                                    {isMe
-                                      ? currentUser?.name
-                                      : selectedUser?.name}
-                                  </div>
-                                </div>
-                              )}
+    {/* Date + Time + Tick */}
+    <div className="flex items-center gap-2 text-xs text-gray-500">
+      <span className="text-[10px]">{date}</span>
+      <span className="text-[10px]">{time}</span>
+
+      {/* {isMe && (
+        <div className="flex items-center">
+          {!m.deliveredAt ? (
+            <Check className="w-3.5 h-3.5" />
+          ) : m.deliveredAt && !m.seenAt ? (
+            <CheckCheck className="w-3.5 h-3.5" />
+          ) : (
+            <CheckCheck className="w-3.5 h-3.5 text-[#3549fa]" />
+          )}
+        </div>
+      )} */}
+    </div>
+
+    {/* Thread (only for channel) */}
+    {/* {selectedChannel && (
+      <div
+        className="text-xs text-blue-500 cursor-pointer mt-1"
+        onClick={() => setActiveThread(m)}
+      >
+        Thread : {m.threadReplyCount}
+      </div>
+    )} */}
+  </div>
+</div>
                               {/*  Hover Actions */}
                               {index != 0 &&
                                 !m.isDelete &&
@@ -3163,20 +3929,19 @@ export default function Slack_chatwindow({
                                 <div className="space-y-2">
                                   {/* Edit Text */}
                                   <textarea
-                                  
                                     value={editTextThread}
                                     onChange={(e) =>
                                       setEditTextThread(e.target.value)
                                     }
                                     className="w-full border rounded-lg p-2 text-sm text-black"
                                     rows={2}
-                                     onPaste={handleEditThreadPaste}
-                               onDrop={(e) => {
-                      handleEditThreadDrop(e);
-                      setIsDragging(false);
-                    }}
-                    onDragOver={handleDragOver}
-                    onDragLeave={() => setIsDragging(false)}
+                                    onPaste={handleEditThreadPaste}
+                                    onDrop={(e) => {
+                                      handleEditThreadDrop(e);
+                                      setIsDragging(false);
+                                    }}
+                                    onDragOver={handleDragOver}
+                                    onDragLeave={() => setIsDragging(false)}
                                   />
                                   {/* Edit Files */}
                                   <div className="flex flex-wrap gap-2">
@@ -3561,18 +4326,18 @@ export default function Slack_chatwindow({
                                     isMe ? "text-black-800" : "text-gray-500"
                                   }`}
                                 >
-                                  <div>
+                                  {/* <div>
                                     {" "}
                                     <span className="text-xs text-gray-600">
                                       {date}
                                     </span>
-                                  </div>
+                                  </div> */}
                                   <div className="flex gap">
-                                    <span className="text-xs">{time}</span>
-                                    {console.log(
+                                    {/* <span className="text-xs">{time}</span> */}
+                                    {/* {console.log(
                                       "Rendering ticks for message:",
                                       m.seenAt,
-                                    )}
+                                    )} */}
                                     {/* {isMe && (
                               <div className="flex items-center">
                                 {!m.deliveredAt && !m.seenAt && (
@@ -3626,23 +4391,23 @@ export default function Slack_chatwindow({
                                 </div>
                               )}
                               {/* channel tick */}
-                              {selectedChannel && (
+                              {selectedChannel  && (m.threadReplyCount > 0 || m.senderId == me) && (
                                 <div
                                   className={` gap-2 mt-2 ${
                                     isMe ? "text-blue-100" : "text-gray-500"
                                   }`}
                                 >
-                                  <div className="flex items-center justify-between gap-2 mt-2">
-                                    <div>
+                                  <div className="flex items-center justify-end gap-2">
+                                    {/* <div>
                                       {" "}
                                       <span className="text-xs text-gray-600">
                                         {date}
                                       </span>
-                                    </div>
+                                    </div> */}
                                     <div className="flex gap-3">
-                                      <span className="text-xs text-gray-600">
+                                      {/* <span className="text-xs text-gray-600">
                                         {time}
-                                      </span>
+                                      </span> */}
                                       {m.senderId == me && (
                                         <div className="message-footer">
                                           {renderTick(m)}
@@ -3666,7 +4431,7 @@ export default function Slack_chatwindow({
                   <div ref={bottomRefTheard} />
                   {/* </div> */}
                 </div>
-                <div/>
+                <div />
 
                 {/* THREAD INPUT */}
                 {/* <div className="p-3 border-t">
@@ -3749,7 +4514,7 @@ export default function Slack_chatwindow({
                 )}
 
                 {/* Input Area */}
-                <div className="px-6 py-4 border-t bg-white">
+                <div className="px-6 py-3 border-t bg-white">
                   <div className="flex items-end gap-3">
                     {/* File Upload Button */}
                     <div className="relative">
@@ -3788,7 +4553,7 @@ export default function Slack_chatwindow({
                             (selectedChannel && "#" + selectedChannel?.name)
                           }...`}
                           rows={1}
-                          className="w-full border border-gray-300 rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 resize-none max-h-32 bg-gray-50 text-gray-900 placeholder-gray-500"
+                          className="w-full border border-gray-300 rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 resize-none max-h-32 bg-gray-50 text-gray-900 placeholder-gray-500 whitespace-pre-wrap break-words"
                           onInput={(e) => {
                             e.target.style.height = "auto";
                             e.target.style.height =
@@ -3826,13 +4591,13 @@ export default function Slack_chatwindow({
                   </div>
 
                   {/* Helper Text */}
-                  {/* <div className="mt-3 text-center">
+                  <div className="mt-3 text-center">
                 <p className="text-xs text-gray-500">
                   Press <span className="font-semibold">Enter</span> to send •{" "}
                   <span className="font-semibold">Shift + Enter</span> for new
                   line
                 </p>
-              </div> */}
+              </div>
                 </div>
                 {/* { console.log("test open",showSeenPopup)} */}
               </div>

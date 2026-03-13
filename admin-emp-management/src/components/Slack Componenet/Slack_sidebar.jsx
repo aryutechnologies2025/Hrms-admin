@@ -410,6 +410,256 @@
 //   );
 // }
 
+///////////////////end
+//
+// Edit Channel Modal
+// function EditChannelModal({
+//   channel,
+//   onClose,
+//   currentUser,
+//   setChaneel,
+//   socket,
+// }) {
+
+//   console.log("channel in edit modal", channel);
+//   const [name, setName] = useState(channel.name);
+//   const [employeeOption, setEmployeeOption] = useState([]);
+//   const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState([]);
+
+//   useEffect(() => {
+//     fetchEmployeeList();
+//   }, []);
+
+//   const fetchEmployeeList = async () => {
+//     try {
+//       const response = await axios.get(
+//         `${API_URL}/api/employees/all-users`,
+//         {
+//           params: {
+//             userId: currentUser?._id,
+//             type: currentUser?.superUser ? "superAdmin" : currentUser?.type,
+//           },
+//         },
+//         {
+//           withCredentials: true,
+//         },
+//       );
+//       console.log("response in edit modal", response);
+//       // const employeeIds = response.data.data.map(emp => `${emp.employeeId} - ${emp.employeeName}`);
+//       const employeeemail = response.data.data
+//         .filter((val) => val._id != currentUser?._id)
+//         .map((emp) => ({
+//           label: emp.name,
+//           value: emp._id,
+//         }));
+//       console.log("employeeemail", employeeemail);
+//       setEmployeeOption(employeeemail);
+
+//       // const selected = channel.members.map((m) => ({
+//       //   label: m.name,
+//       //   value: m._id,
+//       // }));
+
+//       // const selected = channel.members.map((m) => m._id);
+
+// setSelectedEmployeeDetails(channel.members || []);
+
+//     } catch (error) {
+//       console.log(error);
+//       // setLoading(false);
+//     }
+//   };
+
+// console.log("selected", selectedEmployeeDetails);
+//   // const handleUpdate = async () => {
+//   //   try {
+//   //     console.log("update res", selectedEmployeeDetails);
+//   //     const res = await axios.put(
+//   //       `${API_URL}/api/channel/update-channel/${channel._id}`,
+//   //       {
+//   //         name,
+//   //         members: selectedEmployeeDetails,
+//   //       },
+//   //     );
+
+//   //     if (res.data.success) {
+//   //       setChaneel((prev) =>
+//   //         prev.map((ch) => (ch._id === channel._id ? res.data.data : ch)),
+//   //       );
+//   //     }
+//   //     onClose();
+//   //   } catch (err) {
+//   //     console.log("update error", err);
+//   //   }
+//   // };
+
+// const handleUpdate = async () => {
+//   // ✅ Prevent empty name
+//   if (!name.trim()) {
+//     Swal.fire({
+//       icon: "warning",
+//       title: "Channel name required",
+//     });
+//     return;
+//   }
+//   try {
+//     // ✅ Loading alert
+//     Swal.fire({
+//       title: "Updating...",
+//       allowOutsideClick: false,
+//       didOpen: () => {
+//         Swal.showLoading();
+//       },
+//     });
+
+//     const res = await axios.put(
+//       `${API_URL}/api/channel/update-channel/${channel._id}`,
+//       {
+//         name,
+//         members: selectedEmployeeDetails, // already IDs 👍
+//       }
+//     );
+
+//     if (res.data.success) {
+//       setChaneel((prev) =>
+//         prev.map((ch) => (ch._id === channel._id ? res.data.data : ch))
+//       );
+
+//       Swal.fire({
+//         icon: "success",
+//         title: "Channel Updated!",
+//         timer: 1500,
+//         showConfirmButton: false,
+//       });
+
+//       onClose();
+//     }
+//   } catch (err) {
+//     console.log("update error", err);
+
+//     Swal.fire({
+//       icon: "error",
+//       title: "Update Failed",
+//       text: "Something went wrong.",
+//     });
+//   }
+// };
+
+//   return (
+//     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+//       <div className="bg-white rounded-xl w-96 p-6 shadow-xl">
+//         <h2 className="text-lg font-bold mb-4">Edit Channel</h2>
+
+//         <input
+//           className="w-full border rounded px-3 py-2 mb-4"
+//           value={name}
+//           onChange={(e) => setName(e.target.value)}
+//         />
+
+//         <MultiSelect
+//           value={selectedEmployeeDetails}
+//           onChange={(e) => setSelectedEmployeeDetails(e.value)}
+//           options={employeeOption}
+//           optionLabel="label"
+//           optionValue="value" // ⭐ THIS IS THE FIX
+//           filter
+//           placeholder="Select Employees"
+//           // maxSelectedLabels={3}
+//           className="w-full border border-gray-300 rounded-lg"
+//           display="chip"
+//         />
+
+//         <div className="flex justify-end gap-2 mt-4">
+//           <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded">
+//             Cancel
+//           </button>
+//           <button
+//             onClick={handleUpdate}
+//             className="px-4 py-2 bg-blue-600 text-white rounded"
+//           >
+//             Update
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+/* ---------------- SECTION HEADER ---------------- */
+// function SectionHeader({ title, open, onToggle, rightAction, currentUser }) {
+//   return (
+//     <div
+//       onClick={onToggle}
+//       className="flex items-center justify-between px-4 py-2 cursor-pointer hover:bg-gray-100"
+//     >
+//       <div className="flex items-center gap-2">
+//         <span className={`transition-transform ${open ? "rotate-90" : ""}`}>
+//           ▶
+//         </span>
+//         <span className="font-semibold text-gray-700">{title}</span>
+//       </div>
+//       {currentUser && currentUser.superUser && rightAction}
+//     </div>
+//   );
+// }
+
+// function SectionHeader({
+//   title,
+//   open,
+//   onToggle,
+//   rightAction,
+//   currentUser,
+//   icon: LeftIcon, // optional left icon
+// }) {
+//   return (
+//     <div
+//       onClick={onToggle}
+//       className="
+//         group
+//         flex items-center justify-between
+//         px-4 py-2 mx-2 mt-2
+//         rounded-lg
+//         cursor-pointer
+//         transition-all
+//         hover:bg-slate-100
+//       "
+//     >
+//       {/* LEFT SIDE */}
+//       <div className="flex items-center gap-2">
+//         {/* Optional left icon */}
+//         {LeftIcon && (
+//           <LeftIcon size={16} className="text-slate-500" />
+//         )}
+
+//         {/* Title */}
+//         <span className="text-sm font-medium text-slate-700">
+//           {title}
+//         </span>
+//          {/* Arrow (right → down when open) */}
+//         <ChevronRight
+//           size={14}
+//           className={`
+//             text-slate-400
+//             transition-transform duration-200
+//             ${open ? "rotate-90" : ""}
+//           `}
+//         />
+//       </div>
+
+//       {/* RIGHT ACTION (admin only) */}
+//       {currentUser?.superUser && rightAction && (
+//         <div
+//           onClick={(e) => e.stopPropagation()}
+//           className="opacity-0 group-hover:opacity-100 transition"
+//         >
+//           {rightAction}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+//
 import { Dropdown } from "primereact/dropdown";
 import { useEffect, useState } from "react";
 import { API_URL } from "../../config";
@@ -422,7 +672,12 @@ import { BsGlobeCentralSouthAsia, BsPeople } from "react-icons/bs";
 import { GiAllForOne } from "react-icons/gi";
 import { Star, Hash, MessageCircle, Plus } from "lucide-react";
 import { ChevronRight } from "lucide-react";
-import { clearChannel, clearDM, setSelectedChannel, setSelectedUser } from "../../redux/chatSlice";
+import {
+  clearChannel,
+  clearDM,
+  setSelectedChannel,
+  setSelectedUser,
+} from "../../redux/chatSlice";
 import { useDispatch } from "react-redux";
 /* ---------------- MODAL ---------------- */
 function CreateChannelModal({
@@ -629,7 +884,7 @@ function CreateChannelModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 w-[100vw]">
       <div className="bg-white rounded-xl w-96 p-6 shadow-xl">
         <h2 className="text-lg font-bold mb-4">Create Channel</h2>
         <label
@@ -722,179 +977,6 @@ function CreateChannelModal({
     </div>
   );
 }
-
-// Edit Channel Modal
-// function EditChannelModal({
-//   channel,
-//   onClose,
-//   currentUser,
-//   setChaneel,
-//   socket,
-// }) {
-
-//   console.log("channel in edit modal", channel);
-//   const [name, setName] = useState(channel.name);
-//   const [employeeOption, setEmployeeOption] = useState([]);
-//   const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState([]);
-
-//   useEffect(() => {
-//     fetchEmployeeList();
-//   }, []);
-
-//   const fetchEmployeeList = async () => {
-//     try {
-//       const response = await axios.get(
-//         `${API_URL}/api/employees/all-users`,
-//         {
-//           params: {
-//             userId: currentUser?._id,
-//             type: currentUser?.superUser ? "superAdmin" : currentUser?.type,
-//           },
-//         },
-//         {
-//           withCredentials: true,
-//         },
-//       );
-//       console.log("response in edit modal", response);
-//       // const employeeIds = response.data.data.map(emp => `${emp.employeeId} - ${emp.employeeName}`);
-//       const employeeemail = response.data.data
-//         .filter((val) => val._id != currentUser?._id)
-//         .map((emp) => ({
-//           label: emp.name,
-//           value: emp._id,
-//         }));
-//       console.log("employeeemail", employeeemail);
-//       setEmployeeOption(employeeemail);
-
-//       // const selected = channel.members.map((m) => ({
-//       //   label: m.name,
-//       //   value: m._id,
-//       // }));
-
-//       // const selected = channel.members.map((m) => m._id);
-
-// setSelectedEmployeeDetails(channel.members || []);
-
-//     } catch (error) {
-//       console.log(error);
-//       // setLoading(false);
-//     }
-//   };
-
-// console.log("selected", selectedEmployeeDetails);
-//   // const handleUpdate = async () => {
-//   //   try {
-//   //     console.log("update res", selectedEmployeeDetails);
-//   //     const res = await axios.put(
-//   //       `${API_URL}/api/channel/update-channel/${channel._id}`,
-//   //       {
-//   //         name,
-//   //         members: selectedEmployeeDetails,
-//   //       },
-//   //     );
-
-//   //     if (res.data.success) {
-//   //       setChaneel((prev) =>
-//   //         prev.map((ch) => (ch._id === channel._id ? res.data.data : ch)),
-//   //       );
-//   //     }
-//   //     onClose();
-//   //   } catch (err) {
-//   //     console.log("update error", err);
-//   //   }
-//   // };
-
-// const handleUpdate = async () => {
-//   // ✅ Prevent empty name
-//   if (!name.trim()) {
-//     Swal.fire({
-//       icon: "warning",
-//       title: "Channel name required",
-//     });
-//     return;
-//   }
-//   try {
-//     // ✅ Loading alert
-//     Swal.fire({
-//       title: "Updating...",
-//       allowOutsideClick: false,
-//       didOpen: () => {
-//         Swal.showLoading();
-//       },
-//     });
-
-//     const res = await axios.put(
-//       `${API_URL}/api/channel/update-channel/${channel._id}`,
-//       {
-//         name,
-//         members: selectedEmployeeDetails, // already IDs 👍
-//       }
-//     );
-
-//     if (res.data.success) {
-//       setChaneel((prev) =>
-//         prev.map((ch) => (ch._id === channel._id ? res.data.data : ch))
-//       );
-
-//       Swal.fire({
-//         icon: "success",
-//         title: "Channel Updated!",
-//         timer: 1500,
-//         showConfirmButton: false,
-//       });
-
-//       onClose();
-//     }
-//   } catch (err) {
-//     console.log("update error", err);
-
-//     Swal.fire({
-//       icon: "error",
-//       title: "Update Failed",
-//       text: "Something went wrong.",
-//     });
-//   }
-// };
-
-//   return (
-//     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-//       <div className="bg-white rounded-xl w-96 p-6 shadow-xl">
-//         <h2 className="text-lg font-bold mb-4">Edit Channel</h2>
-
-//         <input
-//           className="w-full border rounded px-3 py-2 mb-4"
-//           value={name}
-//           onChange={(e) => setName(e.target.value)}
-//         />
-
-//         <MultiSelect
-//           value={selectedEmployeeDetails}
-//           onChange={(e) => setSelectedEmployeeDetails(e.value)}
-//           options={employeeOption}
-//           optionLabel="label"
-//           optionValue="value" // ⭐ THIS IS THE FIX
-//           filter
-//           placeholder="Select Employees"
-//           // maxSelectedLabels={3}
-//           className="w-full border border-gray-300 rounded-lg"
-//           display="chip"
-//         />
-
-//         <div className="flex justify-end gap-2 mt-4">
-//           <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded">
-//             Cancel
-//           </button>
-//           <button
-//             onClick={handleUpdate}
-//             className="px-4 py-2 bg-blue-600 text-white rounded"
-//           >
-//             Update
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
 
 function EditChannelModal({
   channel,
@@ -1091,7 +1173,7 @@ function EditChannelModal({
   if (!channel) return null; //  Prevent crash
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 w-[100vw]">
       <div className="bg-white rounded-xl w-96 p-6 shadow-xl">
         <h2 className="text-lg font-bold mb-4">Edit Channel</h2>
 
@@ -1199,80 +1281,6 @@ function EditChannelModal({
   );
 }
 
-/* ---------------- SECTION HEADER ---------------- */
-// function SectionHeader({ title, open, onToggle, rightAction, currentUser }) {
-//   return (
-//     <div
-//       onClick={onToggle}
-//       className="flex items-center justify-between px-4 py-2 cursor-pointer hover:bg-gray-100"
-//     >
-//       <div className="flex items-center gap-2">
-//         <span className={`transition-transform ${open ? "rotate-90" : ""}`}>
-//           ▶
-//         </span>
-//         <span className="font-semibold text-gray-700">{title}</span>
-//       </div>
-//       {currentUser && currentUser.superUser && rightAction}
-//     </div>
-//   );
-// }
-
-// function SectionHeader({
-//   title,
-//   open,
-//   onToggle,
-//   rightAction,
-//   currentUser,
-//   icon: LeftIcon, // optional left icon
-// }) {
-//   return (
-//     <div
-//       onClick={onToggle}
-//       className="
-//         group
-//         flex items-center justify-between
-//         px-4 py-2 mx-2 mt-2
-//         rounded-lg
-//         cursor-pointer
-//         transition-all
-//         hover:bg-slate-100
-//       "
-//     >
-//       {/* LEFT SIDE */}
-//       <div className="flex items-center gap-2">
-//         {/* Optional left icon */}
-//         {LeftIcon && (
-//           <LeftIcon size={16} className="text-slate-500" />
-//         )}
-
-//         {/* Title */}
-//         <span className="text-sm font-medium text-slate-700">
-//           {title}
-//         </span>
-//          {/* Arrow (right → down when open) */}
-//         <ChevronRight
-//           size={14}
-//           className={`
-//             text-slate-400
-//             transition-transform duration-200
-//             ${open ? "rotate-90" : ""}
-//           `}
-//         />
-//       </div>
-
-//       {/* RIGHT ACTION (admin only) */}
-//       {currentUser?.superUser && rightAction && (
-//         <div
-//           onClick={(e) => e.stopPropagation()}
-//           className="opacity-0 group-hover:opacity-100 transition"
-//         >
-//           {rightAction}
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
 function SectionHeader({
   title,
   open,
@@ -1289,7 +1297,7 @@ function SectionHeader({
         bg-white
         group
         flex items-center justify-between
-        px-4 py-2 mx-2 mt-2
+        px-4  mx-2 mt-1
         rounded-lg
         cursor-pointer
         transition-all
@@ -2151,6 +2159,7 @@ export default function SlackSidebar({
   // edit channels and users array to single array
   const [editChannel, setEditChannel] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
+
   // redux dispatch
   const dispatch = useDispatch();
 
@@ -2158,6 +2167,7 @@ export default function SlackSidebar({
   // helper function
   const isOnline = (id) => onlineUsers.includes(String(id));
   console.log("after create channel selected ", channels);
+
   /* ---------------- FILTER USERS ---------------- */
   const filteredUsers = users.filter((u) => {
     const name = u.name || "";
@@ -2168,6 +2178,7 @@ export default function SlackSidebar({
     if (filter === "unread") return match && unread[u._id] > 0;
     return match;
   });
+
   console.log("filteredUsers", filteredUsers);
 
   // filter channels based on search term
@@ -2197,12 +2208,12 @@ export default function SlackSidebar({
   /* ---------------- OPEN CHANNEL ---------------- */
   const openChannel = (channel) => {
     // onSelectChannel(channel);
-     dispatch(setSelectedUser(null));        // close DM
-  dispatch(setSelectedChannel(channel));       // set active channel
+    dispatch(setSelectedUser(null)); // close DM
+    dispatch(setSelectedChannel(channel)); // set active channel
 
-  dispatch(clearChannel(channel._id));         // clear unread
+    dispatch(clearChannel(channel._id)); // clear unread
 
-  onSelectChannel(channel);                    // UI / API logic
+    onSelectChannel(channel); // UI / API logic
 
     socket.emit("join_channel", { channelId: channel._id });
 
@@ -2267,6 +2278,7 @@ export default function SlackSidebar({
     }
   };
 
+  console.log("favorites 1233", favorites);
   /* ---------------- HELPERS ---------------- */
   const isDMFavorite = (id) => favorites.dm.some((f) => f._id === id);
 
@@ -2297,7 +2309,20 @@ export default function SlackSidebar({
     }));
   };
 
-  // helper function to sort users
+  // // helper function to sort users
+  // const sortUsers = (a, b) => {
+  //   const aOnline = isOnline(a._id);
+  //   const bOnline = isOnline(b._id);
+
+  //   if (aOnline && !bOnline) return -1;
+  //   if (!aOnline && bOnline) return 1;
+
+  //   const aUnread = unread[a._id] || 0;
+  //   const bUnread = unread[b._id] || 0;
+  //   if (aUnread !== bUnread) return bUnread - aUnread;
+
+  //   return a.name.localeCompare(b.name);
+  // };
   const sortUsers = (a, b) => {
     const aOnline = isOnline(a._id);
     const bOnline = isOnline(b._id);
@@ -2309,7 +2334,7 @@ export default function SlackSidebar({
     const bUnread = unread[b._id] || 0;
     if (aUnread !== bUnread) return bUnread - aUnread;
 
-    return a.name.localeCompare(b.name);
+    return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
   };
 
   // Group users by type
@@ -2341,6 +2366,7 @@ export default function SlackSidebar({
   //     console.log(err);
   //   }
   // };
+
   const handleDeleteChannel = async (id) => {
     const result = await Swal.fire({
       title: "Delete Channel?",
@@ -2403,7 +2429,7 @@ export default function SlackSidebar({
         <h2 className="text-xl font-bold mb-3">Messages</h2>
 
         <input
-          className="w-full px-3 py-2 rounded bg-gray-100 mb-3"
+          className="w-full px-3 py-2 rounded bg-gray-100 mb-3 border border-gray-300"
           placeholder="Search..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -2436,7 +2462,7 @@ export default function SlackSidebar({
               <span>Favorites</span>
 
               {totalFavoritesUnread > 0 && (
-                <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+                <span className="bg-purple-700 text-white text-xs px-2 rounded-full">
                   {totalFavoritesUnread}
                 </span>
               )}
@@ -2447,66 +2473,99 @@ export default function SlackSidebar({
           onToggle={() => setFavoritesOpen((p) => !p)}
         />
         {/* ⭐ FAVORITES */}
-        <div className="overflow-y-scroll scroll max-h-[50%] p-2 scrollbar-hide ">
+        <div className="overflow-y-scroll scroll px-5 max-h-[50%] p-1 scrollbar-hide  border-b ">
           {favoritesOpen &&
             (favoriteDMs.length > 0 || favoriteChannels.length > 0) && (
               <>
                 {/* Favorite Channels */}
-                {favoriteChannels.map((ch) => (
-                  <div
-                    key={`fav-channel-${ch._id}`}
-                    onClick={() => openChannel(ch)}
-                    className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100"
-                  >
-                    <span
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFavoriteChannel(ch);
-                      }}
+                {[...favoriteChannels]
+                  .sort((a, b) => {
+                    const aUnread = channelUnread[a._id] || 0;
+                    const bUnread = channelUnread[b._id] || 0;
+
+                    if (aUnread !== bUnread) {
+                      return bUnread - aUnread;
+                    }
+
+                    return a.name.localeCompare(b.name, undefined, {
+                      sensitivity: "base",
+                    });
+                  })
+                  .map((ch) => (
+                    <div
+                      key={`fav-channel-${ch._id}`}
+                      onClick={() => openChannel(ch)}
+                      className="mx-3 my-1  rounded-lg cursor-pointer hover:bg-yellow-100 text-sm flex justify-between items-center"
                     >
-                      {isChannelFavorite(ch._id) ? "⭐" : "☆"}
-                    </span>
-                    # {ch.name}
-                    <div className="">
-                      {channelUnread[ch._id] > 0 && (
-                        <span className="bg-red-500 text-white text-xs px-2 rounded-full">
-                          {channelUnread[ch._id]}
+                      <div>
+                        <span
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleFavoriteChannel(ch);
+                          }}
+                        >
+                          {isChannelFavorite(ch._id) ? "⭐" : "☆"}
                         </span>
-                      )}
+                        {/* #{ch?.name?.length > 6 ? ch?.name?.slice(0, 6) + "..." : ch?.name} */}
+                        <span className="w-[180px] truncate"># {ch.name}</span>
+                      </div>
+                      <div className="">
+                        {channelUnread[ch._id] > 0 && (
+                          <span className="bg-purple-700 text-white text-xs px-2 rounded-full">
+                            {channelUnread[ch._id]}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                {favoriteDMs.length > 0 && <hr />}
                 {/* Favorite DMs */}
-                {favoriteDMs.map((u) => (
-                  <div
-                    key={`fav-dm-id-${u._id}`}
-                    // onClick={() => onSelectUser(u)}
-                    onClick={() => {
-  dispatch(setSelectedChannel(null));   // close channel
-  dispatch(setSelectedUser(u));         // set active DM
-  dispatch(clearDM(u._id));             // clear unread count
-  onSelectUser(u);                      // UI / API logic
-}}
-                    className="mx-3 my-1 p-3 rounded-lg cursor-pointer hover:bg-yellow-100"
-                  >
-                    <span
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFavoriteDM(u);
+                {[...favoriteDMs]
+                  .sort((a, b) => {
+                    const aUnread = unread[a._id] || 0;
+                    const bUnread = unread[b._id] || 0;
+
+                    if (aUnread !== bUnread) {
+                      return bUnread - aUnread; // higher unread first
+                    }
+
+                    return a.name.localeCompare(b.name, undefined, {
+                      sensitivity: "base",
+                    });
+                  })
+                  .map((u) => (
+                    <div
+                      key={`fav-dm-id-${u._id}`}
+                      // onClick={() => onSelectUser(u)}
+                      onClick={() => {
+                        dispatch(setSelectedChannel(null)); // close channel
+                        dispatch(setSelectedUser(u)); // set active DM
+                        dispatch(clearDM(u._id)); // clear unread count
+                        onSelectUser(u); // UI / API logic
                       }}
+                      className="mx-3 my-1  rounded-lg cursor-pointer hover:bg-yellow-100 text-sm flex justify-between items-center"
                     >
-                      {isDMFavorite(u._id) ? "⭐" : "☆"}
-                    </span>{" "}
-                    {u.name}
-                    <div>
-                      {unread[u._id] > 0 && (
-                        <span className="bg-red-500 text-white text-xs px-2 rounded-full">
-                          {unread[u._id]}
-                        </span>
-                      )}
+                      <div>
+                        <span
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleFavoriteDM(u);
+                          }}
+                        >
+                          {isDMFavorite(u._id) ? "⭐" : "☆"}
+                        </span>{" "}
+                        {/* {u.name.length > 6 ? u.name.slice(0, 6) + "..." : u.name} */}
+                        <span className="w-[180px] truncate">{u.name}</span>
+                      </div>
+                      <div>
+                        {unread[u._id] > 0 && (
+                          <span className="bg-purple-700 text-white text-xs px-2 rounded-full">
+                            {unread[u._id]}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </>
             )}
         </div>
@@ -2541,7 +2600,7 @@ export default function SlackSidebar({
               <span>Channels</span>
 
               {totalChannelUnread > 0 && (
-                <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+                <span className="bg-purple-700 text-white text-xs px-2 rounded-full">
                   {totalChannelUnread}
                 </span>
               )}
@@ -2563,37 +2622,52 @@ export default function SlackSidebar({
             </button>
           }
         />
-        <div className={`overflow-scroll max-h-[50%] scrollbar-hide p-2 `}>
+        <div
+          className={`overflow-scroll max-h-[50%] scrollbar-hide p-1  border-b `}
+        >
           {channelOpen &&
-            filteredChannels.map((ch) => (
-              <div
-                key={`channel-${ch._id}`}
-                onClick={() => openChannel(ch)}
-                className={`mx-3 my-1 p-3 rounded-lg cursor-pointer flex justify-between items-center  ${
-                  selectedChannel?._id === ch._id
-                    ? "bg-blue-100"
-                    : "hover:bg-gray-100"
-                }`}
-              >
-                <div className="flex gap-2">
-                  {ch.channelType == "private" ? (
-                    <Lock className="w-4 h-4 text-yellow-500" />
-                  ) : (
-                    <BsPeople className="w-4 h-4 text-green-500" />
-                  )}
-                  <span># {ch.name}</span>
-                </div>
+            [...filteredChannels]
+              .sort((a, b) => {
+                const aUnread = channelUnread[a._id] || 0;
+                const bUnread = channelUnread[b._id] || 0;
 
-                <div className="flex items-center gap-2">
-                  <span
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleFavoriteChannel(ch);
-                    }}
-                  >
-                    {isChannelFavorite(ch._id) ? "⭐" : "☆"}
-                  </span>
-                  <span
+                if (aUnread !== bUnread) {
+                  return bUnread - aUnread; // higher unread first
+                }
+
+                return a.name.localeCompare(b.name, undefined, {
+                  sensitivity: "base",
+                });
+              })
+              .map((ch) => (
+                <div
+                  key={`channel-${ch._id}`}
+                  onClick={() => openChannel(ch)}
+                  className={`mx-3 my-1 px-3 rounded-lg cursor-pointer flex justify-between items-center text-sm  ${
+                    selectedChannel?._id === ch._id
+                      ? "bg-blue-100"
+                      : "hover:bg-gray-100"
+                  }`}
+                >
+                  <div className="flex gap-2">
+                    {ch.channelType == "private" ? (
+                      <Lock className="w-4 h-4 text-yellow-500" />
+                    ) : (
+                      <BsPeople className="w-4 h-4 text-green-500" />
+                    )}
+                    <span className="w-[180px] truncate"># {ch.name}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFavoriteChannel(ch);
+                      }}
+                    >
+                      {isChannelFavorite(ch._id) ? "⭐" : "☆"}
+                    </span>
+                    {/* <span
                     className="text-blue-400 hover:text-blue-600"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -2612,16 +2686,16 @@ export default function SlackSidebar({
                         handleDeleteChannel(ch._id);
                       }}
                     />
-                  </span>
+                  </span> */}
 
-                  {channelUnread[ch._id] > 0 && (
-                    <span className="bg-red-500 text-white text-xs px-2 rounded-full">
-                      {channelUnread[ch._id]}
-                    </span>
-                  )}
+                    {channelUnread[ch._id] > 0 && (
+                      <span className="bg-purple-700 text-white text-xs px-2 rounded-full">
+                        {channelUnread[ch._id]}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
         </div>
 
         {/* 💬 DIRECT MESSAGES */}
@@ -2659,7 +2733,7 @@ export default function SlackSidebar({
                   className="
           sticky top-0 z-20
           bg-white
-          px-4 py-2
+          pl-5 pr-2 pt-1
           font-semibold
           flex justify-between items-center
           cursor-pointer
@@ -2667,14 +2741,14 @@ export default function SlackSidebar({
           scrollbar-hide
         "
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 text-sm">
                     <div>
                       <span>{group.label}</span>
                     </div>
                   </div>
                   <div className="flex gap-2">
                     {groupUnread > 0 && (
-                      <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                      <span className="bg-purple-700 text-white text-xs px-2 py-0.5 rounded-full">
                         {groupUnread}
                       </span>
                     )}
@@ -2685,15 +2759,15 @@ export default function SlackSidebar({
                 {/* Accordion Body */}
                 {openGroups[group.key] &&
                   group.users.map((u) => (
-                    <div key={`dm-${u._id}`} className="py-3">
+                    <div key={`dm-${u._id}`} className="my-1">
                       <div
-                      onClick={() => {
-  dispatch(setSelectedChannel(null));   // close channel
-  dispatch(setSelectedUser(u));         // set active DM
-  dispatch(clearDM(u._id));             // clear unread count
-  onSelectUser(u);                      // UI / API logic
-}}
-                        className={`mx-3 my-1 rounded-lg cursor-pointer flex justify-between items-center p-2  ${
+                        onClick={() => {
+                          dispatch(setSelectedChannel(null)); // close channel
+                          dispatch(setSelectedUser(u)); // set active DM
+                          dispatch(clearDM(u._id)); // clear unread count
+                          onSelectUser(u); // UI / API logic
+                        }}
+                        className={`mx-3 rounded-lg cursor-pointer flex justify-between items-center text-sm   ${
                           selectedUser?._id === u._id
                             ? "bg-purple-100"
                             : "hover:bg-gray-100"
@@ -2708,12 +2782,13 @@ export default function SlackSidebar({
                           <div className="relative">
                             {u.photo ? (
                               <img
-                                src={u.photo}
+                                // src={u.photo}
+                                src={`${API_URL}/api/uploads/employeesImages/${u.photo}`}
                                 alt={u.name}
-                                className="w-9 h-9 rounded-full object-cover border"
+                                className="w-6 h-6 rounded-full object-contain border"
                               />
                             ) : (
-                              <div className="w-9 h-9 rounded-full  bg-indigo-500 text-white flex items-center justify-center text-sm font-semibold">
+                              <div className="w-6 h-6 rounded-full  bg-indigo-500 text-white flex items-center justify-center text-xs font-semibold">
                                 {u.name?.charAt(0).toUpperCase()}
                               </div>
                             )}
@@ -2725,14 +2800,27 @@ export default function SlackSidebar({
                               }`}
                             />
                           </div>
-                          <span>
+                          {/* <span>
+                            {u.name
+  ? (u.name.length > 12
+      ? u.name.slice(0, 12) + "..."
+      : u.name
+    ).charAt(0).toUpperCase() +
+    (u.name.length > 12
+      ? u.name.slice(0, 12) + "..."
+      : u.name
+    ).slice(1)
+  : ""}
+                            {u._id == currentUser._id && " ( You )"}
+                          </span> */}
+                          <span className="max-w-[200px] truncate block">
                             {u.name}
                             {u._id == currentUser._id && " ( You )"}
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 p-1">
+                        <div className="flex items-center gap-2 ">
                           {unread[u._id] > 0 && (
-                            <span className="bg-red-500 text-white text-xs px-2 rounded-full">
+                            <span className="  bg-purple-700 text-white  text-xs px-2 rounded-full">
                               {unread[u._id]}
                             </span>
                           )}
