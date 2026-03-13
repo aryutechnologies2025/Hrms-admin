@@ -39,7 +39,6 @@ const Dashboard_Mainbar = () => {
   const [presentlistIsOpen, setpresentlistIsOpen] = useState(false);
   const [absentlistData, setAbsentlistData] = useState("");
 
-
   const [wfhlistData, setWfhlistData] = useState("");
   const [presentlistData, setpresentlistData] = useState("");
 
@@ -51,31 +50,32 @@ const Dashboard_Mainbar = () => {
   const [currentDate, setCurrentDate] = useState("");
   const [upcomingBirthdays, setUpcomingBirthdays] = useState([]);
   const [emplopyeereliving, setEmplopyeereliving] = useState([]);
+  const [recurringPayment, setRecurringPayment] = useState([]);
+  console.log("recurringPayment", recurringPayment);
   const [interns, setinterns] = useState([]);
+      const accountId = localStorage.getItem("hrmsuser");
+      console.log("accountId", accountId);
 
   const [announcements, setAnnouncements] = useState([]);
 
   // console.log("announcements", announcements)
   // console.log("interns", interns);
 
- 
-
   const getApiData = async () => {
     try {
       // console.log("API_URL:", API_URL);
       // console.log("Fetching data...");
       const token = localStorage.getItem("admin_token");
-      // console.log("token",token);
+      console.log("token", token);
 
       const response = await axios.get(`${API_URL}/api/employees/dashboard`, {
         params: {
           role: "Admin",
         },
         withCredentials: true,
-         // Include cookies with the request
-      
+        // Include cookies with the request
       });
-      // console.log("Response:", response.data.data);
+      console.log("Response:", response.data.data);
       const {
         upcomingHolidays,
         employeeRequests,
@@ -84,6 +84,7 @@ const Dashboard_Mainbar = () => {
         todayBirthday,
         futureEmployees,
         interns,
+        upcomingRecurringPayments,
 
         announcements,
       } = response.data?.data;
@@ -95,8 +96,9 @@ const Dashboard_Mainbar = () => {
       setpresentlistData(todayAttendanceDetails?.present);
       setUpcomingBirthdays(todayBirthday);
       setEmplopyeereliving(futureEmployees);
+      setRecurringPayment(upcomingRecurringPayments);
       setinterns(interns);
-      setAnnouncements(announcements)
+      setAnnouncements(announcements);
 
       // const employeereleving =
       futureEmployees.map((emp) => emp);
@@ -186,68 +188,63 @@ const Dashboard_Mainbar = () => {
   //     },
   //   },
 
-const commonColumns = [
-  {
-    field: "sno",
-    header: "S.No",
-    body: (_rowData, { rowIndex }) => rowIndex + 1,
-    style: { width: "10px", textAlign: "center" },
-    bodyStyle: { textAlign: "center" },
-  },
-  {
-    field: "employee_name",
-    header: "Employee Name",
-    body: (rowData) =>
-      rowData ? (
-        <div
-          className="cursor-pointer"
-          onClick={() => onClickCard(rowData._id)}
-        >
-          {rowData.employeeName}
-          <br />
-          <span className="text-blue-600 text-sm">
-            {rowData.roleId?.name}
-          </span>
-        </div>
-      ) : (
-        "-"
-      ),
-  },
-];
+  const commonColumns = [
+    {
+      field: "sno",
+      header: "S.No",
+      body: (_rowData, { rowIndex }) => rowIndex + 1,
+      style: { width: "10px", textAlign: "center" },
+      bodyStyle: { textAlign: "center" },
+    },
+    {
+      field: "employee_name",
+      header: "Employee Name",
+      body: (rowData) =>
+        rowData ? (
+          <div
+            className="cursor-pointer"
+            onClick={() => onClickCard(rowData._id)}
+          >
+            {rowData.employeeName}
+            <br />
+            <span className="text-blue-600 text-sm">
+              {rowData.roleId?.name}
+            </span>
+          </div>
+        ) : (
+          "-"
+        ),
+    },
+  ];
 
+  const loginTimeColumn = {
+    field: "login_time",
+    header: "Login Time",
+    body: (rowData) => {
+      if (!rowData?.login) return "-";
 
-const loginTimeColumn = {
-  field: "login_time",
-  header: "Login Time",
-  body: (rowData) => {
-    if (!rowData?.login) return "-";
+      const time = rowData.login.substring(11, 16);
+      let [hours, minutes] = time.split(":").map(Number);
 
-    const time = rowData.login.substring(11, 16);
-    let [hours, minutes] = time.split(":").map(Number);
+      const ampm = hours >= 12 ? "PM" : "AM";
+      const displayHours = hours % 12 || 12;
+      const formattedTime = `${displayHours}:${minutes
+        .toString()
+        .padStart(2, "0")} ${ampm}`;
 
-    const ampm = hours >= 12 ? "PM" : "AM";
-    const displayHours = hours % 12 || 12;
-    const formattedTime = `${displayHours}:${minutes
-      .toString()
-      .padStart(2, "0")} ${ampm}`;
+      let colorClass = "";
+      if (hours === 10 && minutes >= 5 && minutes < 30) {
+        colorClass = "text-yellow-500 font-bold";
+      } else if (hours > 10 || (hours === 10 && minutes >= 30)) {
+        colorClass = "text-red-500";
+      }
 
-    let colorClass = "";
-    if (hours === 10 && minutes >= 5 && minutes < 30) {
-      colorClass = "text-yellow-500 font-bold";
-    } else if (hours > 10 || (hours === 10 && minutes >= 30)) {
-      colorClass = "text-red-500";
-    }
+      return <p className={colorClass}>{formattedTime}</p>;
+    },
+  };
 
-    return <p className={colorClass}>{formattedTime}</p>;
-  },
-};
-
-const absentColumns = [...commonColumns];
-const presentWfhColumns = [...commonColumns, loginTimeColumn];
-
-
-
-
+  const absentColumns = [...commonColumns];
+  const presentWfhColumns = [...commonColumns, loginTimeColumn];
 
   //   // { field: "employeeId", header: "Employee ID" },
   // ];
@@ -255,14 +252,12 @@ const presentWfhColumns = [...commonColumns, loginTimeColumn];
   const [show, setShow] = useState(true);
 
   const sortByLateLogin = (data = []) => {
-  return [...data].sort((a, b) => {
-    if (!a.login) return 1;
-    if (!b.login) return -1;
-    return new Date(b.login) - new Date(a.login); // late first
-  });
-};
-
-
+    return [...data].sort((a, b) => {
+      if (!a.login) return 1;
+      if (!b.login) return -1;
+      return new Date(b.login) - new Date(a.login); // late first
+    });
+  };
 
   return (
     <div className=" w-screen min-h-screen flex flex-col justify-between bg-gray-100 md:px-5 px-3 py-2 md:pt-5 ">
@@ -273,12 +268,11 @@ const presentWfhColumns = [...commonColumns, loginTimeColumn];
           <div>
             <div className=" ">
               <Mobile_Sidebar />
-
             </div>
 
-            <p className="text-sm md:text-md mt-3  text-end text-blue-500">Dashboard</p>
-
-
+            <p className="text-sm md:text-md mt-3  text-end text-blue-500">
+              Dashboard
+            </p>
 
             <div className="bg-white rounded-2xl px-2 py-2 md:px-5 md:py-5 flex justify-between mt-1 ">
               <p className="font-semibold">Dashboard</p>
@@ -290,7 +284,7 @@ const presentWfhColumns = [...commonColumns, loginTimeColumn];
                 <span className="inline-block  text-center">
                   {hours}:{minutes}:{seconds} {amPm}
                 </span> */}
-                <Clock/>
+                <Clock />
               </div>
             </div>
             {/* 
@@ -321,7 +315,6 @@ const presentWfhColumns = [...commonColumns, loginTimeColumn];
 
               </div>
             </div> */}
-
 
             {/* {announcements.length > 0 &&
   announcements.map((item, index) => (
@@ -359,51 +352,43 @@ const presentWfhColumns = [...commonColumns, loginTimeColumn];
 ))}
    */}
 
-{announcements.length > 0 && (
-  <div
-    className={`
+            {announcements.length > 0 && (
+              <div
+                className={`
       transition-all duration-500 
       ${show ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5"} 
       fixed top-4 left-1/2 transform -translate-x-1/2 
       w-[90%] md:w-[600px] z-50
     `}
-  >
-    <div className="relative bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-5 py-5 rounded-xl shadow-xl border border-white/20 backdrop-blur-md">
+              >
+                <div className="relative bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-5 py-5 rounded-xl shadow-xl border border-white/20 backdrop-blur-md">
+                  {/* Close Button on TOP RIGHT */}
+                  <button
+                    onClick={() => setShow(false)}
+                    className="absolute top-2 right-3 text-white text-2xl font-bold hover:scale-125 transition"
+                  >
+                    ×
+                  </button>
 
-      {/* Close Button on TOP RIGHT */}
-      <button
-        onClick={() => setShow(false)}
-        className="absolute top-2 right-3 text-white text-2xl font-bold hover:scale-125 transition"
-      >
-        ×
-      </button>
+                  {/* Icon + Messages */}
+                  <div className="flex items-start gap-3 mt-3">
+                    <span className="text-3xl animate-pulse">📢</span>
 
-      {/* Icon + Messages */}
-      <div className="flex items-start gap-3 mt-3">
-        <span className="text-3xl animate-pulse">📢</span>
+                    {/* BULLET POINTS - MAP */}
+                    <ul className="list-disc pl-6 space-y-1">
+                      {announcements.map((item, i) => {
+                        const cleanMessage = item.message
+                          .replace(/<\/?p>/g, "")
+                          .trim();
+                        return <li key={i}>{cleanMessage}</li>;
+                      })}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
 
-        {/* BULLET POINTS - MAP */}
-        <ul className="list-disc pl-6 space-y-1">
-          {announcements.map((item, i) => {
-            const cleanMessage = item.message.replace(/<\/?p>/g, "").trim();
-            return <li key={i}>{cleanMessage}</li>;
-          })}
-        </ul>
-      </div>
-
-    </div>
-  </div>
-)}
-
-
-
-
-
-
-
-            <div>
-
-            </div>
+            <div></div>
 
             {/* upcoming holiday */}
             <div className="flex pt-1 md:pt-3 flex-wrap md:flex-nowrap gap-2 md:gap-4 md:mb-5 items-center justify-between">
@@ -451,12 +436,13 @@ const presentWfhColumns = [...commonColumns, loginTimeColumn];
                               </div>
                               <span
                                 className={`px-2 py-0.5 rounded-full text-xs font-semibold
-                ${req.status === "approved"
-                                    ? "bg-green-100 text-green-700"
-                                    : req.status === "pending"
-                                      ? "bg-yellow-100 text-yellow-700"
-                                      : "bg-red-100 text-red-700"
-                                  }`}
+                ${
+                  req.status === "approved"
+                    ? "bg-green-100 text-green-700"
+                    : req.status === "pending"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-red-100 text-red-700"
+                }`}
                               >
                                 {req.status.charAt(0).toUpperCase() +
                                   req.status.slice(1)}
@@ -573,7 +559,6 @@ const presentWfhColumns = [...commonColumns, loginTimeColumn];
                             <p className="text-[12px]  text-gray-500 capitalize">
                               {item.role?.name}
                             </p>
-
                           </div>
                         </div>
                       ))}
@@ -584,6 +569,153 @@ const presentWfhColumns = [...commonColumns, loginTimeColumn];
                 )}
               </div>
             </div>
+            {/* {accountId._id === "69b010b2a060b37f7aed0a8a" && ( */}
+              <div className="w-full md:w-[32%]">
+                <div
+                  className="relative flex flex-col w-full mt-1 md:mt-5 h-auto md:h-[260px] rounded-2xl
+                 bg-[url('././assets/zigzaglines_large.svg')] bg-cover shadow-lg px-3 py-3 md:px-6 md:py-6"
+                >
+                  <div className="flex items-center justify-between mb-1 md:mb-4">
+                    <h3 className="text-md font-normal md:font-bold text-gray-800">
+                      Recurring Payment
+                    </h3>
+                    <span className="text-sm text-gray-500">
+                      {recurringPayment?.length} Total
+                    </span>
+                  </div>
+
+                  {recurringPayment?.length === 0 ? (
+                    <div className="flex items-center justify-center flex-1">
+                      <p className="text-gray-500 italic">No recurring found</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-3 overflow-y-auto max-h-[180px] pr-1 custom-scrollbar">
+                      {recurringPayment
+                        ?.slice()
+                        .sort(
+                          (a, b) => new Date(a.dueDate) - new Date(b.dueDate),
+                        )
+                        .map((emp) => {
+                          const formattedDate = new Date(
+                            emp.dueDate,
+                          ).toLocaleDateString("en-GB", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          });
+
+                          // Check if due date is past
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          const dueDate = new Date(emp.dueDate);
+                          dueDate.setHours(0, 0, 0, 0);
+                          const isPastDue = dueDate < today;
+
+                          return (
+                            <div
+                              key={emp._id}
+                              className={`group transition rounded-xl shadow-sm border p-3 flex flex-col gap-2 ${
+                                isPastDue
+                                  ? "bg-red-50 border-red-300 hover:bg-red-100"
+                                  : "bg-white/70 border-gray-200 hover:bg-indigo-50"
+                              }`}
+                            >
+                              {/* Amount and Payment Type */}
+                              <div className="flex items-center justify-between">
+                                <p
+                                  className={`text-base font-semibold ${
+                                    isPastDue ? "text-red-800" : "text-gray-800"
+                                  }`}
+                                >
+                                  ₹{emp.amount}
+                                </p>
+                                <span
+                                  className={`text-xs px-2 py-0.5 rounded-full ${
+                                    isPastDue
+                                      ? "text-red-700 bg-red-200"
+                                      : "text-indigo-600 bg-indigo-100"
+                                  }`}
+                                >
+                                  {emp.paymentType}
+                                </span>
+                              </div>
+
+                              {/* Lender and Account */}
+                              <div className="flex items-center justify-between text-xs">
+                                <span
+                                  className={
+                                    isPastDue ? "text-red-700" : "text-gray-600"
+                                  }
+                                >
+                                  Lender:{" "}
+                                  <span
+                                    className={`font-medium ${
+                                      isPastDue
+                                        ? "text-red-900"
+                                        : "text-gray-900"
+                                    }`}
+                                  >
+                                    {emp.lenderName}
+                                  </span>
+                                </span>
+                                <span
+                                  className={
+                                    isPastDue ? "text-red-700" : "text-gray-600"
+                                  }
+                                >
+                                  A/C:{" "}
+                                  <span
+                                    className={`font-medium ${
+                                      isPastDue
+                                        ? "text-red-900"
+                                        : "text-gray-900"
+                                    }`}
+                                  >
+                                    {emp.account?.name}
+                                  </span>
+                                </span>
+                              </div>
+
+                              {/* Due Date with Warning Icon for Past Due */}
+                              <div className="flex items-center justify-between text-xs">
+                                <span
+                                  className={
+                                    isPastDue ? "text-red-700" : "text-gray-600"
+                                  }
+                                >
+                                  Due Date:
+                                  {isPastDue && (
+                                    <span className="ml-1 inline-flex items-center">
+                                      <svg
+                                        className="w-3.5 h-3.5 text-red-600"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                      >
+                                        <path
+                                          fillRule="evenodd"
+                                          d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                          clipRule="evenodd"
+                                        />
+                                      </svg>
+                                    </span>
+                                  )}
+                                </span>
+                                <span
+                                  className={`font-medium ${
+                                    isPastDue ? "text-red-900" : "text-gray-900"
+                                  }`}
+                                >
+                                  {formattedDate}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  )}
+                </div>
+              </div>
+            {/* )} */}
 
             <section className="flex flex-wrap gap-2 md:gap-5">
               {" "}
@@ -623,11 +755,11 @@ const presentWfhColumns = [...commonColumns, loginTimeColumn];
                         .sort(
                           (a, b) =>
                             new Date(a.last_working_date) -
-                            new Date(b.last_working_date)
+                            new Date(b.last_working_date),
                         ) // ascending order
                         .map((emp) => {
                           const formattedDate = new Date(
-                            emp.last_working_date
+                            emp.last_working_date,
                           ).toLocaleDateString("en-GB", {
                             day: "2-digit",
                             month: "2-digit",
@@ -705,14 +837,14 @@ const presentWfhColumns = [...commonColumns, loginTimeColumn];
                         // ) // ascending order
                         .map((emp) => {
                           const formattedDate = new Date(
-                            emp.internshipEndDate
+                            emp.internshipEndDate,
                           ).toLocaleDateString("en-GB", {
                             day: "2-digit",
                             month: "2-digit",
                             year: "numeric",
                           });
                           const formattedDates = new Date(
-                            emp.dateOfJoining
+                            emp.dateOfJoining,
                           ).toLocaleDateString("en-GB", {
                             day: "2-digit",
                             month: "2-digit",
@@ -759,21 +891,21 @@ const presentWfhColumns = [...commonColumns, loginTimeColumn];
               <div className="flex mt-5 gap-4 w-full md:w-[32%]">
                 {upcomingHolidays?.length > 0 && (
                   <div className="bg-white rounded-2xl w-full px-5 py-5 shadow-md border border-gray-100">
-
                     <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                       📅 Upcoming Holidays
                     </h2>
 
                     <div className="flex flex-col gap-6 mt-4">
                       {upcomingHolidays.map((item, index) => (
-                        <div key={index} className="flex items-center gap-3 w-full">
-
+                        <div
+                          key={index}
+                          className="flex items-center gap-3 w-full"
+                        >
                           {/* DATE */}
                           <div className="flex flex-col items-center">
                             <p className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
                               {formatDateTime(item.date, "MMM")}
                             </p>
-
                           </div>
 
                           <div className="flex-grow border-b border-dashed border-gray-400"></div>
@@ -782,17 +914,12 @@ const presentWfhColumns = [...commonColumns, loginTimeColumn];
                           <div className="bg-gray-900 text-white px-4 py-2 rounded-full text-sm font-medium text-center">
                             {item.reason}
                           </div>
-
                         </div>
                       ))}
                     </div>
-
                   </div>
                 )}
               </div>
-
-
-
             </section>
           </div>
 
@@ -806,7 +933,6 @@ const presentWfhColumns = [...commonColumns, loginTimeColumn];
                   className="bg-white p-6 rounded-lg shadow-lg w-[600px] h-[600px] overflow-y-auto relative"
                   onClick={(e) => e.stopPropagation()}
                 >
-
                   <button
                     onClick={() => setAbsentlistIsOpen(false)}
                     className="absolute right-4 top-4 text-gray-600 hover:text-black"
@@ -939,7 +1065,6 @@ const presentWfhColumns = [...commonColumns, loginTimeColumn];
                   className="bg-white p-6 rounded-lg shadow-lg w-[600px] h-[600px] overflow-y-auto relative"
                   onClick={(e) => e.stopPropagation()}
                 >
-
                   <button
                     onClick={() => setpresentlistIsOpen(false)}
                     className="absolute right-4 top-4 text-gray-600 hover:text-black"
