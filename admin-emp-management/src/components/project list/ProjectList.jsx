@@ -24,9 +24,7 @@ import { IoMdClose } from "react-icons/io";
 import { Dropdown } from "primereact/dropdown";
 import { useNavigate } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
-
 import { FaFilePen } from "react-icons/fa6";
-
 
 const ProjectList = () => {
   const user = JSON.parse(localStorage.getItem("hrmsuser"));
@@ -36,6 +34,7 @@ const ProjectList = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [roles, setRoles] = useState([]);
+  const [filteredRoles, setFilteredRoles] = useState([]); // Add filtered roles state
   const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [text, setText] = useState("");
@@ -56,6 +55,18 @@ const ProjectList = () => {
   const [recurringDays, setRecurringDays] = useState("");
   const [currency, setCurrency] = useState("");
 
+  // Filter states
+  const [filters, setFilters] = useState({
+    status: "",
+  });
+  const [tempFilters, setTempFilters] = useState(filters);
+
+  // Status options
+  const statusOptions = [
+    { label: "Active", value: "1" },
+    { label: "Inactive", value: "0" },
+  ];
+
   useEffect(() => {
     const budgetValue = Number(budget) || 0;
     const final =
@@ -73,7 +84,6 @@ const ProjectList = () => {
         }
       );
 
-      // const employeeIds = response.data.data.map(emp => `${emp.employeeId} - ${emp.employeeName}`);
       const employeeemail = response.data.data.map((emp) => ({
         label: emp.employeeName,
         value: emp._id,
@@ -84,15 +94,13 @@ const ProjectList = () => {
       setLoading(false);
     }
   };
+  
   const fetchClientList = async () => {
     try {
       const response = await axios.get(
         `${API_URL}/api/client/view-clientdetails`,
         {params:{dropDown:true}, withCredentials: true}
-        
       );
-
-      // const employeeIds = response.data.data.map(emp => `${emp.employeeId} - ${emp.employeeName}`);
 
       const clientName = response.data.data.map((emp) => ({
         label: emp.client_name,
@@ -107,7 +115,6 @@ const ProjectList = () => {
   };
 
   useEffect(() => {
-    // fetchData();
     fetchEmployeeList();
     fetchClientList();
   }, []);
@@ -133,6 +140,7 @@ const ProjectList = () => {
       );
       if (response.data.success) {
         setRoles(response.data.data);
+        setFilteredRoles(response.data.data); // Initialize filtered roles
         setLoading(false);
       } else {
         setErrors("Failed to fetch roles.");
@@ -141,6 +149,22 @@ const ProjectList = () => {
       setErrors("Failed to fetch roles.");
       setLoading(false);
     }
+  };
+
+  // Apply filters whenever filters state changes
+  useEffect(() => {
+    applyFilters();
+  }, [filters, roles]);
+
+  const applyFilters = () => {
+    let filtered = [...roles];
+    
+    // Filter by status
+    if (filters.status !== "") {
+      filtered = filtered.filter(role => role.status === filters.status);
+    }
+    
+    setFilteredRoles(filtered);
   };
 
   const [roleDetails, setRoleDetails] = useState({
@@ -162,27 +186,6 @@ const ProjectList = () => {
     paymentType: "",
     recurringDays: "",
   });
-  console.log("roleDetails",roleDetails)
-  //   const handleDelete = async () => {
-  //   try {
-  //     const res = await axios.delete(`${API_URL}/api/delete-file`, {
-  //       data: { filepath: filePathToDelete }, // backend should accept this
-  //     });
-
-  //     if (res.status === 200) {
-  //       // Remove the file from frontend state
-  //       const updatedDocs = roleDetails.document.filter(
-  //         (doc) => doc.filepath !== filePathToDelete
-  //       );
-  //       setRoleDetails((prev) => ({
-  //         ...prev,
-  //         document: updatedDocs,
-  //       }));
-  //     }
-  //   } catch (err) {
-  //     console.error("Failed to delete file:", err);
-  //   }
-  // };
 
   const openViewModal = (
     id,
@@ -217,6 +220,7 @@ const ProjectList = () => {
 
     setIsViewModalOpen(true);
   };
+  
   const openEditModal = (
     id,
     name,
@@ -311,7 +315,6 @@ const ProjectList = () => {
         }
       );
 
-      // setIsAddModalOpen(false);
       setIsAddModalOpen(false);
       fetchProject();
       setErrors({});
@@ -341,7 +344,7 @@ const ProjectList = () => {
       setUploadedFiles([]);
     } catch (err) {
       if (err.response && err.response.data && err.response.data.errors) {
-        setErrors(err.response.data.errors); // Set validation errors from API
+        setErrors(err.response.data.errors);
       } else {
         console.error("Error submitting form:", err);
       }
@@ -390,7 +393,7 @@ const ProjectList = () => {
       // Add selected employee details
       if (teamMembers && teamMembers.length > 0) {
         teamMembers.forEach((email, index) => {
-          formData.append(`teamMembers[]`, email); // or use a different key based on backend needs
+          formData.append(`teamMembers[]`, email);
         });
       } else {
         formData.append(`teamMembers`, null);
@@ -398,10 +401,9 @@ const ProjectList = () => {
 
       // Add uploaded files
       uploadedFiles.forEach((file) => {
-        formData.append("document[]", file); // use "uploadedFiles[]" if backend expects an array
+        formData.append("document[]", file);
       });
 
-      // Assuming you're sending a PUT request to update the role
       await axios.put(
         `${API_URL}/api/project/update-project/${roleId}`,
         formData,
@@ -413,9 +415,7 @@ const ProjectList = () => {
         }
       );
 
-      // Close the modal after successful update
       setIsEditModalOpen(false);
-
       fetchProject();
       setErrors({});
       setUploadedFiles([]);
@@ -444,7 +444,7 @@ const ProjectList = () => {
       setProjectName("");
     } catch (err) {
       if (err.response && err.response.data && err.response.data.errors) {
-        setErrors(err.response.data.errors); // Set validation errors from API
+        setErrors(err.response.data.errors);
       } else {
         console.error("Error submitting form:", err);
       }
@@ -474,8 +474,6 @@ const ProjectList = () => {
   };
 
   const handleDelete = async (index, filePathToDelete, id) => {
-    // Show confirmation dialog
-    // const isConfirmed = window.confirm('Are you sure you want to delete this role?');
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "Do you want to delete this file?",
@@ -485,20 +483,7 @@ const ProjectList = () => {
       cancelButtonText: "Cancel",
     });
 
-    // If user confirms, proceed with deletion
     if (result.isConfirmed) {
-      // if (isConfirmed) {
-      // try {
-      //   const response = await axios.delete(
-      //     `${API_URL}/api/roles/delete/${userid}?index=${index}`
-      //   );
-
-      //   setRoles(roles.filter((role) => role.id !== roleId));
-      //   fetchRoles();
-      // } catch (error) {
-      //   console.error("Error deleting role:", error);
-      // }
-
       try {
         const res = await axios.delete(
           `${API_URL}/api/project/delete-project-file/${id}/${index}`,
@@ -510,18 +495,6 @@ const ProjectList = () => {
           ...prev,
           document: prev.document.filter((_, i) => i !== index),
         }));
-        // setUploadedFiles([]);
-
-        // if (res.status === 200) {
-        //   // Remove the file from frontend state
-        //   const updatedDocs = roleDetails.document.filter(
-        //     (doc) => doc.index !== index
-        //   );
-        //   setRoleDetails((prev) => ({
-        //     ...prev,
-        //     document: updatedDocs,
-        //   }));
-        // }
       } catch (err) {
         console.error("Failed to delete file:", err);
       }
@@ -530,9 +503,9 @@ const ProjectList = () => {
     }
   };
 
-  const rolesWithSno = roles.map((role, index) => ({
+  const rolesWithSno = filteredRoles.map((role, index) => ({ // Use filteredRoles instead of roles
     ...role,
-    Sno: index + 1, // Add Sno field
+    Sno: index + 1,
   }));
 
   const deleteProject = (roleId) => {
@@ -550,7 +523,6 @@ const ProjectList = () => {
           .then((response) => {
             if (response.data.success) {
               Swal.fire("Deleted!", "Project has been deleted.", "success");
-              // fetchRoles(); // Refresh the roles list
               fetchProject();
             } else {
               Swal.fire("Error!", "Failed to delete Project.", "error");
@@ -591,17 +563,11 @@ const ProjectList = () => {
         return `${currencyLabel ? currencyLabel + " " : ""}${data}`;
       },
     },
-    // {
-    //   title: "Created By",
-    //   data: "created_by",
-    //   render: (data, type, row) => row.createdByAdmin.email,
-    // },
-
-      {
+    {
       title: "Notes",
       data: null,
       render: (data, type, row) => {
-        const id = `actions-${row.sno || Math.random()}`;
+        const id = `notes-${row._id || Math.random()}`;
         setTimeout(() => {
           const container = document.getElementById(id);
           if (container) {
@@ -618,33 +584,17 @@ const ProjectList = () => {
                   justifyContent: "center",
                 }}
               >
-               
                 <div
-                  className="modula-icon-edit  flex gap-2"
+                  className="modula-icon-edit flex gap-2"
                   style={{
                     color: "#000",
                   }}
                 >
                   <FaFilePen
                     className="cursor-pointer"
-                          onClick={() => handleEditClick(row)}
-
+                    onClick={() => handleEditClick(row)}
                   />
-                  {/* <MdOutlineDeleteOutline
-                    className="text-red-600 text-xl cursor-pointer"
-                    onClick={() => {
-                      deleteProject(row._id);
-                    }}
-                  /> */}
                 </div>
-
-                {/* <div className="modula-icon-del" style={{
-                  color: "red"
-                }}>
-                  <RiDeleteBin6Line
-                    onClick={() => handleDelete(row.id)}
-                  />
-                </div> */}
               </div>,
               container
             );
@@ -657,12 +607,14 @@ const ProjectList = () => {
       title: "Status",
       data: "status",
       render: (data, type, row) => {
-        const textColor =
-          data === "1"
-            ? "text-green-600 border rounded-full border-green-600"
-            : "text-red-600 border rounded-full border-red-600";
+        // Fixed: Use data directly instead of row.status
+        const statusValue = data;
+        const isActive = statusValue === "1" || statusValue === 1;
+        const textColor = isActive
+          ? "text-green-600 border rounded-full border-green-600"
+          : "text-red-600 border rounded-full border-red-600";
         return `<div class="${textColor}" style="display: inline-block; padding: 2px; text-align: center; width:100px; font-size: 12px; font-weight: 500 ">
-                  ${data === "1" ? "Active" : "InActive"}
+                  ${isActive ? "Active" : "InActive"}
                 </div>`;
       },
     },
@@ -670,7 +622,7 @@ const ProjectList = () => {
       title: "Action",
       data: null,
       render: (data, type, row) => {
-        const id = `actions-${row.sno || Math.random()}`;
+        const id = `actions-${row._id || Math.random()}`;
         setTimeout(() => {
           const container = document.getElementById(id);
           if (container) {
@@ -708,7 +660,7 @@ const ProjectList = () => {
                   />
                 </div>
                 <div
-                  className="modula-icon-edit  flex gap-2"
+                  className="modula-icon-edit flex gap-2"
                   style={{
                     color: "#000",
                   }}
@@ -744,14 +696,6 @@ const ProjectList = () => {
                     }}
                   />
                 </div>
-
-                {/* <div className="modula-icon-del" style={{
-                  color: "red"
-                }}>
-                  <RiDeleteBin6Line
-                    onClick={() => handleDelete(row.id)}
-                  />
-                </div> */}
               </div>,
               container
             );
@@ -786,7 +730,6 @@ const ProjectList = () => {
       </span>
       <span className="ql-formats">
         <button className="ql-link" />
-        {/*  Removed <button className="ql-image" /> */}
       </span>
     </>
   );
@@ -796,9 +739,11 @@ const ProjectList = () => {
   const fileInputRef = useRef(null);
 
   const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
+    const selectedFiles = Array.from(e.files || e.target.files);
     setUploadedFiles((prev) => [...prev, ...selectedFiles]);
-    fileInputRef.current.value = ""; // reset input to clear file preview
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   let navigate = useNavigate();
@@ -810,6 +755,7 @@ const ProjectList = () => {
     setIsAddModalOpen(true);
     setTimeout(() => setIsAnimating(true), 10);
   };
+  
   const closeAddModal = () => {
     setIsAnimating(false);
     setTimeout(() => setIsAddModalOpen(false), 250);
@@ -828,19 +774,6 @@ const ProjectList = () => {
     };
   }, [isAddModalOpen, isEditModalOpen]);
 
-  // const gstCalculate = (e) => {
-  //   setRoleDetails((row) => ({
-  //     ...row,
-  //     budget: e.target.value,
-  //   }));
-  //   const budgetValue = Number(e.target.value) || 0;
-  //   const final =
-  //     roleDetails.gstType === "gst"
-  //       ? budgetValue + (budgetValue * gstno) / 100
-  //       : budgetValue;
-  //   setRoleDetails((row) => ({ ...row, fullpayment: final }));
-  // };
-
   useEffect(() => {
     const budgetValue = Number(roleDetails.budget) || 0;
 
@@ -853,7 +786,7 @@ const ProjectList = () => {
       ...prev,
       fullpayment: final,
     }));
-  }, [roleDetails.budget, roleDetails.gstType]);
+  }, [roleDetails.budget, roleDetails.gstType, gstno]);
 
   const currencyOptions = [
     { label: "USD ($)", value: "USD" },
@@ -862,15 +795,10 @@ const ProjectList = () => {
     { label: "INR (₹)", value: "INR" },
   ];
 
-
-
   const handleEditClick = (row) => {
-    // console.log("row",row)
-    // return
-    // navigate(`/project-note-details/${row._id}`);
-     navigate(`/project-note-details/${row._id}`, {
-    state: { row },   
-  });
+    navigate(`/project-note-details/${row._id}`, {
+      state: { row },   
+    });
   };
 
   return (
@@ -880,25 +808,20 @@ const ProjectList = () => {
       ) : (
         <>
           <div>
-            
-
-            <div className=" cursor-pointer">
+            <div className="cursor-pointer">
               <Mobile_Sidebar />
-             
             </div>
 
-             <div className="flex justify-end gap-1 mt-3 md:mt-0 items-center">
+            <div className="flex justify-end gap-1 mt-3 md:mt-0 items-center">
               <p
-                className="text-sm text-gray-500"
+                className="text-sm text-gray-500 cursor-pointer"
                 onClick={() => navigate("/dashboard")}
               >
-
                 Dashboard
               </p>
               <p>{">"}</p>
-
               <p className="text-sm text-blue-500">Project List</p>
-              </div>
+            </div>
 
             {/* Add Button */}
             <div className="flex justify-between mt-2 md:mt-4 mb-1 md:mb-3">
@@ -907,9 +830,40 @@ const ProjectList = () => {
               </h1>
               <button
                 onClick={openAddModal}
-                className=" px-3 py-2  text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
+                className="px-3 py-2 text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
               >
                 Add
+              </button>
+            </div>
+
+            {/* Filters */}
+            <div className="flex gap-4 flex-wrap mb-4 items-end">
+              <div className="flex flex-col w-40 md:w-48">
+                <label className="text-sm font-medium mb-1">Status</label>
+                <Dropdown
+                  value={tempFilters.status}
+                  onChange={(e) => setTempFilters({ ...tempFilters, status: e.value })}
+                  options={statusOptions}
+                  placeholder="All Status"
+                  className="w-full border border-gray-300 rounded-lg"
+                />
+              </div>
+
+              <button
+                onClick={() => setFilters(tempFilters)}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              >
+                Apply Filters
+              </button>
+
+              <button
+                onClick={() => {
+                  setTempFilters({ status: "" });
+                  setFilters({ status: "" });
+                }}
+                className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+              >
+                Reset
               </button>
             </div>
 
@@ -926,14 +880,13 @@ const ProjectList = () => {
                     scrollX: true,
                     responsive: true,
                     autoWidth: false,
-
                   }}
                   className="display nowrap bg-white"
                 />
               </div>
             </div>
+            
             {/* Add Modal */}
-
             {isAddModalOpen && (
               <div className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 ">
                 {/* Overlay */}
@@ -1402,357 +1355,7 @@ const ProjectList = () => {
             )}
 
             {/* Edit Modal */}
-            {/* {isEditModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-5 rounded-xl w-[680px] h-[580px] overflow-y-auto">
-              <div className="flex justify-between items-center ">
-                <h2 className="text-lg font-semibold mb-4">Edit Project</h2>
-              </div>
-              <label className="block text-sm font-medium mb-2">
-                Project Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={roleDetails.name}
-                onChange={(e) => {
-                  setRoleDetails({ ...roleDetails, name: e.target.value });
-                  validateRoleName(e.target.value); // Validate dynamically
-                }}
-                className="w-full px-3  border py-2 border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.name && (
-                <p className="text-red-500 text-sm mb-4">{errors.name}</p>
-              )}
-              <div className="flex gap-3">
-                <div className="w-full">
-                  <label
-                    htmlFor="roleName"
-                    className="block text-sm font-medium my-2"
-                  >
-                    Client Name <span className="text-red-500">*</span>
-                  </label>
-
-                  <Dropdown
-                    value={roleDetails.clientName}
-                    onChange={(e) => {
-                      setRoleDetails({
-                        ...roleDetails,
-                        clientName: e.target.value,
-                      });
-                    }}
-                    options={clientOption}
-                    optionLabel="name"
-                    // placeholder="Select a Employee"
-                    className="w-full  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {errors.clientName && (
-                    <p className="text-red-500 text-sm mb-4">
-                      {errors.clientName}
-                    </p>
-                  )}
-                </div>
-
-                <div className="my-2 w-full">
-                  <label
-                    htmlFor="employee_name"
-                    className="block text-sm font-medium mb-2"
-                  >
-                    Project Manager <span className="text-red-500">*</span>
-                  </label>
-
-                  <Dropdown
-                    value={roleDetails.projectManager}
-                    onChange={(e) => {
-                      setRoleDetails({
-                        ...roleDetails,
-                        projectManager: e.value,
-                      });
-                    }}
-                    options={employeeOption}
-                    optionLabel="name"
-                    // placeholder="Select a Employee"
-                    className="w-full  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
-              <label
-                htmlFor="roleName"
-                className="block text-sm font-medium mb-2 mt-2"
-              >
-                Description
-              </label>
-              <div className="card">
-                <Editor
-                  value={roleDetails.projectDescription}
-                  onTextChange={(e) => {
-                    setRoleDetails({
-                      ...roleDetails,
-                      projectDescription: e.htmlValue ?? "",
-                    });
-                    setText(e.htmlValue);
-                  }}
-                  style={{ height: "200px" }}
-                  headerTemplate={header}
-                />
-              </div>
-
-              <div className="flex gap-3 my-2">
-                <div className="flex flex-col w-full ">
-                  <label htmlFor="" className=" text-sm font-medium mb-2">
-                    Start Date
-                  </label>
-                  <input
-                    type="date"
-                    value={
-                      roleDetails.startDate
-                        ? roleDetails.startDate.split("T")[0]
-                        : ""
-                    }
-                    onChange={(e) => {
-                      setRoleDetails({
-                        ...roleDetails,
-                        startDate: e.target.value,
-                      });
-                    }}
-                    className=" px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {errors.startDate && (
-                    <p className="text-red-500 text-sm mb-4">
-                      {errors.startDate}
-                    </p>
-                  )}
-                </div>
-                <div className="flex flex-col w-full">
-                  <label htmlFor="" className=" text-sm font-medium mb-2">
-                    End Date
-                  </label>
-                  <input
-                    type="date"
-                    value={
-                      roleDetails.endDate
-                        ? roleDetails.endDate.split("T")[0]
-                        : ""
-                    }
-                    onChange={(e) => {
-                      setRoleDetails({
-                        ...roleDetails,
-                        endDate: e.target.value,
-                      });
-                    }}
-                    min={
-                      roleDetails.startDate
-                        ? roleDetails.startDate.split("T")[0]
-                        : ""
-                    }
-                    className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {errors.endDate && (
-                    <p className="text-red-500 text-sm mb-4">
-                      {errors.endDate}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex gap-3">
-                <div className="my-2 w-[50%]">
-                  <label
-                    htmlFor="employee_name"
-                    className="block text-sm font-medium mb-2"
-                  >
-                    Add Employees to the project
-                  </label>
-
-                  <MultiSelect
-                    value={roleDetails.teamMembers}
-                    onChange={(e) =>
-                      setRoleDetails((row) => ({
-                        ...row,
-                        teamMembers: e.value,
-                      }))
-                    }
-                    options={employeeOption}
-                    // optionLabel="email"
-                    filter
-                    placeholder="Select Employees"
-                    maxSelectedLabels={3}
-                    className="w-full  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    display="chip"
-                  />
-                </div>
-                <div className="my-2 w-[50%]">
-                  <label
-                    htmlFor="employee_name"
-                    className="block text-sm font-medium mb-2"
-                  >
-                    Budget
-                  </label>
-                  <input
-                    type="number"
-                    value={roleDetails.budget}
-                    onChange={(e) =>
-                      setRoleDetails((row) => ({
-                        ...row,
-                        budget: e.target.value,
-                      }))
-                    }
-                    className="px-3 w-full py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <div className="my-2 w-full">
-                  <label
-                    htmlFor="employee_name"
-                    className="block text-sm font-medium mb-2 "
-                  >
-                    Priority
-                  </label>
-                  <Dropdown
-                    value={roleDetails.priority}
-                    onChange={(e) =>
-                      setRoleDetails((row) => ({
-                        ...row,
-                        priority: e.target.value,
-                      }))
-                    }
-                    options={priorityOption}
-                    optionLabel="name"
-                    // placeholder="Select a Employee"
-                    className="w-full  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div className="w-full my-3">
-                  <p>
-                    Status <span className="text-red-500">*</span>
-                  </p>
-                  <select
-                    name="status"
-                    id="status"
-                    value={roleDetails.status}
-                    onChange={(e) => {
-                      setRoleDetails({
-                        ...roleDetails,
-                        status: e.target.value,
-                      });
-                      validateStatus(e.target.value); // Validate dynamically
-                    }}
-                    className="w-full h-10 rounded-lg px-1 outline border-0 border-gray-300 outline-gray-300"
-                  >
-                    <option selected={roleDetails.status == "1"} value="1">
-                      Active
-                    </option>
-                    <option selected={roleDetails.status == "-0"} value="0">
-                      InActive
-                    </option>
-                  </select>
-                  {errors.status && (
-                    <p className="text-red-500 text-sm mb-4">{errors.status}</p>
-                  )}
-                </div>
-              </div>
-
-              <label
-                htmlFor="demo"
-                className="block text-sm font-medium mb-2 mt-4 "
-              >
-                Upload Files
-              </label>
-            
-              <input
-                type="file"
-                multiple
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                style={{ display: "none" }}
-              />
-
-              <button
-                onClick={() => fileInputRef.current.click()}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded mt-2"
-              >
-                Upload Files
-              </button>
-              {errors.error && (
-                <span className="text-red-500 text-xs mb-4 ml-2">
-                  {errors.error}
-                </span>
-              )}
-              <ul className="mt-3 gap-3 flex">
-                {uploadedFiles.map((file, index) => (
-                  <li
-                    key={index}
-                    className=" items-center bg-blue-50 rounded-full gap-3 flex px-4  "
-                  >
-                    <button
-                      onClick={() =>
-                        setUploadedFiles((prev) =>
-                          prev.filter((_, i) => i !== index)
-                        )
-                      }
-                      className="text-red-500 hover:text-red-700 font-bold text-2xl"
-                    >
-                      ×
-                    </button>
-                    <span className="text-sm">{file.name}</span>
-                  </li>
-                ))}
-              </ul>
-            
-              <div className="flex flex-wrap mt-2 gap-2">
-                {roleDetails?.document?.map((doc, index) => (
-                  <div
-                    key={index}
-                    className="relative w-28 h-24 border rounded overflow-hidden group"
-                  >
-                    <a
-                      href={`${API_URL}/api/uploads/others/${doc.filepath}`}
-                      target="_blank"
-                    >
-                      <img
-                        src={`${API_URL}/api/uploads/others/${doc.filepath}`}
-                        alt={doc.originalName}
-                        className="w-full h-full object-cover"
-                      />
-                    </a>
-                    <span className="text-[10px] absolute bottom-0 left-0 bg-black text-white px-1 truncate w-full">
-                      {doc.originalName}
-                    </span>
-               
-                    <button
-                      onClick={() =>
-                        handleDelete(index, doc.filepath, roleDetails.id)
-                      }
-                      className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full text-xs opacity-80 hover:opacity-100"
-                      title="Delete file"
-                    >
-                      <FaTrash />
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex gap-2 justify-end mt-3">
-                <button
-                  onClick={closeEditModal}
-                  className=" bg-red-100  hover:bg-red-200 text-sm md:text-base text-red-600 px-5 md:px-5 py-1 md:py-2 font-semibold rounded-full"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => handleSave(roleDetails.id)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 md:px-5 py-2 font-semibold rounded-full"
-                >
-                  Update
-                </button>
-              </div>
-            </div>
-          </div>
-        )} */}
-
-            {isEditModalOpen && (
+             {isEditModalOpen && (
               <div className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 z-50">
                 {/* Overlay */}
                 <div
@@ -2497,4 +2100,5 @@ const ProjectList = () => {
     </div>
   );
 };
+
 export default ProjectList;
