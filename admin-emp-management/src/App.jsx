@@ -98,6 +98,8 @@ import Letters_download from "./components/releiving components/Letters_download
 import Social_account_main from "./components/social media/Social_account_main";
 import Social_credentials_main from "./components/social media/Social_credentials_main";
 import Finance_account_main from "./pages/Finance_account_main";
+import Finance_lender_main from "./pages/Finance_lender_main";
+
 import Messages from "./pages/Messages";
 import Bidding_all_main from "./components/bidding assests components/Bidding_all_main";
 import Tasklist_main_client from "./pages/Tasklist_main_client";
@@ -882,6 +884,15 @@ useEffect(() => {
       element: (
         <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
           <Finance_account_main />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/finance-lender",
+      permissionTitle: "Lender",
+      element: (
+        <ProtectedRoute isLoggedIn={isLoggedIn} requiredRole="admin">
+          <Finance_lender_main />
         </ProtectedRoute>
       ),
     },
