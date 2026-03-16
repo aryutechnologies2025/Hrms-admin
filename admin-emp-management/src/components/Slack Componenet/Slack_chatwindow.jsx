@@ -924,6 +924,11 @@ export default function Slack_chatwindow({
   setFavorites,
 }) {
   console.log("Selected Channel in Chat Window:", selectedChannel);
+    const [cursor, setCursor] = useState(null)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const containerRef = useRef()
+  const isInitialLoad = useRef(true)
+
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const bottomRef = useRef();
@@ -993,6 +998,7 @@ export default function Slack_chatwindow({
     setEditChannel(channel);
     setShowEditModal(true);
   };
+  
 
   // view channel members
   const me = currentUser?._id;
@@ -1116,61 +1122,217 @@ export default function Slack_chatwindow({
 
   // JOIN + LOAD
 
-  useEffect(() => {
-    if (!socket || !selectedUser) return;
-    setActiveThread(null);
-    socket.emit("join_dm", { senderId: me, receiverId: other });
+  // useEffect(() => {
+  //   if (!socket || !selectedUser) return;
+  //   setActiveThread(null);
+  //   socket.emit("join_dm", { senderId: me, receiverId: other });
 
-    axios
-      .get(`${API_URL}/api/messages/dm/${me}/${other}`)
-      .then((res) => setMessages(res.data.data || []));
+  //   axios
+  //     .get(`${API_URL}/api/messages/dm/${me}/${other}`)
+  //     .then((res) => setMessages(res.data.data || []));
 
-    socket.emit("mark_seen", {
-      senderId: other,
-      receiverId: me,
+  //   socket.emit("mark_seen", {
+  //     senderId: other,
+  //     receiverId: me,
+  //   });
+  // }, [selectedUser]);
+
+  // useEffect(() => {
+  //   if (!socket || !selectedChannel || !currentUser?._id) return;
+  //   setActiveThread(null);
+
+  //   const channelId = selectedChannel._id;
+
+  //   // 🔹 Join channel room
+  //   socket.emit("join_channel", { channelId });
+
+  //   // 🔹 Fetch channel messages
+  //   const fetchMessages = async () => {
+  //     try {
+  //       const res = await axios.get(
+  //         `${API_URL}/api/messages/channel/${channelId}`,
+  //       );
+  //       setMessages(res.data.data || []);
+
+  //       // 🔹 Mark messages as seen (DB)
+  //       // await axios.post(`${API_URL}/api/messages/channel-seen`, {
+  //       //   channelId,
+  //       //   userId: currentUser._id,
+  //       // });
+
+  //       // 🔹 Notify via socket (real-time tick)
+  //       socket.emit("channel_seen", {
+  //         channelId,
+  //         userId: currentUser._id,
+  //       });
+  //     } catch (err) {
+  //       console.error("Channel load error:", err);
+  //     }
+  //   };
+
+  //   fetchMessages();
+
+  //   //  CLEANUP (VERY IMPORTANT)
+  //   return () => {
+  //     socket.emit("leave_channel", { channelId });
+  //   };
+  // }, [socket, selectedChannel]);
+
+
+    useEffect(() => {
+  if (!socket || !selectedUser) return;
+
+  setActiveThread(null);
+  socket.emit("join_dm", { senderId: me, receiverId: other });
+
+  const fetchMessages = async () => {
+    try {
+      const res = await axios.get(
+        `${API_URL}/api/messages/dm/${me}/${other}?limit=30`
+      );
+
+      setMessages(res.data.data || []);
+      setCursor(res.data.nextCursor || null);
+
+      setTimeout(() => {
+        containerRef.current.scrollTop =
+          containerRef.current.scrollHeight;
+      }, 100);
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  fetchMessages();
+
+  socket.emit("mark_seen", {
+    senderId: other,
+    receiverId: me,
+  });
+
+}, [selectedUser]);
+console.log("containerRef.current.scrollTop",containerRef.current);
+useEffect(() => {
+  if (!socket || !selectedChannel || !currentUser?._id) return;
+
+  setActiveThread(null);
+
+  const channelId = selectedChannel._id;
+
+  socket.emit("join_channel", { channelId });
+
+  const fetchMessages = async () => {
+    try {
+
+      const res = await axios.get(
+        `${API_URL}/api/messages/channel/${channelId}?limit=30`
+      );
+
+      setMessages(res.data.data || []);
+      setCursor(res.data.nextCursor || null);
+
+      setTimeout(() => {
+        containerRef.current.scrollTop =
+          containerRef.current.scrollHeight;
+      }, 100);
+
+      socket.emit("channel_seen", {
+        channelId,
+        userId: currentUser._id,
+      });
+
+    } catch (err) {
+      console.error("Channel load error:", err);
+    }
+  };
+
+  fetchMessages();
+
+  return () => {
+    socket.emit("leave_channel", { channelId });
+  };
+
+}, [socket, selectedChannel]);
+
+
+const mergeMessages = (oldMessages, newMessages) => {
+  const map = new Map();
+
+  [...oldMessages, ...newMessages].forEach((m) => {
+    const key = m._id || m.clientId;
+    map.set(key, m);
+  });
+
+  return Array.from(map.values()).sort(
+    (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+  );
+};
+
+// loading old message
+const loadOlderMessages = async () => {
+
+  if (!cursor || loadingMore) return;
+
+  const container = containerRef.current;
+  const prevHeight = container.scrollHeight;
+
+  setLoadingMore(true);
+
+  try {
+
+    let url;
+
+    if (selectedChannel) {
+      url = `${API_URL}/api/messages/channel/${selectedChannel._id}?cursor=${cursor}`;
+    } else {
+      url = `${API_URL}/api/messages/dm/${me}/${other}?cursor=${cursor}`;
+    }
+
+    const res = await axios.get(url);
+
+    const newMessages = res.data.data || [];
+
+    // setMessages(prev => [...newMessages, ...prev]);
+    setMessages(prev => mergeMessages(prev, newMessages));
+    setCursor(res.data.nextCursor);
+
+    requestAnimationFrame(() => {
+      const newHeight = container.scrollHeight;
+      container.scrollTop = newHeight - prevHeight;
     });
-  }, [selectedUser]);
 
-  useEffect(() => {
-    if (!socket || !selectedChannel || !currentUser?._id) return;
-    setActiveThread(null);
+  } catch (err) {
+    console.error(err);
+  }
 
-    const channelId = selectedChannel._id;
+  setLoadingMore(false);
+};
+console.log("container.scrollTop",containerRef?.current);
 
-    // 🔹 Join channel room
-    socket.emit("join_channel", { channelId });
+// detecting scroll 
+useEffect(() => {
 
-    // 🔹 Fetch channel messages
-    const fetchMessages = async () => {
-      try {
-        const res = await axios.get(
-          `${API_URL}/api/messages/channel/${channelId}`,
-        );
-        setMessages(res.data.data || []);
+  const container = containerRef.current;
 
-        // 🔹 Mark messages as seen (DB)
-        // await axios.post(`${API_URL}/api/messages/channel-seen`, {
-        //   channelId,
-        //   userId: currentUser._id,
-        // });
+  if (!container) return;
 
-        // 🔹 Notify via socket (real-time tick)
-        socket.emit("channel_seen", {
-          channelId,
-          userId: currentUser._id,
-        });
-      } catch (err) {
-        console.error("Channel load error:", err);
-      }
-    };
+const handleScroll = () => {
+  console.log("enter scrool",container.scrollTop)
+    if (container.scrollTop <= 50) {
+      console.log("enter scrool 223")
+      loadOlderMessages();
+    }
+  };
 
-    fetchMessages();
+  container.addEventListener("scroll", handleScroll);
 
-    //  CLEANUP (VERY IMPORTANT)
-    return () => {
-      socket.emit("leave_channel", { channelId });
-    };
-  }, [socket, selectedChannel]);
+  return () => {
+    container.removeEventListener("scroll", handleScroll);
+  };
+
+}, [cursor, selectedUser, selectedChannel]);
+
 
   // /*  Channel View Members*/
   useMemo(() => {
@@ -1219,7 +1381,8 @@ export default function Slack_chatwindow({
         (msg.senderId === me && msg.receiverId === other) ||
         (msg.senderId === other && msg.receiverId === me)
       ) {
-        setMessages((prev) => [...prev, msg]);
+        // setMessages((prev) => [...prev, msg]);
+        setMessages((prev) => mergeMessages(prev, [msg]));
 
         if (msg.senderId === other) {
           socket.emit("mark_seen", {
@@ -1241,7 +1404,8 @@ export default function Slack_chatwindow({
 
       console.log("RECEIVED CHANNEL MESSAGE:", msg);
 
-      setMessages((prev) => [...prev, msg]);
+      // setMessages((prev) => [...prev, msg]);
+      setMessages((prev) => mergeMessages(prev, [msg]));
 
       //  auto mark seen ONLY if user is viewing this channel
       socket.emit("channel_seen", {
@@ -1441,9 +1605,15 @@ export default function Slack_chatwindow({
     }, 1500);
   };
 
+  // useEffect(() => {
+  //   bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  // }, [messages]);
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  if (isInitialLoad.current) {
+    bottomRef.current?.scrollIntoView()
+    isInitialLoad.current = false
+  }
+}, [messages])
 
   useEffect(() => {
     bottomRefTheard.current?.scrollIntoView({ behavior: "smooth" });
@@ -2817,8 +2987,8 @@ export default function Slack_chatwindow({
           {/*  Hover Actions */}
 
           {/* Messages Container */}
-          <div className="flex-1 px-1 md:p-6 py-2 overflow-y-scroll overflow-x-hidden bg-gradient-to-b from-white to-gray-50/30 w-[100vw] md:w-full">
-            <div className="w-full mx-auto space-y-3">
+          <div  ref={containerRef} className="flex-1 px-1 md:p-6 py-2 overflow-y-scroll overflow-x-hidden bg-gradient-to-b from-white to-gray-50/30 w-[100vw] md:w-full">
+            <div  className="w-full mx-auto space-y-3 ">
               {messages.map((m) => {
                 const isMe = m.senderId === me;
                 const time = m.createdAt
