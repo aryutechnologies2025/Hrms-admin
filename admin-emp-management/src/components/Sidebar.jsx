@@ -1054,6 +1054,7 @@ const Sidebar = () => {
                                   {currentOpen === "finance" ||
                                   [
                                     "/finance-account",
+                                    "/finance-lender",
                                     "/income/details",
                                     "/expense/details",
                                     "/payment-type",
@@ -1073,6 +1074,7 @@ const Sidebar = () => {
                               currentOpen === "finance" ||
                               [
                                 "/finance-account",
+                                "/finance-lender",
                                 "/income/details",
                                 "/expense/details",
                                 "/payment-type",
@@ -1094,6 +1096,17 @@ const Sidebar = () => {
                             }`}
                               >
                                 Account
+                              </button>
+                              <button
+                                onClick={() => navigate("/finance-lender")}
+                                className={`px-2 py-1 rounded-full 
+                            ${
+                              currentPath === "/finance-lender"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                            }`}
+                              >
+                                Lender
                               </button>
                               <button
                                 onClick={() => navigate("/income/details")}

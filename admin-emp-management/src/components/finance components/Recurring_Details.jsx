@@ -34,18 +34,21 @@ const Recurring_details = () => {
   const [selectedContent, setSelectedContent] = useState("");
   const [paymentLogs, setPaymentLogs] = useState([]);
   const [balanceAmount, setBalanceAmount] = useState("");
-  console.log("balanceAmount", balanceAmount);
+  const [viewData, setViewData] = useState(null);
 
   // Data states
   const [recurringPayments, setRecurringPayments] = useState([]);
   const [accountOptions, setAccountOptions] = useState([]);
+  const [lenderOptions, setLenderOptions] = useState([]);
   const [accountDetails, setAccountDetails] = useState({});
+  const [lenderDetails, setLenderDetails] = useState({});
   const [errors, setErrors] = useState({});
   const [editId, setEditId] = useState("");
 
   // Filter states
   const [filters, setFilters] = useState({
     account: "",
+    lenderName: "",
     status: "",
     dueDate: "",
   });
@@ -68,10 +71,15 @@ const Recurring_details = () => {
     balance_amount: "",
     interest_rate: "",
     dueDate: "",
+    dueDay: "",
     recurringType: "",
     totalEmi: "",
     totalAmount: "",
+    monthlyInterest: "",
+    monthlyPrincipal: "",
+    loanStatus: "inprogress",
     payment_status: "unpaid",
+    notes: "",
     status: "1",
   });
 
@@ -86,22 +94,24 @@ const Recurring_details = () => {
     balance_amount: "",
     interest_rate: "",
     dueDate: "",
+    dueDay: "",
     recurringType: "",
     totalEmi: "",
     totalAmount: "",
+    monthlyInterest: "",
+    monthlyPrincipal: "",
+    loanStatus: "inprogress",
     payment_status: "",
+    notes: "",
     status: "1",
   });
 
   // Payment type options
   const paymentTypeOptions = [
-    { label: "EMI", value: "EMI" },
-    { label: "Subscription", value: "Subscription" },
-    { label: "Rent", value: "Rent" },
-    { label: "Loan", value: "Loan" },
     { label: "Saving", value: "Saving" },
-    { label: "Utilities", value: "Utilities" },
-    { label: "Other", value: "Other" },
+    { label: "Loan", value: "Loan" },
+    { label: "Gold Loan", value: "Gold Loan" },
+    { label: "Subscription", value: "Subscription" },
   ];
 
   // Recurring type options
@@ -123,9 +133,23 @@ const Recurring_details = () => {
     { label: "Unpaid", value: "unpaid" },
   ];
 
+  // Loan status options
+  const loanStatusOptions = [
+    { label: "In Progress", value: "inprogress" },
+    { label: "Completed", value: "completed" },
+    { label: "Pending", value: "pending" },
+  ];
+
+  // Due day options (1-30)
+  const dueDayOptions = Array.from({ length: 30 }, (_, i) => ({
+    label: `Day ${i + 1}`,
+    value: i + 1,
+  }));
+
   // Fetch accounts and recurring payments
   useEffect(() => {
     fetchAccounts();
+    fetchLender();
     fetchRecurringPayments();
   }, []);
 
@@ -138,9 +162,8 @@ const Recurring_details = () => {
         label: emp.name,
         value: emp._id,
       }));
-      setAccountOptions(accounts);
+      setAccountOptions(accounts || []);
 
-      // Store account details for balance lookup
       const accountMap = {};
       response.data.getFinanceName?.forEach((acc) => {
         accountMap[acc._id] = acc;
@@ -148,6 +171,30 @@ const Recurring_details = () => {
       setAccountDetails(accountMap);
     } catch (err) {
       console.error("Failed to fetch accounts:", err);
+    }
+  };
+
+  const fetchLender = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/income/finance-lender-name`,
+        {
+          withCredentials: true,
+        },
+      );
+      const lenders = response.data.getFinanceName?.map((emp) => ({
+        label: emp.name,
+        value: emp._id,
+      }));
+      setLenderOptions(lenders || []);
+
+      const lenderMap = {};
+      response.data.getFinanceName?.forEach((lender) => {
+        lenderMap[lender._id] = lender;
+      });
+      setLenderDetails(lenderMap);
+    } catch (err) {
+      console.error("Failed to fetch lenders:", err);
     }
   };
 
@@ -175,19 +222,30 @@ const Recurring_details = () => {
         },
       );
       console.log("fetchPaymentLogs", response);
-      // if (response.data.success) {
-      setPaymentLogs(response.data.data);
-      setBalanceAmount(response.data.balanceAmount);
+      setPaymentLogs(response.data.data || []);
+      setBalanceAmount(response.data.balanceAmount || 0);
       setIsLogModalOpen(true);
       setTimeout(() => setIsAnimating(true), 10);
-      // }
     } catch (err) {
       console.error("Failed to fetch payment logs:", err);
       Swal.fire("Error", "Failed to fetch payment history", "error");
     }
   };
 
-  // Modal handlers
+  const openViewModal = (row) => {
+    setViewData(row);
+    setIsViewModalOpen(true);
+    setTimeout(() => setIsAnimating(true), 10);
+  };
+
+  const closeViewModal = () => {
+    setIsAnimating(false);
+    setTimeout(() => {
+      setIsViewModalOpen(false);
+      setViewData(null);
+    }, 250);
+  };
+
   const openAddModal = () => {
     setFormData({
       account: "",
@@ -195,6 +253,7 @@ const Recurring_details = () => {
       paymentType: "",
       amount: "",
       dueDate: "",
+      dueDay: "",
       recurringType: "",
       totalEmi: "",
       totalAmount: "",
@@ -202,7 +261,11 @@ const Recurring_details = () => {
       end_date: "",
       balance_amount: "",
       interest_rate: "",
+      monthlyInterest: "",
+      monthlyPrincipal: "",
+      loanStatus: "inprogress",
       payment_status: "unpaid",
+      notes: "",
       status: "1",
     });
     setErrors({});
@@ -217,43 +280,51 @@ const Recurring_details = () => {
   };
 
   const openEditModal = async (row) => {
-     const response = await axios.get(
+    try {
+      const response = await axios.get(
         `${API_URL}/api/recurring-payment/log?parent_id=${row._id}`,
         {
           withCredentials: true,
         },
       );
 
-    setEditId(row._id);
+      setEditId(row._id);
+      const accountBalance = response.data.balanceAmount || 0;
 
-    // Calculate balance amount based on account if available
-    // const accountBalance = accountDetails[row.account?._id]?.balance_amount || row.balance_amount || "";
-    const accountBalance = response.data.balanceAmount || 0; 
-    setEditFormData({
-      account: row.account?._id || "",
-      lenderName: row.lenderName || "",
-      paymentType: row.paymentType || "",
-      amount: row.amount || "",
-      dueDate: row.dueDate
-        ? new Date(row.dueDate).toISOString().split("T")[0]
-        : "",
-      recurringType: row.recurringType || "",
-      totalEmi: row.totalEmi || "",
-      totalAmount: row.totalAmount || "",
-      start_date: row.start_date
-        ? new Date(row.start_date).toISOString().split("T")[0]
-        : "",
-      end_date: row.end_date
-        ? new Date(row.end_date).toISOString().split("T")[0]
-        : "",
-      balance_amount: accountBalance,
-      interest_rate: row.interest_rate || "",
-      payment_status: row.payment_status || "unpaid",
-      status: row.status || "1",
-    });
-    setErrors({});
-    setIsEditModalOpen(true);
-    setTimeout(() => setIsAnimating(true), 10);
+      setEditFormData({
+        account: row.account?._id || "",
+        lenderName: row.lenderName?._id || "",
+        paymentType: row.paymentType || "",
+        amount: row.amount || "",
+        dueDate: row.dueDate
+          ? new Date(row.dueDate).toISOString().split("T")[0]
+          : "",
+        dueDay: row.dueDay || "",
+        recurringType: row.recurringType || "",
+        totalEmi: row.totalEmi || "",
+        totalAmount: row.totalAmount || "",
+        start_date: row.start_date
+          ? new Date(row.start_date).toISOString().split("T")[0]
+          : "",
+        end_date: row.end_date
+          ? new Date(row.end_date).toISOString().split("T")[0]
+          : "",
+        balance_amount: accountBalance,
+        interest_rate: row.interest_rate || "",
+        monthlyInterest: row.monthlyInterest || "",
+        monthlyPrincipal: row.monthlyPrincipal || "",
+        loanStatus: row.loanStatus || "inprogress",
+        payment_status: row.payment_status || "unpaid",
+        notes: row.notes || "",
+        status: row.status || "1",
+      });
+      setErrors({});
+      setIsEditModalOpen(true);
+      setTimeout(() => setIsAnimating(true), 10);
+    } catch (err) {
+      console.error("Failed to fetch payment logs for edit:", err);
+      Swal.fire("Error", "Failed to load payment data for editing", "error");
+    }
   };
 
   const closeEditModal = () => {
@@ -268,58 +339,510 @@ const Recurring_details = () => {
     setPaymentLogs([]);
   };
 
-  // Form handlers
   const handleInputChange = (e, isEdit = false) => {
     const { name, value } = e.target;
     if (isEdit) {
       setEditFormData((prev) => ({ ...prev, [name]: value }));
-
-      // Log amount changes in edit mode
-      if (name === "amount") {
-        console.log("Edit - Amount changed to:", value);
-      }
-      if (name === "payment_status") {
-        console.log("Edit - Payment status changed to:", value);
-      }
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
-
-      // Log amount changes in add mode
-      if (name === "amount") {
-        console.log("Add - Amount changed to:", value);
-      }
-      if (name === "payment_status") {
-        console.log("Add - Payment status changed to:", value);
-      }
     }
   };
 
   const handleAccountChange = (value, isEdit = false) => {
     if (isEdit) {
       setEditFormData((prev) => ({ ...prev, account: value }));
-      // Auto-fill balance amount when account is selected in edit mode
       if (accountDetails[value]?.balance) {
         setEditFormData((prev) => ({
           ...prev,
           balance_amount: accountDetails[value].balance,
         }));
-        console.log(
-          "Edit - Balance amount auto-filled:",
-          accountDetails[value].balance,
-        );
       }
     } else {
       setFormData((prev) => ({ ...prev, account: value }));
+      if (accountDetails[value]?.balance) {
+        setFormData((prev) => ({
+          ...prev,
+          balance_amount: accountDetails[value].balance,
+        }));
+      }
+    }
+  };
+
+  const handleLenderChange = (value, isEdit = false) => {
+    if (isEdit) {
+      setEditFormData((prev) => ({ ...prev, lenderName: value }));
+    } else {
+      setFormData((prev) => ({ ...prev, lenderName: value }));
+    }
+  };
+
+  const renderViewFields = () => {
+    if (!viewData) return null;
+
+    const getStatusColor = (status) => {
+      return status === "1" ? "text-green-600" : "text-red-600";
+    };
+
+    const getPaymentStatusColor = (status) => {
+      return status === "paid" ? "text-green-600" : "text-red-600";
+    };
+
+    const getLoanStatusColor = (status) => {
+      switch (status) {
+        case "completed":
+          return "text-green-600";
+        case "inprogress":
+          return "text-blue-600";
+        case "pending":
+          return "text-yellow-600";
+        default:
+          return "text-gray-600";
+      }
+    };
+
+    const formatCurrency = (value) => {
+      if (!value) return "₹0";
+      return `₹${parseFloat(value).toLocaleString("en-IN")}`;
+    };
+
+    return (
+      <div className="grid grid-cols-2 gap-3">
+        <div className="col-span-2 sm:col-span-1">
+          <label className="text-xs text-gray-500">Account</label>
+          <p className="font-medium text-sm break-words">
+            {viewData.account?.name || "-"}
+          </p>
+        </div>
+        
+        {viewData.lenderName && (
+          <div className="col-span-2 sm:col-span-1">
+            <label className="text-xs text-gray-500">Lender Name</label>
+            <p className="font-medium text-sm">
+              {viewData.lenderName?.name || "-"}
+            </p>
+          </div>
+        )}
+
+        <div className="col-span-2 sm:col-span-1">
+          <label className="text-xs text-gray-500">Payment Type</label>
+          <p className="font-medium text-sm capitalize">
+            {viewData.paymentType || "-"}
+          </p>
+        </div>
+
+        <div className="col-span-2 sm:col-span-1">
+          <label className="text-xs text-gray-500">Recurring Type</label>
+          <p className="font-medium text-sm">
+            {viewData.recurringType || "-"}
+          </p>
+        </div>
+
+        {viewData.amount && (
+          <div className="col-span-2 sm:col-span-1">
+            <label className="text-xs text-gray-500">Amount</label>
+            <p className="font-medium text-sm">
+              {formatCurrency(viewData.amount)}
+            </p>
+          </div>
+        )}
+
+        {viewData.totalAmount && (
+          <div className="col-span-2 sm:col-span-1">
+            <label className="text-xs text-gray-500">Total Amount</label>
+            <p className="font-medium text-sm">
+              {formatCurrency(viewData.totalAmount)}
+            </p>
+          </div>
+        )}
+
+        {viewData.interest_rate && (
+          <div className="col-span-2 sm:col-span-1">
+            <label className="text-xs text-gray-500">Interest Rate</label>
+            <p className="font-medium text-sm">
+              {viewData.interest_rate}%
+            </p>
+          </div>
+        )}
+
+        {viewData.totalEmi && (
+          <div className="col-span-2 sm:col-span-1">
+            <label className="text-xs text-gray-500">Number of EMI</label>
+            <p className="font-medium text-sm">{viewData.totalEmi}</p>
+          </div>
+        )}
+
+        {viewData.monthlyInterest && (
+          <div className="col-span-2 sm:col-span-1">
+            <label className="text-xs text-gray-500">Monthly Interest</label>
+            <p className="font-medium text-sm">
+              {formatCurrency(viewData.monthlyInterest)}
+            </p>
+          </div>
+        )}
+
+        {viewData.monthlyPrincipal && (
+          <div className="col-span-2 sm:col-span-1">
+            <label className="text-xs text-gray-500">Monthly Principal</label>
+            <p className="font-medium text-sm">
+              {formatCurrency(viewData.monthlyPrincipal)}
+            </p>
+          </div>
+        )}
+
+        <div className="col-span-2 sm:col-span-1">
+          <label className="text-xs text-gray-500">Due Day</label>
+          <p className="font-medium text-sm">{viewData.dueDay || "-"}</p>
+        </div>
+
+        {viewData.loanStatus && (
+          <div className="col-span-2 sm:col-span-1">
+            <label className="text-xs text-gray-500">Loan Status</label>
+            <p className={`font-medium text-sm capitalize ${getLoanStatusColor(viewData.loanStatus)}`}>
+              {viewData.loanStatus}
+            </p>
+          </div>
+        )}
+
+        {viewData.balance_amount !== undefined && (
+          <div className="col-span-2 sm:col-span-1">
+            <label className="text-xs text-gray-500">Balance Amount</label>
+            <p className="font-medium text-sm">
+              {formatCurrency(viewData.balance_amount)}
+            </p>
+          </div>
+        )}
+
+        <div className="col-span-2 sm:col-span-1">
+          <label className="text-xs text-gray-500">Payment Status</label>
+          <p className={`font-medium text-sm capitalize ${getPaymentStatusColor(viewData.payment_status)}`}>
+            {viewData.payment_status || "-"}
+          </p>
+        </div>
+
+        {viewData.notes && (
+          <div className="col-span-2">
+            <label className="text-xs text-gray-500">Notes</label>
+            <p className="font-medium text-sm bg-gray-50 p-2 rounded break-words">
+              {viewData.notes}
+            </p>
+          </div>
+        )}
+
+        <div className="col-span-2 sm:col-span-1">
+          <label className="text-xs text-gray-500">Status</label>
+          <p className={`font-medium text-sm ${getStatusColor(viewData.status)}`}>
+            {viewData.status === "1" ? "Active" : "Inactive"}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
+  const renderConditionalFields = (formData, setFormData, isEdit = false) => {
+    switch (formData.paymentType) {
+      case "Saving":
+        return (
+          <>
+           <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Lender Name *</label>
+              <div className="w-2/3">
+                <Dropdown
+                  name="lenderName"
+                  value={formData.lenderName}
+                  onChange={(e) => handleLenderChange(e.value, isEdit)}
+                  options={lenderOptions}
+                  placeholder="Select Lender"
+                  className="w-full border border-gray-300 rounded-lg"
+                />
+              </div>
+            </div>
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Amount *</label>
+              <input
+                type="number"
+                name="amount"
+                value={formData.amount || ""}
+                onChange={(e) => handleInputChange(e, isEdit)}
+                min="1"
+                className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Due Day (1-30) *</label>
+              <Dropdown
+                name="dueDay"
+                value={formData.dueDay}
+                onChange={(e) => {
+                  if (isEdit) {
+                    setEditFormData({ ...formData, dueDay: e.value });
+                  } else {
+                    setFormData({ ...formData, dueDay: e.value });
+                  }
+                }}
+                options={dueDayOptions}
+                placeholder="Select Due Day"
+                className="w-2/3 border border-gray-300 rounded-lg"
+              />
+            </div>
+          </>
+        );
+
+      case "Loan":
+        return (
+          <>
+           <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Lender Name *</label>
+              <div className="w-2/3">
+                <Dropdown
+                  name="lenderName"
+                  value={formData.lenderName}
+                  onChange={(e) => handleLenderChange(e.value, isEdit)}
+                  options={lenderOptions}
+                  placeholder="Select Lender"
+                  className="w-full border border-gray-300 rounded-lg"
+                />
+              </div>
+            </div>
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Total Amount *</label>
+              <input
+                type="number"
+                name="totalAmount"
+                value={formData.totalAmount || ""}
+                onChange={(e) => handleInputChange(e, isEdit)}
+                min="1"
+                className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Interest Rate (%) *</label>
+              <input
+                type="number"
+                name="interest_rate"
+                value={formData.interest_rate || ""}
+                onChange={(e) => handleInputChange(e, isEdit)}
+                min="0"
+                step="0.01"
+                className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Number of EMI *</label>
+              <input
+                type="number"
+                name="totalEmi"
+                value={formData.totalEmi || ""}
+                onChange={(e) => handleInputChange(e, isEdit)}
+                min="1"
+                className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Due Day (1-30) *</label>
+              <Dropdown
+                name="dueDay"
+                value={formData.dueDay}
+                onChange={(e) => {
+                  if (isEdit) {
+                    setEditFormData({ ...formData, dueDay: e.value });
+                  } else {
+                    setFormData({ ...formData, dueDay: e.value });
+                  }
+                }}
+                options={dueDayOptions}
+                placeholder="Select Due Day"
+                className="w-2/3 border border-gray-300 rounded-lg"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Loan Status *</label>
+              <div className="w-2/3">
+                <Dropdown
+                  name="loanStatus"
+                  value={formData.loanStatus}
+                  onChange={(e) => {
+                    if (isEdit) {
+                      setEditFormData({ ...formData, loanStatus: e.value });
+                    } else {
+                      setFormData({ ...formData, loanStatus: e.value });
+                    }
+                  }}
+                  options={loanStatusOptions}
+                  placeholder="Select Loan Status"
+                  className="w-full border border-gray-300 rounded-lg"
+                />
+              </div>
+            </div>
+          </>
+        );
+
+      case "Gold Loan":
+        return (
+          <>
+           <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Lender Name *</label>
+              <div className="w-2/3">
+                <Dropdown
+                  name="lenderName"
+                  value={formData.lenderName}
+                  onChange={(e) => handleLenderChange(e.value, isEdit)}
+                  options={lenderOptions}
+                  placeholder="Select Lender"
+                  className="w-full border border-gray-300 rounded-lg"
+                />
+              </div>
+            </div>
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Total Amount *</label>
+              <input
+                type="number"
+                name="totalAmount"
+                value={formData.totalAmount || ""}
+                onChange={(e) => handleInputChange(e, isEdit)}
+                min="1"
+                className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Interest Rate (%) *</label>
+              <input
+                type="number"
+                name="interest_rate"
+                value={formData.interest_rate || ""}
+                onChange={(e) => handleInputChange(e, isEdit)}
+                min="0"
+                step="0.01"
+                className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Monthly Interest Amount *</label>
+              <input
+                type="number"
+                name="monthlyInterest"
+                value={formData.monthlyInterest || ""}
+                onChange={(e) => handleInputChange(e, isEdit)}
+                min="0"
+                className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Monthly Principal Amount *</label>
+              <input
+                type="number"
+                name="monthlyPrincipal"
+                value={formData.monthlyPrincipal || ""}
+                onChange={(e) => handleInputChange(e, isEdit)}
+                min="0"
+                className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Due Day (1-30) *</label>
+              <Dropdown
+                name="dueDay"
+                value={formData.dueDay}
+                onChange={(e) => {
+                  if (isEdit) {
+                    setEditFormData({ ...formData, dueDay: e.value });
+                  } else {
+                    setFormData({ ...formData, dueDay: e.value });
+                  }
+                }}
+                options={dueDayOptions}
+                placeholder="Select Due Day"
+                className="w-2/3 border border-gray-300 rounded-lg"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Loan Status *</label>
+              <div className="w-2/3">
+                <Dropdown
+                  name="loanStatus"
+                  value={formData.loanStatus}
+                  onChange={(e) => {
+                    if (isEdit) {
+                      setEditFormData({ ...formData, loanStatus: e.value });
+                    } else {
+                      setFormData({ ...formData, loanStatus: e.value });
+                    }
+                  }}
+                  options={loanStatusOptions}
+                  placeholder="Select Loan Status"
+                  className="w-full border border-gray-300 rounded-lg"
+                />
+              </div>
+            </div>
+          </>
+        );
+
+      case "Subscription":
+        return (
+          <>
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Lender Name *</label>
+              <div className="w-2/3">
+                <Dropdown
+                  name="lenderName"
+                  value={formData.lenderName}
+                  onChange={(e) => handleLenderChange(e.value, isEdit)}
+                  options={lenderOptions}
+                  placeholder="Select Lender"
+                  className="w-full border border-gray-300 rounded-lg"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Amount *</label>
+              <input
+                type="number"
+                name="amount"
+                value={formData.amount || ""}
+                onChange={(e) => handleInputChange(e, isEdit)}
+                min="1"
+                className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-medium w-1/3">Due Day (1-30) *</label>
+              <Dropdown
+                name="dueDay"
+                value={formData.dueDay}
+                onChange={(e) => {
+                  if (isEdit) {
+                    setEditFormData({ ...formData, dueDay: e.value });
+                  } else {
+                    setFormData({ ...formData, dueDay: e.value });
+                  }
+                }}
+                options={dueDayOptions}
+                placeholder="Select Due Day"
+                className="w-2/3 border border-gray-300 rounded-lg"
+              />
+            </div>
+          </>
+        );
+
+      default:
+        return null;
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Log the data being submitted
     console.log("Submitting Recurring Payment Data:", formData);
-    console.log("Amount:", formData.amount);
-    console.log("Payment Status:", formData.payment_status);
 
     try {
       const response = await axios.post(
@@ -351,12 +874,7 @@ const Recurring_details = () => {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-
-    // Log the data being submitted for edit
     console.log("Updating Recurring Payment Data:", editFormData);
-    console.log("Amount:", editFormData.amount);
-    console.log("Payment Status:", editFormData.payment_status);
-    console.log("Balance Amount:", editFormData.balance_amount);
 
     try {
       const response = await axios.put(
@@ -418,21 +936,21 @@ const Recurring_details = () => {
     }
   };
 
-  // Filtered data
   const filteredData = useMemo(() => {
     return recurringPayments.filter((row) => {
       const matchesAccount =
         !filters.account || row.account?._id === filters.account;
+      const matchesLender =
+        !filters.lenderName || row.lenderName?._id === filters.lenderName;
       const matchesStatus = !filters.status || row.status === filters.status;
       const matchesDueDate =
         !filters.dueDate ||
-        new Date(row.dueDate).toLocaleDateString("en-GB") ===
-          new Date(filters.dueDate).toLocaleDateString("en-GB");
-      return matchesAccount && matchesStatus && matchesDueDate;
+        (row.dueDate && new Date(row.dueDate).toLocaleDateString("en-GB") ===
+          new Date(filters.dueDate).toLocaleDateString("en-GB"));
+      return matchesAccount && matchesLender && matchesStatus && matchesDueDate;
     });
   }, [recurringPayments, filters]);
 
-  // Columns for DataTable
   const columns = [
     {
       title: "S.no",
@@ -446,48 +964,33 @@ const Recurring_details = () => {
     },
     {
       title: "Lender Name",
-      data: "lenderName",
+      data: null,
+      render: (row) => row.lenderName?.name || "-",
     },
     {
       title: "Payment Type",
       data: "paymentType",
     },
     {
-      title: "Amount",
-      data: "amount",
-      render: (data) => {
-        if (!data) return "₹0";
-        return `₹${parseFloat(data).toLocaleString("en-IN")}`;
-      },
-    },
-    {
-      title: "Due Date",
-      data: "dueDate",
-      render: (data) => formatDateTime(data),
-    },
-    {
-      title: "Recurring Type",
-      data: "recurringType",
-    },
-    {
-      title: "Total EMI",
-      data: "totalEmi",
-      render: (data) => data || "-",
-    },
-    {
-      title: "Total Amount",
-      data: "totalAmount",
-      render: (data) => {
-        if (!data) return "₹0";
-        return `₹${parseFloat(data).toLocaleString("en-IN")}`;
-      },
-    },
-    {
       title: "Balance Amount",
       data: "balance_amount",
       render: (data) => {
-        if (!data) return "₹0";
+        if (!data && data !== 0) return "₹0";
         return `₹${parseFloat(data).toLocaleString("en-IN")}`;
+      },
+    },
+    {
+      title: "Loan Status",
+      data: "loanStatus",
+      render: (data) => {
+        if (!data) return "-";
+        const colors = {
+          inprogress: "text-blue-600 bg-blue-100",
+          completed: "text-green-600 bg-green-100",
+          pending: "text-yellow-600 bg-yellow-100",
+        };
+        const colorClass = colors[data] || "text-gray-600 bg-gray-100";
+        return `<span class="${colorClass} px-2 py-1 rounded-full text-xs font-semibold capitalize">${data}</span>`;
       },
     },
     {
@@ -504,12 +1007,9 @@ const Recurring_details = () => {
       title: "Status",
       data: "status",
       render: (data, type, row) => {
-        const textColor =
-          data === "1"
-            ? "text-green-600 border rounded-full border-green-600"
-            : "text-red-600 border rounded-full border-red-600";
-        return `<div class="${textColor}" style="display: inline-block; border: 1px solid ${textColor}; text-align: center; width:100px; font-size: 12px; font-weight: 500">
-                  ${data === "1" ? "ACTIVE" : "INACTIVE"}
+        const isActive = data === "1";
+        return `<div class="${isActive ? "text-green-600 border-green-600" : "text-red-600 border-red-600"} border rounded-full text-center w-24 text-xs font-medium py-1">
+                  ${isActive ? "ACTIVE" : "INACTIVE"}
                 </div>`;
       },
     },
@@ -525,24 +1025,24 @@ const Recurring_details = () => {
               container._root = createRoot(container);
             }
             container._root.render(
-              <div className="flex gap-3 items-center justify-center">
+              <div className="flex gap-2 items-center justify-center">
+                <FaEye
+                  className="cursor-pointer text-green-600 text-base hover:text-green-800"
+                  onClick={() => openViewModal(row)}
+                  title="View Details"
+                />
                 <FaHistory
-                  className="cursor-pointer text-purple-600 text-lg"
+                  className="cursor-pointer text-purple-600 text-base hover:text-purple-800"
                   onClick={() => fetchPaymentLogs(row._id)}
                   title="View History"
                 />
                 <TfiPencilAlt
-                  className="cursor-pointer text-blue-600 text-lg"
-                  // onClick={() => openEditModal(row)}
-                  onClick={() => {
-                    openEditModal(row);
-                  }}
+                  className="cursor-pointer text-blue-600 text-base hover:text-blue-800"
+                  onClick={() => openEditModal(row)}
                 />
                 <MdOutlineDeleteOutline
-                  className="cursor-pointer text-red-600 text-xl"
-                  onClick={() =>
-                    handleDelete(row._id)}
-                  
+                  className="cursor-pointer text-red-600 text-base hover:text-red-800"
+                  onClick={() => handleDelete(row._id)}
                 />
               </div>,
             );
@@ -553,7 +1053,6 @@ const Recurring_details = () => {
     },
   ];
 
-  // Log Columns
   const logColumns = [
     {
       title: "S.no",
@@ -563,13 +1062,13 @@ const Recurring_details = () => {
     {
       title: "Date",
       data: "createdAt",
-      render: (data) => formatDateTime(data),
+      render: (data) => data ? formatDateTime(data) : "-",
     },
     {
       title: "Amount",
       data: "amount",
       render: (data) => {
-        if (!data) return "₹0";
+        if (!data && data !== 0) return "₹0";
         return `₹${parseFloat(data).toLocaleString("en-IN")}`;
       },
     },
@@ -586,7 +1085,7 @@ const Recurring_details = () => {
       title: "Balance Amount",
       data: "balance_amount",
       render: (data) => {
-        if (!data) return "₹0";
+        if (!data && data !== 0) return "₹0";
         return `₹${parseFloat(data).toLocaleString("en-IN")}`;
       },
     },
@@ -594,11 +1093,11 @@ const Recurring_details = () => {
       title: "Payment Type",
       data: "paymentType",
     },
-    {
-      title: "Due Date",
-      data: "dueDate",
-      render: (data) => formatDateTime(data),
-    },
+    // {
+    //   title: "Due Date",
+    //   data: "dueDate",
+    //   render: (data) => data ? formatDateTime(data) : "-",
+    // },
   ];
 
   return (
@@ -608,32 +1107,29 @@ const Recurring_details = () => {
           <Mobile_Sidebar />
         </div>
 
-        {/* Breadcrumb */}
-        <div className="flex mt-2 md:mt-0 gap-1 items-center">
+        <div className="flex justify-end mt-2 md:mt-0 gap-1 items-center">
           <p
             className="text-sm text-gray-500 cursor-pointer"
             onClick={() => navigate("/dashboard")}
           >
             Dashboard
           </p>
-          <p>{">"}</p>
+          <IoIosArrowForward className="w-3 h-3 text-gray-400" />
           <p className="text-sm text-blue-500">Recurring Payments</p>
         </div>
 
-        {/* Header */}
         <div className="flex justify-between mt-1 md:mt-4 mb-2 md:mb-3">
           <h1 className="text-2xl md:text-3xl font-semibold">
             Recurring Payments
           </h1>
           <button
             onClick={openAddModal}
-            className="px-3 py-2 text-white bg-blue-500 hover:bg-blue-600 font-medium w-20 rounded-2xl"
+            className="px-3 py-2 text-white bg-blue-500 hover:bg-blue-600 font-medium rounded-2xl"
           >
             Add
           </button>
         </div>
 
-        {/* Filters */}
         <div className="flex gap-4 flex-wrap mb-4 items-end">
           <div className="flex flex-col w-40 md:w-48">
             <label className="text-sm font-medium mb-1">Account</label>
@@ -644,6 +1140,19 @@ const Recurring_details = () => {
               }
               options={accountOptions}
               placeholder="All Accounts"
+              className="w-full border border-gray-300 rounded-lg"
+            />
+          </div>
+
+          <div className="flex flex-col w-40 md:w-48">
+            <label className="text-sm font-medium mb-1">Lender</label>
+            <Dropdown
+              value={tempFilters.lenderName}
+              onChange={(e) =>
+                setTempFilters({ ...tempFilters, lenderName: e.value })
+              }
+              options={lenderOptions}
+              placeholder="All Lender"
               className="w-full border border-gray-300 rounded-lg"
             />
           </div>
@@ -682,8 +1191,18 @@ const Recurring_details = () => {
 
           <button
             onClick={() => {
-              setTempFilters({ account: "", status: "", dueDate: "" });
-              setFilters({ account: "", status: "", dueDate: "" });
+              setTempFilters({
+                account: "",
+                lenderName: "",
+                status: "",
+                dueDate: "",
+              });
+              setFilters({
+                account: "",
+                lenderName: "",
+                status: "",
+                dueDate: "",
+              });
             }}
             className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
           >
@@ -691,7 +1210,6 @@ const Recurring_details = () => {
           </button>
         </div>
 
-        {/* DataTable */}
         <div className="datatable-container">
           <div className="table-scroll-container" id="datatable">
             <DataTable
@@ -704,11 +1222,6 @@ const Recurring_details = () => {
                 scrollX: true,
                 responsive: true,
                 autoWidth: false,
-                pageLength: 10,
-                lengthMenu: [
-                  [10, 25, 50, -1],
-                  [10, 25, 50, "All"],
-                ],
               }}
               className="display nowrap bg-white"
             />
@@ -728,7 +1241,7 @@ const Recurring_details = () => {
                 className="w-6 h-6 rounded-full mt-2 ms-2 border-2 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
                 onClick={closeAddModal}
               >
-                <IoIosArrowForward className="w-3 h-3" />
+                <IoClose className="w-3 h-3" />
               </div>
               <div className="p-5">
                 <h2 className="text-xl font-semibold mb-4">
@@ -736,7 +1249,6 @@ const Recurring_details = () => {
                 </h2>
                 <form onSubmit={handleSubmit}>
                   <div className="space-y-4">
-                    {/* Account */}
                     <div className="flex justify-between items-center">
                       <label className="text-sm font-medium w-1/3">
                         Account *
@@ -758,152 +1270,39 @@ const Recurring_details = () => {
                       </div>
                     </div>
 
-                    {/* Lender Name */}
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium w-1/3">
-                        Lender Name
-                      </label>
-                      <input
-                        type="text"
-                        name="lenderName"
-                        value={formData.lenderName}
-                        onChange={(e) => handleInputChange(e)}
-                        className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-
-                    {/* Payment Type */}
                     <div className="flex justify-between items-start">
                       <label className="text-sm font-medium w-1/3">
                         Payment Type *
                       </label>
                       <div className="w-2/3">
                         <div className="flex flex-wrap gap-4">
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="paymentType"
-                              id="paymentLoan"
-                              value="Loan"
-                              checked={formData.paymentType === "Loan"}
-                              onChange={(e) =>
-                                setFormData({
-                                  ...formData,
-                                  paymentType: e.target.value,
-                                })
-                              }
-                              className="mr-2 w-4 h-4 text-blue-600"
-                            />
-                            <label htmlFor="paymentLoan" className="text-sm">
-                              Loan
-                            </label>
-                          </div>
-
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="paymentType"
-                              id="paymentSaving"
-                              value="Saving"
-                              checked={formData.paymentType === "Saving"}
-                              onChange={(e) =>
-                                setFormData({
-                                  ...formData,
-                                  paymentType: e.target.value,
-                                })
-                              }
-                              className="mr-2 w-4 h-4 text-blue-600"
-                            />
-                            <label htmlFor="paymentSaving" className="text-sm">
-                              Saving
-                            </label>
-                          </div>
-
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="paymentType"
-                              id="paymentSubscription"
-                              value="Subscription"
-                              checked={formData.paymentType === "Subscription"}
-                              onChange={(e) =>
-                                setFormData({
-                                  ...formData,
-                                  paymentType: e.target.value,
-                                })
-                              }
-                              className="mr-2 w-4 h-4 text-blue-600"
-                            />
-                            <label
-                              htmlFor="paymentSubscription"
-                              className="text-sm"
+                          {paymentTypeOptions.map((option) => (
+                            <div
+                              key={option.value}
+                              className="flex items-center"
                             >
-                              Subscription
-                            </label>
-                          </div>
-
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="paymentType"
-                              id="paymentUtilities"
-                              value="Utilities"
-                              checked={formData.paymentType === "Utilities"}
-                              onChange={(e) =>
-                                setFormData({
-                                  ...formData,
-                                  paymentType: e.target.value,
-                                })
-                              }
-                              className="mr-2 w-4 h-4 text-blue-600"
-                            />
-                            <label
-                              htmlFor="paymentUtilities"
-                              className="text-sm"
-                            >
-                              Utilities
-                            </label>
-                          </div>
-
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="paymentType"
-                              id="paymentEMI"
-                              value="EMI"
-                              checked={formData.paymentType === "EMI"}
-                              onChange={(e) =>
-                                setFormData({
-                                  ...formData,
-                                  paymentType: e.target.value,
-                                })
-                              }
-                              className="mr-2 w-4 h-4 text-blue-600"
-                            />
-                            <label htmlFor="paymentEMI" className="text-sm">
-                              EMI
-                            </label>
-                          </div>
-
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="paymentType"
-                              id="paymentRent"
-                              value="Rent"
-                              checked={formData.paymentType === "Rent"}
-                              onChange={(e) =>
-                                setFormData({
-                                  ...formData,
-                                  paymentType: e.target.value,
-                                })
-                              }
-                              className="mr-2 w-4 h-4 text-blue-600"
-                            />
-                            <label htmlFor="paymentRent" className="text-sm">
-                              Rent
-                            </label>
-                          </div>
+                              <input
+                                type="radio"
+                                name="paymentType"
+                                id={`addPayment${option.value.replace(" ", "")}`}
+                                value={option.value}
+                                checked={formData.paymentType === option.value}
+                                onChange={(e) =>
+                                  setFormData({
+                                    ...formData,
+                                    paymentType: e.target.value,
+                                  })
+                                }
+                                className="mr-2 w-4 h-4 text-blue-600"
+                              />
+                              <label
+                                htmlFor={`addPayment${option.value.replace(" ", "")}`}
+                                className="text-sm"
+                              >
+                                {option.label}
+                              </label>
+                            </div>
+                          ))}
                         </div>
                         {errors.paymentType && (
                           <p className="text-red-500 text-sm mt-1">
@@ -913,203 +1312,92 @@ const Recurring_details = () => {
                       </div>
                     </div>
 
-                    {/* Conditional fields based on payment type */}
-                    {formData.paymentType === "Loan" && (
+                    {renderConditionalFields(formData, setFormData, false)}
+
+                    {formData.paymentType && (
                       <>
                         <div className="flex justify-between items-center">
                           <label className="text-sm font-medium w-1/3">
-                            Start Date *
+                            Recurring Type *
                           </label>
-                          <input
-                            type="date"
-                            name="start_date"
-                            value={formData.start_date}
-                            onChange={handleInputChange}
+                          <div className="w-2/3">
+                            <Dropdown
+                              name="recurringType"
+                              value={formData.recurringType}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  recurringType: e.value,
+                                })
+                              }
+                              options={recurringTypeOptions}
+                              placeholder="Select Recurring Type"
+                              className="w-full border border-gray-300 rounded-lg"
+                            />
+                            {errors.recurringType && (
+                              <p className="text-red-500 text-sm mt-1">
+                                {errors.recurringType}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between items-center">
+                          <label className="text-sm font-medium w-1/3">
+                            Payment Status
+                          </label>
+                          <div className="w-2/3">
+                            <Dropdown
+                              name="payment_status"
+                              value={formData.payment_status}
+                              onChange={(e) => {
+                                setFormData({
+                                  ...formData,
+                                  payment_status: e.value,
+                                });
+                              }}
+                              options={statusPaymentOptions}
+                              placeholder="Select Payment Status"
+                              className="w-full border border-gray-300 rounded-lg"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between items-center">
+                          <label className="text-sm font-medium w-1/3">
+                            Notes
+                          </label>
+                          <textarea
+                            name="notes"
+                            value={formData.notes || ""}
+                            onChange={(e) => handleInputChange(e, false)}
+                            rows="3"
                             className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Enter any additional notes..."
                           />
                         </div>
 
                         <div className="flex justify-between items-center">
                           <label className="text-sm font-medium w-1/3">
-                            End Date *
+                            Status
                           </label>
-                          <input
-                            type="date"
-                            name="end_date"
-                            value={formData.end_date}
-                            onChange={handleInputChange}
-                            className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          />
+                          <div className="w-2/3">
+                            <Dropdown
+                              name="status"
+                              value={formData.status}
+                              onChange={(e) => {
+                                setFormData({ ...formData, status: e.value });
+                              }}
+                              options={statusOptions}
+                              placeholder="Select Status"
+                              className="w-full border border-gray-300 rounded-lg"
+                            />
+                          </div>
                         </div>
                       </>
                     )}
-
-                    {formData.paymentType === "Saving" && (
-                      <div className="flex justify-between items-center">
-                        <label className="text-sm font-medium w-1/3">
-                          Interest Rate
-                        </label>
-                        <input
-                          type="number"
-                          name="interest_rate"
-                          value={formData.interest_rate}
-                          onChange={(e) => handleInputChange(e)}
-                          className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                      </div>
-                    )}
-
-                    {/* Amount */}
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium w-1/3">
-                        Amount *
-                      </label>
-                      <input
-                        type="number"
-                        name="amount"
-                        value={formData.amount}
-                        onChange={(e) => handleInputChange(e)}
-                        min="1"
-                        className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      {errors.amount && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.amount}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Due Date */}
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium w-1/3">
-                        Due Date *
-                      </label>
-                      <input
-                        type="date"
-                        name="dueDate"
-                        value={formData.dueDate}
-                        onChange={(e) => handleInputChange(e)}
-                        className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      {errors.dueDate && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.dueDate}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Recurring Type */}
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium w-1/3">
-                        Recurring Type *
-                      </label>
-                      <div className="w-2/3">
-                        <Dropdown
-                          name="recurringType"
-                          value={formData.recurringType}
-                          onChange={(e) =>
-                            setFormData({ ...formData, recurringType: e.value })
-                          }
-                          options={recurringTypeOptions}
-                          placeholder="Select Recurring Type"
-                          className="w-full border border-gray-300 rounded-lg"
-                        />
-                        {errors.recurringType && (
-                          <p className="text-red-500 text-sm mt-1">
-                            {errors.recurringType}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Total EMI */}
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium w-1/3">
-                        Total EMI
-                      </label>
-                      <input
-                        type="number"
-                        name="totalEmi"
-                        value={formData.totalEmi}
-                        onChange={(e) => handleInputChange(e)}
-                        min="1"
-                        className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-
-                    {/* Total Amount */}
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium w-1/3">
-                        Total Amount
-                      </label>
-                      <input
-                        type="number"
-                        name="totalAmount"
-                        value={formData.totalAmount}
-                        onChange={(e) => handleInputChange(e)}
-                        min="1"
-                        className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-
-                    {/* Balance Amount */}
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium w-1/3">
-                        Balance Amount
-                      </label>
-                      <input
-                        type="number"
-                        name="balance_amount"
-                        value={formData.balance_amount}
-                        onChange={(e) => handleInputChange(e)}
-                        className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-
-                    {/* Payment Status */}
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium w-1/3">
-                        Payment Status
-                      </label>
-                      <div className="w-2/3">
-                        <Dropdown
-                          name="payment_status"
-                          value={formData.payment_status}
-                          onChange={(e) => {
-                            setFormData({
-                              ...formData,
-                              payment_status: e.value,
-                            });
-                            console.log("Payment status set to:", e.value);
-                          }}
-                          options={statusPaymentOptions}
-                          placeholder="Select Payment Status"
-                          className="w-full border border-gray-300 rounded-lg"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Status */}
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium w-1/3">
-                        Status
-                      </label>
-                      <div className="w-2/3">
-                        <Dropdown
-                          name="status"
-                          value={formData.status}
-                          onChange={(e) =>
-                            setFormData({ ...formData, status: e.value })
-                          }
-                          options={statusOptions}
-                          placeholder="Select Status"
-                          className="w-full border border-gray-300 rounded-lg"
-                        />
-                      </div>
-                    </div>
                   </div>
 
-                  {/* Form Buttons */}
                   <div className="flex gap-2 justify-end mt-6">
                     <button
                       type="button"
@@ -1144,7 +1432,7 @@ const Recurring_details = () => {
                 className="w-6 h-6 rounded-full mt-2 ms-2 border-2 bg-white border-gray-300 flex items-center justify-center cursor-pointer"
                 onClick={closeEditModal}
               >
-                <IoIosArrowForward className="w-3 h-3" />
+                <IoClose className="w-3 h-3" />
               </div>
               <div className="p-5">
                 <h2 className="text-xl font-semibold mb-4">
@@ -1152,7 +1440,6 @@ const Recurring_details = () => {
                 </h2>
                 <form onSubmit={handleEditSubmit}>
                   <div className="space-y-4">
-                    {/* Account */}
                     <div className="flex justify-between items-center">
                       <label className="text-sm font-medium w-1/3">
                         Account *
@@ -1174,163 +1461,41 @@ const Recurring_details = () => {
                       </div>
                     </div>
 
-                    {/* Lender Name */}
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium w-1/3">
-                        Lender Name
-                      </label>
-                      <input
-                        type="text"
-                        name="lenderName"
-                        value={editFormData.lenderName}
-                        onChange={(e) => handleInputChange(e, true)}
-                        className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-
-                    {/* Payment Type - Edit */}
                     <div className="flex justify-between items-start">
                       <label className="text-sm font-medium w-1/3">
                         Payment Type *
                       </label>
                       <div className="w-2/3">
                         <div className="flex flex-wrap gap-4">
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="paymentType"
-                              id="editPaymentLoan"
-                              value="Loan"
-                              checked={editFormData.paymentType === "Loan"}
-                              onChange={(e) =>
-                                setEditFormData({
-                                  ...editFormData,
-                                  paymentType: e.target.value,
-                                })
-                              }
-                              className="mr-2 w-4 h-4 text-blue-600"
-                            />
-                            <label
-                              htmlFor="editPaymentLoan"
-                              className="text-sm"
+                          {paymentTypeOptions.map((option) => (
+                            <div
+                              key={option.value}
+                              className="flex items-center"
                             >
-                              Loan
-                            </label>
-                          </div>
-
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="paymentType"
-                              id="editPaymentSaving"
-                              value="Saving"
-                              checked={editFormData.paymentType === "Saving"}
-                              onChange={(e) =>
-                                setEditFormData({
-                                  ...editFormData,
-                                  paymentType: e.target.value,
-                                })
-                              }
-                              className="mr-2 w-4 h-4 text-blue-600"
-                            />
-                            <label
-                              htmlFor="editPaymentSaving"
-                              className="text-sm"
-                            >
-                              Saving
-                            </label>
-                          </div>
-
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="paymentType"
-                              id="editPaymentSubscription"
-                              value="Subscription"
-                              checked={
-                                editFormData.paymentType === "Subscription"
-                              }
-                              onChange={(e) =>
-                                setEditFormData({
-                                  ...editFormData,
-                                  paymentType: e.target.value,
-                                })
-                              }
-                              className="mr-2 w-4 h-4 text-blue-600"
-                            />
-                            <label
-                              htmlFor="editPaymentSubscription"
-                              className="text-sm"
-                            >
-                              Subscription
-                            </label>
-                          </div>
-
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="paymentType"
-                              id="editPaymentUtilities"
-                              value="Utilities"
-                              checked={editFormData.paymentType === "Utilities"}
-                              onChange={(e) =>
-                                setEditFormData({
-                                  ...editFormData,
-                                  paymentType: e.target.value,
-                                })
-                              }
-                              className="mr-2 w-4 h-4 text-blue-600"
-                            />
-                            <label
-                              htmlFor="editPaymentUtilities"
-                              className="text-sm"
-                            >
-                              Utilities
-                            </label>
-                          </div>
-
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="paymentType"
-                              id="editPaymentEMI"
-                              value="EMI"
-                              checked={editFormData.paymentType === "EMI"}
-                              onChange={(e) =>
-                                setEditFormData({
-                                  ...editFormData,
-                                  paymentType: e.target.value,
-                                })
-                              }
-                              className="mr-2 w-4 h-4 text-blue-600"
-                            />
-                            <label htmlFor="editPaymentEMI" className="text-sm">
-                              EMI
-                            </label>
-                          </div>
-
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="paymentType"
-                              id="editPaymentRent"
-                              value="Rent"
-                              checked={editFormData.paymentType === "Rent"}
-                              onChange={(e) =>
-                                setEditFormData({
-                                  ...editFormData,
-                                  paymentType: e.target.value,
-                                })
-                              }
-                              className="mr-2 w-4 h-4 text-blue-600"
-                            />
-                            <label
-                              htmlFor="editPaymentRent"
-                              className="text-sm"
-                            >
-                              Rent
-                            </label>
-                          </div>
+                              <input
+                                type="radio"
+                                name="paymentType"
+                                id={`editPayment${option.value.replace(" ", "")}`}
+                                value={option.value}
+                                checked={
+                                  editFormData.paymentType === option.value
+                                }
+                                onChange={(e) =>
+                                  setEditFormData({
+                                    ...editFormData,
+                                    paymentType: e.target.value,
+                                  })
+                                }
+                                className="mr-2 w-4 h-4 text-blue-600"
+                              />
+                              <label
+                                htmlFor={`editPayment${option.value.replace(" ", "")}`}
+                                className="text-sm"
+                              >
+                                {option.label}
+                              </label>
+                            </div>
+                          ))}
                         </div>
                         {errors.paymentType && (
                           <p className="text-red-500 text-sm mt-1">
@@ -1340,216 +1505,108 @@ const Recurring_details = () => {
                       </div>
                     </div>
 
-                    {/* Conditional fields based on payment type for edit */}
-                    {editFormData.paymentType === "Loan" && (
+                    {renderConditionalFields(
+                      editFormData,
+                      setEditFormData,
+                      true,
+                    )}
+
+                    {editFormData.paymentType && (
                       <>
                         <div className="flex justify-between items-center">
                           <label className="text-sm font-medium w-1/3">
-                            Start Date *
+                            Recurring Type *
+                          </label>
+                          <div className="w-2/3">
+                            <Dropdown
+                              name="recurringType"
+                              value={editFormData.recurringType}
+                              onChange={(e) =>
+                                setEditFormData({
+                                  ...editFormData,
+                                  recurringType: e.value,
+                                })
+                              }
+                              options={recurringTypeOptions}
+                              placeholder="Select Recurring Type"
+                              className="w-full border border-gray-300 rounded-lg"
+                            />
+                            {errors.recurringType && (
+                              <p className="text-red-500 text-sm mt-1">
+                                {errors.recurringType}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between items-center">
+                          <label className="text-sm font-medium w-1/3">
+                            Payment Status
+                          </label>
+                          <div className="w-2/3">
+                            <Dropdown
+                              name="payment_status"
+                              value={editFormData.payment_status}
+                              onChange={(e) => {
+                                setEditFormData({
+                                  ...editFormData,
+                                  payment_status: e.value,
+                                });
+                              }}
+                              options={statusPaymentOptions}
+                              placeholder="Select Payment Status"
+                              className="w-full border border-gray-300 rounded-lg"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between items-center">
+                          <label className="text-sm font-medium w-1/3">
+                            Balance Amount
                           </label>
                           <input
-                            type="date"
-                            name="start_date"
-                            value={editFormData.start_date}
+                            type="number"
+                            name="balance_amount"
+                            value={editFormData.balance_amount || ""}
                             onChange={(e) => handleInputChange(e, true)}
-                            className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
+                            readOnly
                           />
                         </div>
 
                         <div className="flex justify-between items-center">
                           <label className="text-sm font-medium w-1/3">
-                            End Date *
+                            Notes
                           </label>
-                          <input
-                            type="date"
-                            name="end_date"
-                            value={editFormData.end_date}
+                          <textarea
+                            name="notes"
+                            value={editFormData.notes || ""}
                             onChange={(e) => handleInputChange(e, true)}
+                            rows="3"
                             className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Enter any additional notes..."
                           />
+                        </div>
+
+                        <div className="flex justify-between items-center">
+                          <label className="text-sm font-medium w-1/3">
+                            Status
+                          </label>
+                          <div className="w-2/3">
+                            <Dropdown
+                              name="status"
+                              value={editFormData.status}
+                              onChange={(e) => setEditFormData({ ...editFormData, status: e.value })}
+                              options={statusOptions}
+                              placeholder="Select Status"
+                              className="w-full border border-gray-300 rounded-lg"
+                            />
+                          </div>
                         </div>
                       </>
                     )}
-
-                    {editFormData.paymentType === "Saving" && (
-                      <div className="flex justify-between items-center">
-                        <label className="text-sm font-medium w-1/3">
-                          Interest Rate
-                        </label>
-                        <input
-                          type="number"
-                          name="interest_rate"
-                          value={editFormData.interest_rate}
-                          onChange={(e) => handleInputChange(e, true)}
-                          className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                      </div>
-                    )}
-
-                    {/* Amount */}
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium w-1/3">
-                        Amount *
-                      </label>
-                      <input
-                        type="number"
-                        name="amount"
-                        value={editFormData.amount}
-                        onChange={(e) => {
-                          handleInputChange(e, true);
-                        }}
-                        min="1"
-                        className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      {errors.amount && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.amount}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Due Date */}
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium w-1/3">
-                        Due Date *
-                      </label>
-                      <input
-                        type="date"
-                        name="dueDate"
-                        value={editFormData.dueDate}
-                        onChange={(e) => handleInputChange(e, true)}
-                        className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      {errors.dueDate && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.dueDate}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Recurring Type */}
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium w-1/3">
-                        Recurring Type *
-                      </label>
-                      <div className="w-2/3">
-                        <Dropdown
-                          name="recurringType"
-                          value={editFormData.recurringType}
-                          onChange={(e) =>
-                            setEditFormData({
-                              ...editFormData,
-                              recurringType: e.value,
-                            })
-                          }
-                          options={recurringTypeOptions}
-                          placeholder="Select Recurring Type"
-                          className="w-full border border-gray-300 rounded-lg"
-                        />
-                        {errors.recurringType && (
-                          <p className="text-red-500 text-sm mt-1">
-                            {errors.recurringType}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Total EMI */}
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium w-1/3">
-                        Total EMI
-                      </label>
-                      <input
-                        type="number"
-                        name="totalEmi"
-                        value={editFormData.totalEmi}
-                        onChange={(e) => handleInputChange(e, true)}
-                        min="1"
-                        className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-
-                    {/* Total Amount */}
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium w-1/3">
-                        Total Amount
-                      </label>
-                      <input
-                        type="number"
-                        name="totalAmount"
-                        value={editFormData.totalAmount}
-                        onChange={(e) => handleInputChange(e, true)}
-                        min="1"
-                        className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-
-                    {/* Balance Amount - Auto-filled from account */}
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium w-1/3">
-                        Balance Amount
-                      </label>
-                      <input
-                        type="number"
-                        name="balance_amount"
-                        value={editFormData.balance_amount || balanceAmount}
-                        onChange={(e) => handleInputChange(e, true)}
-                        className="w-2/3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
-                        readOnly
-                      />
-                   
-                    </div>
-
-                    {/* Payment Status */}
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium w-1/3">
-                        Payment Status
-                      </label>
-                      <div className="w-2/3">
-                        <Dropdown
-                          name="payment_status"
-                          value={editFormData.payment_status}
-                          onChange={(e) => {
-                            setEditFormData({
-                              ...editFormData,
-                              payment_status: e.value,
-                            });
-                            console.log(
-                              "Edit - Payment status set to:",
-                              e.value,
-                            );
-                          }}
-                          options={statusPaymentOptions}
-                          placeholder="Select Payment Status"
-                          className="w-full border border-gray-300 rounded-lg"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Status */}
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium w-1/3">
-                        Status
-                      </label>
-                      <div className="w-2/3">
-                        <Dropdown
-                          name="status"
-                          value={editFormData.status}
-                          onChange={(e) =>
-                            setEditFormData({
-                              ...editFormData,
-                              status: e.value,
-                            })
-                          }
-                          options={statusOptions}
-                          placeholder="Select Status"
-                          className="w-full border border-gray-300 rounded-lg"
-                        />
-                      </div>
-                    </div>
                   </div>
 
-                  {/* Form Buttons */}
                   <div className="flex gap-2 justify-end mt-6">
                     <button
                       type="button"
@@ -1626,6 +1683,58 @@ const Recurring_details = () => {
                   >
                     Close
                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* View Modal */}
+        {isViewModalOpen && viewData && (
+          <div className="fixed inset-0 bg-black/10 backdrop-blur-sm z-50">
+            <div className="absolute inset-0" onClick={closeViewModal}></div>
+            <div
+              className={`fixed top-0 right-0 h-screen overflow-y-auto w-screen sm:w-[90vw] md:w-[35vw] bg-white shadow-lg transform transition-transform duration-500 ease-in-out ${
+                isAnimating ? "translate-x-0" : "translate-x-full"
+              }`}
+            >
+              <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 flex justify-between items-center">
+                <h2 className="text-lg font-semibold text-gray-800">
+                  Payment Details
+                </h2>
+                <button
+                  onClick={closeViewModal}
+                  className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center"
+                >
+                  <IoClose className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div
+                className="p-4 overflow-y-auto"
+                style={{ maxHeight: "calc(100vh - 80px)" }}
+              >
+                {renderViewFields()}
+
+                <div className="mt-4 pt-3 border-t border-gray-200">
+                  <div className="grid grid-cols-2 gap-2 text-xs text-gray-500">
+                    <div>
+                      <span className="block">Created</span>
+                      <span className="font-medium text-gray-700">
+                        {viewData.createdAt
+                          ? formatDateTime(viewData.createdAt)
+                          : "-"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="block">Last Updated</span>
+                      <span className="font-medium text-gray-700">
+                        {viewData.updatedAt
+                          ? formatDateTime(viewData.updatedAt)
+                          : "-"}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
