@@ -32,6 +32,7 @@ import { BsViewStacked } from "react-icons/bs";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { MultiSelect } from "primereact/multiselect";
 import Swal from "sweetalert2";
+import { Virtuoso } from "react-virtuoso";
 
 const renderSlackStyleText = (text) => {
   if (!text) return null;
@@ -759,7 +760,7 @@ function EditChannelModal({
         //       : ch
         //   )
         // );
-        
+
         Swal.fire({
           icon: "success",
           title: "Channel Updated!",
@@ -920,14 +921,23 @@ export default function Slack_chatwindow({
   mobileView,
   favorites = { dm: [], channels: [] },
   setChaneel,
-  setChannelRefresh ,
+  setChannelRefresh,
   setFavorites,
 }) {
   console.log("Selected Channel in Chat Window:", selectedChannel);
-    const [cursor, setCursor] = useState(null)
-  const [loadingMore, setLoadingMore] = useState(false)
-  const containerRef = useRef()
-  const isInitialLoad = useRef(true)
+  const virtuosoRef = useRef(null);
+
+  const BUFFER = 10000;
+  const [firstItemIndex, setFirstItemIndex] = useState(BUFFER);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  const [topCursor, setTopCursor] = useState(null);
+  const [bottomCursor, setBottomCursor] = useState(null);
+
+  const [hasMoreTop, setHasMoreTop] = useState(true);
+  const [hasMoreBottom, setHasMoreBottom] = useState(true);
+
+  const isInitialLoad = useRef(true);
 
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
@@ -967,6 +977,12 @@ export default function Slack_chatwindow({
   // single user + channel file and  forwarding
   const [selectedForwardFile, setSelectedForwardFile] = useState(null);
   const [threadReplies, setThreadReplies] = useState([]);
+  // thread scroll
+  const THREAD_BUFFER = 10000;
+  const [threadFirstIndex, setThreadFirstIndex] = useState(THREAD_BUFFER);
+  const [threadCursor, setThreadCursor] = useState(null);
+  const [hasMoreThread, setHasMoreThread] = useState(true);
+  const virtuosoRefThread = useRef(null);
 
   const filteredUsers = users.filter((u) =>
     u.name.toLowerCase().includes(searchForward.toLowerCase()),
@@ -992,13 +1008,12 @@ export default function Slack_chatwindow({
 
   // edit channel
   const [editChannel, setEditChannel] = useState(null);
-    const [showEditModal, setShowEditModal] = useState(false);
-     const handleEditChannel = (channel) => {
+  const [showEditModal, setShowEditModal] = useState(false);
+  const handleEditChannel = (channel) => {
     console.log("Editing channel:", channel);
     setEditChannel(channel);
     setShowEditModal(true);
   };
-  
 
   // view channel members
   const me = currentUser?._id;
@@ -1006,7 +1021,7 @@ export default function Slack_chatwindow({
 
   /* ---------------- HELPERS ---------------- */
 
-    /* ---------------- FAVORITES API ---------------- */
+  /* ---------------- FAVORITES API ---------------- */
   const toggleFavoriteDM = async (user) => {
     const res = await axios.post(`${API_URL}/api/favorites/dm`, {
       userId: currentUser?._id,
@@ -1178,161 +1193,228 @@ export default function Slack_chatwindow({
   //   };
   // }, [socket, selectedChannel]);
 
+  useEffect(() => {
+    if (!socket || !selectedUser) return;
 
-    useEffect(() => {
-  if (!socket || !selectedUser) return;
+    resetChatState();
 
-  setActiveThread(null);
-  socket.emit("join_dm", { senderId: me, receiverId: other });
+    socket.emit("join_dm", { senderId: me, receiverId: other });
 
-  const fetchMessages = async () => {
-    try {
-      const res = await axios.get(
-        `${API_URL}/api/messages/dm/${me}/${other}?limit=30`
-      );
+    const fetchMessages = async () => {
+      try {
+        const res = await axios.get(
+          `${API_URL}/api/messages/dm/${me}/${other}?limit=30`,
+        );
 
-      setMessages(res.data.data || []);
-      setCursor(res.data.nextCursor || null);
+        const msgs = res.data.data || [];
 
-      setTimeout(() => {
-        containerRef.current.scrollTop =
-          containerRef.current.scrollHeight;
-      }, 100);
+        setMessages(msgs);
+        setFirstItemIndex(BUFFER - msgs.length);
 
-    } catch (err) {
-      console.error(err);
-    }
-  };
+        setTopCursor(res.data.prevCursor);
+        setBottomCursor(res.data.nextCursor);
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
-  fetchMessages();
+    fetchMessages();
 
-  socket.emit("mark_seen", {
-    senderId: other,
-    receiverId: me,
-  });
+    socket.emit("mark_seen", {
+      senderId: other,
+      receiverId: me,
+    });
+  }, [selectedUser]);
 
-}, [selectedUser]);
-console.log("containerRef.current.scrollTop",containerRef.current);
-useEffect(() => {
-  if (!socket || !selectedChannel || !currentUser?._id) return;
+  useEffect(() => {
+    if (!socket || !selectedChannel || !currentUser?._id) return;
 
-  setActiveThread(null);
+    resetChatState();
 
-  const channelId = selectedChannel._id;
+    const channelId = selectedChannel._id;
 
-  socket.emit("join_channel", { channelId });
+    socket.emit("join_channel", { channelId });
 
-  const fetchMessages = async () => {
-    try {
+    const fetchMessages = async () => {
+      try {
+        const res = await axios.get(
+          `${API_URL}/api/messages/channel/${channelId}?limit=30`,
+        );
 
-      const res = await axios.get(
-        `${API_URL}/api/messages/channel/${channelId}?limit=30`
-      );
+        const msgs = res.data.data || [];
 
-      setMessages(res.data.data || []);
-      setCursor(res.data.nextCursor || null);
+        setMessages(msgs); // 🔥 REQUIRED
+        setFirstItemIndex(BUFFER - msgs.length);
 
-      setTimeout(() => {
-        containerRef.current.scrollTop =
-          containerRef.current.scrollHeight;
-      }, 100);
+        setTopCursor(res.data.prevCursor);
+        setBottomCursor(res.data.nextCursor);
 
-      socket.emit("channel_seen", {
-        channelId,
-        userId: currentUser._id,
-      });
+        socket.emit("channel_seen", {
+          channelId,
+          userId: currentUser._id,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
-    } catch (err) {
-      console.error("Channel load error:", err);
-    }
-  };
+    fetchMessages();
 
-  fetchMessages();
+    return () => {
+      socket.emit("leave_channel", { channelId });
+    };
+  }, [selectedChannel]);
 
-  return () => {
-    socket.emit("leave_channel", { channelId });
-  };
+  const mergeMessages = (oldMessages, newMessages) => {
+    const map = new Map();
 
-}, [socket, selectedChannel]);
-
-
-const mergeMessages = (oldMessages, newMessages) => {
-  const map = new Map();
-
-  [...oldMessages, ...newMessages].forEach((m) => {
-    const key = m._id || m.clientId;
-    map.set(key, m);
-  });
-
-  return Array.from(map.values()).sort(
-    (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-  );
-};
-
-// loading old message
-const loadOlderMessages = async () => {
-
-  if (!cursor || loadingMore) return;
-
-  const container = containerRef.current;
-  const prevHeight = container.scrollHeight;
-
-  setLoadingMore(true);
-
-  try {
-
-    let url;
-
-    if (selectedChannel) {
-      url = `${API_URL}/api/messages/channel/${selectedChannel._id}?cursor=${cursor}`;
-    } else {
-      url = `${API_URL}/api/messages/dm/${me}/${other}?cursor=${cursor}`;
-    }
-
-    const res = await axios.get(url);
-
-    const newMessages = res.data.data || [];
-
-    // setMessages(prev => [...newMessages, ...prev]);
-    setMessages(prev => mergeMessages(prev, newMessages));
-    setCursor(res.data.nextCursor);
-
-    requestAnimationFrame(() => {
-      const newHeight = container.scrollHeight;
-      container.scrollTop = newHeight - prevHeight;
+    [...oldMessages, ...newMessages].forEach((m) => {
+      const key = m._id || m.clientId;
+      map.set(key, m);
     });
 
-  } catch (err) {
-    console.error(err);
-  }
+    return Array.from(map.values()).sort(
+      (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
+    );
+  };
 
-  setLoadingMore(false);
-};
-console.log("container.scrollTop",containerRef?.current);
+  /////
 
-// detecting scroll 
-useEffect(() => {
+  const resetChatState = () => {
+    setMessages([]);
+    setTopCursor(null);
+    setBottomCursor(null);
+    setHasMoreTop(true);
+    setHasMoreBottom(true);
+    setFirstItemIndex(BUFFER);
+    isInitialLoad.current = true;
+  };
+  // INITIAL SCROLL
+  useEffect(() => {
+    if (!messages.length || !isInitialLoad.current) return;
 
-  const container = containerRef.current;
+    setTimeout(() => {
+      virtuosoRef.current?.scrollToIndex({
+        index: messages.length - 1,
+        behavior: "auto",
+      });
+    }, 50);
 
-  if (!container) return;
+    isInitialLoad.current = false;
+  }, [messages]);
 
-const handleScroll = () => {
-  console.log("enter scrool",container.scrollTop)
-    if (container.scrollTop <= 50) {
-      console.log("enter scrool 223")
-      loadOlderMessages();
+  const loadOlderMessages = async () => {
+    if (!hasMoreTop || !topCursor || loadingMore) return;
+
+    setLoadingMore(true);
+
+    try {
+      const url = selectedChannel
+        ? `${API_URL}/api/messages/channel/${selectedChannel._id}?cursor=${topCursor}&direction=older`
+        : `${API_URL}/api/messages/dm/${me}/${other}?cursor=${topCursor}&direction=older`;
+
+      const res = await axios.get(url);
+      const newMsgs = res.data.data || [];
+
+      if (!newMsgs.length) {
+        setHasMoreTop(false); // ✅ STOP further calls
+        return;
+      }
+
+      setMessages((prev) => {
+        const updated = [...newMsgs, ...prev];
+
+        setFirstItemIndex((prevIndex) => prevIndex - newMsgs.length);
+
+        return updated.slice(0, 300);
+      });
+
+      setTopCursor(res.data.prevCursor);
+      setHasMoreTop(!!res.data.prevCursor); // ✅ important
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingMore(false);
     }
   };
 
-  container.addEventListener("scroll", handleScroll);
+  const loadNewerMessages = async () => {
+    if (!hasMoreBottom || !bottomCursor || loadingMore) return;
 
-  return () => {
-    container.removeEventListener("scroll", handleScroll);
+    setLoadingMore(true);
+
+    try {
+      const url = selectedChannel
+        ? `${API_URL}/api/messages/channel/${selectedChannel._id}?cursor=${bottomCursor}&direction=newer`
+        : `${API_URL}/api/messages/dm/${me}/${other}?cursor=${bottomCursor}&direction=newer`;
+
+      const res = await axios.get(url);
+      const newMsgs = res.data.data || [];
+
+      if (!newMsgs.length) {
+        setHasMoreBottom(false); // ✅ STOP
+        return;
+      }
+
+      setMessages((prev) => {
+        const updated = [...prev, ...newMsgs];
+
+        if (updated.length > 300) {
+          const removeCount = updated.length - 300;
+
+          setFirstItemIndex((prevIndex) => prevIndex + removeCount);
+
+          return updated.slice(removeCount);
+        }
+
+        return updated;
+      });
+
+      setBottomCursor(res.data.nextCursor);
+      setHasMoreBottom(!!res.data.nextCursor); // ✅ important
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingMore(false);
+    }
   };
 
-}, [cursor, selectedUser, selectedChannel]);
+  //////
 
+  // loading old message
+  // const loadOlderMessages = async () => {
+  //   if (!cursor || loadingMore) return;
+  //   if(selectedChannel || (other && me))
+
+  //   setLoadingMore(true);
+
+  //   try {
+  //     let url;
+
+  //     if (selectedChannel) {
+  //       url = `${API_URL}/api/messages/channel/${selectedChannel._id}?cursor=${cursor}`;
+  //     } else {
+  //       url = `${API_URL}/api/messages/dm/${me}/${other}?cursor=${cursor}`;
+  //     }
+
+  //     const res = await axios.get(url);
+
+  //     const newMessages = res.data.data || [];
+
+  //     setMessages((prev) => [...newMessages, ...prev]);
+
+  //     // shift virtualization index
+  //     setFirstItemIndex((prev) => prev - newMessages.length);
+
+  //     setCursor(res.data.nextCursor || null);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+
+  //   setLoadingMore(false);
+  // };
+
+  // detecting scroll
 
   // /*  Channel View Members*/
   useMemo(() => {
@@ -1382,7 +1464,13 @@ const handleScroll = () => {
         (msg.senderId === other && msg.receiverId === me)
       ) {
         // setMessages((prev) => [...prev, msg]);
-        setMessages((prev) => mergeMessages(prev, [msg]));
+        // setMessages((prev) => mergeMessages(prev, [msg]));
+
+        // Better
+        setMessages((prev) => {
+          if (prev.some((m) => m._id === msg._id)) return prev;
+          return [...prev, msg];
+        });
 
         if (msg.senderId === other) {
           socket.emit("mark_seen", {
@@ -1405,7 +1493,11 @@ const handleScroll = () => {
       console.log("RECEIVED CHANNEL MESSAGE:", msg);
 
       // setMessages((prev) => [...prev, msg]);
-      setMessages((prev) => mergeMessages(prev, [msg]));
+      // setMessages((prev) => mergeMessages(prev, [msg]));
+      setMessages((prev) => {
+        if (prev.some((m) => m._id === msg._id)) return prev;
+        return [...prev, msg];
+      });
 
       //  auto mark seen ONLY if user is viewing this channel
       socket.emit("channel_seen", {
@@ -1531,6 +1623,12 @@ const handleScroll = () => {
           res.data.data,
         );
       }
+      if (virtuosoRef.current) {
+        virtuosoRef.current.scrollToIndex({
+          index: messages.length - 1,
+          behavior: "smooth",
+        });
+      }
       // cleanup
       setFiles([]);
       setProgressMap({});
@@ -1608,12 +1706,12 @@ const handleScroll = () => {
   // useEffect(() => {
   //   bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   // }, [messages]);
-  useEffect(() => {
-  if (isInitialLoad.current) {
-    bottomRef.current?.scrollIntoView()
-    isInitialLoad.current = false
-  }
-}, [messages])
+  //   useEffect(() => {
+  //   if (isInitialLoad.current) {
+  //     bottomRef.current?.scrollIntoView()
+  //     isInitialLoad.current = false
+  //   }
+  // }, [messages])
 
   useEffect(() => {
     bottomRefTheard.current?.scrollIntoView({ behavior: "smooth" });
@@ -2158,22 +2256,71 @@ const handleScroll = () => {
   };
 
   // thread
+  // useEffect(() => {
+  //   if (!activeThread) return;
+
+  //   const fetchThreadMessages = async () => {
+  //     try {
+  //       const res = await axios.get(
+  //         `${API_URL}/api/messages/messages/thread/${activeThread._id}`,
+  //       );
+  //       setThreadReplies(res.data.data || []);
+  //     } catch (error) {
+  //       console.error("Failed to fetch thread messages", error);
+  //     }
+  //   };
+  //   fetchThreadMessages();
+  // }, [activeThread]);
   useEffect(() => {
     if (!activeThread) return;
 
     const fetchThreadMessages = async () => {
-      try {
-        const res = await axios.get(
-          `${API_URL}/api/messages/messages/thread/${activeThread._id}`,
-        );
-        setThreadReplies(res.data.data || []);
-      } catch (error) {
-        console.error("Failed to fetch thread messages", error);
-      }
+      const res = await axios.get(
+        `${API_URL}/api/messages/messages/thread/${activeThread._id}?limit=30`,
+      );
+
+      const msgs = res.data.data || [];
+setThreadReplies(msgs);
+setThreadFirstIndex(THREAD_BUFFER - msgs.length);
+      setThreadCursor(res.data.prevCursor);
+      setHasMoreThread(!!res.data.prevCursor);
+
+      // scroll to bottom
+      setTimeout(() => {
+        virtuosoRefThread.current?.scrollToIndex({
+          index: msgs.length - 1,
+          behavior: "auto",
+        });
+      }, 50);
     };
+
     fetchThreadMessages();
   }, [activeThread]);
+  const loadOlderThreadReplies = async () => {
+  if (!hasMoreThread || !threadCursor) return;
 
+  const res = await axios.get(
+    `${API_URL}/api/messages/messages/thread/${activeThread._id}?cursor=${threadCursor}&direction=older`
+  );
+
+  const newMsgs = res.data.data || [];
+
+  if (!newMsgs.length) {
+    setHasMoreThread(false);
+    return;
+  }
+
+  setThreadReplies((prev) => {
+    const updated = [...newMsgs, ...prev];
+
+    // 🔥 CRITICAL: shift virtual index
+    setThreadFirstIndex((prevIndex) => prevIndex - newMsgs.length);
+
+    return updated.slice(0, 200); // keep small
+  });
+
+  setThreadCursor(res.data.prevCursor);
+};
   // console.log("active thread",activeThread && activeThread._id,threadReplies);
   // socket update
   // useEffect(() => {
@@ -2200,7 +2347,7 @@ const handleScroll = () => {
     if (!socket) return;
 
     const onThreadReply = (reply) => {
-      // 🔒 Only replies for active thread
+      //  Only replies for active thread
       if (String(reply.parentMessageId) === String(activeThread?._id)) {
         setThreadReplies((prev) => {
           const exists = prev.some((r) => String(r._id) === String(reply._id));
@@ -2209,7 +2356,7 @@ const handleScroll = () => {
         });
       }
 
-      // 🔢 Update reply count ONLY ONCE
+      //  Update reply count ONLY ONCE
       setMessages((prev) =>
         prev.map((m) =>
           String(m._id) === String(reply.parentMessageId)
@@ -2531,7 +2678,7 @@ const handleScroll = () => {
   };
 
   // Delete channel
-   const handleDeleteChannel = async (id) => {
+  const handleDeleteChannel = async (id) => {
     const result = await Swal.fire({
       title: "Delete Channel?",
       text: "This action cannot be undone!",
@@ -2559,7 +2706,7 @@ const handleScroll = () => {
         timer: 1500,
         showConfirmButton: false,
       });
-       window.location.reload();
+      window.location.reload();
     } catch (err) {
       console.log(err);
 
@@ -2666,7 +2813,7 @@ const handleScroll = () => {
           </div>
         </div>
       )}
-       {showEditModal && (
+      {showEditModal && (
         <EditChannelModal
           channel={editChannel}
           onClose={() => setShowEditModal(false)}
@@ -2833,28 +2980,28 @@ const handleScroll = () => {
 
               {/* Avatar */}
 
-              
-              {selectedUser
-              
-                ?  <span
-                className=" cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFavoriteDM(selectedUser);
-                      }}
-                    >
-                      {isDMFavorite(selectedUser._id) ? "⭐" : "☆"}
-                    </span>
-                : <span
+              {selectedUser ? (
+                <span
                   className=" cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFavoriteChannel(selectedChannel);
-                      }}
-                    >
-                      {isChannelFavorite(selectedChannel._id) ? "⭐" : "☆"}
-                    </span>}
-                    
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFavoriteDM(selectedUser);
+                  }}
+                >
+                  {isDMFavorite(selectedUser._id) ? "⭐" : "☆"}
+                </span>
+              ) : (
+                <span
+                  className=" cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFavoriteChannel(selectedChannel);
+                  }}
+                >
+                  {isChannelFavorite(selectedChannel._id) ? "⭐" : "☆"}
+                </span>
+              )}
+
               {selectedUser && (
                 <div className="relative flex-shrink-0">
                   <div
@@ -2888,9 +3035,9 @@ const handleScroll = () => {
                     : selectedChannel?.name.length > 12
                       ? "#" + selectedChannel.name.slice(0, 12) + "..."
                       : `# ${selectedChannel?.name}`} */}
-                      <div className="max-w-[300px]md:max-w-[450px] truncate">
-  {selectedUser?.name || `# ${selectedChannel?.name}`}
-</div>
+                  <div className="max-w-[300px]md:max-w-[450px] truncate">
+                    {selectedUser?.name || `# ${selectedChannel?.name}`}
+                  </div>
                 </h2>
 
                 {/* <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
@@ -2916,8 +3063,6 @@ const handleScroll = () => {
                 </div> */}
               </div>
             </div>
-           
-          
 
             {/* RIGHT SECTION */}
             <div className="flex items-center gap-2">
@@ -2929,43 +3074,41 @@ const handleScroll = () => {
               )}
             </div>
 
-             {
-              selectedChannel && currentUser?.superUser&&
-                <div className="flex gap-5"> 
+            {selectedChannel && currentUser?.superUser && (
+              <div className="flex gap-5">
                 <div className="flex items-center gap-2">
-
-  {/* EDIT */}
-  <button
-    onClick={(e) => {
-      e.stopPropagation();
-      handleEditChannel(selectedChannel);
-    }}
-    className="flex items-center justify-center
+                  {/* EDIT */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditChannel(selectedChannel);
+                    }}
+                    className="flex items-center justify-center
     w-8 h-8 rounded-md
     text-blue-500 bg-blue-50
     hover:bg-blue-100 hover:text-blue-600
     transition duration-200"
-  >
-    <FiEdit size={16} />
-  </button>
+                  >
+                    <FiEdit size={16} />
+                  </button>
 
-  {/* DELETE */}
-  <button
-    onClick={(e) => {
-      e.stopPropagation();
-      handleDeleteChannel(selectedChannel?._id);
-    }}
-    className="flex items-center justify-center
+                  {/* DELETE */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteChannel(selectedChannel?._id);
+                    }}
+                    className="flex items-center justify-center
     w-8 h-8 rounded-md
     text-red-500 bg-red-50
     hover:bg-red-100 hover:text-red-600
     transition duration-200"
-  >
-    <FiTrash2 size={16} />
-  </button>
-
-</div></div>
-            }
+                  >
+                    <FiTrash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* adding vedio call */}
             {/* <div className="flex items-center space-x-2">
@@ -2987,9 +3130,27 @@ const handleScroll = () => {
           {/*  Hover Actions */}
 
           {/* Messages Container */}
-          <div  ref={containerRef} className="flex-1 px-1 md:p-6 py-2 overflow-y-scroll overflow-x-hidden bg-gradient-to-b from-white to-gray-50/30 w-[100vw] md:w-full">
-            <div  className="w-full mx-auto space-y-3 ">
-              {messages.map((m) => {
+          {/* <div  ref={containerRef} className="flex-1 px-1 md:p-6 py-2 overflow-y-scroll overflow-x-hidden bg-gradient-to-b from-white to-gray-50/30 w-[100vw] md:w-full"> */}
+          <div
+            // ref={containerRef}
+            className="flex-1  overflow-y-scroll overflow-x-hidden bg-gradient-to-b from-white to-gray-50/30 w-[100vw] md:w-full"
+          >
+            <Virtuoso
+              ref={virtuosoRef}
+              style={{ height: "100%" }}
+              data={messages}
+              firstItemIndex={firstItemIndex}
+              startReached={loadOlderMessages}
+              endReached={loadNewerMessages}
+              followOutput={(isAtBottom) => (isAtBottom ? "smooth" : false)}
+              increaseViewportBy={{ top: 300, bottom: 300 }}
+              overscan={200}
+              computeItemKey={(index, item) => item._id || item.clientId}
+              scrollSeekConfiguration={{
+                enter: (v) => Math.abs(v) > 200,
+                exit: (v) => Math.abs(v) < 50,
+              }}
+              itemContent={(index, m) => {
                 const isMe = m.senderId === me;
                 const time = m.createdAt
                   ? new Date(m.createdAt).toLocaleTimeString([], {
@@ -2997,6 +3158,7 @@ const handleScroll = () => {
                       minute: "2-digit",
                     })
                   : "";
+
                 const date = m.createdAt
                   ? new Date(m.createdAt).toLocaleDateString([], {
                       year: "numeric",
@@ -3008,12 +3170,13 @@ const handleScroll = () => {
                 return (
                   <div
                     key={m._id || m.clientId}
+                    data-id={m._id}
                     className={`flex ${
                       isMe ? "justify-end" : "justify-start"
-                    } group`}
+                    } group gap-2`}
                   >
                     <div
-                      className={`max-w-[85%] sm:max-w-[75%] md:max-w-[65%] lg:max-w-[55%] ${
+                      className={`max-w-[85%] sm:max-w-[75%] md:max-w-[65%] lg:max-w-[55%] p-1 ${
                         isMe ? "ml-auto" : ""
                       }`}
                     >
@@ -3030,35 +3193,35 @@ const handleScroll = () => {
                         onMouseLeave={() => setHoveredMessageId(null)}
                       >
                         {/* Particular user name */}
-                       <div className="flex gap-3 items-start mb-2">
-  {/* Avatar */}
-  <div
-    className={`w-7 h-7  flex items-center justify-center 
+                        <div className="flex gap-3 items-start mb-2">
+                          {/* Avatar */}
+                          <div
+                            className={`w-7 h-7  flex items-center justify-center 
       ${isMe ? "bg-gradient-to-r from-blue-500 to-indigo-500" : "bg-gray-500"}
       text-white rounded-full font-semibold`}
-  >
-    {isMe
-      ? currentUser?.name?.charAt(0)?.toUpperCase()
-      : (selectedUser?.name || m.senderName || "U")
-          .charAt(0)
-          .toUpperCase()}
-  </div>
+                          >
+                            {isMe
+                              ? currentUser?.name?.charAt(0)?.toUpperCase()
+                              : (selectedUser?.name || m.senderName || "U")
+                                  .charAt(0)
+                                  .toUpperCase()}
+                          </div>
 
-  {/* Message Meta */}
-  <div className="flex flex-col">
-    {/* Name */}
-    <div className="font-semibold md:text-xs  text-black">
-      {isMe
-        ? currentUser?.name
-        : selectedUser?.name || m.senderName || "User"}
-    </div>
+                          {/* Message Meta */}
+                          <div className="flex flex-col">
+                            {/* Name */}
+                            <div className="font-semibold md:text-xs  text-black">
+                              {isMe
+                                ? currentUser?.name
+                                : selectedUser?.name || m.senderName || "User"}
+                            </div>
 
-    {/* Date + Time + Tick */}
-    <div className="flex items-center gap-2 text-xs text-gray-500">
-      <span className="text-[10px]">{date}</span>
-      <span className="text-[10px]">{time}</span>
+                            {/* Date + Time + Tick */}
+                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                              <span className="text-[10px]">{date}</span>
+                              <span className="text-[10px]">{time}</span>
 
-      {/* {isMe && (
+                              {/* {isMe && (
         <div className="flex items-center">
           {!m.deliveredAt ? (
             <Check className="w-3.5 h-3.5" />
@@ -3069,10 +3232,10 @@ const handleScroll = () => {
           )}
         </div>
       )} */}
-    </div>
+                            </div>
 
-    {/* Thread (only for channel) */}
-    {/* {selectedChannel && (
+                            {/* Thread (only for channel) */}
+                            {/* {selectedChannel && (
       <div
         className="text-xs text-blue-500 cursor-pointer mt-1"
         onClick={() => setActiveThread(m)}
@@ -3080,12 +3243,11 @@ const handleScroll = () => {
         Thread : {m.threadReplyCount}
       </div>
     )} */}
-  </div>
-</div>
+                          </div>
+                        </div>
 
                         {/* 🔥 Hover Actions */}
                         {!m.isDelete &&
-                         
                           hoveredMessageId === (m._id || m.clientId) && (
                             <div
                               className={`absolute -top-9  ${
@@ -3103,7 +3265,7 @@ const handleScroll = () => {
                               {/* <ActionButton title="Reply in thread">
                             <MessageSquare size={14} />
                           </ActionButton> */}
-                              { selectedChannel && (
+                              {selectedChannel && (
                                 <ActionButton
                                   title="Reply in thread"
                                   onClick={() => {
@@ -3343,7 +3505,7 @@ const handleScroll = () => {
 
                                 {/* TEXT ACTIONS */}
                                 {/* {isMe && ( */}
-                                  <TextActions text={m.text} message={m} />
+                                <TextActions text={m.text} message={m} />
                                 {/* )} */}
                               </div>
                             ) : null}
@@ -3559,83 +3721,83 @@ const handleScroll = () => {
                       )} */}
                         {/* dm tick */}
                         {/* Message Status and Time */}
-                        {selectedUser  && (m.threadReplyCount > 0 || m.senderId == me)&& (
-                          <div
-                            className={`flex items-center justify-end gap-2  ${
-                              isMe ? "text-black-800" : "text-gray-500"
-                            }`}
-                          >
-                            
-                            <div className=" ">
-                             
-                              {isMe && (
-                                <div className="flex items-center">
-                                  {(() => {
-                                    if (!m.deliveredAt) {
+                        {selectedUser &&
+                          (m.threadReplyCount > 0 || m.senderId == me) && (
+                            <div
+                              className={`flex items-center justify-end gap-2  ${
+                                isMe ? "text-black-800" : "text-gray-500"
+                              }`}
+                            >
+                              <div className=" ">
+                                {isMe && (
+                                  <div className="flex items-center">
+                                    {(() => {
+                                      if (!m.deliveredAt) {
+                                        return (
+                                          <Check className="w-3.5 h-3.5" />
+                                        );
+                                      } else if (m.deliveredAt && !m.seenAt) {
+                                        console.log(
+                                          "Message delivered but not seen:",
+                                          m,
+                                        );
+                                        return (
+                                          <CheckCheck className="w-3.5 h-3.5" />
+                                        );
+                                      } else if (m.seenAt) {
+                                        return (
+                                          <CheckCheck className="w-3.5 h-3.5 text-[#3549fa]" />
+                                        );
+                                      }
                                       return <Check className="w-3.5 h-3.5" />;
-                                    } else if (m.deliveredAt && !m.seenAt) {
-                                      console.log(
-                                        "Message delivered but not seen:",
-                                        m,
-                                      );
-                                      return (
-                                        <CheckCheck className="w-3.5 h-3.5" />
-                                      );
-                                    } else if (m.seenAt) {
-                                      return (
-                                        <CheckCheck className="w-3.5 h-3.5 text-[#3549fa]" />
-                                      );
-                                    }
-                                    return <Check className="w-3.5 h-3.5" />;
-                                  })()}
-                                </div>
-                              )}
+                                    })()}
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        )}
-                       
-                          <div>
-                            {/* channel tick */}
-                    {selectedChannel && (m.threadReplyCount > 0 || m.senderId == me) && (
-  <div
-    className={`flex items-center justify-between mt-2 text-xs gap-1 ${
-      isMe ? "text-black-800" : "text-gray-500"
-    }`}
-  >
-    {/* Thread replies */}
-    <div>
-      {m.threadReplyCount > 0 && (
-        <div
-          className="flex items-center gap-1 text-blue-500 cursor-pointer group"
-          onClick={() => setActiveThread(m)}
-        >
-          <span>{m.threadReplyCount} replies</span>
+                          )}
 
-          <span className="opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 text-blue-700 hover:underline">
-            (view thread)
-          </span>
-        </div>
-      )}
-    </div>
+                        <div>
+                          {/* channel tick */}
+                          {selectedChannel &&
+                            (m.threadReplyCount > 0 || m.senderId == me) && (
+                              <div
+                                className={`flex items-center justify-between mt-2 text-xs gap-1 ${
+                                  isMe ? "text-black-800" : "text-gray-500"
+                                }`}
+                              >
+                                {/* Thread replies */}
+                                <div>
+                                  {m.threadReplyCount > 0 && (
+                                    <div
+                                      className="flex items-center gap-1 text-blue-500 cursor-pointer group"
+                                      onClick={() => setActiveThread(m)}
+                                    >
+                                      <span>{m.threadReplyCount} replies</span>
 
-    {/* Tick */}
-    {m.senderId == me && (
-      <div className="flex items-center">
-        {renderTick(m)}
-      </div>
-    )}
-  </div>
-)}
-                          </div>
-                        
-                        
+                                      <span className="opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 text-blue-700 hover:underline">
+                                        (view thread)
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Tick */}
+                                {m.senderId == me && (
+                                  <div className="flex items-center">
+                                    {renderTick(m)}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                        </div>
                       </div>
                     </div>
                     <div ref={bottomRef} />
                   </div>
                 );
-              })}
-            </div>
+              }}
+            />
           </div>
 
           {/* Typing Indicator */}
@@ -3885,77 +4047,100 @@ const handleScroll = () => {
                 </div>
 
                 {/* REPLIES */}
-                <div className="flex-1 flex flex-col  p-4 md:p-6 overflow-y-auto bg-gradient-to-b from-white to-gray-50/30 gap-2  ">
-                  {threadReplies &&
-                    threadReplies.map((m, index) => {
-                      const isMe = m.senderId === me;
-                      const time = m.createdAt
-                        ? new Date(m.createdAt).toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })
-                        : "";
-                      const date = m.createdAt
-                        ? new Date(m.createdAt).toLocaleDateString([], {
-                            year: "numeric",
-                            month: "short",
-                            day: "2-digit",
-                          })
-                        : "";
+                <div className="flex-1 flex flex-col overflow-y-auto bg-gradient-to-b from-white to-gray-50/30 gap-2  ">
+                  {threadReplies && (
+                    <Virtuoso
+  ref={virtuosoRefThread}
+  style={{ height: "100%" }}
+  data={threadReplies}
+  firstItemIndex={threadFirstIndex} // 🔥 REQUIRED
+  startReached={loadOlderThreadReplies}
+  followOutput={(isAtBottom) => (isAtBottom ? "smooth" : false)}
+  computeItemKey={(i, item) => item._id}
+  overscan={200}
+  increaseViewportBy={{ top: 300, bottom: 200 }}
 
-                      return (
-                        <div
-                          key={m._id || m.clientId}
-                          className={`flex ${
-                            isMe ? "justify-end" : "justify-start"
-                          } group`}
-                        >
+                      itemContent={(index, m) => {
+                        const isMe = m.senderId === me;
+                        const time = m.createdAt
+                          ? new Date(m.createdAt).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })
+                          : "";
+                        const date = m.createdAt
+                          ? new Date(m.createdAt).toLocaleDateString([], {
+                              year: "numeric",
+                              month: "short",
+                              day: "2-digit",
+                            })
+                          : "";
+
+                        return (
                           <div
-                            className={`max-w-[70%] lg:max-w-[60%] ${
-                              isMe ? "ml-auto" : ""
-                            }`}
+                            key={m._id || m.clientId}
+                            className={`flex ${
+                              isMe ? "justify-end" : "justify-start"
+                            } group`}
                           >
                             <div
-                              className={`relative rounded-2xl px-4 py-3 shadow-sm cursor-pointer ${
-                                isMe
-                                  ? "bg-gray-200/70 text-black rounded-br-lg"
-                                  : "bg-white text-gray-800 border border-gray-200 rounded-bl-lg"
+                              className={`max-w-[70%] lg:max-w-[60%] p-1 ${
+                                isMe ? "ml-auto" : ""
                               }`}
-                              onMouseEnter={() =>
-                                setHoveredMessageId(m._id || m.clientId)
-                              }
-                              onMouseLeave={() => setHoveredMessageId(null)}
                             >
- {/* Particular user name */}
-                       <div className="flex gap-3 items-start mb-2">
-  {/* Avatar */}
-  <div
-    className={`w-7 h-7  flex items-center justify-center 
+                              <div
+                                className={`relative rounded-2xl px-4 py-3 shadow-sm cursor-pointer  ${
+                                  isMe
+                                    ? "bg-gray-200/70 text-black rounded-br-lg"
+                                    : "bg-white text-gray-800 border border-gray-200 rounded-bl-lg"
+                                }`}
+                                onMouseEnter={() =>
+                                  setHoveredMessageId(m._id || m.clientId)
+                                }
+                                onMouseLeave={() => setHoveredMessageId(null)}
+                              >
+                                {/* Particular user name */}
+                                <div className="flex gap-3 items-start mb-2">
+                                  {/* Avatar */}
+                                  <div
+                                    className={`w-7 h-7  flex items-center justify-center 
       ${isMe ? "bg-gradient-to-r from-blue-500 to-indigo-500" : "bg-gray-500"}
       text-white rounded-full font-semibold`}
-  >
-    {isMe
-      ? currentUser?.name?.charAt(0)?.toUpperCase()
-      : (selectedUser?.name || m.senderName || "U")
-          .charAt(0)
-          .toUpperCase()}
-  </div>
+                                  >
+                                    {isMe
+                                      ? currentUser?.name
+                                          ?.charAt(0)
+                                          ?.toUpperCase()
+                                      : (
+                                          selectedUser?.name ||
+                                          m.senderName ||
+                                          "U"
+                                        )
+                                          .charAt(0)
+                                          .toUpperCase()}
+                                  </div>
 
-  {/* Message Meta */}
-  <div className="flex flex-col">
-    {/* Name */}
-    <div className="font-semibold md:text-xs  text-black">
-      {isMe
-        ? currentUser?.name
-        : selectedUser?.name || m.senderName || "User"}
-    </div>
+                                  {/* Message Meta */}
+                                  <div className="flex flex-col">
+                                    {/* Name */}
+                                    <div className="font-semibold md:text-xs  text-black">
+                                      {isMe
+                                        ? currentUser?.name
+                                        : selectedUser?.name ||
+                                          m.senderName ||
+                                          "User"}
+                                    </div>
 
-    {/* Date + Time + Tick */}
-    <div className="flex items-center gap-2 text-xs text-gray-500">
-      <span className="text-[10px]">{date}</span>
-      <span className="text-[10px]">{time}</span>
+                                    {/* Date + Time + Tick */}
+                                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                                      <span className="text-[10px]">
+                                        {date}
+                                      </span>
+                                      <span className="text-[10px]">
+                                        {time}
+                                      </span>
 
-      {/* {isMe && (
+                                      {/* {isMe && (
         <div className="flex items-center">
           {!m.deliveredAt ? (
             <Check className="w-3.5 h-3.5" />
@@ -3966,10 +4151,10 @@ const handleScroll = () => {
           )}
         </div>
       )} */}
-    </div>
+                                    </div>
 
-    {/* Thread (only for channel) */}
-    {/* {selectedChannel && (
+                                    {/* Thread (only for channel) */}
+                                    {/* {selectedChannel && (
       <div
         className="text-xs text-blue-500 cursor-pointer mt-1"
         onClick={() => setActiveThread(m)}
@@ -3977,17 +4162,18 @@ const handleScroll = () => {
         Thread : {m.threadReplyCount}
       </div>
     )} */}
-  </div>
-</div>
-                              {/*  Hover Actions */}
-                              {index != 0 &&
-                                !m.isDelete &&
-                                isMe &&
-                                hoveredMessageId === (m._id || m.clientId) && (
-                                  <div
-                                    className={`absolute -top-6 ${
-                                      isMe ? "right-2" : "left-2"
-                                    }
+                                  </div>
+                                </div>
+                                {/*  Hover Actions */}
+                                {index != 0 &&
+                                  !m.isDelete &&
+                                  isMe &&
+                                  hoveredMessageId ===
+                                    (m._id || m.clientId) && (
+                                    <div
+                                      className={`absolute -top-6 ${
+                                        isMe ? "right-2" : "left-2"
+                                      }
     flex items-center gap-1
     bg-white border border-gray-200
     rounded-xl shadow-lg
@@ -3995,12 +4181,12 @@ const handleScroll = () => {
     z-[50]
     opacity-0 group-hover:opacity-100
     transition-all duration-150`}
-                                  >
-                                    {/* THREAD */}
-                                    {/* <ActionButton title="Reply in thread">
+                                    >
+                                      {/* THREAD */}
+                                      {/* <ActionButton title="Reply in thread">
                             <MessageSquare size={14} />
                           </ActionButton> */}
-                                    {/* {isMe && (
+                                      {/* {isMe && (
                                     <ActionButton
                                       title="Reply in thread"
                                       onClick={() => setActiveThread(m)}
@@ -4009,431 +4195,365 @@ const handleScroll = () => {
                                     </ActionButton>
                                   )} */}
 
-                                    {/* EDIT */}
-                                    {/* {isMe && (
+                                      {/* EDIT */}
+                                      {/* {isMe && (
                             <ActionButton title="Edit message">
                               <Pencil size={14} />
                             </ActionButton>
                           )} */}
-                                    {isMe && (
-                                      <ActionButton
-                                        title="Edit message"
-                                        onClick={() => {
-                                          setEditingMessageIdThread(m._id);
-                                          setEditTextThread(m.text || "");
-                                          setEditFilesThread([]); // new files only
-                                        }}
-                                      >
-                                        <Pencil size={14} />
-                                      </ActionButton>
-                                    )}
+                                      {isMe && (
+                                        <ActionButton
+                                          title="Edit message"
+                                          onClick={() => {
+                                            setEditingMessageIdThread(m._id);
+                                            setEditTextThread(m.text || "");
+                                            setEditFilesThread([]); // new files only
+                                          }}
+                                        >
+                                          <Pencil size={14} />
+                                        </ActionButton>
+                                      )}
 
-                                    {/* DELETE */}
-                                    {/* {isMe && (
+                                      {/* DELETE */}
+                                      {/* {isMe && (
       <ActionButton danger title="Delete message">
         <Trash2 size={14} />
       </ActionButton>
     )} */}
-                                    {isMe && (
-                                      <ActionButton
-                                        danger
-                                        title="Delete message"
-                                        onClick={() =>
-                                          handleDeleteMessage(
-                                            m._id,
-                                            m.parentMessageId,
-                                          )
-                                        }
-                                      >
-                                        <Trash2 size={14} />
-                                      </ActionButton>
-                                    )}
+                                      {isMe && (
+                                        <ActionButton
+                                          danger
+                                          title="Delete message"
+                                          onClick={() =>
+                                            handleDeleteMessage(
+                                              m._id,
+                                              m.parentMessageId,
+                                            )
+                                          }
+                                        >
+                                          <Trash2 size={14} />
+                                        </ActionButton>
+                                      )}
 
-                                    {/* FORWARD
+                                      {/* FORWARD
                           <ActionButton
                             title="Forward"
                             onClick={() => openForwardMessage(m._id)}
                           >
                             <CornerUpRight size={14} />
                           </ActionButton> */}
-                                    {isMe && (
-                                      <ActionButton
-                                        title="Forward"
-                                        onClick={() => {
-                                          setForwardMessage(m);
-                                          setShowForwardDropdown(true);
-                                        }}
-                                      >
-                                        <CornerUpRight size={14} />
-                                      </ActionButton>
-                                    )}
+                                      {isMe && (
+                                        <ActionButton
+                                          title="Forward"
+                                          onClick={() => {
+                                            setForwardMessage(m);
+                                            setShowForwardDropdown(true);
+                                          }}
+                                        >
+                                          <CornerUpRight size={14} />
+                                        </ActionButton>
+                                      )}
 
-                                    {/* SEEN */}
-                                    {/* <ActionButton title="Seen by">
+                                      {/* SEEN */}
+                                      {/* <ActionButton title="Seen by">
                               <Eye size={14} />
                             </ActionButton> */}
-                                    {isMe && (
-                                      <ActionButton
-                                        title="Seen by"
-                                        onClick={() => fetchSeenBy(m._id)}
-                                      >
-                                        <Eye size={14} />
-                                      </ActionButton>
-                                    )}
-                                  </div>
-                                )}
+                                      {isMe && (
+                                        <ActionButton
+                                          title="Seen by"
+                                          onClick={() => fetchSeenBy(m._id)}
+                                        >
+                                          <Eye size={14} />
+                                        </ActionButton>
+                                      )}
+                                    </div>
+                                  )}
 
-                              {/* {m.text && (
+                                {/* {m.text && (
                       <p className="whitespace-pre-wrap break-words text-[15px] leading-relaxed">
                         {m.text}
                       </p>
                     )} */}
-                              {/* {m.isDelete ? (
+                                {/* {m.isDelete ? (
                       <p className="italic text-sm text-gray-400 select-none">
                         This message was deleted
                       </p>
                     ) : (
                       m.text && <MessageText text={m.text} isMe={isMe} />
                     )} */}
-                              {editingMessageIdThread === m._id ? (
-                                <div className="space-y-2">
-                                  {/* Edit Text */}
-                                  <textarea
-                                    value={editTextThread}
-                                    onChange={(e) =>
-                                      setEditTextThread(e.target.value)
-                                    }
-                                    className="w-full border rounded-lg p-2 text-sm text-black"
-                                    rows={2}
-                                    onPaste={handleEditThreadPaste}
-                                    onDrop={(e) => {
-                                      handleEditThreadDrop(e);
-                                      setIsDragging(false);
-                                    }}
-                                    onDragOver={handleDragOver}
-                                    onDragLeave={() => setIsDragging(false)}
-                                  />
-                                  {/* Edit Files */}
-                                  <div className="flex flex-wrap gap-2">
-                                    {editFilesThread.map(
-                                      ({ file, tempId }, idx) => {
-                                        const url = URL.createObjectURL(file);
-                                        return (
-                                          <div
-                                            key={tempId}
-                                            className="relative w-20 h-20 rounded-lg overflow-hidden border shadow-sm"
-                                          >
-                                            {/* <img
+                                {editingMessageIdThread === m._id ? (
+                                  <div className="space-y-2">
+                                    {/* Edit Text */}
+                                    <textarea
+                                      value={editTextThread}
+                                      onChange={(e) =>
+                                        setEditTextThread(e.target.value)
+                                      }
+                                      className="w-full border rounded-lg p-2 text-sm text-black"
+                                      rows={2}
+                                      onPaste={handleEditThreadPaste}
+                                      onDrop={(e) => {
+                                        handleEditThreadDrop(e);
+                                        setIsDragging(false);
+                                      }}
+                                      onDragOver={handleDragOver}
+                                      onDragLeave={() => setIsDragging(false)}
+                                    />
+                                    {/* Edit Files */}
+                                    <div className="flex flex-wrap gap-2">
+                                      {editFilesThread.map(
+                                        ({ file, tempId }, idx) => {
+                                          const url = URL.createObjectURL(file);
+                                          return (
+                                            <div
+                                              key={tempId}
+                                              className="relative w-20 h-20 rounded-lg overflow-hidden border shadow-sm"
+                                            >
+                                              {/* <img
                                             src={url}
                                             alt={file.name}
                                             className="w-full h-full object-cover"
                                           /> */}
-                                            {file.type.startsWith("image/") ? (
-                                              <img
-                                                src={url}
-                                                className="rounded-xl w-full max-h-[300px] sm:max-h-[350px] object-contain shadow-sm"
-                                                alt="preview"
-                                              />
-                                            ) : file.type.startsWith(
-                                                "video/",
+                                              {file.type.startsWith(
+                                                "image/",
                                               ) ? (
-                                              <video
-                                                src={url}
-                                                controls
-                                                className="w-full h-full object-cover"
-                                              />
-                                            ) : file.type.startsWith(
-                                                "audio/",
-                                              ) ? (
-                                              <audio
-                                                src={url}
-                                                controls
-                                                className="w-full "
-                                              />
-                                            ) : file.type ===
-                                              "application/pdf" ? (
-                                              <iframe
-                                                src={url}
-                                                title="pdf"
-                                                className="w-full h-[250px] sm:h-[350px] rounded-xl"
-                                              />
-                                            ) : (
-                                              <div className="w-full h-full flex flex-col items-center justify-center p-3">
-                                                <span className="text-2xl mb-2">
-                                                  {icon}
-                                                </span>
+                                                <img
+                                                  src={url}
+                                                  className="rounded-xl w-full max-h-[300px] sm:max-h-[350px] object-contain shadow-sm"
+                                                  alt="preview"
+                                                />
+                                              ) : file.type.startsWith(
+                                                  "video/",
+                                                ) ? (
+                                                <video
+                                                  src={url}
+                                                  controls
+                                                  className="w-full h-full object-cover"
+                                                />
+                                              ) : file.type.startsWith(
+                                                  "audio/",
+                                                ) ? (
+                                                <audio
+                                                  src={url}
+                                                  controls
+                                                  className="w-full "
+                                                />
+                                              ) : file.type ===
+                                                "application/pdf" ? (
+                                                <iframe
+                                                  src={url}
+                                                  title="pdf"
+                                                  className="w-full h-[250px] sm:h-[350px] rounded-xl"
+                                                />
+                                              ) : (
+                                                <div className="w-full h-full flex flex-col items-center justify-center p-3">
+                                                  <span className="text-2xl mb-2">
+                                                    {icon}
+                                                  </span>
 
-                                                <p className="text-xs text-center font-medium truncate w-full">
-                                                  {file.name
-                                                    .split(".")
-                                                    .slice(0, -1)
-                                                    .join(".")}
-                                                </p>
+                                                  <p className="text-xs text-center font-medium truncate w-full">
+                                                    {file.name
+                                                      .split(".")
+                                                      .slice(0, -1)
+                                                      .join(".")}
+                                                  </p>
 
-                                                <p className="text-[11px] text-gray-500 mt-1">
-                                                  {formatSize(file.size)}
-                                                </p>
-                                              </div>
-                                            )}
+                                                  <p className="text-[11px] text-gray-500 mt-1">
+                                                    {formatSize(file.size)}
+                                                  </p>
+                                                </div>
+                                              )}
 
-                                            <button
-                                              onClick={() =>
-                                                setEditFilesThread((prev) =>
-                                                  prev.filter(
-                                                    (f) => f.tempId !== tempId,
-                                                  ),
-                                                )
-                                              }
-                                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                                            >
-                                              ×
-                                            </button>
-                                          </div>
-                                        );
-                                      },
-                                    )}
-
-                                    <button
-                                      onClick={() =>
-                                        editFileRefThread.current.click()
-                                      }
-                                      className="w-15 h-10 p-5 flex items-center justify-center rounded-lg border border-gray-300  hover:bg-gray-100 hover:text-black"
-                                    >
-                                      + Add
-                                    </button>
-                                    <input
-                                      type="file"
-                                      multiple
-                                      ref={editFileRefThread}
-                                      className="hidden"
-                                      onChange={(e) => {
-                                        const newFiles = Array.from(
-                                          e.target.files,
-                                        ).map((file) => ({
-                                          file,
-                                          tempId: crypto.randomUUID(),
-                                        }));
-                                        setEditFilesThread((prev) => [
-                                          ...prev,
-                                          ...newFiles,
-                                        ]);
-                                      }}
-                                    />
-                                  </div>
-
-                                  <div className="flex justify-end gap-2 mt-2">
-                                    <button
-                                      onClick={() =>
-                                        setEditingMessageIdThread(null)
-                                      }
-                                      className="text-sm bg-red-500 text-white p-1  rounded-md "
-                                    >
-                                      Cancel
-                                    </button>
-                                    <button
-                                      onClick={() =>
-                                        handleSaveEditThread(m._id)
-                                      }
-                                      className="bg-blue-600 text-white px-3 py-1 rounded text-sm"
-                                    >
-                                      Save
-                                    </button>
-                                  </div>
-                                </div>
-                              ) : (
-                                <>
-                                  {/* {m.text && <MessageText text={m.text} isMe={isMe} />} */}
-                                  {m.isDelete ? (
-                                    <p className="italic text-sm text-red-400 select-none">
-                                      This message was deleted
-                                    </p>
-                                  ) : m.text ? (
-                                    <div className="relative group max-w-fit">
-                                      <MessageText
-                                        text={m.text.trim()}
-                                        isMe={isMe}
-                                      />
-
-                                      {/* TEXT ACTIONS */}
-                                      {isMe && (
-                                        <TextActions
-                                          text={m.text}
-                                          message={m}
-                                        />
+                                              <button
+                                                onClick={() =>
+                                                  setEditFilesThread((prev) =>
+                                                    prev.filter(
+                                                      (f) =>
+                                                        f.tempId !== tempId,
+                                                    ),
+                                                  )
+                                                }
+                                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                                              >
+                                                ×
+                                              </button>
+                                            </div>
+                                          );
+                                        },
                                       )}
+
+                                      <button
+                                        onClick={() =>
+                                          editFileRefThread.current.click()
+                                        }
+                                        className="w-15 h-10 p-5 flex items-center justify-center rounded-lg border border-gray-300  hover:bg-gray-100 hover:text-black"
+                                      >
+                                        + Add
+                                      </button>
+                                      <input
+                                        type="file"
+                                        multiple
+                                        ref={editFileRefThread}
+                                        className="hidden"
+                                        onChange={(e) => {
+                                          const newFiles = Array.from(
+                                            e.target.files,
+                                          ).map((file) => ({
+                                            file,
+                                            tempId: crypto.randomUUID(),
+                                          }));
+                                          setEditFilesThread((prev) => [
+                                            ...prev,
+                                            ...newFiles,
+                                          ]);
+                                        }}
+                                      />
                                     </div>
-                                  ) : null}
 
-                                  {/* existing files rendering here */}
-                                </>
-                              )}
+                                    <div className="flex justify-end gap-2 mt-2">
+                                      <button
+                                        onClick={() =>
+                                          setEditingMessageIdThread(null)
+                                        }
+                                        className="text-sm bg-red-500 text-white p-1  rounded-md "
+                                      >
+                                        Cancel
+                                      </button>
+                                      <button
+                                        onClick={() =>
+                                          handleSaveEditThread(m._id)
+                                        }
+                                        className="bg-blue-600 text-white px-3 py-1 rounded text-sm"
+                                      >
+                                        Save
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <>
+                                    {/* {m.text && <MessageText text={m.text} isMe={isMe} />} */}
+                                    {m.isDelete ? (
+                                      <p className="italic text-sm text-red-400 select-none">
+                                        This message was deleted
+                                      </p>
+                                    ) : m.text ? (
+                                      <div className="relative group max-w-fit">
+                                        <MessageText
+                                          text={m.text.trim()}
+                                          isMe={isMe}
+                                        />
 
-                              {/* 
+                                        {/* TEXT ACTIONS */}
+                                        {isMe && (
+                                          <TextActions
+                                            text={m.text}
+                                            message={m}
+                                          />
+                                        )}
+                                      </div>
+                                    ) : null}
+
+                                    {/* existing files rendering here */}
+                                  </>
+                                )}
+
+                                {/* 
                     {m.text && (
                       <div className="mb-1">
                         <MessageText text={m.text} isMe={isMe} />
                       </div>
                     )} */}
 
-                              {/* Files */}
+                                {/* Files */}
 
-                              {/* editingMessageId === m._id && */}
+                                {/* editingMessageId === m._id && */}
 
-                              {editingMessageIdThread !== m._id &&
-                                m.files.map((f) => {
-                                  const src = `${API_URL}/api${f.url}`;
-                                  return (
-                                    <div
-                                      key={f._id}
-                                      className="mt-3 relative group"
-                                    >
-                                      {/* 🔥 FILE DELETED PLACEHOLDER */}
-                                      {f.isDeleteFile ? (
-                                        <div className="italic text-red-400 text-sm p-3 rounded-lg bg-gray-100">
-                                          🗑 File deleted
-                                        </div>
-                                      ) : (
-                                        <>
-                                          {/* IMAGE */}
-                                          {f.type.startsWith("image") && (
-                                            <div className="relative">
-                                              <img
-                                                src={src}
-                                                className="rounded-xl w-full max-h-[300px] sm:max-h-[350px] object-contain shadow-sm"
-                                                alt={f.name}
-                                              />
-
-                                              <FileActions
-                                                src={src}
-                                                isMe={isMe}
-                                                onDelete={() =>
-                                                  handleDeleteFile(m._id, f._id)
-                                                }
-                                                onForward={() => {
-                                                  setForwardMessage(m); // parent message
-                                                  setSelectedForwardFile(f); //  only this file
-                                                  setShowForwardDropdown(true);
-                                                }}
-                                              />
-                                            </div>
-                                          )}
-
-                                          {/* VIDEO */}
-                                          {f.type.startsWith("video") && (
-                                            <div className="relative rounded-xl overflow-hidden">
-                                              <video
-                                                controls
-                                                className="w-full"
-                                              >
-                                                <source
+                                {editingMessageIdThread !== m._id &&
+                                  m.files.map((f) => {
+                                    const src = `${API_URL}/api${f.url}`;
+                                    return (
+                                      <div
+                                        key={f._id}
+                                        className="mt-3 relative group"
+                                      >
+                                        {/* 🔥 FILE DELETED PLACEHOLDER */}
+                                        {f.isDeleteFile ? (
+                                          <div className="italic text-red-400 text-sm p-3 rounded-lg bg-gray-100">
+                                            🗑 File deleted
+                                          </div>
+                                        ) : (
+                                          <>
+                                            {/* IMAGE */}
+                                            {f.type.startsWith("image") && (
+                                              <div className="relative">
+                                                <img
                                                   src={src}
-                                                  type={f.type}
+                                                  className="rounded-xl w-full max-h-[300px] sm:max-h-[350px] object-contain shadow-sm"
+                                                  alt={f.name}
                                                 />
-                                              </video>
 
-                                              <FileActions
-                                                src={src}
-                                                isMe={isMe}
-                                                onDelete={() =>
-                                                  handleDeleteFile(m._id, f._id)
-                                                }
-                                                onForward={() => {
-                                                  setForwardMessage(m); // parent message
-                                                  setSelectedForwardFile(f); //  only this file
-                                                  setShowForwardDropdown(true);
-                                                }}
-                                              />
-                                            </div>
-                                          )}
+                                                <FileActions
+                                                  src={src}
+                                                  isMe={isMe}
+                                                  onDelete={() =>
+                                                    handleDeleteFile(
+                                                      m._id,
+                                                      f._id,
+                                                    )
+                                                  }
+                                                  onForward={() => {
+                                                    setForwardMessage(m); // parent message
+                                                    setSelectedForwardFile(f); //  only this file
+                                                    setShowForwardDropdown(
+                                                      true,
+                                                    );
+                                                  }}
+                                                />
+                                              </div>
+                                            )}
 
-                                          {/* AUDIO */}
-                                          {f.type.startsWith("audio") && (
-                                            <div className="relative p-3 bg-black/5 rounded-lg">
-                                              <audio
-                                                controls
-                                                className="w-full"
-                                                src={src}
-                                              />
+                                            {/* VIDEO */}
+                                            {f.type.startsWith("video") && (
+                                              <div className="relative rounded-xl overflow-hidden">
+                                                <video
+                                                  controls
+                                                  className="w-full"
+                                                >
+                                                  <source
+                                                    src={src}
+                                                    type={f.type}
+                                                  />
+                                                </video>
 
-                                              <FileActions
-                                                src={src}
-                                                isMe={isMe}
-                                                onDelete={() =>
-                                                  handleDeleteFile(m._id, f._id)
-                                                }
-                                                onForward={() => {
-                                                  setForwardMessage(m); // parent message
-                                                  setSelectedForwardFile(f); // 🔥 only this file
-                                                  setShowForwardDropdown(true);
-                                                }}
-                                              />
-                                            </div>
-                                          )}
-                                          {/* application/pdf */}
-                                          {f.type.startsWith(
-                                            "application/pdf",
-                                          ) && (
-                                            <div className="relative p-3 bg-black/5 rounded-lg">
-                                              {/* <audio
-                                          controls
-                                          className="w-full"
-                                          src={src}
-                                        /> */}
-                                              <iframe
-                                                src={src}
-                                                title="pdf"
-                                                className="w-full h-[250px] sm:h-[350px] rounded-xl"
-                                              />
+                                                <FileActions
+                                                  src={src}
+                                                  isMe={isMe}
+                                                  onDelete={() =>
+                                                    handleDeleteFile(
+                                                      m._id,
+                                                      f._id,
+                                                    )
+                                                  }
+                                                  onForward={() => {
+                                                    setForwardMessage(m); // parent message
+                                                    setSelectedForwardFile(f); //  only this file
+                                                    setShowForwardDropdown(
+                                                      true,
+                                                    );
+                                                  }}
+                                                />
+                                              </div>
+                                            )}
 
-                                              <FileActions
-                                                src={src}
-                                                isMe={isMe}
-                                                onDelete={() =>
-                                                  handleDeleteFile(m._id, f._id)
-                                                }
-                                                onForward={() => {
-                                                  setForwardMessage(m); // parent message
-                                                  setSelectedForwardFile(f); // 🔥 only this file
-                                                  setShowForwardDropdown(true);
-                                                }}
-                                              />
-                                            </div>
-                                          )}
+                                            {/* AUDIO */}
+                                            {f.type.startsWith("audio") && (
+                                              <div className="relative p-3 bg-black/5 rounded-lg">
+                                                <audio
+                                                  controls
+                                                  className="w-full"
+                                                  src={src}
+                                                />
 
-                                          {/* DOCUMENT / OTHER */}
-                                          {!f.type.startsWith("image") &&
-                                            !f.type.startsWith("video") &&
-                                            !f.type.startsWith("audio") &&
-                                            !f.type.startsWith(
-                                              "application/pdf",
-                                            ) && (
-                                              <div
-                                                className={`relative flex items-center gap-3 p-3 rounded-xl ${
-                                                  isMe
-                                                    ? "bg-blue-500/20 hover:bg-blue-500/30"
-                                                    : "bg-gray-100 hover:bg-gray-200"
-                                                } transition-colors`}
-                                              >
-                                                <span className="text-xl">
-                                                  {getFileIcon(f.type, f.name)}
-                                                </span>
-
-                                                <div className="flex-1 min-w-0">
-                                                  <p className="text-sm font-medium truncate">
-                                                    {f.name}
-                                                  </p>
-                                                  <p className="text-xs text-gray-500">
-                                                    {formatSize(f.size)}
-                                                  </p>
-                                                </div>
-
-                                                {/* <FileActions
-                                        src={src}
-                                        isMe={isMe}
-                                        onDelete={() =>
-                                          handleDeleteFile(m._id, f._id)
-                                        }
-                                      /> */}
                                                 <FileActions
                                                   src={src}
                                                   isMe={isMe}
@@ -4453,15 +4573,107 @@ const handleScroll = () => {
                                                 />
                                               </div>
                                             )}
-                                        </>
-                                      )}
-                                    </div>
-                                  );
-                                })}
+                                            {/* application/pdf */}
+                                            {f.type.startsWith(
+                                              "application/pdf",
+                                            ) && (
+                                              <div className="relative p-3 bg-black/5 rounded-lg">
+                                                {/* <audio
+                                          controls
+                                          className="w-full"
+                                          src={src}
+                                        /> */}
+                                                <iframe
+                                                  src={src}
+                                                  title="pdf"
+                                                  className="w-full h-[250px] sm:h-[350px] rounded-xl"
+                                                />
 
-                              {/* dm tick */}
-                              {/* Message Status and Time */}
-                              {/* {selectedUser && (
+                                                <FileActions
+                                                  src={src}
+                                                  isMe={isMe}
+                                                  onDelete={() =>
+                                                    handleDeleteFile(
+                                                      m._id,
+                                                      f._id,
+                                                    )
+                                                  }
+                                                  onForward={() => {
+                                                    setForwardMessage(m); // parent message
+                                                    setSelectedForwardFile(f); // 🔥 only this file
+                                                    setShowForwardDropdown(
+                                                      true,
+                                                    );
+                                                  }}
+                                                />
+                                              </div>
+                                            )}
+
+                                            {/* DOCUMENT / OTHER */}
+                                            {!f.type.startsWith("image") &&
+                                              !f.type.startsWith("video") &&
+                                              !f.type.startsWith("audio") &&
+                                              !f.type.startsWith(
+                                                "application/pdf",
+                                              ) && (
+                                                <div
+                                                  className={`relative flex items-center gap-3 p-3 rounded-xl ${
+                                                    isMe
+                                                      ? "bg-blue-500/20 hover:bg-blue-500/30"
+                                                      : "bg-gray-100 hover:bg-gray-200"
+                                                  } transition-colors`}
+                                                >
+                                                  <span className="text-xl">
+                                                    {getFileIcon(
+                                                      f.type,
+                                                      f.name,
+                                                    )}
+                                                  </span>
+
+                                                  <div className="flex-1 min-w-0">
+                                                    <p className="text-sm font-medium truncate">
+                                                      {f.name}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500">
+                                                      {formatSize(f.size)}
+                                                    </p>
+                                                  </div>
+
+                                                  {/* <FileActions
+                                        src={src}
+                                        isMe={isMe}
+                                        onDelete={() =>
+                                          handleDeleteFile(m._id, f._id)
+                                        }
+                                      /> */}
+                                                  <FileActions
+                                                    src={src}
+                                                    isMe={isMe}
+                                                    onDelete={() =>
+                                                      handleDeleteFile(
+                                                        m._id,
+                                                        f._id,
+                                                      )
+                                                    }
+                                                    onForward={() => {
+                                                      setForwardMessage(m); // parent message
+                                                      setSelectedForwardFile(f); // 🔥 only this file
+                                                      setShowForwardDropdown(
+                                                        true,
+                                                      );
+                                                    }}
+                                                  />
+                                                </div>
+                                              )}
+                                          </>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+
+                                {/* dm tick */}
+                                {/* Message Status and Time */}
+                                {/* {selectedUser && (
                         <div
                           className={`flex items-center justify-end gap-2 mt-2 ${
                             isMe ? "text-blue-100" : "text-gray-500"
@@ -4482,33 +4694,33 @@ const handleScroll = () => {
                           )}
                         </div>
                       )} */}
-                              {/* channel tick */}
-                              {/* {selectedChannel && m.senderId == me && (
+                                {/* channel tick */}
+                                {/* {selectedChannel && m.senderId == me && (
                         <div>
                           <div className="message-footer">{renderTick(m)}</div>
                         </div>
                       )} */}
-                              {/* dm tick */}
-                              {/* Message Status and Time */}
-                              {selectedUser && (
-                                <div
-                                  className={`flex items-center justify-end gap-2 mt-2 ${
-                                    isMe ? "text-black-800" : "text-gray-500"
-                                  }`}
-                                >
-                                  {/* <div>
+                                {/* dm tick */}
+                                {/* Message Status and Time */}
+                                {selectedUser && (
+                                  <div
+                                    className={`flex items-center justify-end gap-2 mt-2 ${
+                                      isMe ? "text-black-800" : "text-gray-500"
+                                    }`}
+                                  >
+                                    {/* <div>
                                     {" "}
                                     <span className="text-xs text-gray-600">
                                       {date}
                                     </span>
                                   </div> */}
-                                  <div className="flex gap">
-                                    {/* <span className="text-xs">{time}</span> */}
-                                    {/* {console.log(
+                                    <div className="flex gap">
+                                      {/* <span className="text-xs">{time}</span> */}
+                                      {/* {console.log(
                                       "Rendering ticks for message:",
                                       m.seenAt,
                                     )} */}
-                                    {/* {isMe && (
+                                      {/* {isMe && (
                               <div className="flex items-center">
                                 {!m.deliveredAt && !m.seenAt && (
                                   <Check className="w-3.5 h-3.5" />
@@ -4521,7 +4733,7 @@ const handleScroll = () => {
                                 )}
                               </div>
                             )} */}
-                                    {/* {isMe && (
+                                      {/* {isMe && (
                             <div className="flex items-center">
                               {m.seenAt ? (
                                 <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
@@ -4532,72 +4744,77 @@ const handleScroll = () => {
                               )}
                             </div>
                           )} */}
-                                    {isMe && (
-                                      <div className="flex items-center">
-                                        {(() => {
-                                          if (!m.deliveredAt) {
+                                      {isMe && (
+                                        <div className="flex items-center">
+                                          {(() => {
+                                            if (!m.deliveredAt) {
+                                              return (
+                                                <Check className="w-3.5 h-3.5" />
+                                              );
+                                            } else if (
+                                              m.deliveredAt &&
+                                              !m.seenAt
+                                            ) {
+                                              return (
+                                                <CheckCheck className="w-3.5 h-3.5" />
+                                              );
+                                            } else if (m.seenAt) {
+                                              return (
+                                                <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
+                                              );
+                                            }
                                             return (
                                               <Check className="w-3.5 h-3.5" />
                                             );
-                                          } else if (
-                                            m.deliveredAt &&
-                                            !m.seenAt
-                                          ) {
-                                            return (
-                                              <CheckCheck className="w-3.5 h-3.5" />
-                                            );
-                                          } else if (m.seenAt) {
-                                            return (
-                                              <CheckCheck className="w-3.5 h-3.5 text-[#03f4fc]" />
-                                            );
-                                          }
-                                          return (
-                                            <Check className="w-3.5 h-3.5" />
-                                          );
-                                        })()}
-                                      </div>
-                                    )}
+                                          })()}
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
-                                </div>
-                              )}
-                              {/* channel tick */}
-                              {selectedChannel  && (m.threadReplyCount > 0 || m.senderId == me) && (
-                                <div
-                                  className={` gap-2 mt-2 ${
-                                    isMe ? "text-blue-100" : "text-gray-500"
-                                  }`}
-                                >
-                                  <div className="flex items-center justify-end gap-2">
-                                    {/* <div>
+                                )}
+                                {/* channel tick */}
+                                {selectedChannel &&
+                                  (m.threadReplyCount > 0 ||
+                                    m.senderId == me) && (
+                                    <div
+                                      className={` gap-2 mt-2 ${
+                                        isMe ? "text-blue-100" : "text-gray-500"
+                                      }`}
+                                    >
+                                      <div className="flex items-center justify-end gap-2">
+                                        {/* <div>
                                       {" "}
                                       <span className="text-xs text-gray-600">
                                         {date}
                                       </span>
                                     </div> */}
-                                    <div className="flex gap-3">
-                                      {/* <span className="text-xs text-gray-600">
+                                        <div className="flex gap-3">
+                                          {/* <span className="text-xs text-gray-600">
                                         {time}
                                       </span> */}
-                                      {m.senderId == me && (
-                                        <div className="message-footer">
-                                          {renderTick(m)}
+                                          {m.senderId == me && (
+                                            <div className="message-footer">
+                                              {renderTick(m)}
+                                            </div>
+                                          )}
                                         </div>
-                                      )}
-                                    </div>
-                                  </div>
-                                  {/* <div
+                                      </div>
+                                      {/* <div
                                   className="text-sm underline"
                                   onClick={() => setActiveThread(m)}
                                 >
                                   Thread Count:{m.threadReplyCount}
                                 </div> */}
-                                </div>
-                              )}
+                                    </div>
+                                  )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      }}
+                    />
+                  )}
+
                   <div ref={bottomRefTheard} />
                   {/* </div> */}
                 </div>
@@ -4762,12 +4979,12 @@ const handleScroll = () => {
 
                   {/* Helper Text */}
                   <div className="mt-3 text-center">
-                <p className="text-xs text-gray-500">
-                  Press <span className="font-semibold">Enter</span> to send •{" "}
-                  <span className="font-semibold">Shift + Enter</span> for new
-                  line
-                </p>
-              </div>
+                    <p className="text-xs text-gray-500">
+                      Press <span className="font-semibold">Enter</span> to send
+                      • <span className="font-semibold">Shift + Enter</span> for
+                      new line
+                    </p>
+                  </div>
                 </div>
                 {/* { console.log("test open",showSeenPopup)} */}
               </div>

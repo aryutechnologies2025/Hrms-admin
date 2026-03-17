@@ -827,8 +827,6 @@ export default function Slack() {
       });
   }, [currentUser]);
 
-
-
 /////////////////
 //  useSocketEvents({
 //     socket,
@@ -1122,7 +1120,7 @@ export default function Slack() {
         onSelectUser={handleSelectUser}
         onSelectChannel={(ch) => {
           setSelectedChannel(ch);
-          setSelectedUser(null);
+          stSelectedUser(null);e
         }}
          favorites={favorites}
           setFavorites={setFavorites}
