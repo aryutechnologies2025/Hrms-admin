@@ -118,14 +118,14 @@ html {
 
 .dataTable th,
 .dataTable td {
-  text-align: center;
+  text-align: start;
   padding: 12px;
   white-space: wrap;
   /* Prevent wrapping in cells */
 }
 
 th {
-  text-align: center;
+  text-align: start;
   height: 40px;
   color: #495057 !important;
   background-color: #F8F9FA;
@@ -141,7 +141,7 @@ th {
 }
 
 td {
-  text-align: center;
+  text-align: start;
   border-bottom: 1px solid #e0e4ea;
   color: #495057 !important;
   /* font-family: 'segoe-Regul'; */
