@@ -1163,6 +1163,17 @@ const Sidebar = () => {
                               >
                                 Recurring
                               </button>
+                              <button
+                                onClick={() => navigate("/recurring-reports")}
+                                className={`px-2 py-1 rounded-full 
+                            ${
+                              currentPath === "/recurring-reports"
+                                ? " text-[#4F46E5]"
+                                : "hover:bg-blue-100 text-gray-500"
+                            }`}
+                              >
+                                Recurring Report
+                              </button>
                               {/* <div
                         onClick={() => onClickSidebarMenu("client-details")}
                         className={`flex w-full items-center flex-grow ${

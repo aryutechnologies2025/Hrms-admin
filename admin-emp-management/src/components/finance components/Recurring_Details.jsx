@@ -1371,6 +1371,7 @@ const handleInputChange = (e, isEdit = false) => {
                 <Dropdown
                   name="lenderName"
                   value={formData.lenderName}
+                  filter
                   onChange={(e) => handleLenderChange(e.value, isEdit)}
                   options={lenderOptions}
                   placeholder="Select Lender"
@@ -1408,6 +1409,7 @@ const handleInputChange = (e, isEdit = false) => {
               <Dropdown
                 name="dueDay"
                 value={formData.dueDay}
+                filter
                 onChange={(e) => {
                   if (isEdit) {
                     setEditFormData({ ...formData, dueDay: e.value });
@@ -1432,6 +1434,7 @@ const handleInputChange = (e, isEdit = false) => {
                 <Dropdown
                   name="lenderName"
                   value={formData.lenderName}
+                  filter
                   onChange={(e) => handleLenderChange(e.value, isEdit)}
                   options={lenderOptions}
                   placeholder="Select Lender"
@@ -1496,6 +1499,7 @@ const handleInputChange = (e, isEdit = false) => {
               <Dropdown
                 name="dueDay"
                 value={formData.dueDay}
+                filter
                 onChange={(e) => {
                   if (isEdit) {
                     setEditFormData({ ...formData, dueDay: e.value });
@@ -1541,6 +1545,7 @@ const handleInputChange = (e, isEdit = false) => {
                 <Dropdown
                   name="lenderName"
                   value={formData.lenderName}
+                  filter
                   onChange={(e) => handleLenderChange(e.value, isEdit)}
                   options={lenderOptions}
                   placeholder="Select Lender"
@@ -1601,6 +1606,7 @@ const handleInputChange = (e, isEdit = false) => {
               <Dropdown
                 name="dueDay"
                 value={formData.dueDay}
+                filter
                 onChange={(e) => {
                   if (isEdit) {
                     setEditFormData({ ...formData, dueDay: e.value });
@@ -1645,6 +1651,7 @@ const handleInputChange = (e, isEdit = false) => {
                 <Dropdown
                   name="lenderName"
                   value={formData.lenderName}
+                  filter
                   onChange={(e) => handleLenderChange(e.value, isEdit)}
                   options={lenderOptions}
                   placeholder="Select Lender"
@@ -1682,6 +1689,7 @@ const handleInputChange = (e, isEdit = false) => {
               <Dropdown
                 name="dueDay"
                 value={formData.dueDay}
+                filter
                 onChange={(e) => {
                   if (isEdit) {
                     setEditFormData({ ...formData, dueDay: e.value });
@@ -2115,6 +2123,7 @@ const handleInputChange = (e, isEdit = false) => {
               onChange={(e) =>
                 setTempFilters({ ...tempFilters, account: e.value })
               }
+              filter
               options={accountOptions}
               placeholder="All Accounts"
               className="w-full border border-gray-300 rounded-lg"
@@ -2129,6 +2138,7 @@ const handleInputChange = (e, isEdit = false) => {
                 setTempFilters({ ...tempFilters, lenderName: e.value })
               }
               options={ lenderOptions}
+              filter
               placeholder="All Lender"
               className="w-full border border-gray-300 rounded-lg"
             />
@@ -2141,13 +2151,14 @@ const handleInputChange = (e, isEdit = false) => {
               onChange={(e) =>
                 setTempFilters({ ...tempFilters, status: e.value })
               }
+              filter
               options={statusOptions}
               placeholder="All Status"
               className="w-full border border-gray-300 rounded-lg"
             />
           </div>
 
-          <div className="flex flex-col w-40 md:w-48">
+          {/* <div className="flex flex-col w-40 md:w-48">
             <label className="text-sm font-medium mb-1">Due Date</label>
             <input
               type="date"
@@ -2157,7 +2168,7 @@ const handleInputChange = (e, isEdit = false) => {
               }
               className="border px-3 py-2 rounded focus:outline-none"
             />
-          </div>
+          </div> */}
 
           <button
             onClick={() => setFilters(tempFilters)}
@@ -2693,6 +2704,7 @@ const handleInputChange = (e, isEdit = false) => {
                         <Dropdown
                           name="account"
                           value={formData.account}
+                          filter
                           onChange={(e) => handleAccountChange(e.value, false)}
                           options={accountOptions}
                           placeholder="Select Account"
