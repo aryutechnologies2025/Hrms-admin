@@ -940,10 +940,9 @@ const dueDayOptions = Array.from({ length: 30 }, (_, i) => ({
           showConfirmButton: false,
         });
         
-        // Refresh payment list
         fetchPaymentList(paymentFormData.parent_id);
         fetchRecurringPayments();
-        // closeEditPaymentModal();
+ 
       }
     } catch (err) {
       if (err.response?.data?.errors) {
@@ -1879,16 +1878,16 @@ const handleInputChange = (e, isEdit = false) => {
     //     return `<span class="${color} ${bgColor} px-2 py-1 rounded-full text-xs font-semibold capitalize">${data}</span>`;
     //   },
     // },
-    {
-      title: "Status",
-      data: "status",
-      render: (data, type, row) => {
-        const isActive = data === "1";
-        return `<div class="${isActive ? "text-green-600 border-green-600" : "text-red-600 border-red-600"} border rounded-full text-center w-24 text-xs font-medium py-1">
-                  ${isActive ? "ACTIVE" : "INACTIVE"}
-                </div>`;
-      },
-    },
+    // {
+    //   title: "Status",
+    //   data: "status",
+    //   render: (data, type, row) => {
+    //     const isActive = data === "1";
+    //     return `<div class="${isActive ? "text-green-600 border-green-600" : "text-red-600 border-red-600"} border rounded-full text-center w-24 text-xs font-medium py-1">
+    //               ${isActive ? "ACTIVE" : "INACTIVE"}
+    //             </div>`;
+    //   },
+    // },
     {
       title: "Action",
       data: null,
