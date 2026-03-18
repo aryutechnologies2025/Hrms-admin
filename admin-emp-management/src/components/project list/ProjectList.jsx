@@ -59,6 +59,7 @@ const ProjectList = () => {
   const [filters, setFilters] = useState({
     status: "",
   });
+  
   const [tempFilters, setTempFilters] = useState(filters);
 
   // Status options
@@ -1992,11 +1993,18 @@ const ProjectList = () => {
                           Add Employees to the project :
                         </label>
 
-                        {roleDetails.teamMembers.map((email, index) => (
-                          <div className="text-sm mt-3 p-1 px-2 bg-gray-100 rounded-2xl inline-block ">
-                            {index + 1}. {email}
-                          </div>
-                        ))}
+                      {roleDetails.teamMembers.map((email, index) => {
+  const employee = employeeOption.find((val) => val.value === email);
+
+  return (
+    <div
+      key={email}
+      className="text-sm mt-3 p-1 px-2 bg-gray-100 rounded-2xl inline-block"
+    >
+      {index + 1}. {employee ? employee.label : email}
+    </div>
+  );
+})}
                       </div>
 
                       <div className="flex gap-2 mt-3">
