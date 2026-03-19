@@ -1,7 +1,7 @@
 import React from "react";
 import Sidebar from "../components/Sidebar";
 import Roles_Mainbar from "../components/roles components/Roles_Mainbar";
-import Departments_Mainbar from "../components/departments/departments_mainbar";
+import Departments_Mainbar from "../components/departments/Departments_Mainbar";
 
 const Departments = () => {
   return (

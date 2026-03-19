@@ -9,7 +9,7 @@ import { jsPDF } from "jspdf";
 import html2pdf from "html2pdf.js";
 
 import html2canvas from "html2canvas";
-import Aryulogo from "../../assets/aryu_logo.png";
+import Aryulogo from "../../assets/aryu_logo.svg";
 import Sing from "../../assets/sign.png";
 import Steal from "../../assets/steal.png";
 import { useLocation } from "react-router-dom";
