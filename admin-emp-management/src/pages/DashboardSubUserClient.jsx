@@ -1,7 +1,7 @@
 import React from 'react'
 import Sidebar from '../components/Sidebar'
 import DashboardClientSubUser from '../components/dashboard components/DashboardClientSubUser'
-import SubUserListClient from '../components/taskList/subUserListClient'
+import SubUserListClient from '../components/taskList/SubUserListClient'
 
 const DashboardClientSubUserMain = () => {
   return (

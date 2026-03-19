@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Sidebar from '../Sidebar'
-import Recurring_details_report from './recurring_details_report'
+import Recurring_details_report from './Recurring_details_report'
 
 
 

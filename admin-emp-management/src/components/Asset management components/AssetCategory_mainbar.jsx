@@ -1,6 +1,6 @@
 import React from 'react'
 import Sidebar from "../Sidebar"
-import AssetCategory_Details from './AssetCategory_Details'
+import AssetCategory_details from './AssetCategory_details'
 
 const AssetCategory_mainbar = () => {
   return (
@@ -10,7 +10,7 @@ const AssetCategory_mainbar = () => {
       <Sidebar />
       </div>
       
-      <AssetCategory_Details />
+      <AssetCategory_details />
     </div>
   )
 }

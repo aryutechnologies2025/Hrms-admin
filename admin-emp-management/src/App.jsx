@@ -154,7 +154,7 @@ import useSocketNotifications from "./hooks/useSocketNotifications";
 import useSocketConnection from "./hooks/useSocketConnection";
 import useSocketEvents from "./hooks/useSocketEvents";
 import { initNotificationSound, resetTabTitle } from "./notifications/notificationManager";
-import Recurring_reports_main from "./components/finance components/recurring_reports_main";
+import Recurring_reports_main from "./components/finance components/Recurring_reports_main";
 
 export const SettingsContext = createContext();
 
