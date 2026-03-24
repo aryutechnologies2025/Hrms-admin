@@ -2,10 +2,10 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY  mainsource/package*.json ./
+COPY  admin-emp-management/package*.json ./
 RUN npm ci
 
-COPY  mainsource/ .
+COPY  admin-emp-management/ .
 RUN npm run build
 
 FROM nginx:alpine
